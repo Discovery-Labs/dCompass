@@ -11,16 +11,50 @@ import CTASection from "components/CTASection";
 import SomeImage from "components/SomeImage";
 import SomeText from "components/SomeText";
 
+type MoralisChainId =
+  | "eth"
+  | "0x1"
+  | "ropsten"
+  | "0x3"
+  | "rinkeby"
+  | "0x4"
+  | "goerli"
+  | "0x5"
+  | "kovan"
+  | "0x2a"
+  | "polygon"
+  | "0x89"
+  | "mumbai"
+  | "0x13881"
+  | "bsc"
+  | "0x38"
+  | "bsc testnet"
+  | "0x61"
+  | "localdevchain"
+  | "dev"
+  | undefined;
 const Home = () => {
-  const { authenticate, isAuthenticated, user, logout, enableWeb3 } =
+  const { authenticate, isAuthenticated, user, logout, enableWeb3, Moralis } =
     useMoralis();
   const [address, setAddress] = useState("");
+  const [chainId, setChainId] = useState<MoralisChainId>(undefined);
 
   useEffect(() => {
     if (isAuthenticated && user) {
       setAddress(user.attributes.ethAddress);
     }
   }, [isAuthenticated, user]);
+
+  useEffect(() => {
+    Moralis.Web3.onChainChanged((newChainId) => {
+      console.log("chain changed to: ", newChainId);
+      setChainId(newChainId as MoralisChainId);
+    });
+    Moralis.Web3.onAccountsChanged((accounts) => {
+      console.log("account changed to: ", accounts[0]);
+      setAddress(accounts[0]);
+    });
+  }, [Moralis.Web3]);
 
   const handleLogin = async () => {
     enableWeb3();
@@ -31,7 +65,7 @@ const Home = () => {
   } = useMoralisWeb3Api();
 
   const getNativeBalanceQuery = useMoralisWeb3ApiCall(getNativeBalance, {
-    chain: "mumbai",
+    chain: chainId,
     address,
   });
 
