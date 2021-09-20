@@ -6,6 +6,10 @@ import {
   useMoralisWeb3ApiCall,
 } from "react-moralis";
 
+import SuperfluidSDK from "@superfluid-finance/js-sdk";
+import { Web3Provider } from "@ethersproject/providers";
+import { toast, Toaster } from "react-hot-toast";
+
 import CodeBlock from "../components/CodeBlock";
 import CTASection from "components/CTASection";
 import SomeImage from "components/SomeImage";
@@ -34,8 +38,15 @@ type MoralisChainId =
   | "dev"
   | undefined;
 const Home = () => {
-  const { authenticate, isAuthenticated, user, logout, enableWeb3, Moralis } =
-    useMoralis();
+  const {
+    authenticate,
+    isAuthenticated,
+    user,
+    logout,
+    enableWeb3,
+    Moralis,
+    web3,
+  } = useMoralis();
   const [address, setAddress] = useState("");
   const [chainId, setChainId] = useState<MoralisChainId>(undefined);
 
@@ -55,6 +66,34 @@ const Home = () => {
       setAddress(accounts[0]);
     });
   }, [Moralis.Web3]);
+
+  const handleSuperStream = async () => {
+    if (!isAuthenticated) {
+      return toast("Login to start streaming");
+    }
+    const sf = new SuperfluidSDK.Framework({
+      ethers: new Web3Provider(web3?.currentProvider as any),
+    });
+    await sf.initialize();
+    const superUser = sf.user({
+      address: address,
+      token: "0x745861aed1eee363b4aaa5f1994be40b1e05ff90",
+    });
+    await superUser.flow({
+      recipient: "0x7E13623dd5D070967c8568066bE81a3E5bF75226",
+      flowRate: "385802469135802",
+    });
+
+    const details = await superUser.details();
+    console.log(details);
+    toast("Stream started");
+    // Stop the stream
+    await superUser.flow({
+      recipient: "0x7E13623dd5D070967c8568066bE81a3E5bF75226",
+      flowRate: "0",
+    });
+    toast("Stream stopped");
+  };
 
   const handleLogin = async () => {
     enableWeb3();
@@ -80,6 +119,12 @@ const Home = () => {
   }
   return (
     <Box mb={8} w="full">
+      <Toaster />
+      <div>
+        <Button onClick={handleSuperStream} type="button">
+          Start Streaming
+        </Button>
+      </div>
       <div>
         <Button onClick={() => logout()} type="button">
           Logout

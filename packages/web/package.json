@@ -25,8 +25,10 @@
     "@emotion/react": "^11.4.1",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.3.0",
+    "@ethersproject/contracts": "^5.4.1",
     "@fontsource/lexend": "^4.5.1",
     "@fontsource/roboto-mono": "^4.5.0",
+    "@superfluid-finance/js-sdk": "^0.5.3",
     "@walletconnect/web3-provider": "^1.6.5",
     "framer-motion": "^4.1.17",
     "moralis": "^0.0.54",
@@ -35,6 +37,7 @@
     "next-seo": "^4.26.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hot-toast": "^2.1.1",
     "react-icons": "^4.2.0",
     "react-moralis": "^0.2.3"
   },
