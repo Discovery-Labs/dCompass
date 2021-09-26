@@ -1,17 +1,18 @@
-import { Box, Flex, Heading } from "@chakra-ui/react";
-import Link from "next/link";
-import ThemeToggle from "./ThemeToggle";
+import { Box, Flex } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/layout";
+import React from "react";
 
+import ConnectButton from "../Buttons/ConnectButton";
+import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
   return (
     <Flex as="header" width="full" align="center">
-      <Heading as="h1" size="md">
-        <Link href="/">dCompass</Link>
-      </Heading>
-
       <Box marginLeft="auto">
-        <ThemeToggle />
+        <Stack direction="row" spacing={4}>
+          <ThemeToggle />
+          <ConnectButton />
+        </Stack>
       </Box>
     </Flex>
   );
