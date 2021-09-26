@@ -2,9 +2,9 @@ import { Box, Button, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { Web3Provider } from "@ethersproject/providers";
-
 import { useMoralis } from "react-moralis";
 import SuperfluidSDK from "@superfluid-finance/js-sdk";
+import Link from "next/link";
 
 import WelcomeText from "components/static/WelcomeText";
 import ProjectModal from "./projects/ProjectModal";
@@ -56,13 +56,15 @@ function Dapp() {
       {isAuthenticated && (
         <VStack>
           <Toaster />
-          <div>
+          <Box>
             <Button onClick={handleSuperStream} type="button">
               Start Streaming
             </Button>
 
-            <ProjectModal />
-          </div>
+            <Link href="/dapp/projects/create-project" passHref>
+              <Button>Create Project</Button>
+            </Link>
+          </Box>
         </VStack>
       )}
     </Box>
