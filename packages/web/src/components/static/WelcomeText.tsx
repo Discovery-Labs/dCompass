@@ -39,12 +39,7 @@ const WelcomeText = ({
           {address ? (
             <>
               Your current address is
-              <Code
-                colorScheme="yellow"
-                cursor="pointer"
-                onClick={onCopy}
-                p="2"
-              >
+              <Code colorScheme="green" cursor="pointer" onClick={onCopy} p="2">
                 {address}
               </Code>
             </>

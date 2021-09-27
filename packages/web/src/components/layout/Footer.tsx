@@ -30,7 +30,7 @@ const Footer = () => {
             h={35}
             color="purple.500"
             _hover={{
-              color: "yellow.500",
+              color: "green.500",
             }}
           />
         </Link>

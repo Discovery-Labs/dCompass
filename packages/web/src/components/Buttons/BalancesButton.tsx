@@ -35,7 +35,7 @@ const BalancesButton = ({
     address,
   });
 
-  const bgColor = useColorModeValue("violet.100", "brand.900");
+  const bgColor = useColorModeValue("violet.100", "blue.700");
   return (
     <Popover isLazy>
       <PopoverTrigger>
@@ -45,7 +45,7 @@ const BalancesButton = ({
           icon={<FaEthereum />}
         />
       </PopoverTrigger>
-      <PopoverContent backgroundColor={bgColor}>
+      <PopoverContent backgroundColor={bgColor} rounded="3xl">
         <PopoverHeader fontWeight="semibold">
           Native token balance
         </PopoverHeader>

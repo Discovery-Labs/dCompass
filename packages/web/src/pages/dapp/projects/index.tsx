@@ -1,11 +1,23 @@
-import { Box } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
+import { Box, Heading, HStack } from "@chakra-ui/layout";
 import React from "react";
+import Link from "next/link";
+
 import CardWithImage from "../../../components/Cards/CardWithImage";
+import { AddIcon } from "@chakra-ui/icons";
 
 function Projects() {
   return (
     <Box>
-      Projects:
+      <HStack justifyContent="space-between">
+        <Heading>Projects:</Heading>
+        <Box>
+          <Link href="/dapp/projects/create-project" passHref>
+            <Button leftIcon={<AddIcon />}>Create Project</Button>
+          </Link>
+        </Box>
+      </HStack>
+
       <CardWithImage
         heading="TypeScript"
         avatarSrc="/ts-logo-512.svg"

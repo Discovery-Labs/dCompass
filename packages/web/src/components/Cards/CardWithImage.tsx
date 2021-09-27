@@ -50,7 +50,7 @@ function CardWithImage({
       boxShadow={"2xl"}
       rounded={"3xl"}
       overflow={"hidden"}
-      m="5"
+      my="5"
     >
       <Image
         alt="cover"

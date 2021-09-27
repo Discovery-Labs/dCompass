@@ -17,7 +17,7 @@ import SomeImage from "components/SomeImage";
 import { Circle } from "components/Circles/Circle";
 
 const Home = () => {
-  const headingColor = useColorModeValue("yellow.600", "yellow.500");
+  const headingColor = useColorModeValue("green.600", "green.500");
   // scheduled rooms, open spaces,..
   // VIP pass, tickets, fractionalized ownership
   // super rare crypto curration
@@ -32,15 +32,14 @@ const Home = () => {
         >
           <VStack align="left" w="full">
             <HStack align="center">
-              <Heading color={headingColor}>Quadratic Rooms</Heading>
+              <Heading color={headingColor}>dCompass</Heading>
             </HStack>
             <Text color="purple.500" fontWeight="bold">
               {" "}
               by MOONSHOT COLLECTIVE
             </Text>
             <Text pt="10" fontSize="3xl">
-              Join events, mentoring sessions and AMAs with the best Web3
-              project members.
+              Explore the Web3 space and contribute to your favorite projects.
             </Text>
 
             <Box maxW="300px" pt="12">

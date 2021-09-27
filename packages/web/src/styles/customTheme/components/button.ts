@@ -9,7 +9,7 @@ const Button: DeepPartial<Theme["components"]["Button"]> = {
       _hover: {
         boxShadow: "lg",
         fontWeight: "bold",
-        background: "yellow.500",
+        background: "green.500",
         color: "purple.500",
       },
     },

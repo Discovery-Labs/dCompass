@@ -7,7 +7,6 @@ import SuperfluidSDK from "@superfluid-finance/js-sdk";
 import Link from "next/link";
 
 import WelcomeText from "components/static/WelcomeText";
-import ProjectModal from "./projects/ProjectModal";
 
 function Dapp() {
   const { isAuthenticated, user, web3 } = useMoralis();
@@ -60,10 +59,6 @@ function Dapp() {
             <Button onClick={handleSuperStream} type="button">
               Start Streaming
             </Button>
-
-            <Link href="/dapp/projects/create-project" passHref>
-              <Button>Create Project</Button>
-            </Link>
           </Box>
         </VStack>
       )}
