@@ -12,7 +12,7 @@ function LogoutButton(props: ButtonProps) {
       rounded="full"
       {...props}
     >
-      Logout
+      LOGOUT
     </Button>
   );
 }

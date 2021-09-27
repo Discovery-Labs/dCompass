@@ -5,7 +5,9 @@ const Button: DeepPartial<Theme["components"]["Button"]> = {
     solid: {
       bg: "purple.500",
       color: "violet.50",
+      type: "button",
       borderRadius: "full",
+      textTransform: "uppercase",
       _hover: {
         boxShadow: "lg",
         fontWeight: "bold",

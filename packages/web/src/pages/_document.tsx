@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 /**
  * @todo: remove this comment below when ready
  * ref: https://github.com/vercel/next.js/issues/13712#issuecomment-910409023
@@ -29,8 +28,8 @@ class MyDocument extends Document {
 
     ctx.renderPage = () =>
       originalRenderPage({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        enhanceApp: (App: any) => (props) =>
+        // eslint-disable-next-line react/display-name
+        enhanceApp: (App: any) => (props: any) =>
           <App emotionCache={cache} {...props} />,
       });
 
@@ -71,14 +70,15 @@ class MyDocument extends Document {
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="theme-color" content="#FFFFFF" />
 
-          {/* add your own app-icon */}
-          {/* <link
+          {/* TODO: add your own app-icon */}
+          <link
             rel="apple-touch-icon"
             sizes="180x180"
             href="/icons/apple-touch-icon.png"
           />
-          <link rel="shortcut icon" href="/app-icon.png" /> */}
+          <link rel="shortcut icon" href="/app-icon.png" />
           <link rel="manifest" href="/manifest.json" />
+          <link rel="canonical" href="https://dcompass.eth" />
         </Head>
         <body>
           <Main />
