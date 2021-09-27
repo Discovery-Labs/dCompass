@@ -12,12 +12,11 @@ import Link from "next/link";
 import MotionBox from "components/motion/Box";
 
 const Page404 = () => {
-  const { colorMode } = useColorMode();
-
   return (
-    <>
+    <Box mb={8} w="full">
       <MotionBox
         animate={{ y: 20 }}
+        pt="10"
         transition={{ repeat: Infinity, duration: 2, repeatType: "reverse" }}
         width={["100%", "70%", "60%", "60%"]}
         margin="0 auto"
@@ -27,27 +26,19 @@ const Page404 = () => {
           alt="Error 404 not found Illustration"
         />
       </MotionBox>
-      <Text textAlign="center" fontSize="xs">
-        <ChakraLink href="https://stories.freepik.com/web" isExternal>
-          Illustration by Freepik Stories
-        </ChakraLink>
-      </Text>
 
-      <Box marginY={4}>
-        <Heading textAlign="center">Page not Found.</Heading>
-
-        <Box textAlign="center" marginTop={4}>
-          <Text>It&apos;s Okay!</Text>
+      <Box>
+        <Heading textAlign="center" pt="10">
+          Page not Found.
+        </Heading>
+        <Box textAlign="center" pt="10">
           <Link href="/" passHref>
-            <Button
-              backgroundColor={colorMode === "light" ? "gray.300" : "teal.500"}
-            >
-              Let&apos;s Head Back
-            </Button>
+            <Button>Let&apos;s Head Back</Button>
           </Link>
         </Box>
       </Box>
-    </>
+      <Box h="180" />
+    </Box>
   );
 };
 

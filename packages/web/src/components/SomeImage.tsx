@@ -17,23 +17,12 @@ const SomeImage = () => {
         marginX="auto"
       >
         <Image
-          src="/Launching-amico.svg"
-          width={400}
-          height={400}
-          alt="Launching Illustration"
+          src="/dCompass-home.png"
+          width={800}
+          height={800}
+          alt="Decentralized infrastructure"
         />
       </MotionBox>
-      <Text textAlign="center" fontSize="xs">
-        <Link href="https://stories.freepik.com/web" isExternal>
-          Illustration by Freepik Stories
-        </Link>
-      </Text>
-
-      <Flex marginY={4} justifyContent="center" alignItems="center">
-        <HelperImage src={`/nextjs-icon-${colorMode}.svg`} label="NextJS" />
-        <HelperImage src="/chakra-ui-logomark-colored.svg" label="Chakra UI" />
-        <HelperImage src="/ts-logo-512.svg" label="TypeScript" />
-      </Flex>
     </>
   );
 };

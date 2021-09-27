@@ -1,17 +1,31 @@
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/layout";
+import React from "react";
 import Link from "next/link";
-import ThemeToggle from "./ThemeToggle";
 
+import ConnectButton from "../Buttons/ConnectButton";
+import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
   return (
     <Flex as="header" width="full" align="center">
-      <Heading as="h1" size="md">
-        <Link href="/">dCompass</Link>
-      </Heading>
-
       <Box marginLeft="auto">
-        <ThemeToggle />
+        <Stack direction="row" spacing={6}>
+          <Link href="/dapp/projects/" passHref>
+            <Button w="sm">Projects</Button>
+          </Link>
+          <Link href="/dapp/projects/" passHref>
+            <Button w="sm">Projects</Button>
+          </Link>
+          <Link href="/dapp/projects/" passHref>
+            <Button w="sm">Projects</Button>
+          </Link>
+          <Link href="/dapp/projects/" passHref>
+            <Button w="sm">Projects</Button>
+          </Link>
+          <ThemeToggle />
+          <ConnectButton />
+        </Stack>
       </Box>
     </Flex>
   );
