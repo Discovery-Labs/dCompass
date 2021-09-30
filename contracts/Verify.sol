@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import './Ownable.sol';
 //import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 
-contract Signer is Ownable{
+contract Verify is Ownable{
     //using ECDSA for bytes32;
    
    uint256 public nonce = 0;

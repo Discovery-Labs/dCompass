@@ -1,0 +1,72 @@
+pragma solidity >=0.5.0 <0.9.0;
+
+/**
+ * @title DiscoveryMergeNFT
+ * @dev NFTs for merging course content on gitbook
+*/
+
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import './Ownable.sol';
+import './Verify.sol';
+
+
+contract ProjectNFT is ERC721URIStorage, Ownable{
+    using Counters for Counters.Counter;
+    
+    Counters.Counter private _tokenIds;
+
+    mapping (address => bool) approvers;
+    mapping (string => uint[]) courseIndices;
+    mapping (string => bool) public checkNFTURI;
+    mapping (address => mapping(string => Commit[])) public Commits; //address --> course -> versions
+    Verify private signVerifyContract; //contract to verify the signatures 
+
+    event NFTCommitMinted(address indexed _to, string indexed _tokenURI, string indexed course);
+
+    constructor(address payable _signerAddress) ERC721("CommitGitBook", "CGB") public{
+        signVerifyContract = Signer(_signerAddress);
+        approvers[msg.sender] = true;
+    } 
+
+    struct Commit {
+        address receiver;
+        string course;
+        string URI;
+        uint timestamp;
+        uint version;
+        bool exists;
+    }
+
+    modifier onlyApprover(){
+        require(approvers[msg.sender], "only an approver can perform action");
+        _;
+    }
+
+    function mintToken(address _to , string memory _tokenURI, string memory courseName, uint _version, string memory _did) public onlyApprover() {
+        
+        require(signVerifyContract.whiteList(_to), "address is not registered!");
+        require(!checkNFTURI[_tokenURI], "this URI already is being used!");
+        //insert chainlink call for randomness later
+        tokenID++;
+        _mint(_to, tokenID);
+        checkNFTURI[_tokenURI] = true;
+        
+        Commit memory commit_to_add = Commit({
+            receiver : _to,
+            course : courseName,
+            URI : _tokenURI,
+            timestamp : block.timestamp,
+            version : _version,
+            exists : true
+        });
+        Commits[_to][courseName].push(commit_to_add);
+        emit NFTCommitMinted(_to, _tokenURI, courseName);
+    }
+
+    function addApprover(address _approver) public {
+        require (!approvers[_approver], "address is already an approver");
+        approvers[_approver]=true;
+    }
+}
