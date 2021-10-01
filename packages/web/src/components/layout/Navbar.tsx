@@ -1,19 +1,17 @@
-import { ReactNode } from "react";
+import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
   HStack,
-  Link as UILink,
   IconButton,
-  useDisclosure,
-  useColorModeValue,
   Stack,
+  useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
-import ThemeToggle from "./ThemeToggle";
-import ConnectButton from "../Buttons/ConnectButton";
 import Link from "next/link";
+import ConnectButton from "../Buttons/ConnectButton";
 import NavLink from "./NavLink";
+import ThemeToggle from "./ThemeToggle";
 const Links = [
   { label: "Home", link: "/dapp" },
   { label: "Projects", link: "/dapp/projects" },
