@@ -24,9 +24,11 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     Verify private signVerifyContract; //contract to verify the signatures 
 
     event NFTCommitMinted(address indexed _to, string indexed _tokenURI, string indexed course);
+    event ReceiveCalled(address _caller, uint _value);
 
-    constructor(address payable _signerAddress) ERC721("CommitGitBook", "CGB") public{
-        signVerifyContract = Signer(_signerAddress);
+
+    constructor(address payable _verifyAddress) ERC721("CommitGitBook", "CGB") public{
+        signVerifyContract = Verify(_verifyAddress);
         approvers[msg.sender] = true;
     } 
 
@@ -44,13 +46,19 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         _;
     }
 
+    receive() external payable {
+        emit ReceiveCalled(msg.sender, msg.value);
+    }
+
     function mintToken(address _to , string memory _tokenURI, string memory courseName, uint _version, string memory _did) public onlyApprover() {
-        
-        require(signVerifyContract.whiteList(_to), "address is not registered!");
         require(!checkNFTURI[_tokenURI], "this URI already is being used!");
         //insert chainlink call for randomness later
-        tokenID++;
-        _mint(_to, tokenID);
+        _tokenIds.increment();
+        uint256 newItemId = _tokenIds.current();
+        
+        _mint(msg.sender, newItemId);
+        
+        _setTokenURI(newItemId, _tokenURI);
         checkNFTURI[_tokenURI] = true;
         
         Commit memory commit_to_add = Commit({
