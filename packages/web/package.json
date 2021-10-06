@@ -32,6 +32,7 @@
     "@superfluid-finance/js-sdk": "^0.5.3",
     "@walletconnect/web3-provider": "^1.6.5",
     "framer-motion": "^4.1.17",
+    "fuse.js": "^6.4.6",
     "moralis": "^0.0.54",
     "next": "^11.1.2",
     "next-pwa": "^5.3.1",
