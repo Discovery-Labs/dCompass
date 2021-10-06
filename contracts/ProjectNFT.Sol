@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-//import './Ownable.sol';
+import './RandomNumberConsumer.sol';
 import './Verify.sol';
 
 
@@ -18,7 +18,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     
     Counters.Counter private _tokenIds;
     address marketplace;
-    address vrfAddress;
+    RandomNumberConsumer randomNumberContract;
 
     mapping (address => bool) approvers;
     mapping (string => uint[]) courseIndices;
@@ -34,7 +34,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         signVerifyContract = Verify(_verifyAddress);
         approvers[msg.sender] = true;
         marketplace = _marketplace;
-        vrfAddress = _vrfAddress;
+        randomNumberContract = RandomNumberConsumer(_vrfAddress);
     } 
 
     modifier onlyApprover(){
@@ -46,13 +46,13 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         emit ReceiveCalled(msg.sender, msg.value);
     }
 
-    function createToken(address _mintAddress , string memory _tokenURI, string memory _did, string memory _questID, bytes32 requestId) public returns(uint){
+    function createToken(address _mintAddress , string memory _tokenURI, string memory _did, string memory _questID, bytes32 requestId, bytes32 r, bytes32 s, uint8 v) public returns(uint){
         //require(!checkNFTURI[_tokenURI], "this URI already is being used!");
         require(!didQuestCheck[_did][_questID], "this did already has NFT for quest");
         require(approvers[msg.sender] || msg.sender == _mintAddress , "sender not allowed to mint");
-        //uint256 _randomNumber = vrfAddress.call("requestResults(bytes32)")
-        require(signVerifyContract.metaDataVerify())//put in all params and then mint
-        //insert chainlink call for randomness later
+        uint256 _randomNumber = randomNumberContract.requestResults(requestId);
+        require(signVerifyContract.metaDataVerify(_mintAddress, _randomNumber, _did, _questID, r, s, v), "incorrect minting signature");//put in all params and then mint
+        
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         
