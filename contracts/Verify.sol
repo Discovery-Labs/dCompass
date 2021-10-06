@@ -8,35 +8,35 @@ import './Ownable.sol';
 contract Verify is Ownable{
     //using ECDSA for bytes32;
    
-   uint256 public nonce = 0;
+   mapping (address => uint) public nonces;
    bytes32 public checkHash;
    bytes32 public finalHash;
    address public serverAddress;
   mapping (address => bool)  public serverAddresses;
+  mapping (address => bool) public approvers;
   
   constructor(address _serverAddress) public {
       serverAddresses[_serverAddress] = true;
   }
   
-  function getHash( uint256 _nonce, address _mintAddress, uint256 _toMint, string memory _did, string memory _questID) public returns (bytes32) {
-      checkHash = keccak256(abi.encodePacked(address(this),_nonce,_mintAddress, _toMint, _did, _questID));
-    return keccak256(abi.encodePacked(address(this),_nonce,_mintAddress, _toMint, _did, _questID));
+  function getHash(address _mintAddress, uint256 _toMint, string memory _did, string memory _questID) public returns (bytes32) {
+      checkHash = keccak256(abi.encodePacked(nonces[_mintAddress],_mintAddress, _toMint, _did, address(this), _questID));
+    return keccak256(abi.encodePacked(address(this),nonces[_mintAddress],_mintAddress, _toMint, _did, address(this), _questID));
   }
   
   function testHash(string memory _testString, address _testAddress, bytes32 r, bytes32 s, uint8 v) public {
       checkHash = keccak256(abi.encodePacked(_testString, _testAddress));
       bytes32 messageDigest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", checkHash));
       finalHash = messageDigest;
-      serverAddress = ecrecover(finalHash, v, r, s);
-      
-      
+      serverAddress = ecrecover(finalHash, v, r, s);   
   }
 
-  function metaSendValue( uint256 _toMint, string memory _did, string memory _questID, bytes32 r, bytes32 s, uint8 v) public {
-    bytes32 hash = getHash(nonce, msg.sender, _toMint, _did, _questID);
-    address signer = ecrecover(hash, v, r, s);
+  function metaDataVerify(address _mintAddress, uint256 _randomNumber, string memory _did, string memory _questID, bytes32 r, bytes32 s, uint8 v) public returns(bool) {
+    bytes32 hashRecover = getHash(_mintAddress, _randomNumber, _did, _questID);
+    address signer = ecrecover(hashRecover, v, r, s);
     require( serverAddresses[signer],"SIGNER MUST BE SERVER"); 
-    nonce++;
+    nonces[msg.sender]++;
+    return true;
     //Call NFT mint function(address, _did, _questID)
   }
     

@@ -15,6 +15,7 @@ contract RandomNumberConsumer is VRFConsumerBase {
     uint256 public randomResult;
     uint256 public winningNumber;
     uint256 public blockNumberResult;
+    mapping (bytes32 => uint256) requestResults;
     
     /**
      * Constructor inherits VRFConsumerBase
@@ -48,6 +49,7 @@ contract RandomNumberConsumer is VRFConsumerBase {
     function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
         randomResult = randomness;
         blockNumberResult = block.number;
+        requestResults[requestId] = randomResult;
     }
     
     function getWinningNumber(uint256 lower, uint256 upper) public {
