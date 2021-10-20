@@ -1,4 +1,4 @@
-
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.5.0 <0.9.0;
 
 /**
@@ -27,7 +27,8 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     address payable _projectWallet;//sign in a script and also withdraw
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
-    mapping (string => mapping (address => bool)) public contributors; //possibly keep this on ceramic?
+    //mapping (string => mapping (address => bool)) public contributors; //possibly keep this on ceramic?
+    mapping (string => address[]) public contributors;
     mapping (string => ProjectStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of reviewers for ProjectId
@@ -69,9 +70,12 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         votes[_projectId]++;
         reviewerVotes[_projectId][_msgSender()] = true;
         if(status[_projectId] == ProjectStatus.NONEXISTENT){
+            require(_contributors.length >0 && _rarities.length > 0, "empty array");
+            rarities[_projectId] = _rarities;
+            contributors[_projectId] = _contributors;
             if(multiSigThreshold*numReviewers/100 == 0){
                 status[_projectId] = ProjectStatus.APPROVED;
-                //call approve function
+                approveMint(_projectId);
             }
             else{
                 status[_projectId] = ProjectStatus.PENDING;
@@ -84,10 +88,16 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             }
             if(votes[_projectId] >= minVotes){
                 status[_projectId] = ProjectStatus.APPROVED;
-                //call approve function
+                approveMint(_projectId);
             }
             
         }
+    }
+
+    function approveMint(string memory _projectId) internal {
+        (bool success, ) = vrfAddress.call(abi.encodeWithSelector(bytes4(keccak256("getRandomNumber(string)")), _projectId));
+        require(success, "approve call failed");
+
     }
 
     function createToken(address[] memory _mintAddresses, uint32[] memory firstURIParts, uint256[] memory secondURIParts, string memory _projectId) public returns(uint[] memory){

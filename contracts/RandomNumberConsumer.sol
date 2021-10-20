@@ -2,20 +2,21 @@
 pragma solidity >=0.5.0 <0.9.0;
 
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-/**
- * THIS IS AN EXAMPLE CONTRACT WHICH USES HARDCODED VALUES FOR CLARITY.
- * PLEASE DO NOT USE THIS CODE IN PRODUCTION.
- */
-contract RandomNumberConsumer is VRFConsumerBase {
+
+contract RandomNumberConsumer is VRFConsumerBase, Ownable {
     
     bytes32 internal keyHash;
     uint256 internal fee;
     
-    uint256 public randomResult;
+    mapping(bytes32 => string) public projectRequests;//requestId to projectId
     uint256 public winningNumber;
-    uint256 public blockNumberResult;
-    mapping (bytes32 => uint256) requestResults;
+    mapping(string => uint256) public blockNumberResults;
+    mapping (string => uint256) public requestResults;
+    mapping (address => bool) whiteList;//approved contracts and users that can call this
+
+    event RandomNumberFulilled(string indexed _projectId);
     
     /**
      * Constructor inherits VRFConsumerBase
@@ -38,18 +39,24 @@ contract RandomNumberConsumer is VRFConsumerBase {
     /** 
      * Requests randomness 
      */
-    function getRandomNumber() public returns (bytes32 requestId) {
+
+
+    function getRandomNumber(string memory _projectId) public returns (bytes32 requestId) {
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
-        return requestRandomness(keyHash, fee);
+        requestId = requestRandomness(keyHash, fee);
+        projectRequests[requestId] = _projectId;
+        return requestId;
     }
 
     /**
      * Callback function used by VRF Coordinator
      */
     function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
-        randomResult = randomness;
-        blockNumberResult = block.number;
+        string memory projectId = projectRequests[requestId];
+        requestResults[projectId] = randomness;
+        blockNumberResults[projectId] = block.number;
         requestResults[requestId] = randomResult;
+        emit RandomNumberFulilled(projectId);
     }
     
     function getWinningNumber(uint256 lower, uint256 upper) public {
