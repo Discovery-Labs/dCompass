@@ -11,8 +11,7 @@ contract RandomNumberConsumer is VRFConsumerBase, Ownable {
     uint256 internal fee;
     
     mapping(bytes32 => string) public projectRequests;//requestId to projectId
-    uint256 public winningNumber;
-    mapping(string => uint256) public blockNumberResults;
+    mapping(string => uint256) public blockNumberResults;//block number request was fulfilled at
     mapping (string => uint256) public requestResults;
     mapping (address => bool) whiteList;//approved contracts and users that can call this
 
@@ -42,6 +41,7 @@ contract RandomNumberConsumer is VRFConsumerBase, Ownable {
 
 
     function getRandomNumber(string memory _projectId) public returns (bytes32 requestId) {
+        require(whiteList[_msgSender()], "not authorized");
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
         requestId = requestRandomness(keyHash, fee);
         projectRequests[requestId] = _projectId;
@@ -55,19 +55,12 @@ contract RandomNumberConsumer is VRFConsumerBase, Ownable {
         string memory projectId = projectRequests[requestId];
         requestResults[projectId] = randomness;
         blockNumberResults[projectId] = block.number;
-        requestResults[requestId] = randomResult;
         emit RandomNumberFulilled(projectId);
     }
     
-    function getWinningNumber(uint256 lower, uint256 upper) public {
-        require(upper >= lower, "upper must be bigger than lower");
-        if(upper == lower){
-            winningNumber = upper;
-        }
-        else{
-            uint modulus = upper + 1-lower;
-            winningNumber = lower + (randomResult % modulus);
-        }
+    function addContractToWhiteList(address _newWhiteList) public onlyOwner{
+        require(!whiteList[_newWhiteList], "already approved");
+        whiteList[_newWhiteList] = true;
     }
 
     // function withdrawLink() external {} - Implement a withdraw function to avoid locking your LINK in the contract

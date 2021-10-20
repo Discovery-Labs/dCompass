@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./RandomNumberConsumer.sol";
 
 
 
@@ -23,37 +24,33 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     mapping (address => bool) public reviewers;
     uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )
     uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation
-    address public vrfAddress; //VRF Contract used for randomness
+    RandomNumberConsumer vrfContract;//VRF Contract used for randomness
     address payable _projectWallet;//sign in a script and also withdraw
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
-    //mapping (string => mapping (address => bool)) public contributors; //possibly keep this on ceramic?
     mapping (string => address[]) public contributors;
     mapping (string => ProjectStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of reviewers for ProjectId
     mapping (string => uint16[]) public rarities; // rarities of each image uint16 used for pakcing purposes
+    mapping (string => bool) public projectMinted; // tracks if mint has been done
     
-    
-    //Verify private signVerifyContract; //contract to verify the signatures 
 
     event NFTProjectMinted(address indexed _to, string indexed _tokenURI, string indexed _questId);
     event ReceiveCalled(address _caller, uint _value);
-
 
     constructor(address payable _walletAddress, address[] memory _reviewers, address _vrfAddress, uint128 _initialThreshold) ERC721("dCompassProject", "DCOMPROJ") public{
         require(_reviewers.length > 0, "Must have at least 1 reviewer");
         require(_initialThreshold > 0 && _initialThreshold <=100, "invalid threshold");
         multiSigThreshold = _initialThreshold;
-        vrfAddress = _vrfAddress;
+        vrfContract = RandomNumberConsumer(_vrfAddress);
         _projectWallet = _walletAddress;
         for (uint i=0; i<_reviewers.length; i++){
             if(_reviewers[i]!= address(0) && !reviewers[_reviewers[i]]){
                 reviewers[_reviewers[i]] = true;
                 numReviewers++;
             }
-        }
-        
+        } 
     } 
 
     modifier onlyReviewer(){
@@ -89,34 +86,59 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             if(votes[_projectId] >= minVotes){
                 status[_projectId] = ProjectStatus.APPROVED;
                 approveMint(_projectId);
-            }
-            
+            }  
         }
     }
 
     function approveMint(string memory _projectId) internal {
-        (bool success, ) = vrfAddress.call(abi.encodeWithSelector(bytes4(keccak256("getRandomNumber(string)")), _projectId));
-        require(success, "approve call failed");
-
+        //(bool success, ) = vrfAddress.call(abi.encodeWithSelector(bytes4(keccak256("getRandomNumber(string)")), _projectId));
+        //require(success, "approve call failed");
+        vrfContract.getRandomNumber(_projectId);
     }
 
-    function createToken(address[] memory _mintAddresses, uint32[] memory firstURIParts, uint256[] memory secondURIParts, string memory _projectId) public returns(uint[] memory){
+    function createToken(uint32[] memory firstURIParts, uint256[] memory secondURIParts, uint256[] memory raritiesUsed, string memory _projectId) public returns(uint[] memory){
         require(status[_projectId] == ProjectStatus.APPROVED, "job not approved yet");
         require(reviewers[_msgSender()] || payable(_msgSender()) == _projectWallet , "sender not allowed to mint");
-        //uint256 _randomNumber = randomNumberContract.requestResults(requestId);
-        uint256[] memory newItems = new uint256[](_mintAddresses.length);
+        require(!projectMinted[_projectId], "already minted");
+        require(vrfContract.blockNumberResults(_projectId) > 0, "no request yet");
+        require(contributors[_projectId].length == raritiesUsed.length, "invalid rarities");
+
+        //check on chain that correct image rarities were derived
+        uint256 _randomNumber = vrfContract.requestResults(_projectId);
+        uint256[] memory checkRarities = new uint256[](contributors[_projectId].length);
+        uint totalRarity = 0;
+        uint currentIndex = 0;
+        uint target;
+        bool allMatch=true;
+        for (uint j=0; j<rarities[_projectId].length; j++){
+            totalRarity+=rarities[_projectId][j];
+        }
+
+        while(currentIndex < contributors[_projectId].length){
+            target = (uint256(keccak256(abi.encode(_randomNumber, currentIndex))) % totalRarity) + 1;
+            checkRarities[currentIndex] = target;
+            if (target != raritiesUsed[currentIndex]){
+                allMatch = false;
+            }
+            currentIndex++;
+        }
+
+        require(allMatch, "incorrect rarities");
+
+        //batch minting
+        uint256[] memory newItems = new uint256[](contributors[_projectId].length);
         uint256 newItemId;
         string memory _tokenURI;
 
-        for(uint i =0; i<_mintAddresses.length; i++){
+        for(uint i =0; i< contributors[_projectId].length; i++){
         _tokenIds.increment();
         newItemId = _tokenIds.current();
         _tokenURI = string(abi.encodePacked("ipfs://f",uint32tohexstr(firstURIParts[i]),uint256tohexstr(secondURIParts[i])));
         
-        _mint(_mintAddresses[i], newItemId);
+        _mint(contributors[_projectId][i], newItemId);
         _setTokenURI(newItemId, _tokenURI);
         
-        emit NFTProjectMinted(_mintAddresses[i], _tokenURI, _projectId);
+        emit NFTProjectMinted(contributors[_projectId][i], _tokenURI, _projectId);
         }
         return newItems;    
     }
@@ -159,10 +181,8 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             if(count>1){
                 i = i >> 4;
             }
-            count--;
-            
+            count--; 
         }
         return string(o);
-    }
-    
+    } 
 }
