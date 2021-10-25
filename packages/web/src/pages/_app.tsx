@@ -1,4 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+
 import { ChakraProvider } from "@chakra-ui/react";
 import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";

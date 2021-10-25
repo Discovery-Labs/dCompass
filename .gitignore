@@ -105,3 +105,4 @@ dist
 
 # IPFS
 /ipfs
+/packages/chakra-app
