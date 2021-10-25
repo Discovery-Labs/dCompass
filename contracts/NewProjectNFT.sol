@@ -10,9 +10,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./RandomNumberConsumer.sol";
-
-
 
 contract ProjectNFT is ERC721URIStorage, Ownable{
     using Counters for Counters.Counter;
@@ -20,11 +17,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     Counters.Counter private _tokenIds;
     Counters.Counter private _multiSigRequest;
     
-    
     mapping (address => bool) public reviewers;
     uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )
     uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation
-    RandomNumberConsumer vrfContract;//VRF Contract used for randomness
+    //RandomNumberConsumer vrfContract;//VRF Contract used for randomness
     address payable _projectWallet;//sign in a script and also withdraw
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
@@ -32,18 +28,18 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     mapping (string => ProjectStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of reviewers for ProjectId
-    mapping (string => uint16[]) public rarities; // rarities of each image uint16 used for pakcing purposes
+    //mapping (string => uint16[]) public rarities; // rarities of each image uint16 used for pakcing purposes
     mapping (string => bool) public projectMinted; // tracks if mint has been done
     
-
     event NFTProjectMinted(address indexed _to, string indexed _tokenURI, string indexed _questId);
     event ReceiveCalled(address _caller, uint _value);
+    event ProjectApproved(string indexed _projectId);
 
-    constructor(address payable _walletAddress, address[] memory _reviewers, address _vrfAddress, uint128 _initialThreshold) ERC721("dCompassProject", "DCOMPROJ") public{
+    constructor(address payable _walletAddress, address[] memory _reviewers, uint128 _initialThreshold) ERC721("dCompassProject", "DCOMPROJ") public{
         require(_reviewers.length > 0, "Must have at least 1 reviewer");
         require(_initialThreshold > 0 && _initialThreshold <=100, "invalid threshold");
         multiSigThreshold = _initialThreshold;
-        vrfContract = RandomNumberConsumer(_vrfAddress);
+        //vrfContract = RandomNumberConsumer(_vrfAddress);
         _projectWallet = _walletAddress;
         for (uint i=0; i<_reviewers.length; i++){
             if(_reviewers[i]!= address(0) && !reviewers[_reviewers[i]]){
@@ -62,17 +58,18 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         emit ReceiveCalled(msg.sender, msg.value);
     }
     
-    function voteForApproval(address[] memory _contributors, uint16[] memory _rarities, string memory _projectId) public onlyReviewer{
+    function voteForApproval(address[] memory _contributors, string memory _projectId) public onlyReviewer{
         require(status[_projectId] != ProjectStatus.DENIED && status[_projectId] != ProjectStatus.APPROVED, "finalized project");
         votes[_projectId]++;
         reviewerVotes[_projectId][_msgSender()] = true;
         if(status[_projectId] == ProjectStatus.NONEXISTENT){
-            require(_contributors.length >0 && _rarities.length > 0, "empty array");
-            rarities[_projectId] = _rarities;
+            require(_contributors.length >0, "empty array");
+            //rarities[_projectId] = _rarities;
             contributors[_projectId] = _contributors;
             if(multiSigThreshold*numReviewers/100 == 0){
                 status[_projectId] = ProjectStatus.APPROVED;
-                approveMint(_projectId);
+                emit ProjectApproved(_projectId);
+                //approveMint(_projectId);
             }
             else{
                 status[_projectId] = ProjectStatus.PENDING;
@@ -85,26 +82,27 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             }
             if(votes[_projectId] >= minVotes){
                 status[_projectId] = ProjectStatus.APPROVED;
-                approveMint(_projectId);
+                emit ProjectApproved(_projectId);
+                //approveMint(_projectId);
             }  
         }
     }
-
+    /*
     function approveMint(string memory _projectId) internal {
         //(bool success, ) = vrfAddress.call(abi.encodeWithSelector(bytes4(keccak256("getRandomNumber(string)")), _projectId));
         //require(success, "approve call failed");
         vrfContract.getRandomNumber(_projectId);
-    }
+    }*/
 
-    function createToken(uint32[] memory firstURIParts, uint256[] memory secondURIParts, uint256[] memory raritiesUsed, string memory _projectId) public returns(uint[] memory){
+    function createToken(uint32[] memory firstURIParts, uint256[] memory secondURIParts, string memory _projectId) public returns(uint[] memory){
         require(status[_projectId] == ProjectStatus.APPROVED, "job not approved yet");
         require(reviewers[_msgSender()] || payable(_msgSender()) == _projectWallet , "sender not allowed to mint");
         require(!projectMinted[_projectId], "already minted");
-        require(vrfContract.blockNumberResults(_projectId) > 0, "no request yet");
-        require(contributors[_projectId].length == raritiesUsed.length, "invalid rarities");
+        //require(vrfContract.blockNumberResults(_projectId) > 0, "no request yet");
+        //require(contributors[_projectId].length == raritiesUsed.length, "invalid rarities");
 
         //check on chain that correct image rarities were derived
-        uint256 _randomNumber = vrfContract.requestResults(_projectId);
+        /*uint256 _randomNumber = vrfContract.requestResults(_projectId);
         uint256[] memory checkRarities = new uint256[](contributors[_projectId].length);
         uint totalRarity = 0;
         uint currentIndex = 0;
@@ -123,7 +121,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             currentIndex++;
         }
 
-        require(allMatch, "incorrect rarities");
+        require(allMatch, "incorrect rarities");*/
 
         //batch minting
         uint256[] memory newItems = new uint256[](contributors[_projectId].length);
