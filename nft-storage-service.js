@@ -1,5 +1,4 @@
 import { NFTStorage, File } from 'nft.storage'
-import fs from 'fs';
 
 
 function getAccessToken() {
@@ -9,23 +8,15 @@ function getAccessToken() {
 export function makeNFTStorageClient(){
     return new NFTStorage({ token: getAccessToken() })
 }
-
-export async function storeNFTData(_name, _description, _did, quest, imageURI){
+//pass in a name, description, properties Object (custom : et al) and an imageURI
+export async function storeNFTData(_name, _description, properties, imageURI){
     const client = makeNFTStorageClient();
 
     const metadata = await client.store({
-        name: _did,
+        name: _name,
         description: _description,
-        image: new File(
-          
-            [await fs.promises.readFile(`${_name}.jpg`)],
-          
-          `${_name}.jpg`,
-          { type: 'image/jpg' }
-        ),
-        properties: {
-            custom: `${quest}`
-        }
+        image: imageURI,
+        properties: properties
       })
       console.log(process.cwd());
       
