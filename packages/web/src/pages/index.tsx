@@ -34,10 +34,6 @@ const Home = () => {
             <HStack align="center">
               <Heading color={headingColor}>dCompass</Heading>
             </HStack>
-            <Text color="purple.500" fontWeight="bold">
-              {" "}
-              by MOONSHOT COLLECTIVE
-            </Text>
             <Text pt="10" fontSize="3xl">
               Explore the Web3 space and contribute to your favorite projects.
             </Text>

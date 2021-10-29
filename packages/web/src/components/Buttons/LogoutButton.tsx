@@ -5,10 +5,19 @@ import React from "react";
 function LogoutButton(props: ButtonProps) {
   return (
     <Button
-      type="button"
+      // type="button"
       rightIcon={<HiOutlineLogout />}
-      colorScheme="red"
       variant="outline"
+      color="red.500"
+      borderColor="red.500"
+      _hover={{
+        boxShadow: "lg",
+        fontWeight: "bold",
+        background: "red.100",
+      }}
+      _active={{
+        bg: "red.200",
+      }}
       rounded="full"
       {...props}
     >
