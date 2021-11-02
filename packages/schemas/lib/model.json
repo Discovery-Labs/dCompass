@@ -1,0 +1,19 @@
+{
+  "definitions": {
+    "basicProfile": "kjzl6cwe1jw145cjbeko9kil8g9bxszjhyde21ob8epxuxkaon1izyqsu8wgcic",
+    "cryptoAccounts": "kjzl6cwe1jw149z4rvwzi56mjjukafta30kojzktd9dsrgqdgz4wlnceu59f95f",
+    "alsoKnownAs": "kjzl6cwe1jw146zfmqa10a5x1vry6au3t362p44uttz4l0k4hi88o41zplhmxnf",
+    "@dProfiles/contributors": "kjzl6cwe1jw149qb5y00evxo4n3bubupd1v3863z8gq74rlh6q8atxpcpmiasv4",
+    "@dProfiles/tags": "kjzl6cwe1jw147glqzml0sfe4pcj128rmmxja59iyfz3klvnm878rcjdq6rf3zq",
+    "@dProfiles/tag": "kjzl6cwe1jw149i07fpwdu83bccj6klxmwc5jyrqnnbbchwljfph59gwlge4vs5"
+  },
+  "schemas": {
+    "BasicProfile": "ceramic://k3y52l7qbv1frxt706gqfzmq6cbqdkptzk8uudaryhlkf6ly9vx21hqu4r6k1jqio",
+    "CryptoAccounts": "ceramic://k3y52l7qbv1frypussjburqg4fykyyycfu0p9znc75lv2t5cg4xaslhagkd7h7mkg",
+    "AlsoKnownAs": "ceramic://k3y52l7qbv1fryojt8n8cw2k04p9wp67ly59iwqs65dejso566fij5wsdrb871yio",
+    "Contributors": "ceramic://k3y52l7qbv1fry3cko1gnghwrbas3624k4y50w87ihcpgfjktrcj2o59vsd7bp14w",
+    "Tags": "ceramic://k3y52l7qbv1frxlp9cmjqvihe0vjpk2djsywzaj4852sgvsobfqpx0xbj5ifmm7ls",
+    "Tag": "ceramic://k3y52l7qbv1frybv0ccvavvmgcns0l6me0e6cztq0mvs07aaoj2plxylm8vswn75s"
+  },
+  "tiles": {}
+}
