@@ -1,6 +1,4 @@
-import { ChevronLeftIcon } from "@chakra-ui/icons";
 import {
-  Button,
   Center,
   Flex,
   FormControl,
@@ -8,157 +6,179 @@ import {
   FormLabel,
   Heading,
   Input,
-  Text,
+  Image,
   Textarea,
-  VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
+
 import IconWithState from "./custom/IconWithState";
 
-const CreateElectionPage: React.FunctionComponent = () => {
+const CreateProjectPage: React.FunctionComponent = () => {
   const router = useRouter();
+  const [files, setFiles] = useState([]);
+  const {
+    register,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
+
+  const onDrop = useCallback(
+    (acceptedFiles, rejectedFiles, e) => {
+      if (acceptedFiles) {
+        const { name } = e.target;
+        setValue(name, e.target.files);
+        setFiles(
+          acceptedFiles.map((file: File) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file),
+            })
+          )
+        );
+      }
+    },
+    [setValue]
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: "image/*",
+    onDrop,
+  });
+
+  const thumbs = files.map((file: any) => (
+    <div key={file.name}>
+      <Image src={file.preview} />
+    </div>
+  ));
+
   function goBack() {
     router.back();
   }
 
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  // const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+  //   {
+  //     control, // control props comes from useForm (optional: if you are using FormContext)
+  //     name: "contributors", // unique name for your Field Array
+  //     // keyName: "id", default to "id", you can change the key name
+  //   }
+  // );
 
-  const {
-    handleSubmit,
-    register,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm();
-
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control, // control props comes from useForm (optional: if you are using FormContext)
-      name: "candidates", // unique name for your Field Array
-      // keyName: "id", default to "id", you can change the key name
-    }
+  useEffect(
+    () => () => {
+      // Make sure to revoke the data uris to avoid memory leaks
+      files.forEach((file: any) => URL.revokeObjectURL(file.preview));
+    },
+    [files]
   );
-
-  function onSubmit(values: any) {
-    console.log(values);
-  }
 
   return (
     <>
       <Heading>Create project</Heading>
-      <VStack w="full" onSubmit={handleSubmit(onSubmit)}>
-        <FormControl isInvalid={errors.name} {...getRootProps()}>
-          <FormLabel htmlFor="logo">Logo</FormLabel>
-          <Input
-            placeholder="Logo"
-            {...register("logo", {
-              required: "This is required",
-            })}
-            {...getInputProps()}
-          />
-          {isDragActive ? (
-            <p>Drop the files here ...</p>
-          ) : (
-            <Center h="150px" bg="aqua.300" color="space" borderRadius="4">
-              Drag something here or select
-            </Center>
-          )}
-          <FormErrorMessage>
-            {errors.name && errors.name.message}
-          </FormErrorMessage>
-        </FormControl>
+      <FormControl isInvalid={errors.name} {...getRootProps()}>
+        <FormLabel htmlFor="logo">Logo</FormLabel>
+        {/* <input
+            type="file"
+            accept={acceptedFileTypes}
+            style={{ display: "none" }}
+          /> */}
+        <Input
+          {...register("logo", {
+            required: "This is required",
+          })}
+          {...getInputProps()}
+          placeholder="Logo"
+        />
+        {thumbs}
+        {isDragActive ? (
+          <p>Drop the files here ...</p>
+        ) : (
+          <Center h="150px" bg="aqua.300" color="space" borderRadius="4">
+            Drag something here or select
+          </Center>
+        )}
+        <FormErrorMessage>
+          {errors.name && errors.name.message}
+        </FormErrorMessage>
+      </FormControl>
 
-        <FormControl isInvalid={errors.name}>
-          <FormLabel htmlFor="name">Project name</FormLabel>
-          <Input
-            placeholder="Project name"
-            {...register("name", {
-              required: "This is required",
-              maxLength: {
-                value: 150,
-                message: "Maximum length should be 150",
-              },
-            })}
-          />
-          <FormErrorMessage>
-            {errors.name && errors.name.message}
-          </FormErrorMessage>
-        </FormControl>
+      <FormControl isInvalid={errors.name}>
+        <FormLabel htmlFor="name">Project name</FormLabel>
+        <Input
+          placeholder="Project name"
+          {...register("name", {
+            required: "This is required",
+            maxLength: {
+              value: 150,
+              message: "Maximum length should be 150",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.name && errors.name.message}
+        </FormErrorMessage>
+      </FormControl>
 
-        <FormControl isInvalid={errors.name}>
-          <FormLabel htmlFor="description">Description</FormLabel>
-          <Textarea
-            placeholder="Project description"
-            {...register("description", {
-              required: "This is required",
-              maxLength: {
-                value: 1200,
-                message: "Maximum length should be 1200",
-              },
-            })}
-          />
-          <FormErrorMessage>
-            {errors.name && errors.name.message}
-          </FormErrorMessage>
-        </FormControl>
+      <FormControl isInvalid={errors.name}>
+        <FormLabel htmlFor="description">Description</FormLabel>
+        <Textarea
+          placeholder="Project description"
+          {...register("description", {
+            required: "This is required",
+            maxLength: {
+              value: 1200,
+              message: "Maximum length should be 1200",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.name && errors.name.message}
+        </FormErrorMessage>
+      </FormControl>
 
-        <FormControl isInvalid={errors.name}>
-          <FormLabel htmlFor="website">Website</FormLabel>
-          <Input
-            placeholder="Website"
-            {...register("website", {
-              required: "This is required",
-              maxLength: {
-                value: 50,
-                message: "Maximum length should be 50",
-              },
-            })}
-          />
-          <FormErrorMessage>
-            {errors.name && errors.name.message}
-          </FormErrorMessage>
-        </FormControl>
+      <FormControl isInvalid={errors.name}>
+        <FormLabel htmlFor="website">Website</FormLabel>
+        <Input
+          placeholder="Website"
+          {...register("website", {
+            required: "This is required",
+            maxLength: {
+              value: 50,
+              message: "Maximum length should be 50",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.name && errors.name.message}
+        </FormErrorMessage>
+      </FormControl>
 
-        <FormControl isInvalid={errors.name}>
-          <FormLabel htmlFor="whitepaper">Whitepaper</FormLabel>
-          <Input
-            placeholder="Whitepaper"
-            {...register("whitepaper", {
-              required: "This is required",
-              maxLength: {
-                value: 150,
-                message: "Maximum length should be 150",
-              },
-            })}
-          />
-          <FormErrorMessage>
-            {errors.name && errors.name.message}
-          </FormErrorMessage>
-        </FormControl>
+      <FormControl isInvalid={errors.name}>
+        <FormLabel htmlFor="whitepaper">Whitepaper</FormLabel>
+        <Input
+          placeholder="Whitepaper"
+          {...register("whitepaper", {
+            required: "This is required",
+            maxLength: {
+              value: 150,
+              message: "Maximum length should be 150",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.name && errors.name.message}
+        </FormErrorMessage>
+      </FormControl>
 
-        <Flex p="4" w="full" justify="space-around">
-          <IconWithState icon="discord" active />
-          <IconWithState icon="gitbook" />
-          <IconWithState icon="github" />
-          <IconWithState icon="twitter" />
-        </Flex>
-
-        {/* <Button
-          mt={4}
-          colorScheme="aqua"
-          isLoading={isSubmitting}
-          type="submit"
-        >
-          Next
-        </Button> */}
-      </VStack>
+      <Flex p="4" w="full" justify="space-around">
+        <IconWithState icon="discord" active />
+        <IconWithState icon="gitbook" />
+        <IconWithState icon="github" />
+        <IconWithState icon="twitter" />
+      </Flex>
     </>
   );
 };
 
-export default CreateElectionPage;
+export default CreateProjectPage;

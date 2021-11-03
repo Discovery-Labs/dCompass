@@ -1,3 +1,4 @@
+import publishedModel from "@discovery-decrypted/schemas/lib/model.json";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 // import Authereum from "authereum";
@@ -80,8 +81,9 @@ export const Web3Provider = ({ children }: { children: any }) => {
       authProvider: new EthereumAuthProvider(ethersProvider.provider, account),
       ceramic: "testnet-clay",
       connectNetwork: "testnet-clay",
+      model: publishedModel,
     });
-    console.log("curr self", mySelf.id);
+
     setSelf(mySelf);
 
     provider.on("chainChanged", () => {
