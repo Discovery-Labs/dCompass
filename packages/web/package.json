@@ -6,8 +6,9 @@
   "homepage": "",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next",
     "build": "next build",
+    "export": "next export",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "start": "next start",
     "lint": "next lint",
@@ -15,8 +16,7 @@
     "format": "prettier --write src",
     "up-latest": "yarn upgrade-interactive --latest",
     "release": "standard-version",
-    "push-release": "git push --follow-tags origin main",
-    "prepare": "husky install"
+    "push-release": "git push --follow-tags origin main"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.15",
