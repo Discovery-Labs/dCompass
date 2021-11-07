@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "JSON Schema definitions for Decentralized Profiles",
   "main": "lib/schemas.js",
-  "author": "Cali93 <armut.cumaali@gmail.com>",
+  "author": "Discovery DAO",
   "license": "GPL-3.0-or-later",
   "directories": {
     "lib": "lib",
