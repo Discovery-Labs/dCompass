@@ -10,6 +10,8 @@ import {
 import ThemeToggle from "./ThemeToggle";
 import NextLink from "next/link";
 import LogoDarkIcon from "../Icons/LogoDarkIcon";
+import TwitterButton from "../Buttons/TwitterButton";
+import DiscordButton from "../Buttons/DiscordButton";
 
 export default function Navbar() {
   const headingColor = useColorModeValue("purple.400", "green.500");
@@ -30,7 +32,9 @@ export default function Navbar() {
             </Flex>
           </HStack>
           <Flex alignItems={"center"}>
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={5}>
+              <DiscordButton />
+              <TwitterButton />
               <ThemeToggle />
             </Stack>
           </Flex>

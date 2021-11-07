@@ -8,6 +8,7 @@ import {
   SimpleGrid,
   Text,
   VStack,
+  Image,
 } from "@chakra-ui/react";
 
 import { useColorModeValue } from "@chakra-ui/color-mode";
@@ -39,20 +40,23 @@ const Home = () => {
             <Text pt="10" fontSize="3xl">
               A gamified and community driven Web3 learning platform.
             </Text>
-            <Box maxW="300px" pt="12">
+            <HStack pt="12" justifyContent="space-evenly">
               {/* <Link href="/dapp" passHref> */}
-              <Button
-                w="full"
-                h="51px"
-                fontSize="xl"
-                disabled
-                aria-label="Launch App"
-              >
-                Spin your compass
+              <Button h="51px" fontSize="xl" aria-label="Launch App">
+                Join Alpha
+              </Button>
+              <Button h="51px" fontSize="xl" aria-label="Launch App">
+                Contribute
               </Button>
               {/* </Link> */}
-            </Box>
+            </HStack>
           </VStack>
+          <Image
+            rounded="3xl"
+            boxShadow="dark-lg"
+            alt="skill-tree"
+            src="/dCompass-skill-tree.png"
+          />
         </SimpleGrid>
       </HStack>
 
@@ -124,13 +128,32 @@ const Home = () => {
           FAQs
         </Heading>
         <Text color="purple.500" fontWeight="bold">
-          Lorem ipsum dolor sit amet?
+          When will dCompass be available ?
+        </Text>
+        <Text>We will release the alpha version on the 13th of December.</Text>
+        <Text color="purple.500" fontWeight="bold">
+          What is the tech stack ?
         </Text>
         <Text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea
+          We are using Next.js &amp; TypeScript for our front-end. We choose
+          Ceramic for our main data store in conjunction with Filecoin &amp;
+          IPFS for file storage.
+        </Text>
+        <Text color="purple.500" fontWeight="bold">
+          Which blockhain will dCompass run on ?
+        </Text>
+        <Text>
+          The dApp will be available on the Ethereum mainnet and Polygon for the
+          alpha version but we are planning to support chains like Solana,
+          Avalanche &amp; as well as chains running on Substrate &amp;
+          Tendermint in the future.
+        </Text>
+        <Text color="purple.500" fontWeight="bold">
+          Is dCompass open source ?
+        </Text>
+        <Text>
+          Yes, it is! We are looking for super shadowy coders &amp; talented
+          Anons!
         </Text>
       </VStack>
       <Divider mt="16" backgroundColor="purple.500" />
