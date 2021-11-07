@@ -18,7 +18,7 @@ import createEmotionCache from "styles/createEmotionCache";
 
 const APP_NAME = "quadratic-diplomacy";
 const APP_DESCRIPTION =
-  "Distribute tokens among your team members based on quadratic voting.";
+  "Distribute tokens among your squad members based on quadratic voting.";
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {

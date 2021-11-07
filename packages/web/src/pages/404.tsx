@@ -1,22 +1,13 @@
-import {
-  Box,
-  Button,
-  Heading,
-  Image,
-  Text,
-  Link as ChakraLink,
-  useColorMode,
-} from "@chakra-ui/react";
+import { Box, Button, Heading, Image } from "@chakra-ui/react";
 import Link from "next/link";
 
 import MotionBox from "components/motion/Box";
 
 const Page404 = () => {
   return (
-    <Box mb={8} w="full">
+    <Box w="full">
       <MotionBox
         animate={{ y: 20 }}
-        pt="10"
         transition={{ repeat: Infinity, duration: 2, repeatType: "reverse" }}
         width={["100%", "70%", "60%", "60%"]}
         margin="0 auto"
@@ -31,13 +22,12 @@ const Page404 = () => {
         <Heading textAlign="center" pt="10">
           Page not Found.
         </Heading>
-        <Box textAlign="center" pt="10">
+        <Box textAlign="center" py="10">
           <Link href="/" passHref>
             <Button>Let&apos;s Head Back</Button>
           </Link>
         </Box>
       </Box>
-      <Box h="180" />
     </Box>
   );
 };

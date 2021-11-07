@@ -1,6 +1,6 @@
 # nextarter-chakra
 
-[![nextarter-chakra](https://socialify.git.ci/sozonome/nextarter-chakra/image?description=1&descriptionEditable=Template%20to%20quickly%20initialize%20nextjs%20app%20with%20Chakra%20UI%20%26%20Typescript%20setup&logo=https%3A%2F%2Fsznm.dev%2Fapp_icons%2Fnextarter-chakra.svg&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)](https://github.com/sozonome/nextarter-chakra)
+[![nextarter-chakra](https://socialify.git.ci/sozonome/nextarter-chakra/image?description=1&descriptionEditable=Template%20to%20quickly%20initialize%20nextjs%20app%20with%20Chakra%20UI%20%26%20Typescript%20setup&logo=https%3A%2F%2FdCompass.dao%2Fapp_icons%2Fnextarter-chakra.svg&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)](https://github.com/sozonome/nextarter-chakra)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/git?s=https://github.com/sozonome/nextarter-chakra) [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/sozonome/nextarter-chakra)
 

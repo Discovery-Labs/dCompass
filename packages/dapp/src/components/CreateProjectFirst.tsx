@@ -53,18 +53,6 @@ const CreateProjectPage: React.FunctionComponent = () => {
     </div>
   ));
 
-  function goBack() {
-    router.back();
-  }
-
-  // const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-  //   {
-  //     control, // control props comes from useForm (optional: if you are using FormContext)
-  //     name: "contributors", // unique name for your Field Array
-  //     // keyName: "id", default to "id", you can change the key name
-  //   }
-  // );
-
   useEffect(
     () => () => {
       // Make sure to revoke the data uris to avoid memory leaks
@@ -73,6 +61,9 @@ const CreateProjectPage: React.FunctionComponent = () => {
     [files]
   );
 
+  function goBack() {
+    router.back();
+  }
   return (
     <>
       <Heading>Create project</Heading>

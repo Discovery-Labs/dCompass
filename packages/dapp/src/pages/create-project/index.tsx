@@ -22,12 +22,12 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
-  const { nextStep, prevStep, setStep, reset, activeStep } = useSteps({
+  const { nextStep, prevStep, activeStep } = useSteps({
     initialStep: 0,
   });
   const methods = useForm({
     defaultValues: {
-      founders: [],
+      squads: [],
     },
   });
 

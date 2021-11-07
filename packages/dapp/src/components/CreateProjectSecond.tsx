@@ -1,155 +1,67 @@
 import {
-  Box,
-  Text,
   Heading,
-  VStack,
-  HStack,
-  Divider,
   Button,
-  Icon,
-  Input,
   InputGroup,
-  IconButton,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  Flex,
+  Input,
+  InputRightElement,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { FiX } from "react-icons/fi";
+import React, { useState } from "react";
+import { useFormContext } from "react-hook-form";
 
-import ControllerPlus from "./Inputs/ControllerPlus";
+import { convertToKebabCase } from "../core/helpers";
 
-function AddMembersCard() {
-  const [members, setMembers] = useState(["0xad"]);
+import AddMembersCard from "./AddMembersCard";
+
+const CreateProjectSecond = () => {
   const {
     register,
-    setValue,
     control,
+    setValue,
+    getValues,
     formState: { errors },
   } = useFormContext();
+  const [currentSquadName, setCurrentSquadName] = useState("");
 
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control, // control props comes from useForm (optional: if you are using FormContext)
-      name: "founders", // unique name for your Field Array
-      // keyName: "id", default to "id", you can change the key name
-    }
-  );
-
-  const {
-    fields: devFields,
-    append: devAppend,
-    remove: devRemove,
-  } = useFieldArray({
-    control, // control props comes from useForm (optional: if you are using FormContext)
-    name: "developers", // unique name for your Field Array
-    // keyName: "id", default to "id", you can change the key name
-  });
-
-  useEffect(() => {
-    devAppend("");
-    append("");
-    return () => {
-      devRemove();
-      remove();
-    };
-  }, [append, remove, devAppend, devRemove]);
-
+  const handleSquadName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentSquadName(convertToKebabCase(e.target.value));
+  };
+  const handleAddSquad = () => {
+    const values = getValues();
+    setValue("squads", [...values.squads, currentSquadName]);
+    setCurrentSquadName("");
+  };
+  const handleRemoveSquad = (oldSquad: string) => {
+    const values = getValues();
+    setValue(
+      "squads",
+      values.squads.filter((t: string) => t !== oldSquad)
+    );
+  };
   return (
     <>
-      <Heading>Create project</Heading>
-      <VStack w="full">
-        <Flex w="full" d="colum">
-          <FormControl isInvalid={errors.founders}>
-            <FormLabel color="white" htmlFor="founders">
-              Genesis Team
-            </FormLabel>
-            {fields.map((field, index) => (
-              <>
-                <HStack py="2">
-                  <InputGroup w="full">
-                    <ControllerPlus
-                      key={field.id} // important to include key with field's id
-                      {...register(`founders.${index}.value`)}
-                      transform={{
-                        input: (value: any) => {
-                          console.log(value);
-                          return value;
-                        },
-                        output: (e: any) => e.target.value,
-                      }}
-                      control={control}
-                    />
-                  </InputGroup>
-                  <IconButton
-                    variant="unstyled"
-                    color="pink.300"
-                    size="xs"
-                    aria-label="remove"
-                    as={FiX}
-                    onClick={() => remove(index)}
-                  />
-                </HStack>
-              </>
-            ))}
-            <FormErrorMessage>
-              {errors.founders && errors.founders.message}
-            </FormErrorMessage>
-          </FormControl>
-          <Button w="100%" mb="5" variant="outline" onClick={() => append("")}>
-            + Add genesis member
+      <Heading>Create squads &amp; add members</Heading>
+      <InputGroup size="md">
+        <Input
+          pr="4.5rem"
+          value={currentSquadName}
+          type="text"
+          placeholder="Enter new squad name"
+          onChange={(e) => handleSquadName(e)}
+        />
+        <InputRightElement width="6rem">
+          <Button p="4" size="md" onClick={handleAddSquad}>
+            Add squad
           </Button>
-          <FormControl isInvalid={errors.founders}>
-            <FormLabel color="white" htmlFor="developers">
-              Developer Team
-            </FormLabel>
-            {devFields.map((field, index) => (
-              <>
-                <HStack py="2">
-                  <InputGroup w="full">
-                    <ControllerPlus
-                      key={field.id} // important to include key with field's id
-                      {...register(`developers.${index}.value`)}
-                      transform={{
-                        input: (value: any) => {
-                          console.log(value);
-                          return value;
-                        },
-                        output: (e: any) => e.target.value,
-                      }}
-                      control={control}
-                    />
-                  </InputGroup>
-                  <IconButton
-                    variant="unstyled"
-                    color="pink.300"
-                    size="xs"
-                    aria-label="remove"
-                    as={FiX}
-                    onClick={() => devRemove(index)}
-                  />
-                </HStack>
-              </>
-            ))}
-            <FormErrorMessage>
-              {errors.developers && errors.developers.message}
-            </FormErrorMessage>
-          </FormControl>
-          <Button
-            w="100%"
-            mb="5"
-            variant="outline"
-            onClick={() => devAppend("")}
-          >
-            + Add developer member
-          </Button>
-        </Flex>
-      </VStack>
-      <Divider />
+        </InputRightElement>
+      </InputGroup>
+      {getValues().squads.map((squadType: string) => (
+        <AddMembersCard
+          memberType={squadType}
+          removeSquad={() => handleRemoveSquad(squadType)}
+        />
+      ))}
     </>
   );
-}
+};
 
-export default AddMembersCard;
+export default CreateProjectSecond;

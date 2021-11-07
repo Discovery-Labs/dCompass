@@ -69,6 +69,7 @@ export const Web3Provider = ({ children }: { children: any }) => {
   const connectWeb3 = useCallback(async () => {
     const web3Modal = new Web3Modal({
       providerOptions,
+      cacheProvider: false,
     });
     const provider = await web3Modal.connect();
     const ethersProvider = new ethers.providers.Web3Provider(provider);
