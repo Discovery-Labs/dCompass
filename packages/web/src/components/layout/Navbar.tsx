@@ -3,12 +3,10 @@ import {
   Box,
   Flex,
   HStack,
-  Link as UILink,
   IconButton,
-  useDisclosure,
-  useColorModeValue,
   Stack,
   Heading,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import ThemeToggle from "./ThemeToggle";
@@ -16,6 +14,8 @@ import ConnectButton from "../Buttons/ConnectButton";
 import NextLink from "next/link";
 import NavLink from "./NavLink";
 import LogoDarkIcon from "../Icons/LogoDarkIcon";
+
+import Link from "next/link";
 const Links = [
   { label: "Home", link: "/dapp" },
   { label: "Projects", link: "/dapp/projects" },
@@ -25,7 +25,7 @@ const Links = [
 ];
 
 export default function Navbar() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
   const activeLinkColors = {
     bg: useColorModeValue("gray.200", "green.500"),
     color: useColorModeValue("purple.500", "purple.500"),
