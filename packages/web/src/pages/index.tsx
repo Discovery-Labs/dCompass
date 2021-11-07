@@ -162,8 +162,8 @@ const Home = () => {
         <Text>
           The dApp will be available on the Ethereum mainnet and Polygon for the
           alpha version but we are planning to support chains like Solana,
-          Avalanche &amp; as well as chains running on Substrate &amp;
-          Tendermint in the future.
+          Avalanche as well as chains running on Substrate &amp; Tendermint in
+          the future.
         </Text>
         <Text color="purple.500" fontWeight="bold">
           Is dCompass open source ?
