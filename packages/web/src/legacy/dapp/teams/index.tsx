@@ -39,7 +39,7 @@ const avatars = [
   },
 ];
 
-export default function JoinOurTeam() {
+export default function JoinOurSquad() {
   const cardBg = useColorModeValue("violet.100", "violet.50");
   const avatarBreakpoints = useBreakpointValue({ base: "md", md: "lg" });
   return (
@@ -132,14 +132,14 @@ export default function JoinOurTeam() {
               lineHeight={1.1}
               fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
             >
-              Join our team
+              Join our squad
               <Text as={"span"} bgClip="text">
                 !
               </Text>
             </Heading>
             <Text color={"gray.700"} fontSize={{ base: "sm", sm: "md" }}>
               We’re looking for amazing engineers just like you! Become a part
-              of our rockstar engineering team and skyrocket your career!
+              of our rockstar engineering squad and skyrocket your career!
             </Text>
           </Stack>
           <Box as={"form"} mt={10}>

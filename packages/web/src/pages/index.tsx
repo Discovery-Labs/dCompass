@@ -15,9 +15,12 @@ import { useColorModeValue } from "@chakra-ui/color-mode";
 
 import SomeImage from "components/SomeImage";
 import { Circle } from "components/Circles/Circle";
+import LogoDarkIcon from "../components/Icons/LogoDarkIcon";
 
 const Home = () => {
   const headingColor = useColorModeValue("green.600", "green.500");
+  const subHeadingColor = useColorModeValue("green.500", "purple.500");
+
   // scheduled rooms, open spaces,..
   // VIP pass, tickets, fractionalized ownership
   // super rare crypto curration
@@ -31,28 +34,29 @@ const Home = () => {
           }}
         >
           <VStack align="left" w="full">
-            <HStack align="center">
+            {/* <HStack align="center">
+              <LogoDarkIcon size="30px" />
               <Heading color={headingColor}>dCompass</Heading>
-            </HStack>
-            <Text color="purple.500" fontWeight="bold">
+            </HStack> */}
+            <Text color={subHeadingColor} fontWeight="bold">
               {" "}
-              by MOONSHOT COLLECTIVE
+              by Discovery DAO &amp; Gitcoin DAO
             </Text>
             <Text pt="10" fontSize="3xl">
-              Explore the Web3 space and contribute to your favorite projects.
+              A gamified and community driven Web3 learning platform.
             </Text>
-
             <Box maxW="300px" pt="12">
-              <Link href="/dapp" passHref>
-                <Button
-                  w="239px"
-                  h="51px"
-                  fontSize="xl"
-                  aria-label="Launch App"
-                >
-                  Launch App
-                </Button>
-              </Link>
+              {/* <Link href="/dapp" passHref> */}
+              <Button
+                w="full"
+                h="51px"
+                fontSize="xl"
+                disabled
+                aria-label="Launch App"
+              >
+                Spin your compass
+              </Button>
+              {/* </Link> */}
             </Box>
           </VStack>
           <SomeImage />
@@ -99,7 +103,7 @@ const Home = () => {
                 text="2"
               />
             </Box>
-            <Text>Learn in detail about a project and its members</Text>
+            <Text>Learn how to use their features &amp; protocols</Text>
           </HStack>
 
           <HStack>
@@ -114,7 +118,9 @@ const Home = () => {
                 text="3"
               />
             </Box>
-            <Text>Signal and stake on your favorite projects</Text>
+            <Text>
+              Complete quests &amp; start contributing to your favorite projects
+            </Text>
           </HStack>
         </SimpleGrid>
       </VStack>

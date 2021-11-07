@@ -1,10 +1,10 @@
-# nextchakra-starter
+# dCompass
 
-[![nextchakra-starter](https://socialify.git.ci/sozonome/nextchakra-starter/image?description=1&descriptionEditable=Template%20to%20quickly%20initialize%20nextjs%20app%20with%20Chakra%20UI%20%26%20Typescript%20setup&logo=https%3A%2F%2Fsznm.dev%2Fapp_icons%2Fnextchakra-starter.svg&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)](https://github.com/sozonome/nextchakra-starter)
+[![dCompass](https://socialify.git.ci/sozonome/dCompass/image?description=1&descriptionEditable=Template%20to%20quickly%20initialize%20nextjs%20app%20with%20Chakra%20UI%20%26%20Typescript%20setup&logo=https%3A%2F%2FdCompass.dao%2Fapp_icons%2Fnextchakra-starter.svg&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)](https://github.com/sozonome/dCompass)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/git?s=https://github.com/sozonome/nextchakra-starter) [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/sozonome/nextchakra-starter)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/git?s=https://github.com/sozonome/dCompass) [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/sozonome/dCompass)
 
-[![CodeFactor](https://www.codefactor.io/repository/github/sozonome/nextchakra-starter/badge)](https://www.codefactor.io/repository/github/sozonome/nextchakra-starter)
+[![CodeFactor](https://www.codefactor.io/repository/github/sozonome/dCompass/badge)](https://www.codefactor.io/repository/github/sozonome/dCompass)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sozonome_nextchakra-starter&metric=alert_status)](https://sonarcloud.io/dashboard?id=sozonome_nextchakra-starter) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=sozonome_nextchakra-starter&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=sozonome_nextchakra-starter) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=sozonome_nextchakra-starter&metric=bugs)](https://sonarcloud.io/dashboard?id=sozonome_nextchakra-starter) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=sozonome_nextchakra-starter&metric=code_smells)](https://sonarcloud.io/dashboard?id=sozonome_nextchakra-starter) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=sozonome_nextchakra-starter&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=sozonome_nextchakra-starter)
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-typescript.svg)](https://forthebadge.com)
@@ -35,9 +35,9 @@ Start developing right away!
 You can either click `Use this template` button on this repository and clone the repo or create project with `create-next-app` like so:
 
 ```bash
-npx create-next-app <APP_NAME> --example https://github.com/sozonome/nextchakra-starter
+npx create-next-app <APP_NAME> --example https://github.com/sozonome/dCompass
 # or
-yarn create next-app <APP_NAME> --example https://github.com/sozonome/nextchakra-starter
+yarn create next-app <APP_NAME> --example https://github.com/sozonome/dCompass
 ```
 
 Then, run the development server:
