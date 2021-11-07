@@ -3,7 +3,6 @@ import { Stack } from "@chakra-ui/layout";
 import React from "react";
 import Link from "next/link";
 
-import ConnectButton from "../Buttons/ConnectButton";
 import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
@@ -24,7 +23,6 @@ const Header = () => {
             <Button w="sm">Projects</Button>
           </Link>
           <ThemeToggle />
-          <ConnectButton />
         </Stack>
       </Box>
     </Flex>
