@@ -23,16 +23,23 @@ export default function Navbar() {
             <Flex _hover={{ cursor: "pointer" }} align="center" mr={5}>
               <NextLink href="/">
                 <>
-                  <LogoDarkIcon size="25px" />
-                  <Heading fontSize="3xl" pl="2" color={headingColor}>
-                    dCompass
-                  </Heading>
+                  <LogoDarkIcon size="35px" />
+                  <Box
+                    display={{
+                      base: "none",
+                      sm: "block",
+                    }}
+                  >
+                    <Heading pl="2" color={headingColor}>
+                      dCompass
+                    </Heading>
+                  </Box>
                 </>
               </NextLink>
             </Flex>
           </HStack>
           <Flex alignItems={"center"}>
-            <Stack direction="row" spacing={5}>
+            <Stack direction="row" spacing={3}>
               <DiscordButton />
               <TwitterButton />
               <ThemeToggle />

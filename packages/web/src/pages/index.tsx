@@ -24,6 +24,7 @@ const Home = () => {
       <HStack>
         <SimpleGrid
           columns={{
+            base: 1,
             sm: 1,
             md: 2,
           }}
@@ -40,12 +41,28 @@ const Home = () => {
             <Text pt="10" fontSize="3xl">
               A gamified and community driven Web3 learning platform.
             </Text>
-            <HStack pt="12" justifyContent="space-evenly">
+            <HStack py="12" justifyContent="space-evenly">
               {/* <Link href="/dapp" passHref> */}
-              <Button h="51px" fontSize="xl" aria-label="Launch App">
+              <Button
+                h="51px"
+                p="5"
+                fontSize={{
+                  base: "xl",
+                  xs: "md",
+                }}
+                aria-label="Launch App"
+              >
                 Join Alpha
               </Button>
-              <Button h="51px" fontSize="xl" aria-label="Launch App">
+              <Button
+                h="51px"
+                p="5"
+                fontSize={{
+                  base: "xl",
+                  xs: "md",
+                }}
+                aria-label="Launch App"
+              >
                 Contribute
               </Button>
               {/* </Link> */}
