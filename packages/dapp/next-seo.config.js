@@ -18,7 +18,7 @@ const defaultSEOConfig = {
     site_name: "nextarter-chakra",
   },
   twitter: {
-    handle: "@sozonome",
+    handle: "@dCompass_",
     cardType: "summary_large_image",
   },
 };
