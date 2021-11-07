@@ -13,7 +13,8 @@ import Fuse from "fuse.js";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import CardWithImage from "../../../components/Cards/CardWithImage";
+
+import CardWithImage from "../../../../web/src/components/Cards/CardWithImage";
 
 type Project = {
   name: string;
