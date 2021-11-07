@@ -9,21 +9,15 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import Link from "next/link";
 
 import { useColorModeValue } from "@chakra-ui/color-mode";
 
-import SomeImage from "components/SomeImage";
 import { Circle } from "components/Circles/Circle";
-import LogoDarkIcon from "../components/Icons/LogoDarkIcon";
 
 const Home = () => {
   const headingColor = useColorModeValue("green.600", "green.500");
   const subHeadingColor = useColorModeValue("green.500", "purple.500");
 
-  // scheduled rooms, open spaces,..
-  // VIP pass, tickets, fractionalized ownership
-  // super rare crypto curration
   return (
     <Box mb={8} w="full">
       <HStack>
@@ -59,7 +53,6 @@ const Home = () => {
               {/* </Link> */}
             </Box>
           </VStack>
-          <SomeImage />
         </SimpleGrid>
       </HStack>
 
