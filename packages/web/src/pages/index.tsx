@@ -9,6 +9,7 @@ import {
   Text,
   VStack,
   Image,
+  Link,
 } from "@chakra-ui/react";
 
 import { useColorModeValue } from "@chakra-ui/color-mode";
@@ -42,28 +43,40 @@ const Home = () => {
               A gamified and community driven Web3 learning platform.
             </Text>
             <HStack py="12" justifyContent="space-evenly">
-              <Button
-                h="51px"
-                p="5"
-                fontSize={{
-                  base: "xl",
-                  xs: "md",
-                }}
-                aria-label="Launch App"
+              <Link
+                href="https://discord.gg/MkfqU2bPhT"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Join Alpha
-              </Button>
-              <Button
-                h="51px"
-                p="5"
-                fontSize={{
-                  base: "xl",
-                  xs: "md",
-                }}
-                aria-label="Launch App"
+                <Button
+                  h="51px"
+                  p="5"
+                  fontSize={{
+                    base: "xl",
+                    xs: "md",
+                  }}
+                  aria-label="Launch App"
+                >
+                  Join Alpha
+                </Button>
+              </Link>
+              <Link
+                href="https://github.com/discovery-labs/dcompass/issues"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Contribute
-              </Button>
+                <Button
+                  h="51px"
+                  p="5"
+                  fontSize={{
+                    base: "xl",
+                    xs: "md",
+                  }}
+                  aria-label="Contribute"
+                >
+                  Contribute
+                </Button>
+              </Link>
             </HStack>
           </VStack>
           <Image
