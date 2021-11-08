@@ -42,7 +42,6 @@ const Home = () => {
               A gamified and community driven Web3 learning platform.
             </Text>
             <HStack py="12" justifyContent="space-evenly">
-              {/* <Link href="/dapp" passHref> */}
               <Button
                 h="51px"
                 p="5"
@@ -65,7 +64,6 @@ const Home = () => {
               >
                 Contribute
               </Button>
-              {/* </Link> */}
             </HStack>
           </VStack>
           <Image
