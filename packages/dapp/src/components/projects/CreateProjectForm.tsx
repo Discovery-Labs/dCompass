@@ -14,9 +14,9 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { useFormContext } from "react-hook-form";
 
-import IconWithState from "./custom/IconWithState";
+import IconWithState from "../custom/IconWithState";
 
-const CreateProjectPage: React.FunctionComponent = () => {
+const CreateProjectForm: React.FunctionComponent = () => {
   const router = useRouter();
   const [files, setFiles] = useState([]);
   const {
@@ -69,11 +69,6 @@ const CreateProjectPage: React.FunctionComponent = () => {
       <Heading>Create project</Heading>
       <FormControl isInvalid={errors.name} {...getRootProps()}>
         <FormLabel htmlFor="logo">Logo</FormLabel>
-        {/* <input
-            type="file"
-            accept={acceptedFileTypes}
-            style={{ display: "none" }}
-          /> */}
         <Input
           {...register("logo", {
             required: "This is required",
@@ -172,4 +167,4 @@ const CreateProjectPage: React.FunctionComponent = () => {
   );
 };
 
-export default CreateProjectPage;
+export default CreateProjectForm;

@@ -14,7 +14,7 @@ import {
 import NextLink from "next/link";
 
 import Container from "../../components/layout/Container";
-import ProjectCard from "../../components/ProjectCard";
+import ProjectCard from "../../components/projects/ProjectCard";
 
 const ProjectData = {
   logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",

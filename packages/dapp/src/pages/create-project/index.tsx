@@ -2,23 +2,20 @@ import { Flex, Button, Stack } from "@chakra-ui/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { FormProvider, useForm } from "react-hook-form";
 
-import CreateProjectFirst from "../../components/CreateProjectFirst";
-import CreateProjectSecond from "../../components/CreateProjectSecond";
-import CreateProjectThird from "../../components/CreateProjectThird";
 import CenteredFrame from "../../components/layout/CenteredFrame";
+import CreateProjectForm from "../../components/projects/CreateProjectForm";
+import SquadsForm from "../../components/projects/squads/SquadsForm";
 import Card from "components/custom/Card";
 
-const CreateProject1 = <CreateProjectFirst />;
-const CreateProject2 = <CreateProjectSecond />;
-const CreateProject3 = <CreateProjectThird />;
+const CreateProject = <CreateProjectForm />;
+const CreateSquads = <SquadsForm />;
 
 const steps = [
   {
     label: "Step 1",
-    content: CreateProject1,
+    content: CreateProject,
   },
-  { label: "Step 2", content: CreateProject2 },
-  { label: "Step 3", content: CreateProject3 },
+  { label: "Step 2", content: CreateSquads },
 ];
 
 function CreateProjectStepper() {
@@ -27,7 +24,12 @@ function CreateProjectStepper() {
   });
   const methods = useForm({
     defaultValues: {
-      squads: [],
+      squads: [
+        {
+          name: "Genesis",
+          members: ["0x0000000000000"],
+        },
+      ],
     },
   });
 
@@ -49,7 +51,7 @@ function CreateProjectStepper() {
               ))}
             </Steps>
             <Flex w="full" justify="center">
-              {activeStep > 0 && activeStep <= 2 && (
+              {activeStep > 0 && activeStep <= 1 && (
                 <Button
                   variant="outline"
                   onClick={() => prevStep()}
@@ -59,7 +61,7 @@ function CreateProjectStepper() {
                   Prev
                 </Button>
               )}
-              {activeStep < 2 && (
+              {activeStep < 1 && (
                 <Button
                   ml="0.5rem"
                   onClick={() => nextStep()}
@@ -69,10 +71,9 @@ function CreateProjectStepper() {
                   Next
                 </Button>
               )}
-              {activeStep === 2 && (
+              {activeStep === 1 && (
                 <Button
                   ml="0.5rem"
-                  mt={4}
                   colorScheme="aqua"
                   isLoading={methods.formState.isSubmitting}
                   type="submit"
