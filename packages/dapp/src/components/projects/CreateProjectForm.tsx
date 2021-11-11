@@ -29,6 +29,7 @@ const CreateProjectForm: React.FunctionComponent = () => {
     (acceptedFiles, rejectedFiles, e) => {
       if (acceptedFiles) {
         const { name } = e.target;
+        console.log({ name });
         setValue(name, e.target.files);
         setFiles(
           acceptedFiles.map((file: File) =>

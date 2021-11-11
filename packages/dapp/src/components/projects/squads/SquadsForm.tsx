@@ -9,6 +9,7 @@ const squadsDefaultValues = {
     {
       name: "Genesis",
       members: ["0x0000000000000"],
+      image: null,
     },
   ],
 };

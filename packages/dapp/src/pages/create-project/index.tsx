@@ -28,14 +28,30 @@ function CreateProjectStepper() {
         {
           name: "Genesis",
           members: ["0x0000000000000"],
+          image: null,
         },
       ],
     },
   });
 
-  function onSubmit() {
+  async function onSubmit() {
     const values = methods.getValues();
     console.log({ values });
+    const formData = new FormData();
+    values.squads.forEach((squad) => {
+      if (squad.image) {
+        formData.append(squad.name, squad.image[0]);
+      }
+    });
+    const cids = await fetch("/api/image-storage", {
+      method: "POST",
+      body: formData,
+    })
+      .then((r) => r.json())
+      .then((response) => {
+        return response.cids;
+      });
+    console.log({ cids });
   }
 
   return (

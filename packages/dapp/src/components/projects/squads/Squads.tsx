@@ -12,18 +12,17 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import React, { useEffect } from "react";
+// import { useDropzone } from "react-dropzone";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import MembersFieldArray from "./MembersFieldArray";
 
 export default function Squads({ control, register }: any) {
   const router = useRouter();
-  const [files, setFiles] = useState([]);
+  // const [files, setFiles] = useState([]);
 
   const {
-    setValue,
     formState: { errors },
   } = useFormContext();
 
@@ -33,41 +32,43 @@ export default function Squads({ control, register }: any) {
     // keyName: "id", default to "id", you can change the key name
   });
 
-  const onDrop = useCallback(
-    (acceptedFiles, rejectedFiles, e) => {
-      if (acceptedFiles) {
-        const { name } = e.target;
-        setValue(name, e.target.files);
-        setFiles(
-          acceptedFiles.map((file: File) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            })
-          )
-        );
-      }
-    },
-    [setValue]
-  );
+  // const onDrop = useCallback(
+  //   (acceptedFiles, rejectedFiles, e) => {
+  //     if (acceptedFiles) {
+  //       console.log({ e });
+  //       const { name } = e.target;
+  //       setValue(name, e.target.files);
+  //       setFiles(
+  //         acceptedFiles.map((file: File) =>
+  //           Object.assign(file, {
+  //             preview: URL.createObjectURL(file),
+  //           })
+  //         )
+  //       );
+  //     }
+  //   },
+  //   [setValue]
+  // );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: "image/*",
-    onDrop,
-  });
+  // TODO: there's currently a bug for useDropzone with useFieldArray
+  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  //   accept: "image/*",
+  //   onDrop,
+  // });
 
-  const thumbs = files.map((file: any) => (
-    <div key={file.name}>
-      <Image src={file.preview} />
-    </div>
-  ));
+  // const thumbs = files.map((file: any) => (
+  //   <div key={file.name}>
+  //     <Image src={file.preview} />
+  //   </div>
+  // ));
 
-  useEffect(
-    () => () => {
-      // Make sure to revoke the data uris to avoid memory leaks
-      files.forEach((file: any) => URL.revokeObjectURL(file.preview));
-    },
-    [files]
-  );
+  // useEffect(
+  //   () => () => {
+  //     // Make sure to revoke the data uris to avoid memory leaks
+  //     files.forEach((file: any) => URL.revokeObjectURL(file.preview));
+  //   },
+  //   [files]
+  // );
 
   function goBack() {
     router.back();
@@ -117,29 +118,16 @@ export default function Squads({ control, register }: any) {
               </FormControl>
               <FormControl
                 isInvalid={errors.squads && errors.squads[index].image}
-                {...getRootProps()}
               >
                 <FormLabel htmlFor={`squads[${index}].image`}>
                   Squad image
                 </FormLabel>
                 <Input
-                  {...register(`squads[${index}].image`)}
-                  {...getInputProps()}
+                  type="file"
                   placeholder="Image"
+                  {...register(`squads[${index}].image`)}
                 />
-                {thumbs}
-                {isDragActive ? (
-                  <p>Drop the files here ...</p>
-                ) : (
-                  <Center
-                    h="150px"
-                    bg="aqua.300"
-                    color="space"
-                    borderRadius="4"
-                  >
-                    Drag your super rare squad image here or select
-                  </Center>
-                )}
+                {/* {thumbs} */}
                 <FormErrorMessage>
                   {errors.squads &&
                     errors.squads[index].image &&
@@ -171,10 +159,10 @@ export default function Squads({ control, register }: any) {
         w="full"
         type="button"
         onClick={() => {
-          append({ name: "", members: ["0x0000000000000"] });
+          append({ name: "", members: ["0x0000000000000"], image: null });
         }}
       >
-        Add another Squad
+        + New Squad
       </Button>
     </VStack>
   );

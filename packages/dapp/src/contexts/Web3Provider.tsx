@@ -33,9 +33,9 @@ const providerOptions = {
   //   package: Authereum,
   // },
 };
-export const Web3Context = createContext(initialState);
+const Web3Context = createContext(initialState);
 
-export const Web3Provider = ({ children }: { children: any }) => {
+const Web3Provider = ({ children }: { children: any }) => {
   const [state, dispatch] = useReducer(Web3Reducer, initialState);
 
   const setAccount = (account: null | string) => {
@@ -108,3 +108,5 @@ export const Web3Provider = ({ children }: { children: any }) => {
     </Web3Context.Provider>
   );
 };
+
+export { Web3Context, Web3Provider };
