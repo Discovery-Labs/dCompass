@@ -4,6 +4,7 @@ export type State = {
   account: null | string;
   provider: null | any;
   self: null | any;
+  core: null | any;
   connectWeb3?: any;
   logout?: any;
 };
@@ -23,6 +24,11 @@ export const Web3Reducer = (state: State, action: Record<string, any>) => {
       return {
         ...state,
         self: action.payload,
+      };
+    case "SET_CORE":
+      return {
+        ...state,
+        core: action.payload,
       };
     default:
       return state;

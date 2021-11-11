@@ -3,8 +3,15 @@ import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 // import Authereum from "authereum";
 import { ethers } from "ethers";
-import React, { createContext, useReducer, useCallback } from "react";
+import React, {
+  createContext,
+  useReducer,
+  useCallback,
+  useEffect,
+} from "react";
 import Web3Modal from "web3modal";
+
+import { ceramicCoreFactory, CERAMIC_TESTNET } from "../core/ceramic";
 
 import { State, Web3Reducer } from "./Web3Reducer";
 
@@ -59,10 +66,24 @@ const Web3Provider = ({ children }: { children: any }) => {
     });
   };
 
+  const setCore = (core: null | any) => {
+    dispatch({
+      type: "SET_SELF",
+      payload: core,
+    });
+  };
+
+  useEffect(() => {
+    const coreCeramic = ceramicCoreFactory();
+    setCore(coreCeramic);
+    return () => state.core.ceramic.close();
+  }, [state.core]);
+
   const logout = async () => {
     setAccount(null);
     setProvider(null);
     setSelf(null);
+    setCore(null);
     localStorage.setItem("defaultWallet", "");
   };
 
@@ -74,14 +95,14 @@ const Web3Provider = ({ children }: { children: any }) => {
     const provider = await web3Modal.connect();
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     setProvider(ethersProvider);
-    const signer = await ethersProvider.getSigner();
+    const signer = ethersProvider.getSigner();
     const account = await signer.getAddress();
     setAccount(account);
 
     const mySelf = await SelfID.authenticate({
       authProvider: new EthereumAuthProvider(ethersProvider.provider, account),
-      ceramic: "testnet-clay",
-      connectNetwork: "testnet-clay",
+      ceramic: CERAMIC_TESTNET,
+      connectNetwork: CERAMIC_TESTNET,
       model: publishedModel,
     });
 

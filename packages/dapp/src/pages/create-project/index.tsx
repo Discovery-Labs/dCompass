@@ -1,10 +1,12 @@
 import { Flex, Button, Stack } from "@chakra-ui/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
+import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import CenteredFrame from "../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../components/projects/CreateProjectForm";
 import SquadsForm from "../../components/projects/squads/SquadsForm";
+import { Web3Context } from "../../contexts/Web3Provider";
 import Card from "components/custom/Card";
 
 const CreateProject = <CreateProjectForm />;
@@ -19,11 +21,13 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
+  const { self } = useContext(Web3Context);
   const { nextStep, prevStep, activeStep } = useSteps({
     initialStep: 0,
   });
   const methods = useForm({
     defaultValues: {
+      logo: null,
       squads: [
         {
           name: "Genesis",
@@ -38,20 +42,36 @@ function CreateProjectStepper() {
     const values = methods.getValues();
     console.log({ values });
     const formData = new FormData();
+    if (values.logo) {
+      formData.append("logo", values.logo[0]);
+    }
     values.squads.forEach((squad) => {
       if (squad.image) {
         formData.append(squad.name, squad.image[0]);
       }
     });
-    const cids = await fetch("/api/image-storage", {
+    const cidsRes = await fetch("/api/image-storage", {
       method: "POST",
       body: formData,
-    })
-      .then((r) => r.json())
-      .then((response) => {
-        return response.cids;
-      });
-    console.log({ cids });
+    });
+    const { cids } = await cidsRes.json();
+    // const ownProjects = await self.set("projects", [{ ...values }]);
+    const ceramicRes = await fetch("/api/ceramic-storage", {
+      method: "POST",
+      body: JSON.stringify({
+        ...values,
+        logo: cids.logo,
+        squads: values.squads.map((squad) => {
+          return {
+            ...squad,
+            image: cids[squad.name],
+          };
+        }),
+      }),
+    });
+
+    const { projectStreamId } = await ceramicRes.json();
+    console.log({ projectStreamId });
   }
 
   return (
