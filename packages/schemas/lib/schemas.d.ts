@@ -130,6 +130,26 @@ export declare const schemas: {
                         $ref: string;
                     };
                 };
+                squads: {
+                    type: string;
+                    items: {
+                        type: string;
+                        properties: {
+                            name: {
+                                type: string;
+                            };
+                            image: {
+                                $ref: string;
+                            };
+                            members: {
+                                type: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                        };
+                    };
+                };
                 peerProjects: {
                     type: string;
                     items: {
@@ -138,6 +158,52 @@ export declare const schemas: {
                 };
             };
             definitions: {
+                IPFSUrl: {
+                    type: string;
+                    pattern: string;
+                    maxLength: number;
+                };
+                positiveInteger: {
+                    type: string;
+                    minimum: number;
+                };
+                imageMetadata: {
+                    type: string;
+                    properties: {
+                        src: {
+                            $ref: string;
+                        };
+                        mimeType: {
+                            type: string;
+                            maxLength: number;
+                        };
+                        width: {
+                            $ref: string;
+                        };
+                        height: {
+                            $ref: string;
+                        };
+                        size: {
+                            $ref: string;
+                        };
+                    };
+                    required: string[];
+                };
+                imageSources: {
+                    type: string;
+                    properties: {
+                        original: {
+                            $ref: string;
+                        };
+                        alternatives: {
+                            type: string;
+                            items: {
+                                $ref: string;
+                            };
+                        };
+                    };
+                    required: string[];
+                };
                 CeramicStreamId: {
                     type: string;
                     pattern: string;

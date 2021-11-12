@@ -1,11 +1,15 @@
 # `@discovery-decrypted/schemas`
 
-> TODO: description
+> 1. Create your .env file
 
-## Usage
-
+```sh
+cp .exemple.env .env
 ```
-const schemas = require('@discovery-decrypted/schemas');
 
-// TODO: DEMONSTRATE API
+> 2. Edit your schemas in src/
+> 3. publish your ceramic schemas
+
+```bash
+cd packages/schemas
+yarn build
 ```
