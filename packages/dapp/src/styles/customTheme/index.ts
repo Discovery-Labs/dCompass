@@ -1,5 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
-import { customTheme } from "dapper-ui";
+import { customTheme } from "@discovery-decrypted/ui";
 
 const theme = extendTheme(customTheme);
 
