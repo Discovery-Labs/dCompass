@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.5.0 <0.9.0;
+pragma solidity >=0.7.0 <0.9.0;
 
 /**
  * @title dCompassProjectNFT
@@ -20,16 +20,16 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     mapping (address => bool) public reviewers;
     uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )
     uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation
-    //RandomNumberConsumer vrfContract;//VRF Contract used for randomness
     address payable _projectWallet;//sign in a script and also withdraw
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
-    mapping (string => address[]) public contributors;
+    mapping (string => address[]) internal contributors;
     mapping (string => ProjectStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of reviewers for ProjectId
     //mapping (string => uint16[]) public rarities; // rarities of each image uint16 used for pakcing purposes
     mapping (string => bool) public projectMinted; // tracks if mint has been done
+    mapping (string => uint) public projectThresholds;// threshold for the project contributors to approve courses
     
     event NFTProjectMinted(address indexed _to, string indexed _tokenURI, string indexed _questId);
     event ReceiveCalled(address _caller, uint _value);
@@ -39,7 +39,6 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         require(_reviewers.length > 0, "Must have at least 1 reviewer");
         require(_initialThreshold > 0 && _initialThreshold <=100, "invalid threshold");
         multiSigThreshold = _initialThreshold;
-        //vrfContract = RandomNumberConsumer(_vrfAddress);
         _projectWallet = _walletAddress;
         for (uint i=0; i<_reviewers.length; i++){
             if(_reviewers[i]!= address(0) && !reviewers[_reviewers[i]]){
@@ -58,14 +57,17 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         emit ReceiveCalled(msg.sender, msg.value);
     }
     
-    function voteForApproval(address[] memory _contributors, string memory _projectId) public onlyReviewer{
+    function voteForApproval(address[] memory _contributors, uint _threshold, string memory _projectId) public onlyReviewer{
         require(status[_projectId] != ProjectStatus.DENIED && status[_projectId] != ProjectStatus.APPROVED, "finalized project");
+        require(!reviewerVotes[_projectId][_msgSender()], "already voted for this project");
         votes[_projectId]++;
         reviewerVotes[_projectId][_msgSender()] = true;
         if(status[_projectId] == ProjectStatus.NONEXISTENT){
             require(_contributors.length >0, "empty array");
+            require(_threshold > 0 && _threshold <= 100, "invalid threshold");
             //rarities[_projectId] = _rarities;
             contributors[_projectId] = _contributors;
+            projectThresholds[_projectId] = _threshold;
             if(multiSigThreshold*numReviewers/100 == 0){
                 status[_projectId] = ProjectStatus.APPROVED;
                 emit ProjectApproved(_projectId);
@@ -87,41 +89,12 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             }  
         }
     }
-    /*
-    function approveMint(string memory _projectId) internal {
-        //(bool success, ) = vrfAddress.call(abi.encodeWithSelector(bytes4(keccak256("getRandomNumber(string)")), _projectId));
-        //require(success, "approve call failed");
-        vrfContract.getRandomNumber(_projectId);
-    }*/
+    
 
-    function createToken(uint32[] memory firstURIParts, uint256[] memory secondURIParts, string memory _projectId) public returns(uint[] memory){
+    function createToken(uint32[] memory firstURIParts, uint256[] memory secondURIParts, string memory _projectId) public onlyReviewer returns(uint[] memory){
         require(status[_projectId] == ProjectStatus.APPROVED, "job not approved yet");
-        require(reviewers[_msgSender()] || payable(_msgSender()) == _projectWallet , "sender not allowed to mint");
         require(!projectMinted[_projectId], "already minted");
-        //require(vrfContract.blockNumberResults(_projectId) > 0, "no request yet");
-        //require(contributors[_projectId].length == raritiesUsed.length, "invalid rarities");
-
-        //check on chain that correct image rarities were derived
-        /*uint256 _randomNumber = vrfContract.requestResults(_projectId);
-        uint256[] memory checkRarities = new uint256[](contributors[_projectId].length);
-        uint totalRarity = 0;
-        uint currentIndex = 0;
-        uint target;
-        bool allMatch=true;
-        for (uint j=0; j<rarities[_projectId].length; j++){
-            totalRarity+=rarities[_projectId][j];
-        }
-
-        while(currentIndex < contributors[_projectId].length){
-            target = (uint256(keccak256(abi.encode(_randomNumber, currentIndex))) % totalRarity) + 1;
-            checkRarities[currentIndex] = target;
-            if (target != raritiesUsed[currentIndex]){
-                allMatch = false;
-            }
-            currentIndex++;
-        }
-
-        require(allMatch, "incorrect rarities");*/
+        require(firstURIParts.length == secondURIParts.length && firstURIParts.length == contributors[_projectId].length, "incorrect arrs");
 
         //batch minting
         uint256[] memory newItems = new uint256[](contributors[_projectId].length);
@@ -138,6 +111,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         
         emit NFTProjectMinted(contributors[_projectId][i], _tokenURI, _projectId);
         }
+        projectMinted[_projectId] = true;
         return newItems;    
     }
 
@@ -146,15 +120,20 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         reviewers[_reviewer]=true;
         numReviewers++;
     }
+
+    function setThreshold(uint128 _newThreshold) public onlyReviewer{
+        require(_newThreshold > 0 && _newThreshold <=100, "invalid threshold");
+        multiSigThreshold = _newThreshold;
+    }
     
     //helpers for building URIs
-    function uint8tohexchar(uint8 i) public pure returns (uint8) {
+    function uint8tohexchar(uint8 i) internal pure returns (uint8) {
         return (i > 9) ?
             (i + 87) : // ascii a-f
             (i + 48); // ascii 0-9
     }
     
-    function uint32tohexstr(uint32 i) public pure returns (string memory) {
+    function uint32tohexstr(uint32 i) internal pure returns (string memory) {
             bytes memory o = new bytes(8);
             uint32 mask = 0x0000000f;
             uint count =8;
@@ -164,12 +143,11 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
                     i = i >> 4;
                 }
                 count--;
-                
             }
             return string(o);
         }
  
-    function uint256tohexstr(uint256 i) public pure returns (string memory) {
+    function uint256tohexstr(uint256 i) internal pure returns (string memory) {
         bytes memory o = new bytes(64);
         uint256 mask = 0x0000000000000000000000000000000f;
         
@@ -182,5 +160,9 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             count--; 
         }
         return string(o);
-    } 
+    }
+
+    function getContributors(string memory _projectId) external view returns(address[] memory){
+        return contributors[_projectId];
+    }
 }

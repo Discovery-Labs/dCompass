@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan");
 require('dotenv').config();
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -34,15 +35,31 @@ const { INFURA_ID, DEPLOYER_PRIVATE_KEY } = process.env;
       ? `https://polygon-mainnet.infura.io/v3/${INFURA_ID}`
       : "https://rpc-mainnet.maticvigil.com",
       accounts: [DEPLOYER_PRIVATE_KEY]
+    },
+    kovan : {
+      url: INFURA_ID
+      ? `https://kovan.infura.io/v3/${INFURA_ID}`
+      : ``,
+      accounts: [DEPLOYER_PRIVATE_KEY],
+      chainId : 42
     }
   },
   solidity: {
-    version: "0.8.4",
+    version: "0.8.7",
     settings: {
       optimizer: {
         enabled: true,
         runs: 200
+      },
+      outputSelection: {
+        "*": {
+          "*": ["storageLayout"]
+        }
       }
     }
+  },
+  etherscan: {
+    apiKey: `${process.env.ETHERSCAN_API_KEY}`
   }
 };
+
