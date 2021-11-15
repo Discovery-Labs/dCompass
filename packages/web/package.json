@@ -6,11 +6,11 @@
   "homepage": "",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 3001",
     "build": "next build",
     "export": "next export",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "next lint",
     "lint:fix": "eslint src --fix && yarn format",
     "format": "prettier --write src",
