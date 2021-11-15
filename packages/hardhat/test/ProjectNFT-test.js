@@ -12,7 +12,7 @@ describe("ProjectNFT", function() {
   let addr1, addr2, addr3, addr4, addr5, addr6;
   let addrs;
   beforeEach( async () => {
-    [owner, addr1, addr2, addr3, addr4,addr5, addr6, ...addrs] = await ethers.getSigners();
+    [owner, addr1, addr2, addr3, addr4, addr5, addr6, ...addrs] = await ethers.getSigners();
     ProjectFactory = await ethers.getContractFactory("ProjectNFT");
     projectNFT = await ProjectFactory.deploy(`${owner.address}`, [`${owner.address}`, `${addr1.address}`, `${addr2.address}`, `${addr3.address}`, `${addr4.address}`], 10);
     await projectNFT.deployed();
@@ -20,22 +20,20 @@ describe("ProjectNFT", function() {
 
   describe("Testing deployment and voting", function() {
     it("testing constructor and reviewer setters and getters", async function() {
-      /*const [owner, addr1, addr2, addr3, addr4, ...addrs] = await ethers.getSigners();
-      let ProjectFactory = await ethers.getContractFactory("ProjectNFT");
-      let projectNFT = await ProjectFactory.deploy(`${owner.address}`, [`${owner.address}`, `${addr1.address}`, `${addr2.address}`, `${addr3.address}`, `${addr4.address}`], 10);
-      await projectNFT.deployed();*/
       console.log(`${owner.address}`);
   
       //set in constructor
       expect(await projectNFT.multiSigThreshold()).to.be.equal(10);
       expect(await projectNFT.numReviewers()).to.be.equal(5);
       expect(await projectNFT.owner()).to.be.equal(`${owner.address}`);
-  
-      //reviewers can change Threshold
+      
+      //reviewers can change Threshold, and add reviewers
       await projectNFT.setThreshold(40);
       expect(await projectNFT.multiSigThreshold()).to.be.equal(40);
       await projectNFT.connect(addr1).setThreshold(30);
       expect(await projectNFT.multiSigThreshold()).to.be.equal(30);
+      await projectNFT.connect(addr3).addReviewer(`${addr5.address}`);
+      expect(await projectNFT.numReviewers()).to.be.equal(6);
   
       //check all reviewers
       expect(await projectNFT.reviewers("0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631")).to.be.false;
@@ -47,10 +45,6 @@ describe("ProjectNFT", function() {
     })
     
     it("When threshold is 10 should approve right away", async function() {
-      /*const [owner, addr1, addr2, addr3, addr4, addr5, addr6, ...addrs] = await ethers.getSigners();
-      let ProjectFactory = await ethers.getContractFactory("ProjectNFT");
-      let projectNFT = await ProjectFactory.deploy(`${owner.address}`, [`${owner.address}`, `${addr1.address}`, `${addr2.address}`, `${addr3.address}`, `${addr4.address}`], 10);
-      await projectNFT.deployed();*/
       await projectNFT.voteForApproval([`${addr5.address}`, `${addr6.address}`, "0xCf642913012CaBCBF09ca4f18748a430fA01237e", "0x4E7a45148C65248183AE1CE6C33fFAE5825C1979", "0x4553d50bEAf37ea51430C7E192ec4283d9B5BD56"], 15, "firstTestProject");
       expect(await projectNFT.status("firstTestProject")).to.be.equal(3);//approve Enum value
       expect(await projectNFT.reviewerVotes("firstTestProject", `${owner.address}`)).to.be.true;//person who voted is marked true
