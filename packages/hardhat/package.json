@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "hardhat-deploy": "^0.9.8"
   }
 }

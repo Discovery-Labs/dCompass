@@ -1,3 +1,4 @@
+import ABIS from "@discovery-dao/hardhat/abis.json";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import WalletConnectProvider from "@walletconnect/web3-provider";
