@@ -7,14 +7,21 @@ import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 // import Authereum from "authereum";
 import { ethers } from "ethers";
-import React, { createContext, useReducer, useEffect } from "react";
+import React, {
+  createContext,
+  useReducer,
+  useEffect,
+  useCallback,
+} from "react";
 import Web3Modal from "web3modal";
 
 import { ceramicCoreFactory, CERAMIC_TESTNET } from "../core/ceramic";
+import NETWORKS from "../core/networks";
 
 import { State, Web3Reducer } from "./Web3Reducer";
 
 const { NEXT_PUBLIC_INFURA_ID } = process.env;
+const supportedNetworks = Object.keys(ABIS);
 
 const rpcs = {
   1: `https://mainnet.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
@@ -23,7 +30,7 @@ const rpcs = {
   100: "https://dai.poa.network", // xDai
 };
 const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42],
+  supportedChainIds: supportedNetworks.map((net) => parseInt(net, 10)),
 });
 
 // TODO: create custom ceramic auth for wallet connect?
@@ -36,6 +43,7 @@ const initialState = {
   loading: false,
   account: null,
   provider: null,
+  contracts: null,
 } as State;
 
 const providerOptions = {
@@ -55,7 +63,7 @@ const Web3Context = createContext(initialState);
 
 const Web3Provider = ({ children }: { children: any }) => {
   const [state, dispatch] = useReducer(Web3Reducer, initialState);
-  const { activate } = useWeb3React();
+  const { activate, chainId } = useWeb3React();
   const setAccount = (account: null | string) => {
     dispatch({
       type: "SET_ACCOUNT",
@@ -64,7 +72,6 @@ const Web3Provider = ({ children }: { children: any }) => {
   };
 
   const setProvider = (provider: null | any) => {
-    activate(provider.connection.url === "metamask" ? injected : walletconnect);
     dispatch({
       type: "SET_PROVIDER",
       payload: provider,
@@ -75,6 +82,13 @@ const Web3Provider = ({ children }: { children: any }) => {
     dispatch({
       type: "SET_SELF",
       payload: self,
+    });
+  };
+
+  const setContracts = (contracts: null | any) => {
+    dispatch({
+      type: "SET_CONTRACTS",
+      payload: contracts,
     });
   };
 
@@ -90,6 +104,22 @@ const Web3Provider = ({ children }: { children: any }) => {
     setCore(coreCeramic);
   }, []);
 
+  useEffect(() => {
+    if (chainId) {
+      const strChainId = chainId.toString() as keyof typeof NETWORKS;
+      if (supportedNetworks.includes(strChainId)) {
+        const network = NETWORKS[strChainId];
+        const abis = ABIS as Record<string, any>;
+        const projectNFTContract = new ethers.Contract(
+          abis[strChainId][network.name].contracts.ProjectNFT.address,
+          abis[strChainId][network.name].contracts.ProjectNFT.abi,
+          state.provider.getSigner()
+        );
+        setContracts({ projectNFTContract });
+      }
+    }
+  }, [chainId, state.provider]);
+
   const logout = async () => {
     setAccount(null);
     setProvider(null);
@@ -98,16 +128,33 @@ const Web3Provider = ({ children }: { children: any }) => {
     localStorage.setItem("defaultWallet", "");
   };
 
-  const connectWeb3 = async () => {
+  const connectWeb3 = useCallback(async () => {
     const web3Modal = new Web3Modal({
       providerOptions,
       cacheProvider: false,
     });
     const provider = await web3Modal.connect();
     const ethersProvider = new ethers.providers.Web3Provider(provider);
+    activate(
+      ethersProvider.connection.url === "metamask" ? injected : walletconnect
+    );
     setProvider(ethersProvider);
     const signer = ethersProvider.getSigner();
     const account = await signer.getAddress();
+    if (chainId) {
+      const strChainId = chainId.toString() as keyof typeof NETWORKS;
+      if (supportedNetworks.includes(strChainId)) {
+        const network = NETWORKS[strChainId];
+        const abis = ABIS as Record<string, any>;
+        const projectNFTContract = new ethers.Contract(
+          abis[strChainId][network.name].contracts.ProjectNFT.address,
+          abis[strChainId][network.name].contracts.ProjectNFT.abi,
+          signer
+        );
+        setContracts({ projectNFTContract });
+      }
+    }
+
     setAccount(account);
 
     const mySelf = await SelfID.authenticate({
@@ -125,7 +172,7 @@ const Web3Provider = ({ children }: { children: any }) => {
     provider.on("accountsChanged", () => {
       // window.location.reload();
     });
-  };
+  }, [chainId, activate]);
 
   return (
     <Web3Context.Provider

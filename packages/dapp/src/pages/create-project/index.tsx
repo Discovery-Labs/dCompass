@@ -26,7 +26,7 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
-  const { self } = useContext(Web3Context);
+  const { self, contracts } = useContext(Web3Context);
   const web3React = useWeb3React();
 
   const {
@@ -40,6 +40,7 @@ function CreateProjectStepper() {
     error,
   } = web3React;
   console.log({
+    contracts,
     connector,
     library,
     chainId,
