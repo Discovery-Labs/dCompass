@@ -5,6 +5,8 @@ import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import "@fontsource/poppins";
 import "@fontsource/space-mono";
+import { Web3Provider as EthersProvider } from "@ethersproject/providers";
+import { Web3ReactProvider } from "@web3-react/core";
 import { DefaultSeo } from "next-seo";
 import { AppProps } from "next/app";
 import Head from "next/head";
@@ -18,7 +20,11 @@ import theme from "styles/customTheme";
 import "styles/globals.css";
 
 const clientSideEmotionCache = createEmotionCache();
-
+const getLibrary = (provider: any): EthersProvider => {
+  const library = new EthersProvider(provider);
+  library.pollingInterval = 12000;
+  return library;
+};
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
@@ -31,22 +37,24 @@ const MyApp = ({
   const apolloClient = useApollo(pageProps);
   return (
     <ApolloProvider client={apolloClient}>
-      <Web3Provider>
-        <CacheProvider value={emotionCache}>
-          <ChakraProvider theme={theme}>
-            <Head>
-              <meta
-                name="viewport"
-                content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover"
-              />
-            </Head>
-            <DefaultSeo {...defaultSEOConfig} />
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </ChakraProvider>
-        </CacheProvider>
-      </Web3Provider>
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <Web3Provider>
+          <CacheProvider value={emotionCache}>
+            <ChakraProvider theme={theme}>
+              <Head>
+                <meta
+                  name="viewport"
+                  content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover"
+                />
+              </Head>
+              <DefaultSeo {...defaultSEOConfig} />
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </ChakraProvider>
+          </CacheProvider>
+        </Web3Provider>
+      </Web3ReactProvider>
     </ApolloProvider>
   );
 };
