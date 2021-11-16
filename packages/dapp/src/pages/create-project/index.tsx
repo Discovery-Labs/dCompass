@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import { Flex, Button, Stack } from "@chakra-ui/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useContext } from "react";
@@ -7,8 +8,11 @@ import CenteredFrame from "../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../components/projects/CreateProjectForm";
 import SquadsForm from "../../components/projects/squads/SquadsForm";
 import { Web3Context } from "../../contexts/Web3Provider";
+import { schemaAliases } from "../../core/ceramic";
+import { CREATE_PROJECT_MUTATION } from "../../graphql/projects";
 import Card from "components/custom/Card";
 
+const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
 const CreateSquads = <SquadsForm />;
 
@@ -22,6 +26,7 @@ const steps = [
 
 function CreateProjectStepper() {
   const { self } = useContext(Web3Context);
+  const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION);
   const { nextStep, prevStep, activeStep } = useSteps({
     initialStep: 0,
   });
@@ -41,6 +46,7 @@ function CreateProjectStepper() {
   async function onSubmit() {
     const values = methods.getValues();
     console.log({ values });
+
     const formData = new FormData();
     if (values.logo) {
       formData.append("logo", values.logo[0]);
@@ -50,28 +56,54 @@ function CreateProjectStepper() {
         formData.append(squad.name, squad.image[0]);
       }
     });
+
     const cidsRes = await fetch("/api/image-storage", {
       method: "POST",
       body: formData,
     });
     const { cids } = await cidsRes.json();
-    // const ownProjects = await self.set("projects", [{ ...values }]);
-    const ceramicRes = await fetch("/api/ceramic-storage", {
-      method: "POST",
-      body: JSON.stringify({
-        ...values,
-        logo: cids.logo,
-        squads: values.squads.map((squad) => {
-          return {
-            ...squad,
-            image: cids[squad.name],
-          };
-        }),
+
+    const serializedProject = {
+      ...values,
+      logo: cids.logo,
+      squads: values.squads.map((squad) => {
+        return {
+          ...squad,
+          image: cids[squad.name],
+          members: squad.members.map((member: any) => member.value),
+        };
       }),
+    };
+    console.log({ serializedProject });
+
+    const newProjectDoc = await self.client.dataModel.createTile(
+      "Project",
+      serializedProject
+    );
+
+    // Get user's existing projects
+    const existingProjects = await self.client.dataStore.get(PROJECTS_ALIAS);
+
+    // Push new project to the index
+    if (existingProjects && existingProjects.projects.length > 0) {
+      await self.client.dataStore.set(PROJECTS_ALIAS, {
+        projects: [...existingProjects.projects, newProjectDoc.id.toUrl()],
+      });
+    } else {
+      await self.client.dataStore.set(PROJECTS_ALIAS, {
+        projects: [newProjectDoc.id.toUrl()],
+      });
+    }
+
+    const allProjects = await createProjectMutation({
+      variables: {
+        input: {
+          id: newProjectDoc.id.toUrl(),
+        },
+      },
     });
 
-    const { projectStreamId } = await ceramicRes.json();
-    console.log({ projectStreamId });
+    console.log({ allProjects });
   }
 
   return (
@@ -113,7 +145,6 @@ function CreateProjectStepper() {
                   colorScheme="aqua"
                   isLoading={methods.formState.isSubmitting}
                   type="submit"
-                  onClick={() => onSubmit()}
                   px="1.25rem"
                   fontSize="md"
                 >

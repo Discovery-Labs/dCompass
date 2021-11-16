@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-describe('@discovery-decrypted/schemas', () => {
-    it('needs tests');
+describe("@discovery-dao/schemas", () => {
+  it("needs tests");
 });

@@ -1,5 +1,5 @@
 {
-  "name": "@discovery-decrypted/dapp",
+  "name": "@discovery-dao/dapp",
   "version": "0.1.0",
   "private": true,
   "author": "Super Shadowy Coders",
@@ -17,6 +17,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@apollo/client": "^3.4.17",
     "@ceramicnetwork/http-client": "^1.4.3",
     "@ceramicstudio/multiauth": "^0.2.3",
     "@chakra-ui/anatomy": "^1.0.1",
@@ -41,6 +42,7 @@
     "dids": "^2.4.0",
     "ethers": "^5.5.1",
     "framer-motion": "^4.1.17",
+    "graphql": "^16.0.1",
     "key-did-provider-ed25519": "^1.1.0",
     "key-did-resolver": "^1.4.0",
     "multiparty": "^4.2.2",

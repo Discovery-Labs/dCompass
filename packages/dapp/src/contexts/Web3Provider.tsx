@@ -1,4 +1,4 @@
-import publishedModel from "@discovery-decrypted/schemas/lib/model.json";
+import publishedModel from "@discovery-dao/schemas/lib/model.json";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 // import Authereum from "authereum";
@@ -68,7 +68,7 @@ const Web3Provider = ({ children }: { children: any }) => {
 
   const setCore = (core: null | any) => {
     dispatch({
-      type: "SET_SELF",
+      type: "SET_CORE",
       payload: core,
     });
   };
@@ -76,8 +76,7 @@ const Web3Provider = ({ children }: { children: any }) => {
   useEffect(() => {
     const coreCeramic = ceramicCoreFactory();
     setCore(coreCeramic);
-    return () => state.core.ceramic.close();
-  }, [state.core]);
+  }, []);
 
   const logout = async () => {
     setAccount(null);
@@ -105,7 +104,6 @@ const Web3Provider = ({ children }: { children: any }) => {
       connectNetwork: CERAMIC_TESTNET,
       model: publishedModel,
     });
-
     setSelf(mySelf);
 
     provider.on("chainChanged", () => {

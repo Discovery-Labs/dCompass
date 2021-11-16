@@ -1,5 +1,5 @@
 {
-  "name": "@discovery-decrypted/schemas",
+  "name": "@discovery-dao/schemas",
   "version": "0.0.0",
   "description": "JSON Schema definitions for Decentralized Profiles",
   "main": "lib/schemas.js",

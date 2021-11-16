@@ -1,5 +1,5 @@
 import { CeramicClient } from "@ceramicnetwork/http-client";
-import publishedModel from "@discovery-decrypted/schemas/lib/model.json";
+import publishedModel from "@discovery-dao/schemas/lib/model.json";
 import { DataModel } from "@glazed/datamodel";
 import { DIDDataStore } from "@glazed/did-datastore";
 import { Core } from "@self.id/core";
@@ -13,6 +13,14 @@ export const CERAMIC_TESTNET = "testnet-clay";
 export const CERAMIC_TESTNET_NODE_URL = "https://ceramic-clay.3boxlabs.com";
 export const CERAMIC_MAINNET_NODE_URL = "https://gateway.ceramic.network";
 export const CERAMIC_LOCAL_NODE_URL = "http://localhost:7007";
+
+export const schemaAliases = {
+  PROJECTS_ALIAS: "@dCompass/projects",
+  COURSES_ALIAS: "@dCompass/courses",
+  LEARNERS_ALIAS: "@dCompass/learners",
+  REPOS_ALIAS: "@dCompass/repos",
+  CONTRIBUTORS_ALIAS: "@dCompass/contributors",
+};
 
 // READ ONLY CLIENT
 export const ceramicCoreFactory = () => {

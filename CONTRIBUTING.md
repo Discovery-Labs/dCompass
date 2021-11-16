@@ -2,7 +2,7 @@
 
 ## Creating a new package
 
-npx lerna create @discovery-decrypted/<new-package>
+npx lerna create @discovery-dao/<new-package>
 
 ## Publishing a package
 
