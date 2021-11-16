@@ -9,19 +9,14 @@ import {
   Textarea,
   Box,
 } from "@chakra-ui/react";
-import publishedModel from "@d-profiles/schemas/lib/model.json";
+import publishedModel from "@discovery-dao/schemas/lib/model.json";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
+import { useWeb3React } from "@web3-react/core";
+import { CERAMIC_TESTNET_NODE_URL, CERAMIC_TESTNET, ceramicCoreFactory } from "core/ceramic";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 // import Image from "next/image";
-
-import {
-  ceramicCoreFactory,
-  CERAMIC_TESTNET,
-  CERAMIC_TESTNET_NODE_URL,
-} from "../../../ceramic";
-import { getNetwork } from "../../../utils";
 
 const EditProfilePage = () => {
   const router = useRouter();
@@ -30,6 +25,7 @@ const EditProfilePage = () => {
   const [address, setAddress] = useState<string>();
   const [imageURL, setImageURL] = useState<string>();
   const [backgroundURL, setBackgroundURL] = useState<string>();
+  const { chainId, connector } = useWeb3React();
   const image = useRef(null);
   const background = useRef(null);
   const {
@@ -40,16 +36,18 @@ const EditProfilePage = () => {
   } = useForm();
 
   const init = async () => {
-    const addresses = await window.ethereum.enable();
-    console.log({ addresses });
+    await connector?.activate();
+    const account = await connector?.getAccount()
+    console.log({ account });
+    if (!account) return
     const self = await SelfID.authenticate({
-      authProvider: new EthereumAuthProvider(window.ethereum, addresses[0]),
+      authProvider: new EthereumAuthProvider(window.ethereum, account),
       ceramic: CERAMIC_TESTNET_NODE_URL,
       connectNetwork: CERAMIC_TESTNET,
       model: publishedModel,
     });
     setMySelf(self);
-    setAddress(addresses[0]);
+    setAddress(account);
     return self;
   };
 
@@ -62,11 +60,10 @@ const EditProfilePage = () => {
     (async () => {
       if (address) {
         const core = ceramicCoreFactory();
-        const { network } = await getNetwork();
         let userDID;
         try {
           userDID = await core.getAccountDID(
-            `${address}@eip155:${network.chainId}`
+            `${address}@eip155:${chainId}`
           );
         } catch (error) {
           console.log(error);
