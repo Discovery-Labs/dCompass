@@ -60,7 +60,7 @@ npm run acp
 
 ```tsx
 import { extendTheme } from "@chakra-ui/react";
-import { customTheme } from "@discovery-decrypted/ui";
+import { customTheme } from "@discovery-dao/ui";
 
 const theme = extendTheme(customTheme);
 

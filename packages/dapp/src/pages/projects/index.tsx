@@ -55,7 +55,7 @@ function projects() {
           <TabPanel>
             <SimpleGrid columns={3} spacing={10}>
               {allProjects.map((project) => (
-                <ProjectCard project={project} />
+                <ProjectCard key={project.name} project={project} />
               ))}
             </SimpleGrid>
           </TabPanel>

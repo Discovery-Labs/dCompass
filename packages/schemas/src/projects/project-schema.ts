@@ -3,6 +3,11 @@ export const ProjectSchema = {
   title: "Project",
   type: "object",
   properties: {
+    name: {
+      type: "string",
+      title: "name",
+      maxLength: 100,
+    },
     color: {
       type: "string",
     },
@@ -27,8 +32,12 @@ export const ProjectSchema = {
     logo: {
       type: "string",
     },
-    contract_address: {
-      type: "string",
+    contracts: {
+      type: "array",
+      items: {
+        type: "string",
+        title: "ContractAddress",
+      },
     },
     is_featured: {
       type: "boolean",
@@ -37,6 +46,42 @@ export const ProjectSchema = {
       type: "array",
       items: {
         $ref: "#/definitions/CeramicStreamId",
+      },
+    },
+    courses: {
+      type: "array",
+      title: "courses",
+      items: {
+        type: "object",
+        title: "CourseItem",
+        properties: {
+          id: {
+            $ref: "#/definitions/CeramicStreamId",
+          },
+          title: {
+            type: "string",
+            title: "title",
+            maxLength: 100,
+          },
+        },
+      },
+    },
+    tags: {
+      type: "array",
+      title: "tags",
+      items: {
+        type: "object",
+        title: "TagItem",
+        properties: {
+          id: {
+            $ref: "#/definitions/CeramicStreamId",
+          },
+          name: {
+            type: "string",
+            title: "name",
+            maxLength: 100,
+          },
+        },
       },
     },
     squads: {
@@ -48,7 +93,7 @@ export const ProjectSchema = {
             type: "string",
           },
           image: {
-            $ref: "#/definitions/imageSources",
+            type: "string",
           },
           members: {
             type: "array",

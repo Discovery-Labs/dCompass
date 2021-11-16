@@ -1,4 +1,4 @@
-# `@discovery-decrypted/schemas`
+# `@discovery-dao/schemas`
 
 > 1. Create your .env file
 

@@ -1,5 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
-import { customTheme } from "@discovery-decrypted/ui";
+import { customTheme } from "@discovery-dao/ui";
 
 // Style guide;
 

@@ -30,54 +30,7 @@ export declare const schemas: {
                     type: string;
                     title: string;
                     items: {
-                        type: string;
-                        title: string;
-                        properties: {
-                            id: {
-                                $ref: string;
-                            };
-                            name: {
-                                type: string;
-                                title: string;
-                                maxLength: number;
-                            };
-                            courses: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                    title: string;
-                                    properties: {
-                                        id: {
-                                            $ref: string;
-                                        };
-                                        title: {
-                                            type: string;
-                                            title: string;
-                                            maxLength: number;
-                                        };
-                                    };
-                                };
-                            };
-                            tags: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                    title: string;
-                                    properties: {
-                                        id: {
-                                            $ref: string;
-                                        };
-                                        name: {
-                                            type: string;
-                                            title: string;
-                                            maxLength: number;
-                                        };
-                                    };
-                                };
-                            };
-                        };
+                        $ref: string;
                     };
                 };
             };
@@ -94,6 +47,11 @@ export declare const schemas: {
             title: string;
             type: string;
             properties: {
+                name: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
                 color: {
                     type: string;
                 };
@@ -118,8 +76,12 @@ export declare const schemas: {
                 logo: {
                     type: string;
                 };
-                contract_address: {
+                contracts: {
                     type: string;
+                    items: {
+                        type: string;
+                        title: string;
+                    };
                 };
                 is_featured: {
                     type: string;
@@ -128,6 +90,42 @@ export declare const schemas: {
                     type: string;
                     items: {
                         $ref: string;
+                    };
+                };
+                courses: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                        title: string;
+                        properties: {
+                            id: {
+                                $ref: string;
+                            };
+                            title: {
+                                type: string;
+                                title: string;
+                                maxLength: number;
+                            };
+                        };
+                    };
+                };
+                tags: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                        title: string;
+                        properties: {
+                            id: {
+                                $ref: string;
+                            };
+                            name: {
+                                type: string;
+                                title: string;
+                                maxLength: number;
+                            };
+                        };
                     };
                 };
                 squads: {
@@ -139,7 +137,7 @@ export declare const schemas: {
                                 type: string;
                             };
                             image: {
-                                $ref: string;
+                                type: string;
                             };
                             members: {
                                 type: string;

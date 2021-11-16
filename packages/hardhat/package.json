@@ -1,5 +1,5 @@
 {
-  "name": "@discovery-decrypted/hardhat",
+  "name": "@discovery-dao/hardhat",
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "Discovery DAO",
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "hardhat-deploy": "^0.9.8"
   }
 }
