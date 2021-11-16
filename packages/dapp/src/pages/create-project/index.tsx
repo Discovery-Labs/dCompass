@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { Flex, Button, Stack } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -26,6 +27,28 @@ const steps = [
 
 function CreateProjectStepper() {
   const { self } = useContext(Web3Context);
+  const web3React = useWeb3React();
+
+  const {
+    connector,
+    library,
+    chainId,
+    account,
+    activate,
+    deactivate,
+    active,
+    error,
+  } = web3React;
+  console.log({
+    connector,
+    library,
+    chainId,
+    account,
+    activate,
+    deactivate,
+    active,
+    error,
+  });
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION);
   const { nextStep, prevStep, activeStep } = useSteps({
     initialStep: 0,

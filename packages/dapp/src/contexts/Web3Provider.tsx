@@ -2,26 +2,41 @@ import ABIS from "@discovery-dao/hardhat/abis.json";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { useWeb3React } from "@web3-react/core";
+import { InjectedConnector } from "@web3-react/injected-connector";
+import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 // import Authereum from "authereum";
 import { ethers } from "ethers";
-import React, {
-  createContext,
-  useReducer,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { createContext, useReducer, useEffect } from "react";
 import Web3Modal from "web3modal";
 
 import { ceramicCoreFactory, CERAMIC_TESTNET } from "../core/ceramic";
 
 import { State, Web3Reducer } from "./Web3Reducer";
 
+const { NEXT_PUBLIC_INFURA_ID } = process.env;
+
+const rpcs = {
+  1: `https://mainnet.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
+  42: `https://kovan.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`,
+  80001: `https://polygon-mumbai.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`,
+  100: "https://dai.poa.network", // xDai
+};
+const injected = new InjectedConnector({
+  supportedChainIds: [1, 3, 4, 5, 42],
+});
+
+// TODO: create custom ceramic auth for wallet connect?
+const walletconnect = new WalletConnectConnector({
+  rpc: rpcs,
+  qrcode: true,
+});
+
 const initialState = {
   loading: false,
   account: null,
   provider: null,
 } as State;
-const { NEXT_PUBLIC_INFURA_ID } = process.env;
 
 const providerOptions = {
   walletconnect: {
@@ -29,12 +44,7 @@ const providerOptions = {
     options: {
       bridge: "https://polygon.bridge.walletconnect.org",
       infuraId: NEXT_PUBLIC_INFURA_ID,
-      rpc: {
-        1: `https://mainnet.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
-        42: `https://kovan.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`,
-        80001: `https://polygon-mumbai.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`,
-        100: "https://dai.poa.network", // xDai
-      },
+      rpc: rpcs,
     },
   },
   // authereum: {
@@ -45,7 +55,7 @@ const Web3Context = createContext(initialState);
 
 const Web3Provider = ({ children }: { children: any }) => {
   const [state, dispatch] = useReducer(Web3Reducer, initialState);
-
+  const { activate } = useWeb3React();
   const setAccount = (account: null | string) => {
     dispatch({
       type: "SET_ACCOUNT",
@@ -54,6 +64,7 @@ const Web3Provider = ({ children }: { children: any }) => {
   };
 
   const setProvider = (provider: null | any) => {
+    activate(provider.connection.url === "metamask" ? injected : walletconnect);
     dispatch({
       type: "SET_PROVIDER",
       payload: provider,
@@ -87,7 +98,7 @@ const Web3Provider = ({ children }: { children: any }) => {
     localStorage.setItem("defaultWallet", "");
   };
 
-  const connectWeb3 = useCallback(async () => {
+  const connectWeb3 = async () => {
     const web3Modal = new Web3Modal({
       providerOptions,
       cacheProvider: false,
@@ -108,13 +119,13 @@ const Web3Provider = ({ children }: { children: any }) => {
     setSelf(mySelf);
 
     provider.on("chainChanged", () => {
-      window.location.reload();
+      // window.location.reload();
     });
 
     provider.on("accountsChanged", () => {
-      window.location.reload();
+      // window.location.reload();
     });
-  }, []);
+  };
 
   return (
     <Web3Context.Provider
