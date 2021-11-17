@@ -78,6 +78,13 @@ const Web3Provider = ({ children }: { children: any }) => {
     });
   };
 
+  const setIsReviewer = (isReviewer: boolean) => {
+    dispatch({
+      type: "SET_IS_REVIEWER",
+      payload: isReviewer,
+    });
+  };
+
   const setSelf = (self: null | any) => {
     dispatch({
       type: "SET_SELF",
@@ -125,6 +132,8 @@ const Web3Provider = ({ children }: { children: any }) => {
     setProvider(null);
     setSelf(null);
     setCore(null);
+    setIsReviewer(false);
+    setContracts(null);
     localStorage.setItem("defaultWallet", "");
   };
 
@@ -152,6 +161,8 @@ const Web3Provider = ({ children }: { children: any }) => {
           signer
         );
         setContracts({ projectNFTContract });
+        const isValidReviewer = await projectNFTContract.reviewers(account);
+        setIsReviewer(isValidReviewer);
       }
     }
 

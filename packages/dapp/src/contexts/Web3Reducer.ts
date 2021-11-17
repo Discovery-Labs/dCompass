@@ -6,6 +6,7 @@ export type State = {
   self: null | any;
   core: null | any;
   contracts: null | any;
+  isReviewer: boolean;
   connectWeb3?: any;
   logout?: any;
 };
@@ -30,6 +31,11 @@ export const Web3Reducer = (state: State, action: Record<string, any>) => {
       return {
         ...state,
         core: action.payload,
+      };
+    case "SET_IS_REVIEWER":
+      return {
+        ...state,
+        isReviewer: action.payload,
       };
     case "SET_CONTRACTS":
       return {
