@@ -105,7 +105,7 @@ const Web3Provider = ({ children }: { children: any }) => {
   }, []);
 
   useEffect(() => {
-    if (chainId) {
+    if (chainId && state.provider) {
       const strChainId = chainId.toString() as keyof typeof NETWORKS;
       if (supportedNetworks.includes(strChainId)) {
         const network = NETWORKS[strChainId];
@@ -134,7 +134,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       cacheProvider: false,
     });
     const provider = await web3Modal.connect();
-    const ethersProvider = new ethers.providers.Web3Provider(provider);
+    const ethersProvider = new ethers.providers.Web3Provider(provider, "any");
     activate(
       ethersProvider.connection.url === "metamask" ? injected : walletconnect
     );

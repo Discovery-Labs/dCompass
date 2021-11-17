@@ -87,18 +87,23 @@ function CreateProjectStepper() {
     });
     const { cids } = await cidsRes.json();
 
+    let contributors = [] as string[];
     const serializedProject = {
       ...values,
       logo: cids.logo,
       squads: values.squads.map((squad) => {
+        const members = squad.members.map(
+          (member: any) => member.value
+        ) as string[];
+        contributors = members;
         return {
           ...squad,
           image: cids[squad.name],
-          members: squad.members.map((member: any) => member.value),
+          members,
         };
       }),
     };
-    console.log({ serializedProject });
+    console.log({ contributors, serializedProject });
 
     const newProjectDoc = await self.client.dataModel.createTile(
       "Project",
@@ -108,7 +113,7 @@ function CreateProjectStepper() {
     // Get user's existing projects
     const existingProjects = await self.client.dataStore.get(PROJECTS_ALIAS);
 
-    // Push new project to the index
+    // Index his new project
     if (existingProjects && existingProjects.projects.length > 0) {
       await self.client.dataStore.set(PROJECTS_ALIAS, {
         projects: [...existingProjects.projects, newProjectDoc.id.toUrl()],
@@ -118,6 +123,17 @@ function CreateProjectStepper() {
         projects: [newProjectDoc.id.toUrl()],
       });
     }
+
+    const voteForApprovalTx =
+      await contracts.projectNFTContract.voteForApproval(
+        contributors,
+        10,
+        newProjectDoc.id.toUrl()
+      );
+
+    // get return values or events
+    const receipt = await voteForApprovalTx.wait(2);
+    console.log({ receipt });
 
     const allProjects = await createProjectMutation({
       variables: {
