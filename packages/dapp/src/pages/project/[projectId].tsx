@@ -11,24 +11,22 @@ import {
   TabPanels,
   Tabs,
   Text,
-  Icon,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 import Container from "../../components/layout/Container";
 import QuestCard from "../../components/QuestCard";
 import IconWithState from "components/custom/IconWithState";
 
 const ProjectData = {
-  logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
+  logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA/",
   avatar: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
   owner: "huxwell.eth",
   name: "Project Alpha",
   description:
     "This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.",
   website: "https://www.google.com",
-  whitepaper: "https://www.google.com",
+  whitepaper: "https://www.twitter.com",
   social: {
     github: "https://github.com",
   },
