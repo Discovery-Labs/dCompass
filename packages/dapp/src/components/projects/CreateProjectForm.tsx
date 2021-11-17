@@ -10,7 +10,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React, { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { useFormContext } from "react-hook-form";
 
@@ -81,7 +81,13 @@ const CreateProjectForm: React.FunctionComponent = () => {
         {isDragActive ? (
           <p>Drop the files here ...</p>
         ) : (
-          <Center h="150px" bg="aqua.300" color="space" borderRadius="4">
+          <Center
+            _hover={{ cursor: "pointer" }}
+            h="150px"
+            bg="aqua.300"
+            color="space"
+            borderRadius="4"
+          >
             Drag something here or select
           </Center>
         )}

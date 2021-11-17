@@ -14,6 +14,24 @@ import { useRouter } from "next/router";
 import Tilt from "react-parallax-tilt";
 import Container from "../components/layout/Container";
 
+import ProjectCard from "../components/projects/ProjectCard";
+
+const ProjectData = {
+  logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
+  avatar: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
+  owner: "huxwell.eth",
+  name: "Project Alpha",
+  description:
+    "This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.",
+  website: "https://www.google.com",
+  whitepaper: "https://www.google.com",
+  social: {
+    github: "https://github.com",
+  },
+  signals: 24,
+  created: "2021-09-13",
+};
+
 const Home = () => {
   const router = useRouter();
 
@@ -40,18 +58,21 @@ const Home = () => {
           Explore the Web3 space and contribute to your favorite projects.
         </Box>
 
-        <Tilt glareEnable glareMaxOpacity={0.15} scale={1.05}>
-          <Image
-            w="600px"
-            borderRadius="sm"
-            m="4"
-            src="https://images.unsplash.com/photo-1594897030264-ab7d87efc473"
-          />
-        </Tilt>
-        <Flex maxW="300px" pt="12">
+        <SimpleGrid p="8" columns={[1, 2, 3]} spacing={10}>
+          <Tilt glareEnable glareMaxOpacity={0.15} scale={1.05}>
+            <ProjectCard project={ProjectData} />
+          </Tilt>
+          <Tilt glareEnable glareMaxOpacity={0.15} scale={1.05}>
+            <ProjectCard project={ProjectData} />
+          </Tilt>
+          <Tilt glareEnable glareMaxOpacity={0.15} scale={1.05}>
+            <ProjectCard project={ProjectData} />
+          </Tilt>
+        </SimpleGrid>
+
+        <Flex maxW="300px">
           <Button
             size="lg"
-            colorScheme="aqua"
             onClick={() => goTo("/projects")}
             aria-label="Launch App"
           >
@@ -61,7 +82,12 @@ const Home = () => {
             size="lg"
             variant="outline"
             ml="1.5rem"
-            onClick={() => goTo("/about")}
+            onClick={() =>
+              window.open(
+                "https://gov.gitcoin.co/t/proposal-integrate-dcompass-within-dgitcoin-to-build-dquests-dknowledge/8836",
+                "_blank"
+              )
+            }
             aria-label="Learn More"
           >
             Learn More
