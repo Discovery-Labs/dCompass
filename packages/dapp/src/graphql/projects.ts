@@ -2,7 +2,11 @@ import { gql } from "@apollo/client";
 
 export const CREATE_PROJECT_MUTATION = gql`
   mutation CreateProject($input: CreateProjectInput!) {
-    createProject(input: $input)
+    createProject(input: $input) {
+      id
+      tokenUri
+      isFeatured
+    }
   }
 `;
 

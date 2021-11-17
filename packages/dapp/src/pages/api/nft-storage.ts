@@ -36,18 +36,17 @@ const nftStorage = new NFTStorage({ token: getNFTStorageToken() });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const form = await parseForm(req);
-  const file = form.files.file[0];
+  const file = form.files.logo[0];
+  const properties = JSON.parse(form.fields.metadata);
   const name = file.originalFilename as string;
   const f = new File([fs.readFileSync(file.path)], name, { type: "image/*" });
   const nftCid = await nftStorage.store({
     name,
-    description: "test nft description",
+    description: `Genesis ${properties.name} NFT`,
     image: f,
-    properties: {
-      ceramicStreamId: req.body.ceramicStreamId,
-    },
+    properties,
   });
-  res.status(200).json({ cid: nftCid.url });
+  res.status(200).json({ cid: nftCid });
 }
 
 // first we need to disable the default body parser

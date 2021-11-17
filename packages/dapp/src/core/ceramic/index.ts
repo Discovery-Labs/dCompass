@@ -15,6 +15,7 @@ export const CERAMIC_MAINNET_NODE_URL = "https://gateway.ceramic.network";
 export const CERAMIC_LOCAL_NODE_URL = "http://localhost:7007";
 
 export const schemaAliases = {
+  APP_PROJECTS_ALIAS: "@dCompass/appprojects",
   PROJECTS_ALIAS: "@dCompass/projects",
   COURSES_ALIAS: "@dCompass/courses",
   LEARNERS_ALIAS: "@dCompass/learners",

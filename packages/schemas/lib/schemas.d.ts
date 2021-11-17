@@ -21,6 +21,39 @@ export declare const schemas: {
                 };
             };
         };
+        AppProjects: {
+            $schema: string;
+            title: string;
+            type: string;
+            properties: {
+                projects: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                        title: string;
+                        properties: {
+                            id: {
+                                $ref: string;
+                            };
+                            tokenUri: {
+                                type: string;
+                            };
+                            isFeatured: {
+                                type: string;
+                            };
+                        };
+                    };
+                };
+            };
+            definitions: {
+                CeramicStreamId: {
+                    type: string;
+                    pattern: string;
+                    maxLength: number;
+                };
+            };
+        };
         Projects: {
             $schema: string;
             title: string;

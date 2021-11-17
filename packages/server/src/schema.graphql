@@ -4,6 +4,13 @@
 
 input CreateProjectInput {
   id: String!
+  tokenUri: String!
+}
+
+type CreateProjectOutput {
+  id: String!
+  isFeatured: Boolean!
+  tokenUri: String!
 }
 
 """
@@ -13,7 +20,7 @@ scalar DateTime
 
 type Mutation {
   """Create a new Project in dCompass"""
-  createProject(input: CreateProjectInput!): [String!]
+  createProject(input: CreateProjectInput!): [CreateProjectOutput!]
 }
 
 type Query {

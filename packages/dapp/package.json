@@ -43,6 +43,7 @@
     "@web3-react/walletconnect-connector": "^6.2.8",
     "authereum": "^0.1.14",
     "chakra-ui-steps": "^1.3.0",
+    "cids": "^1.1.9",
     "dids": "^2.4.0",
     "ethers": "^5.5.1",
     "framer-motion": "^4.1.17",

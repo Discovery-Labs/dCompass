@@ -31,12 +31,6 @@ function getWeb3Token() {
   return token;
 }
 
-function getNFTStorageToken(): string {
-  const token = process.env.NFTSTORAGE_TOKEN;
-  if (!token) throw new Error(`Misconfigured: nft.storage token`);
-  return token;
-}
-
 const web3Storage = new Web3Storage({ token: getWeb3Token() });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {

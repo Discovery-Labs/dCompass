@@ -110,17 +110,35 @@ function CreateProjectStepper() {
       serializedProject
     );
 
+    const projectId = newProjectDoc.id.toUrl();
+    formData.append(
+      "metadata",
+      JSON.stringify({
+        projectId,
+        ...newProjectDoc.content,
+      })
+    );
+
+    const nftCidRes = await fetch("/api/nft-storage", {
+      method: "POST",
+      body: formData,
+    });
+
+    const { cid } = await nftCidRes.json();
+
+    console.log({ cid });
+
     // Get user's existing projects
     const existingProjects = await self.client.dataStore.get(PROJECTS_ALIAS);
 
     // Index his new project
     if (existingProjects && existingProjects.projects.length > 0) {
       await self.client.dataStore.set(PROJECTS_ALIAS, {
-        projects: [...existingProjects.projects, newProjectDoc.id.toUrl()],
+        projects: [...existingProjects.projects, projectId],
       });
     } else {
       await self.client.dataStore.set(PROJECTS_ALIAS, {
-        projects: [newProjectDoc.id.toUrl()],
+        projects: [projectId],
       });
     }
 
@@ -128,7 +146,7 @@ function CreateProjectStepper() {
       await contracts.projectNFTContract.voteForApproval(
         contributors,
         10,
-        newProjectDoc.id.toUrl()
+        projectId
       );
 
     // get return values or events
@@ -138,7 +156,8 @@ function CreateProjectStepper() {
     const allProjects = await createProjectMutation({
       variables: {
         input: {
-          id: newProjectDoc.id.toUrl(),
+          id: projectId,
+          tokenUri: cid.url,
         },
       },
     });

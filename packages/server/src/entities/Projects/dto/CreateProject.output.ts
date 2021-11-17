@@ -1,9 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
-// import { ProjectTagInput } from './ProjectTagsInput';
 
-@InputType()
-export class CreateProjectInput {
+@ObjectType()
+export class CreateProjectOutput {
   @Field()
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
@@ -16,10 +15,10 @@ export class CreateProjectInput {
   @IsNotEmpty({ message: 'not.empty' })
   tokenUri: string;
 
-  // @Field(() => [ProjectTagInput])
-  // @IsDefined({ message: 'not.defined' })
-  // @IsNotEmpty({ message: 'not.empty' })
-  // tags: ProjectTagInput[];
+  @Field(() => Boolean, { defaultValue: false })
+  @IsDefined({ message: 'not.defined' })
+  @IsNotEmpty({ message: 'not.empty' })
+  isFeatured: boolean;
 
   // @Field()
   // @IsString({ message: 'wrong.type' })
