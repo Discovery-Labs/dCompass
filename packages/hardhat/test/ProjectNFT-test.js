@@ -26,6 +26,10 @@ describe("ProjectNFT", function() {
       expect(await projectNFT.multiSigThreshold()).to.be.equal(10);
       expect(await projectNFT.numReviewers()).to.be.equal(5);
       expect(await projectNFT.owner()).to.be.equal(`${owner.address}`);
+      expect(await projectNFT.statusStrings(0)).to.be.equal("NONEXISTENT");
+      expect(await projectNFT.statusStrings(1)).to.be.equal("PENDING");
+      expect(await projectNFT.statusStrings(2)).to.be.equal("DENIED");
+      expect(await projectNFT.statusStrings(3)).to.be.equal("APPROVED");
       
       //reviewers can change Threshold, and add reviewers
       await projectNFT.setThreshold(40);
@@ -34,6 +38,8 @@ describe("ProjectNFT", function() {
       expect(await projectNFT.multiSigThreshold()).to.be.equal(30);
       await projectNFT.connect(addr3).addReviewer(`${addr5.address}`);
       expect(await projectNFT.numReviewers()).to.be.equal(6);
+      await projectNFT.connect(addr5).setStatusString(2,"DEPRECATED");
+      expect(await projectNFT.statusStrings(2)).to.be.equal("DEPRECATED");
   
       //check all reviewers
       expect(await projectNFT.reviewers("0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631")).to.be.false;

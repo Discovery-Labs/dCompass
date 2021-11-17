@@ -24,6 +24,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
     mapping (string => address[]) internal contributors;
+    mapping (uint => string) public statusStrings;
     mapping (string => ProjectStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of reviewers for ProjectId
@@ -45,7 +46,11 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
                 reviewers[_reviewers[i]] = true;
                 numReviewers++;
             }
-        } 
+        }
+        statusStrings[0] = "NONEXISTENT";
+        statusStrings[1] = "PENDING";
+        statusStrings[2] = "DENIED";
+        statusStrings[3] = "APPROVED";
     } 
 
     modifier onlyReviewer(){
@@ -119,6 +124,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         require (!reviewers[_reviewer], "already reviewer");
         reviewers[_reviewer]=true;
         numReviewers++;
+    }
+
+    function setStatusString(uint index, string memory newName) external onlyReviewer{
+        statusStrings[index] = newName;
     }
 
     function setThreshold(uint128 _newThreshold) public onlyReviewer{
