@@ -7,11 +7,9 @@ import {
   MenuItem,
   MenuList,
   Text,
-  Tag,
-  TagLabel,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { AiFillSetting } from "react-icons/ai";
 import { BsFillPersonLinesFill } from "react-icons/bs";
 
