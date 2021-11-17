@@ -1,5 +1,5 @@
 // import { Resolver, Query } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+// import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 // import { Ceramic } from '../../../core/utils/types';
 // import { ContributorsList } from '../mutations/JoinAsContributor.resolver';
 // import { Contributor } from '../Contributor.entity';
@@ -12,7 +12,7 @@
 //     name: 'getAllContributors',
 //   })
 //   async getAllContributors(
-//     @UseCeramicClient() ceramicClient: Ceramic,
+//     @UseCeramic() { ceramicClient }: UseCeramicClient,
 //   ): Promise<Contributor[] | null | undefined> {
 //     const allDiscoveryContributors =
 //       await ceramicClient.idx.get<ContributorsList>('contributors');

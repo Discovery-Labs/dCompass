@@ -1,5 +1,5 @@
 // import { Resolver, Mutation, Args } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+// import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 // import { Ceramic } from '../../../core/utils/types';
 // import { createCeramicDocument } from '../../../services/ceramic/ceramic.service';
 // import { CreateTagInput } from '../dto/CreateTag.input';
@@ -21,7 +21,7 @@
 //     name: 'createTag',
 //   })
 //   async createTag(
-//     @UseCeramicClient() ceramicClient: Ceramic,
+//     @UseCeramic() { ceramicClient }: UseCeramicClient,
 //     @Args('input') tag: CreateTagInput,
 //   ): Promise<Tag | null | undefined> {
 //     const createdTag = await createCeramicDocument(ceramicClient, {

@@ -1,7 +1,7 @@
 import { Resolver, Query } from '@nestjs/graphql';
 import { schemaAliases } from '../../../core/constants/idx';
-import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
-import { Ceramic } from '../../../core/utils/types';
+import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
+import { UseCeramicClient } from '../../../core/utils/types';
 import { Project } from '../Project.entity';
 
 @Resolver(() => [Project])
@@ -12,7 +12,7 @@ export class GetAllProjectsResolver {
     name: 'getAllProjects',
   })
   async getAllProjects(
-    @UseCeramicClient() ceramicClient: Ceramic,
+    @UseCeramic() { ceramicClient }: UseCeramicClient,
   ): Promise<Project[] | null | undefined> {
     const allProjects = await ceramicClient.dataStore.get(
       schemaAliases.APP_PROJECTS_ALIAS,

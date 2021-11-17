@@ -1,6 +1,6 @@
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { compareHash } from '../../../core/utils/security/hash';
 import { Ceramic } from '../../../core/utils/types';
 import { QuestAnswersSubmitionInput } from '../dto/QuestAnswersSubmition.input';
@@ -14,7 +14,7 @@ export class SubmitQuestAnswersResolver {
     name: 'submitQuestAnswers',
   })
   async submitQuestAnswers(
-    @UseCeramicClient() ceramicClient: Ceramic,
+    @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args('input') answerSubmition: QuestAnswersSubmitionInput,
   ): Promise<boolean> {
     const questDetails = await ceramicClient.ceramic.loadStream(

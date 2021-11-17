@@ -18,7 +18,10 @@ import config from './core/configs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { CorsConfig, SwaggerConfig } from './core/configs/config.interface';
-import { ceramicDataModelFactory } from './services/ceramic/data-models';
+import {
+  ceramicCoreFactory,
+  ceramicDataModelFactory,
+} from './services/ceramic/data-models';
 
 const {
   api: { protocol, hostname, port, corsOptions },
@@ -38,6 +41,7 @@ async function bootstrap() {
   app.enableShutdownHooks(['SIGINT', 'SIGTERM']);
 
   const ceramicClient = await ceramicDataModelFactory();
+  const ceramicCore = ceramicCoreFactory();
 
   // app.use(helmet());
   app.use(cookieParser(sessionOptions.secret));
@@ -54,6 +58,7 @@ async function bootstrap() {
 
   app.use((req: Context['req'], _res: Context['res'], next: NextFunction) => {
     req.ceramicClient = ceramicClient;
+    req.ceramicCore = ceramicCore;
     next();
   });
 

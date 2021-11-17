@@ -1,5 +1,5 @@
 // import { Resolver, Mutation, Args } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+// import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 // import { Ceramic } from '../../../core/utils/types';
 // import { createCeramicDocument } from '../../../services/ceramic/ceramic.service';
 // import { Contributor } from '../Contributor.entity';
@@ -20,7 +20,7 @@
 //     name: 'joinAsContributor',
 //   })
 //   async createContributor(
-//     @UseCeramicClient() ceramicClient: Ceramic,
+//     @UseCeramic() { ceramicClient }: UseCeramicClient,
 //     @Args('input') { did, githubUsername }: JoinAsContributorInput,
 //   ): Promise<Contributor | null | undefined> {
 //     const createdContributor = await createCeramicDocument(ceramicClient, {

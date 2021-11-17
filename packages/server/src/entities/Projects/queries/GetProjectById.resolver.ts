@@ -1,5 +1,5 @@
 // import { Resolver, Query, Args } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+// import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 // import { Ceramic } from '../../../core/utils/types';
 // import { CourseItem } from '../../Courses/mutations/CreateCourse.resolver';
 // import { QuestItem } from '../../Quests/mutations/CreateQuest.resolver';
@@ -13,7 +13,7 @@
 //     name: 'getProjectById',
 //   })
 //   async getProjectById(
-//     @UseCeramicClient() ceramicClient: Ceramic,
+//     @UseCeramic() { ceramicClient }: UseCeramicClient,
 //     @Args('projectId') projectId: string,
 //   ): Promise<Project | null | undefined> {
 //     const record = await ceramicClient.ceramic.loadStream(projectId);

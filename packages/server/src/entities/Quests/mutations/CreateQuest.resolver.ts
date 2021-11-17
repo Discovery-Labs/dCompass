@@ -1,6 +1,6 @@
 // import { TileDocument } from '@ceramicnetwork/stream-tile';
 // import { Resolver, Mutation, Args } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+// import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 // import { generateHash } from '../../../core/utils/security/hash';
 // import { Ceramic } from '../../../core/utils/types';
 // import { createCeramicDocument } from '../../../services/ceramic/ceramic.service';
@@ -23,7 +23,7 @@
 //     name: 'createQuest',
 //   })
 //   async createQuest(
-//     @UseCeramicClient() ceramicClient: Ceramic,
+//     @UseCeramic() { ceramicClient }: UseCeramicClient,
 //     @Args('input') quest: CreateQuestInput,
 //   ): Promise<Quest | null | undefined> {
 //     const questionsWithHashedAnswer = await Promise.all(

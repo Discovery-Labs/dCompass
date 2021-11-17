@@ -1,5 +1,5 @@
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { Ceramic } from '../../../core/utils/types';
 import { Quest } from '../Quest.entity';
 
@@ -11,7 +11,7 @@ export class GetQuestByIdResolver {
     name: 'getQuestById',
   })
   async getQuestById(
-    @UseCeramicClient() ceramicClient: Ceramic,
+    @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args('questId') questId: string,
   ): Promise<Quest | null | undefined> {
     const record = await ceramicClient.ceramic.loadStream(questId);

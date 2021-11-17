@@ -1,5 +1,5 @@
 // import { Resolver, Query } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+// import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 // import { Ceramic } from '../../../core/utils/types';
 // import { CoursesList } from '../mutations/CreateCourse.resolver';
 // import { Course } from '../Course.entity';
@@ -12,7 +12,7 @@
 //     name: 'getAllCourses',
 //   })
 //   async getAllCourses(
-//     @UseCeramicClient() ceramicClient: Ceramic,
+//     @UseCeramic() { ceramicClient }: UseCeramicClient,
 //   ): Promise<Course[] | null | undefined> {
 //     const allDiscoveryCourses = await ceramicClient.idx.get<CoursesList>(
 //       'courses',

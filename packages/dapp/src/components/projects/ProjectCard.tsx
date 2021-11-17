@@ -24,7 +24,7 @@ function ProjectCard({
   isReviewMode = false,
 }: {
   project: Project;
-  isReviewMode: boolean;
+  isReviewMode?: boolean;
 }) {
   const router = useRouter();
 

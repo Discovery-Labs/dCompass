@@ -39,6 +39,7 @@ enum CourseTypeEnum {
 }
 
 input CreateProjectInput {
+  creatorSignature: String!
   id: String!
   tokenUri: String!
 }

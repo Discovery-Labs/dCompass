@@ -27,7 +27,7 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
-  const { self, contracts } = useContext(Web3Context);
+  const { self, contracts, provider } = useContext(Web3Context);
   const web3React = useWeb3React();
 
   const {
@@ -88,7 +88,6 @@ function CreateProjectStepper() {
     });
     const { cids } = await cidsRes.json();
 
-    let contributors = [] as string[];
     const serializedProject = {
       ...values,
       logo: cids.logo,
@@ -96,7 +95,6 @@ function CreateProjectStepper() {
         const members = squad.members.map(
           (member: any) => member.value
         ) as string[];
-        contributors = members;
         return {
           ...squad,
           image: cids[squad.name],
@@ -104,7 +102,6 @@ function CreateProjectStepper() {
         };
       }),
     };
-    console.log({ contributors, serializedProject });
 
     const newProjectDoc = await self.client.dataModel.createTile(
       "Project",
@@ -127,8 +124,6 @@ function CreateProjectStepper() {
 
     const { cid } = await nftCidRes.json();
 
-    console.log({ cid });
-
     // Get user's existing projects
     const existingProjects = await self.client.dataStore.get(PROJECTS_ALIAS);
 
@@ -142,27 +137,23 @@ function CreateProjectStepper() {
         projects: [projectId],
       });
     }
-
+    const signature = await provider.provider.send("personal_sign", [
+      JSON.stringify({
+        id: projectId,
+        tokenUri: cid.url,
+      }),
+      account,
+    ]);
     const allProjects = await createProjectMutation({
       variables: {
         input: {
           id: projectId,
           tokenUri: cid.url,
+          creatorSignature: signature.result,
         },
       },
     });
     console.log({ allProjects });
-
-    // // get return values or events
-    // const voteForApprovalTx =
-    //   await contracts.projectNFTContract.voteForApproval(
-    //     contributors,
-    //     10,
-    //     projectId
-    //   );
-    // const receipt = await voteForApprovalTx.wait(2);
-
-    // console.log({ receipt });
   }
 
   return account && contracts ? (

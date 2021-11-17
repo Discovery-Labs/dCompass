@@ -3,20 +3,21 @@ import { ExecutionParams } from 'subscriptions-transport-ws';
 import CeramicClient from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
 import { DataModel } from '@glazed/datamodel';
-
-export interface Context {
-  req: {
-    session: any;
-    ceramicClient: Ceramic;
-  } & Request;
-  res: Response;
-  connection: ExecutionParams;
-}
+import { Core } from '@self.id/core';
 
 export interface Ceramic {
   ceramic: CeramicClient;
   dataStore: DIDDataStore;
   model: DataModel<any, any>;
+}
+export interface Context {
+  req: {
+    session: any;
+    ceramicClient: Ceramic;
+    ceramicCore: Core;
+  } & Request;
+  res: Response;
+  connection: ExecutionParams;
 }
 
 export interface RateLimitOptionsType {
@@ -24,4 +25,9 @@ export interface RateLimitOptionsType {
   windowMs: number;
   limitByVariables: boolean;
   errorMessage: string;
+}
+
+export interface UseCeramicClient {
+  ceramicCore: Core;
+  ceramicClient: Ceramic;
 }

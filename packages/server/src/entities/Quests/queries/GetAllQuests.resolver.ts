@@ -1,5 +1,5 @@
 // import { Resolver, Query } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+// import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 // import { Ceramic } from '../../../core/utils/types';
 // import { QuestsList } from '../mutations/CreateQuest.resolver';
 // import { Quest } from '../Quest.entity';
@@ -12,7 +12,7 @@
 //     name: 'getAllQuests',
 //   })
 //   async getAllQuests(
-//     @UseCeramicClient() ceramicClient: Ceramic,
+//     @UseCeramic() { ceramicClient }: UseCeramicClient,
 //   ): Promise<Quest[] | null | undefined> {
 //     const allDiscoveryQuests = await ceramicClient.idx.get<QuestsList>(
 //       'quests',

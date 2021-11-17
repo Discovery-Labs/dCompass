@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import {
-  Button,
   Flex,
   Heading,
   SimpleGrid,
@@ -24,6 +23,18 @@ import { ALL_PROJECTS_QUERY } from "../../graphql/projects";
 function ReviewProjects() {
   const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY);
   const { isReviewer } = useContext(Web3Context);
+
+  // TODO: WIP approve project
+  // // get return values or events
+  // const voteForApprovalTx =
+  //   await contracts.projectNFTContract.voteForApproval(
+  //     contributors,
+  //     10,
+  //     projectId
+  //   );
+  // const receipt = await voteForApprovalTx.wait(2);
+
+  // console.log({ receipt });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   return isReviewer ? (
@@ -48,7 +59,11 @@ function ReviewProjects() {
                 )
                 .map((project: any) => (
                   // TODO: use GraphQL codegen to get the types out of the box
-                  <ProjectCard key={project.name} project={project} />
+                  <ProjectCard
+                    isReviewMode
+                    key={project.name}
+                    project={project}
+                  />
                 ))}
             </SimpleGrid>
           </TabPanel>
@@ -57,7 +72,11 @@ function ReviewProjects() {
               {data.getAllProjects
                 .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
                 .map((project: any) => (
-                  <ProjectCard key={project.name} project={project} />
+                  <ProjectCard
+                    isReviewMode
+                    key={project.name}
+                    project={project}
+                  />
                 ))}
             </SimpleGrid>
           </TabPanel>

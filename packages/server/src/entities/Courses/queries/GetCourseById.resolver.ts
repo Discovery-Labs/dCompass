@@ -1,5 +1,5 @@
 // import { Resolver, Query, Args } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+// import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 // import { Ceramic } from '../../../core/utils/types';
 // import { Course } from '../Course.entity';
 
@@ -11,7 +11,7 @@
 //     name: 'getCourseById',
 //   })
 //   async getCourseById(
-//     @UseCeramicClient() ceramicClient: Ceramic,
+//     @UseCeramic() { ceramicClient }: UseCeramicClient,
 //     @Args('courseId') courseId: string,
 //   ): Promise<Course | null | undefined> {
 //     console.log('COURSE QUERY');

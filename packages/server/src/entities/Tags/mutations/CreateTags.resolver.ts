@@ -1,6 +1,6 @@
 // import { TileDocument } from '@ceramicnetwork/stream-tile';
 // import { Resolver, Mutation, Args } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+// import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 // import { Ceramic } from '../../../core/utils/types';
 // import { createCeramicDocument } from '../../../services/ceramic/ceramic.service';
 // import { CreateTagsInput } from '../dto/CreateTags.input';
@@ -15,7 +15,7 @@
 //     name: 'createTags',
 //   })
 //   async createTags(
-//     @UseCeramicClient() ceramicClient: Ceramic,
+//     @UseCeramic() { ceramicClient }: UseCeramicClient,
 //     @Args('input') { tags }: CreateTagsInput,
 //   ): Promise<Tag[] | null | undefined> {
 //     const createdTags = [] as

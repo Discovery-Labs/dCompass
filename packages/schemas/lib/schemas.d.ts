@@ -42,6 +42,9 @@ export declare const schemas: {
                             isFeatured: {
                                 type: string;
                             };
+                            creatorSignature: {
+                                type: string;
+                            };
                         };
                     };
                 };

@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { Resolver, Query, Context } from '@nestjs/graphql';
-import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { Ceramic, Context as ContextType } from '../../../core/utils/types';
 import { User } from '../User.entity';
 import { UserService } from '../User.service';
@@ -15,7 +15,7 @@ export class MeResolver {
   })
   async me(
     @Context() ctx: ContextType,
-    @UseCeramicClient() ceramicClient: Ceramic,
+    @UseCeramic() { ceramicClient }: UseCeramicClient,
   ): Promise<User | undefined> {
     Logger.log('ceramicClient', ceramicClient);
     if (!ctx.req.session.userId || !ceramicClient) {
