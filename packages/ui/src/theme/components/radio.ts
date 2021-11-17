@@ -1,5 +1,9 @@
-/* eslint-disable @typescript-eslint/dot-notation */
-import { DeepPartial, Theme } from "@chakra-ui/react";
+import { radioAnatomy as parts } from "@chakra-ui/anatomy";
+import {
+  PartsStyleFunction,
+  PartsStyleObject,
+  SystemStyleFunction,
+} from "@chakra-ui/theme-tools";
 
 import Checkbox from "./checkbox";
 
@@ -20,22 +24,60 @@ type BaseStyle = {
   };
 };
 
-const baseStyle = Checkbox?.baseStyle as BaseStyle;
+const baseStyleControl: SystemStyleFunction = (props) => {
+  const { control } = Checkbox.baseStyle(props) as BaseStyle;
 
-const Radio: DeepPartial<Theme["components"]["Radio"]> = {
-  baseStyle: {
-    control: {
-      _focus: {
-        ...baseStyle.control["_focus"],
-      },
-      _checked: {
-        ...baseStyle.control["_checked"],
+  return {
+    ...control,
+    borderRadius: "full",
+    _focus: {
+      // eslint-disable-next-line no-underscore-dangle
+      ...control._focus,
+    },
+    _checked: {
+      // eslint-disable-next-line no-underscore-dangle
+      ...control._checked,
+      _before: {
+        content: `""`,
+        display: "inline-block",
+        pos: "relative",
+        w: "50%",
+        h: "50%",
+        borderRadius: "50%",
+        bg: "currentColor",
       },
     },
-    label: {
-      color: "stone",
-    },
+  };
+};
+
+const baseStyle: PartsStyleFunction<typeof parts> = (props) => ({
+  label: Checkbox.baseStyle(props).label,
+  control: baseStyleControl(props),
+});
+
+const sizes: Record<string, PartsStyleObject<typeof parts>> = {
+  md: {
+    control: { w: 4, h: 4 },
+    label: { fontSize: "md" },
+  },
+  lg: {
+    control: { w: 5, h: 5 },
+    label: { fontSize: "lg" },
+  },
+  sm: {
+    control: { width: 3, height: 3 },
+    label: { fontSize: "sm" },
   },
 };
 
-export default Radio;
+const defaultProps = {
+  size: "md",
+  colorScheme: "aqua",
+};
+
+export default {
+  parts: parts.keys,
+  baseStyle,
+  sizes,
+  defaultProps,
+};
