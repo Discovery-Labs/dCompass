@@ -19,21 +19,18 @@ import { Web3Context } from "../../contexts/Web3Provider";
 
 import LogoutButton from "./LogoutButton";
 
-function ConnectButton() {
-  const { account, connectWeb3, logout, isReviewer } = useContext(Web3Context);
+function ConnectButton({ w }: { w?: string }) {
+  const { account, connectWeb3, logout } = useContext(Web3Context);
 
   return (
     <HStack w="full">
-      {account && isReviewer && (
-        <Tag colorScheme="green">
-          <TagLabel>Reviewer</TagLabel>
-        </Tag>
-      )}
       <Text>{account}</Text>
       {account ? (
         <Button onClick={logout}>Logout</Button>
       ) : (
-        <Button onClick={connectWeb3}>Connect</Button>
+        <Button onClick={connectWeb3} w={w}>
+          Connect
+        </Button>
       )}
       <Menu>
         <MenuButton

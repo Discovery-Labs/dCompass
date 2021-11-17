@@ -1,6 +1,17 @@
-import { Box, Container, Flex, Heading, Link, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Flex,
+  Heading,
+  Link,
+  Stack,
+  Tag,
+  TagLabel,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useContext } from "react";
 
+import { Web3Context } from "../../contexts/Web3Provider";
 import ConnectButton from "../Buttons/ConnectButton";
 import LogoIcon from "../Icons/LogoIcon";
 
@@ -23,6 +34,7 @@ const LinkItem = ({ href, path, _target, children, ...props }) => {
 
 const Navbar = (props) => {
   const { path } = props;
+  const { account, isReviewer } = useContext(Web3Context);
 
   return (
     <Box
@@ -75,6 +87,14 @@ const Navbar = (props) => {
         </Stack>
 
         <Flex>
+          {account && isReviewer && (
+            <LinkItem href="/projects/review" path={path}>
+              <Tag colorScheme="green">
+                <TagLabel>Reviews</TagLabel>
+              </Tag>
+            </LinkItem>
+          )}
+
           <ConnectButton />
         </Flex>
       </Container>

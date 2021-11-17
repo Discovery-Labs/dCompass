@@ -112,20 +112,28 @@ const Web3Provider = ({ children }: { children: any }) => {
   }, []);
 
   useEffect(() => {
-    if (chainId && state.provider) {
-      const strChainId = chainId.toString() as keyof typeof NETWORKS;
-      if (supportedNetworks.includes(strChainId)) {
-        const network = NETWORKS[strChainId];
-        const abis = ABIS as Record<string, any>;
-        const projectNFTContract = new ethers.Contract(
-          abis[strChainId][network.name].contracts.ProjectNFT.address,
-          abis[strChainId][network.name].contracts.ProjectNFT.abi,
-          state.provider.getSigner()
-        );
-        setContracts({ projectNFTContract });
+    async function updateState() {
+      if (chainId && state.provider && state.account) {
+        const strChainId = chainId.toString() as keyof typeof NETWORKS;
+        if (supportedNetworks.includes(strChainId)) {
+          const network = NETWORKS[strChainId];
+          const abis = ABIS as Record<string, any>;
+          const signer = state.provider.getSigner();
+          const projectNFTContract = new ethers.Contract(
+            abis[strChainId][network.name].contracts.ProjectNFT.address,
+            abis[strChainId][network.name].contracts.ProjectNFT.abi,
+            signer
+          );
+          setContracts({ projectNFTContract });
+          const isValidReviewer = await projectNFTContract.reviewers(
+            state.account
+          );
+          setIsReviewer(isValidReviewer);
+        }
       }
     }
-  }, [chainId, state.provider]);
+    updateState();
+  }, [chainId, state.provider, state.account]);
 
   const logout = async () => {
     setAccount(null);

@@ -5,6 +5,7 @@ import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
+import NotConnectedCard from "../../components/custom/NotConnectedCard";
 import CenteredFrame from "../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../components/projects/CreateProjectForm";
 import SquadsForm from "../../components/projects/squads/SquadsForm";
@@ -142,17 +143,6 @@ function CreateProjectStepper() {
       });
     }
 
-    const voteForApprovalTx =
-      await contracts.projectNFTContract.voteForApproval(
-        contributors,
-        10,
-        projectId
-      );
-
-    // get return values or events
-    const receipt = await voteForApprovalTx.wait(2);
-    console.log({ receipt });
-
     const allProjects = await createProjectMutation({
       variables: {
         input: {
@@ -161,11 +151,21 @@ function CreateProjectStepper() {
         },
       },
     });
-
     console.log({ allProjects });
+
+    // // get return values or events
+    // const voteForApprovalTx =
+    //   await contracts.projectNFTContract.voteForApproval(
+    //     contributors,
+    //     10,
+    //     projectId
+    //   );
+    // const receipt = await voteForApprovalTx.wait(2);
+
+    // console.log({ receipt });
   }
 
-  return (
+  return account && contracts ? (
     <FormProvider {...methods}>
       <CenteredFrame>
         <Card h="full" w="2xl">
@@ -215,6 +215,12 @@ function CreateProjectStepper() {
         </Card>
       </CenteredFrame>
     </FormProvider>
+  ) : (
+    <CenteredFrame>
+      <Card h="full" w="2xl" border="solid 1px red">
+        <NotConnectedCard />
+      </Card>
+    </CenteredFrame>
   );
 }
 
