@@ -1,28 +1,42 @@
+import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
   Container,
   Flex,
   Heading,
+  HStack,
+  IconButton,
   Link,
+  Spacer,
   Stack,
   Tag,
   TagLabel,
+  useDisclosure,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import { useContext } from "react";
 
 import { Web3Context } from "../../contexts/Web3Provider";
 import ConnectButton from "../Buttons/ConnectButton";
 import LogoIcon from "../Icons/LogoIcon";
 
-const LinkItem = ({ href, path, _target, children, ...props }) => {
-  const active = path === href;
+const LinkItem = ({ href, _target, children, ...props }: any) => {
+  const { pathname } = useRouter();
+  let isActive = false;
+
+  if (href !== "/") {
+    const [, path] = href.split("/");
+    isActive = pathname.includes(path);
+  } else if (href === pathname) {
+    isActive = true;
+  }
+
   return (
     <NextLink href={href} passHref>
       <Link
         p={2}
-        bg={active ? "aqua.400" : undefined}
-        color={active ? "aqua.300" : "stone"}
+        color={isActive ? "aqua.300" : "stone"}
         _target={_target}
         {...props}
       >
@@ -32,9 +46,9 @@ const LinkItem = ({ href, path, _target, children, ...props }) => {
   );
 };
 
-const Navbar = (props) => {
-  const { path } = props;
+const Navbar = (props: any) => {
   const { account, isReviewer } = useContext(Web3Context);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Box
@@ -49,55 +63,61 @@ const Navbar = (props) => {
     >
       <Container
         display="flex"
-        p={2}
+        p="2"
         maxW="7xl"
         wrap="wrap"
         align="center"
         justify="space-between"
       >
-        <NextLink href="/">
-          <Flex _hover={{ cursor: "pointer" }} align="center" mr={5}>
-            <LogoIcon size="25px" />
-            <Heading fontSize="lg" pl="2">
-              dCompass
-            </Heading>
-          </Flex>
-        </NextLink>
-
-        <Stack
-          direction={{ base: "column", md: "row" }}
-          display={{ base: "none", md: "flex" }}
-          width={{ base: "full", md: "auto" }}
-          alignItems="center"
-          flexGrow={1}
-          mt={{ base: 4, md: 0 }}
-        >
-          <LinkItem href="/projects" path={path}>
-            Projects
-          </LinkItem>
-          <LinkItem href="/quests" path={path}>
-            Quests
-          </LinkItem>
-          <LinkItem href="/marketplace" path={path}>
-            Marketplace
-          </LinkItem>
-          <LinkItem href="/dashboard" path={path}>
-            Dashboard
-          </LinkItem>
-        </Stack>
-
-        <Flex>
+        <IconButton
+          size="md"
+          px="2"
+          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          aria-label="Open Menu"
+          display={{ md: "none" }}
+          onClick={isOpen ? onClose : onOpen}
+        />
+        <HStack spacing={4} alignItems="center">
+          <Box px="2">
+            <NextLink href="/">
+              <Flex _hover={{ cursor: "pointer" }} align="center" mr={5}>
+                <LogoIcon size="25px" />
+                <Heading fontSize="lg" pl="2">
+                  dCompass
+                </Heading>
+              </Flex>
+            </NextLink>
+          </Box>
+          <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
+            <LinkItem href="/projects">Projects</LinkItem>
+            <LinkItem href="/quests">Quests</LinkItem>
+            <LinkItem href="/marketplace">Marketplace</LinkItem>
+            <LinkItem href="/dashboard">Dashboard</LinkItem>
+          </HStack>
+        </HStack>
+        <Spacer />
+        <Flex alignItems="center">
           {account && isReviewer && (
-            <LinkItem href="/projects/review" path={path}>
+            <LinkItem href="/projects/review">
               <Tag colorScheme="green">
                 <TagLabel>Reviews</TagLabel>
               </Tag>
             </LinkItem>
           )}
-
           <ConnectButton />
         </Flex>
       </Container>
+
+      {isOpen ? (
+        <Box pb={4} display={{ md: "none" }}>
+          <Stack as="nav" spacing={4}>
+            <LinkItem href="/projects">Projects</LinkItem>
+            <LinkItem href="/quests">Quests</LinkItem>
+            <LinkItem href="/marketplace">Marketplace</LinkItem>
+            <LinkItem href="/dashboard">Dashboard</LinkItem>
+          </Stack>
+        </Box>
+      ) : null}
     </Box>
   );
 };
