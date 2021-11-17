@@ -41,10 +41,12 @@ import {
   useDisclosure,
   useToast,
   VStack,
+  useColorMode,
 } from "@chakra-ui/react";
 
 const Elements = () => {
   const toast = useToast();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -53,6 +55,9 @@ const Elements = () => {
       <VStack align="center">
         {/* UI Components */}
         <VStack>
+          <Button onClick={toggleColorMode}>
+            Toggle {colorMode === "light" ? "Dark" : "Light"}
+          </Button>
           <Button variant="solid" colorScheme="purple">
             Hello
           </Button>
