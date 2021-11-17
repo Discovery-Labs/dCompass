@@ -5,7 +5,7 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const devAddress = "0x7E13623dd5D070967c8568066bE81a3E5bF75226"; // "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631"
+  const devAddress = process.env.DEV_ADDRESS;
 
   await deploy("ProjectNFT", {
     from: devAddress,
