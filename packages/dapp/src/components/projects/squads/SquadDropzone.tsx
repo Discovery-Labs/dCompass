@@ -1,15 +1,19 @@
+import { CloseIcon } from "@chakra-ui/icons";
 import {
   Center,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  IconButton,
   Image,
   Input,
+  Text,
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default ({ nestIndex, register, setValue, errors }: any) => {
+export default ({ nestIndex, register, setValue, errors, formLabel }: any) => {
   const [files, setFiles] = useState([]);
 
   const onDrop = useCallback(
@@ -35,9 +39,23 @@ export default ({ nestIndex, register, setValue, errors }: any) => {
   });
 
   const thumbs = files.map((file: any) => (
-    <div key={file.name}>
-      <Image src={file.preview} />
-    </div>
+    <Flex key={file.name}>
+      <Image
+        borderRadius="2"
+        objectFit="cover"
+        boxSize="150px"
+        src={file.preview}
+      />
+      <Flex pl="4" d="column" v="full" alignSelf="center">
+        <IconButton
+          colorScheme="pink"
+          onClick={() => setFiles([])}
+          aria-label="Remove Image"
+          icon={<CloseIcon />}
+        />
+        <Text>{file.path}</Text>
+      </Flex>
+    </Flex>
   ));
 
   useEffect(
@@ -53,18 +71,30 @@ export default ({ nestIndex, register, setValue, errors }: any) => {
       isInvalid={errors.squads && errors.squads[nestIndex].image}
       {...getRootProps()}
     >
-      <FormLabel htmlFor={`squads[${nestIndex}].image`}>Squad image</FormLabel>
-      <Input
-        type="file"
-        placeholder="Image"
-        {...register(`squads[${nestIndex}].image`)}
-        {...getInputProps()}
-      />
-      {thumbs}
-      {isDragActive ? (
-        <p>Drop the files here ...</p>
-      ) : (
+      <FormLabel htmlFor={`squads[${nestIndex}].image`}>{formLabel}</FormLabel>
+      {files && thumbs}
+
+      {files.length === 0 && isDragActive && (
         <Center
+          _hover={{ cursor: "pointer" }}
+          h="150px"
+          bg="aqua.200"
+          color="space"
+          borderRadius="4"
+        >
+          Drop the files here ...
+          <Input
+            type="file"
+            placeholder="Image"
+            {...register(`squads[${nestIndex}].image`)}
+            {...getInputProps()}
+          />
+        </Center>
+      )}
+
+      {files.length === 0 && !isDragActive && (
+        <Center
+          w="full"
           _hover={{ cursor: "pointer" }}
           h="150px"
           bg="aqua.300"
@@ -72,8 +102,15 @@ export default ({ nestIndex, register, setValue, errors }: any) => {
           borderRadius="4"
         >
           Drag something here or select
+          <Input
+            type="file"
+            placeholder="Image"
+            {...register(`squads[${nestIndex}].image`)}
+            {...getInputProps()}
+          />
         </Center>
       )}
+
       <FormErrorMessage>
         {errors.squads &&
           errors.squads[nestIndex].image &&

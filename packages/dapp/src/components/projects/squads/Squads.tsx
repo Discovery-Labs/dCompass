@@ -12,7 +12,7 @@ import {
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import MembersFieldArray from "./MembersFieldArray";
-import SquadImage from "./SquadImage";
+import SquadDropzone from "./SquadDropzone";
 
 export default function Squads({ control, register, setValue }: any) {
   // const router = useRouter();
@@ -107,7 +107,11 @@ export default function Squads({ control, register, setValue }: any) {
               </FormErrorMessage>
             </FormControl>
 
-            <SquadImage nestIndex={index} {...{ register, setValue, errors }} />
+            <SquadDropzone
+              nestIndex={index}
+              formLabel="Squad image"
+              {...{ register, setValue, errors }}
+            />
 
             <FormControl
               isInvalid={errors.squads && errors.squads[index].members}

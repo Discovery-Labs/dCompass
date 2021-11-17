@@ -16,6 +16,8 @@ import { useFormContext } from "react-hook-form";
 
 import IconWithState from "../custom/IconWithState";
 
+import LogoDropzone from "./LogoDropzone";
+
 const CreateProjectForm: React.FunctionComponent = () => {
   const router = useRouter();
   const [files, setFiles] = useState([]);
@@ -68,33 +70,7 @@ const CreateProjectForm: React.FunctionComponent = () => {
   return (
     <>
       <Heading>Create project</Heading>
-      <FormControl isInvalid={errors.name} {...getRootProps()}>
-        <FormLabel htmlFor="logo">Logo</FormLabel>
-        <Input
-          {...register("logo", {
-            required: "This is required",
-          })}
-          {...getInputProps()}
-          placeholder="Logo"
-        />
-        {thumbs}
-        {isDragActive ? (
-          <p>Drop the files here ...</p>
-        ) : (
-          <Center
-            _hover={{ cursor: "pointer" }}
-            h="150px"
-            bg="aqua.300"
-            color="space"
-            borderRadius="4"
-          >
-            Drag something here or select
-          </Center>
-        )}
-        <FormErrorMessage>
-          {errors.name && errors.name.message}
-        </FormErrorMessage>
-      </FormControl>
+      <LogoDropzone {...{ register, setValue, errors }} />
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Project name</FormLabel>
@@ -113,7 +89,7 @@ const CreateProjectForm: React.FunctionComponent = () => {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.name}>
+      <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
         <Textarea
           placeholder="Project description"
@@ -126,11 +102,11 @@ const CreateProjectForm: React.FunctionComponent = () => {
           })}
         />
         <FormErrorMessage>
-          {errors.name && errors.name.message}
+          {errors.description && errors.description.message}
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.name}>
+      <FormControl isInvalid={errors.website}>
         <FormLabel htmlFor="website">Website</FormLabel>
         <Input
           placeholder="Website"
@@ -143,11 +119,11 @@ const CreateProjectForm: React.FunctionComponent = () => {
           })}
         />
         <FormErrorMessage>
-          {errors.name && errors.name.message}
+          {errors.website && errors.website.message}
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.name}>
+      <FormControl isInvalid={errors.whitepaper}>
         <FormLabel htmlFor="whitepaper">Whitepaper</FormLabel>
         <Input
           placeholder="Whitepaper"
@@ -160,7 +136,7 @@ const CreateProjectForm: React.FunctionComponent = () => {
           })}
         />
         <FormErrorMessage>
-          {errors.name && errors.name.message}
+          {errors.whitepaper && errors.whitepaper.message}
         </FormErrorMessage>
       </FormControl>
 
