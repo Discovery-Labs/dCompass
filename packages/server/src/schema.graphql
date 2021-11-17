@@ -2,6 +2,42 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Course {
+  courseType: CourseTypeEnum!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  description: String!
+  difficulty: CourseDifficultyEnum!
+  gitbook: String!
+  id: String!
+  projects: [Project!]!
+  quests: [Quest!]
+  title: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+"""
+The difficulty of a course, from beginner to wizard where wizard is the most difficult mode
+"""
+enum CourseDifficultyEnum {
+  ADVANCED
+  BEGINNER
+  EXPERT
+  INTERMEDIATE
+  WIZARD
+}
+
+"""
+Branched = theorical lessons and Decrypted = technical hands on lessons
+"""
+enum CourseTypeEnum {
+  BRANCHED
+  DECRYPTED
+}
+
 input CreateProjectInput {
   id: String!
   tokenUri: String!
@@ -23,15 +59,110 @@ type Mutation {
   createProject(input: CreateProjectInput!): [CreateProjectOutput!]
 }
 
+type Project {
+  color: String
+  contracts: [String!]!
+  courses: [Course!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  description: String!
+  discord: String
+  github: String!
+  id: String!
+  isFeatured: Boolean!
+  logo: String
+  name: String!
+  peerProjects: [String!]
+  repos: [String!]
+  squads: [Squad!]!
+  tags: [Tag!]
+  tokenUri: String!
+  twitter: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  websites: [Website!]
+  whitepaper: String
+}
+
 type Query {
   """Checks if a user confirmation token is valid"""
   confirmationTokenStatus(input: TokenInput!): Int
+
+  """Gets all the projects in dCompass"""
+  getAllProjects: [Project!]
 
   """Gets a user by ID and returns its informations"""
   getUserById(input: UserDIDInput!): User
 
   """Gets the currently logged in user"""
   me: User
+}
+
+type Quest {
+  completedBy: [String!]
+  course: Course!
+  courseId: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  description: String!
+  id: String!
+  name: String!
+  nfts: [QuestNFT!]
+  questions: [Question!]
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type QuestNFT {
+  claimedBy: [String!]!
+  name: String!
+  rarity: RarityEnum!
+  url: String!
+}
+
+type Question {
+  answer: String!
+  choices: [String!]!
+  question: String!
+}
+
+"""
+Rarity of the NFT, from lowest to highest rarity: common, uncommon, epic, legendary
+"""
+enum RarityEnum {
+  COMMON
+  EPIC
+  LEGENDARY
+  UNCOMMON
+}
+
+type Squad {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: String!
+  image: String
+  members: [String!]!
+  name: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type Tag {
+  color: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  description: String!
+  id: String!
+  name: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 input TokenInput {
@@ -53,4 +184,9 @@ type User {
 
 input UserDIDInput {
   userDID: String!
+}
+
+type Website {
+  name: String!
+  url: String!
 }

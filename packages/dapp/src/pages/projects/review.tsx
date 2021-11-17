@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { useQuery } from "@apollo/client";
 import {
   Button,
   Flex,
@@ -11,7 +11,6 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
 import { useContext } from "react";
 
 import Card from "../../components/custom/Card";
@@ -20,27 +19,13 @@ import CenteredFrame from "../../components/layout/CenteredFrame";
 import Container from "../../components/layout/Container";
 import ProjectCard from "../../components/projects/ProjectCard";
 import { Web3Context } from "../../contexts/Web3Provider";
-
-const ProjectData = {
-  logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
-  avatar: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
-  owner: "huxwell.eth",
-  name: "Project Alpha",
-  description:
-    "This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.",
-  website: "https://www.google.com",
-  whitepaper: "https://www.google.com",
-  social: {
-    github: "https://github.com",
-  },
-  signals: 24,
-  created: "2021-09-13",
-};
-
-const allProjects = [ProjectData, ProjectData, ProjectData];
+import { ALL_PROJECTS_QUERY } from "../../graphql/projects";
 
 function ReviewProjects() {
+  const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY);
   const { isReviewer } = useContext(Web3Context);
+  if (loading) return "Loading...";
+  if (error) return `Error! ${error.message}`;
   return isReviewer ? (
     <Container>
       <Flex w="full">
@@ -57,14 +42,23 @@ function ReviewProjects() {
         <TabPanels>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {allProjects.map((project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))}
+              {data.getAllProjects
+                .filter(
+                  ({ isFeatured }: { isFeatured: boolean }) => !isFeatured
+                )
+                .map((project: any) => (
+                  // TODO: use GraphQL codegen to get the types out of the box
+                  <ProjectCard key={project.name} project={project} />
+                ))}
             </SimpleGrid>
           </TabPanel>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 3]} spacing={10}>
-              <ProjectCard project={ProjectData} />
+              {data.getAllProjects
+                .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+                .map((project: any) => (
+                  <ProjectCard key={project.name} project={project} />
+                ))}
             </SimpleGrid>
           </TabPanel>
         </TabPanels>

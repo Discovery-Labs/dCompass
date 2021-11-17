@@ -3,7 +3,7 @@ import { HttpModule } from '@nestjs/axios';
 
 import { RedisModule } from '../../core/resources/Redis/Redis.module';
 
-// import { GetAllProjectsResolver } from './queries/GetAllProjects.resolver';
+import { GetAllProjectsResolver } from './queries/GetAllProjects.resolver';
 import { CreateProjectResolver } from './mutations/CreateProject.resolver';
 // import { GetProjectByIdResolver } from './queries/GetProjectById.resolver';
 
@@ -16,7 +16,7 @@ import { CreateProjectResolver } from './mutations/CreateProject.resolver';
     }),
   ],
   providers: [
-    // GetAllProjectsResolver,
+    GetAllProjectsResolver,
     // GetProjectByIdResolver,
     CreateProjectResolver,
   ],

@@ -16,12 +16,9 @@ export const ALL_PROJECTS_QUERY = gql`
       id
       name
       description
-      github
-      color
-      tags {
-        id
-        name
-      }
+      tokenUri
+      isFeatured
+      logo
     }
   }
 `;

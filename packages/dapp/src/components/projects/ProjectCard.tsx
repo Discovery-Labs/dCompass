@@ -1,9 +1,10 @@
 import { Avatar, Button, Flex, Heading, Spacer, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
-import Card from "components/custom/Card";
+import CardMedia from "../custom/CardMedia";
 
 type Project = {
+  id: string;
   logo: string;
   name: string;
   avatar: string;
@@ -18,15 +19,23 @@ type Project = {
   created: string;
 };
 
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({
+  project,
+  isReviewMode = false,
+}: {
+  project: Project;
+  isReviewMode: boolean;
+}) {
   const router = useRouter();
 
   function openProject() {
-    router.push("/project/example");
+    router.push(
+      isReviewMode ? `/projects/review/${project.id}` : "/project/example"
+    );
   }
-
+  const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
   return (
-    <Card>
+    <CardMedia src={imgSrc}>
       <Heading fontSize="2xl">{project.name}</Heading>
       <Flex align="center">
         <Avatar mr="0.5rem" boxSize="1.5em" src={project.avatar} />
@@ -39,9 +48,9 @@ function ProjectCard({ project }: { project: Project }) {
         <Text>Created on {project.created}</Text>
       </Flex>
       <Button w="100%" fontSize="md" onClick={() => openProject()}>
-        View Project
+        {!isReviewMode ? "View project" : "Review project"}
       </Button>
-    </Card>
+    </CardMedia>
   );
 }
 

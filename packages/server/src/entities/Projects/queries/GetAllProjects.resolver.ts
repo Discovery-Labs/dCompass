@@ -1,39 +1,46 @@
-// import { Resolver, Query } from '@nestjs/graphql';
-// import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
-// import { Ceramic } from '../../../core/utils/types';
-// import { ProjectsList } from '../mutations/CreateProject.resolver';
-// import { Project } from '../Project.entity';
+import { Resolver, Query } from '@nestjs/graphql';
+import { schemaAliases } from '../../../core/constants/idx';
+import { UseCeramicClient } from '../../../core/decorators/UseCeramicClient.decorator';
+import { Ceramic } from '../../../core/utils/types';
+import { Project } from '../Project.entity';
 
-// @Resolver(() => [Project])
-// export class GetAllProjectsResolver {
-//   @Query(() => [Project], {
-//     nullable: true,
-//     description: 'Gets all the projects in Discovery',
-//     name: 'getAllProjects',
-//   })
-//   async getAllProjects(
-//     @UseCeramicClient() ceramicClient: Ceramic,
-//   ): Promise<Project[] | null | undefined> {
-//     const allDiscoveryProjects = await ceramicClient.idx.get<ProjectsList>(
-//       'projects',
-//     );
-//     if (allDiscoveryProjects?.projects) {
-//       const mergedProjects = await Promise.all(
-//         allDiscoveryProjects?.projects.map(async (project) => {
-//           const record = await ceramicClient.ceramic.loadStream(project.id);
-//           if (!record) {
-//             return null;
-//           }
-//           return {
-//             id: project.id,
-//             name: project.name,
-//             ...record.state.content,
-//             courses: record.state.next?.content.courses,
-//           };
-//         }),
-//       );
-//       return mergedProjects;
-//     }
-//     return undefined;
-//   }
-// }
+@Resolver(() => [Project])
+export class GetAllProjectsResolver {
+  @Query(() => [Project], {
+    nullable: true,
+    description: 'Gets all the projects in dCompass',
+    name: 'getAllProjects',
+  })
+  async getAllProjects(
+    @UseCeramicClient() ceramicClient: Ceramic,
+  ): Promise<Project[] | null | undefined> {
+    const allProjects = await ceramicClient.dataStore.get(
+      schemaAliases.APP_PROJECTS_ALIAS,
+    );
+
+    if (allProjects?.projects) {
+      const projectIds = allProjects?.projects.map(
+        ({ id }: { id: string }) => ({ streamId: id }),
+      );
+
+      const projectsWithDetails = await ceramicClient.ceramic.multiQuery(
+        projectIds,
+      );
+
+      const serializedProjects = await Promise.all(
+        Object.values(projectsWithDetails).map(async (stream) => {
+          const additionalFields = allProjects.projects.find(
+            ({ id }: { id: string }) => id === stream.id.toUrl(),
+          );
+          return {
+            id: stream.id.toUrl(),
+            ...stream.state.content,
+            ...additionalFields,
+          };
+        }),
+      );
+      return serializedProjects;
+    }
+    return undefined;
+  }
+}

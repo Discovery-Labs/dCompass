@@ -38,11 +38,14 @@ export class Project extends BaseEntity {
   @Field()
   logo?: string;
 
-  @Field()
-  contracts: string;
+  @Field(() => [String])
+  contracts: string[];
 
-  @Field(() => Boolean)
-  is_featured?: boolean;
+  @Field()
+  tokenUri: string;
+
+  @Field(() => Boolean, { defaultValue: false })
+  isFeatured: boolean;
 
   @Field(() => [Tag])
   tags?: Tag[];
