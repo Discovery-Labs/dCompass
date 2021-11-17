@@ -24,6 +24,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
     mapping (string => address[]) internal contributors;
+    mapping (uint => string) public statusStrings;
     mapping (string => ProjectStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of reviewers for ProjectId
@@ -45,7 +46,11 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
                 reviewers[_reviewers[i]] = true;
                 numReviewers++;
             }
-        } 
+        }
+        statusStrings[0] = "NONEXISTENT";
+        statusStrings[1] = "PENDING";
+        statusStrings[2] = "DENIED";
+        statusStrings[3] = "APPROVED";
     } 
 
     modifier onlyReviewer(){
@@ -119,6 +124,31 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         require (!reviewers[_reviewer], "already reviewer");
         reviewers[_reviewer]=true;
         numReviewers++;
+    }
+
+    function setStatusString(uint index, string memory newName) external onlyReviewer{
+        statusStrings[index] = newName;
+    }
+
+    function addProjectContributor(string memory _projectId, address newContributor) external{
+        require(status[_projectId]!= ProjectStatus.NONEXISTENT, "project doesn't exist");
+        require(!projectMinted[_projectId], "project already minted");
+        bool isAllowed = reviewers[_msgSender()];
+        bool notContributor = true;
+        if(!isAllowed){
+            address[] memory currContributors = contributors[_projectId];
+            for(uint i=0; i<currContributors.length; i++){
+                if(_msgSender() == currContributors[i]){
+                    isAllowed = true;
+                }
+                if(newContributor == currContributors[i]){
+                    notContributor = false;
+                }
+            }
+        }
+        require(isAllowed, "must be a project contributor or reviewer");
+        require(notContributor, "already a contributor on project");
+        contributors[_projectId].push(newContributor);
     }
 
     function setThreshold(uint128 _newThreshold) public onlyReviewer{
