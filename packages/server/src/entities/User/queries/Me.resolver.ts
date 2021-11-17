@@ -1,7 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { Resolver, Query, Context } from '@nestjs/graphql';
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { Ceramic, Context as ContextType } from '../../../core/utils/types';
+import {
+  Context as ContextType,
+  UseCeramicClient,
+} from '../../../core/utils/types';
 import { User } from '../User.entity';
 import { UserService } from '../User.service';
 

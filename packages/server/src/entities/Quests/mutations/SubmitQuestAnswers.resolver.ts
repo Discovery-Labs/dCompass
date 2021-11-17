@@ -2,7 +2,7 @@ import { TileDocument } from '@ceramicnetwork/stream-tile';
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { compareHash } from '../../../core/utils/security/hash';
-import { Ceramic } from '../../../core/utils/types';
+import { UseCeramicClient } from '../../../core/utils/types';
 import { QuestAnswersSubmitionInput } from '../dto/QuestAnswersSubmition.input';
 import { Question } from '../dto/Question';
 

@@ -1,6 +1,6 @@
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { Ceramic } from '../../../core/utils/types';
+import { UseCeramicClient } from '../../../core/utils/types';
 import { Quest } from '../Quest.entity';
 
 @Resolver(() => Quest)
