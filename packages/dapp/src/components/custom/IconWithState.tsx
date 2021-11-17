@@ -68,7 +68,7 @@ function IconWithState({ icon, active = false }: IconWithStateProps) {
       />
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg="space">
           <ModalHeader>Discord</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

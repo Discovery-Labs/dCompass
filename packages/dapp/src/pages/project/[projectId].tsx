@@ -87,14 +87,14 @@ function ProjectPage() {
 
         <TabPanels>
           <TabPanel>
-            <SimpleGrid columns={3} spacing={10}>
+            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
               {allQuests.map((quest) => (
                 <QuestCard quest={quest} />
               ))}
             </SimpleGrid>
           </TabPanel>
           <TabPanel>
-            <SimpleGrid columns={3} spacing={10}>
+            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
               <QuestCard quest={QuestData} />
             </SimpleGrid>
           </TabPanel>

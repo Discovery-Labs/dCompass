@@ -1,14 +1,11 @@
 import {
-  Box,
-  Flex,
-  HStack,
-  VStack,
-  IconButton,
   Button,
-  Input,
   Divider,
+  HStack,
+  IconButton,
+  Input,
+  VStack,
 } from "@chakra-ui/react";
-import React from "react";
 import { useFieldArray } from "react-hook-form";
 import { FiX } from "react-icons/fi";
 
@@ -19,35 +16,31 @@ export default ({ nestIndex, control, register }: any) => {
   });
 
   return (
-    <Box>
-      <VStack w="full">
-        <Flex w="full" d="colum">
-          {fields.map((item, k) => {
-            return (
-              <HStack key={item.id}>
-                <Input
-                  {...register(`squads[${nestIndex}].members[${k}].value`, {
-                    required: true,
-                  })}
-                />
-                <IconButton
-                  variant="unstyled"
-                  color="pink.300"
-                  size="xs"
-                  aria-label="remove"
-                  as={FiX}
-                  onClick={() => remove(k)}
-                />
-              </HStack>
-            );
-          })}
+    <VStack w="full" align="start" spacing="2">
+      {fields.map((item, k) => {
+        return (
+          <HStack w="full" key={item.id}>
+            <Input
+              {...register(`squads[${nestIndex}].members[${k}].value`, {
+                required: true,
+              })}
+            />
+            <IconButton
+              variant="unstyled"
+              color="pink.300"
+              size="xs"
+              aria-label="remove"
+              as={FiX}
+              onClick={() => remove(k)}
+            />
+          </HStack>
+        );
+      })}
 
-          <Button type="button" onClick={() => append("")}>
-            +
-          </Button>
-          <Divider my="5" />
-        </Flex>
-      </VStack>
-    </Box>
+      <Button mt="2" type="button" onClick={() => append("")}>
+        +
+      </Button>
+      <Divider my="5" />
+    </VStack>
   );
 };

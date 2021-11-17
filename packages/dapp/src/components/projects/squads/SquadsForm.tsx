@@ -1,5 +1,4 @@
 import { Heading, Button } from "@chakra-ui/react";
-import React from "react";
 import { useFormContext } from "react-hook-form";
 
 import Squads from "./Squads";
@@ -39,7 +38,7 @@ function FieldArrayForm() {
       />
 
       <Button
-        colorScheme="red"
+        colorScheme="pink"
         type="button"
         onClick={() => reset(squadsDefaultValues)}
       >

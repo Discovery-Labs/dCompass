@@ -1,25 +1,21 @@
 import {
-  Center,
-  FormControl,
-  FormLabel,
-  Input,
-  Image,
-  FormErrorMessage,
-  VStack,
-  Flex,
-  Box,
   Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   HStack,
+  Input,
+  VStack,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+// import { useRouter } from "next/router";
 // import { useDropzone } from "react-dropzone";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import MembersFieldArray from "./MembersFieldArray";
+import SquadImage from "./SquadImage";
 
-export default function Squads({ control, register }: any) {
-  const router = useRouter();
+export default function Squads({ control, register, setValue }: any) {
+  // const router = useRouter();
   // const [files, setFiles] = useState([]);
 
   const {
@@ -70,90 +66,65 @@ export default function Squads({ control, register }: any) {
   //   [files]
   // );
 
-  function goBack() {
-    router.back();
-  }
+  // function goBack() {
+  //   router.back();
+  // }
 
   return (
     <VStack w="full">
-      <Flex w="full" d="colum">
-        {fields.map((item, index) => {
-          return (
-            <Box key={item.id}>
-              <FormControl
-                isInvalid={errors.squads && errors.squads[index].name}
-              >
-                <FormLabel htmlFor={`squads[${index}].name`}>
-                  Squad name
-                </FormLabel>
-                <HStack>
-                  <Input
-                    placeholder="Squad name"
-                    {...register(`squads[${index}].name`, {
-                      required: "This is required",
-                      maxLength: {
-                        value: 150,
-                        message: "Maximum length should be 150",
-                      },
-                    })}
-                  />
-                  <Button
-                    backgroundColor="pink.300"
-                    _hover={{
-                      bg: "red.500",
-                    }}
-                    onClick={() => remove(index)}
-                    aria-label="remove"
-                    size="md"
-                    px="10"
-                  >
-                    Remove Squad
-                  </Button>
-                </HStack>
-                <FormErrorMessage>
-                  {errors.squads &&
-                    errors.squads[index].name &&
-                    errors.squads[index].name.message}
-                </FormErrorMessage>
-              </FormControl>
-              <FormControl
-                isInvalid={errors.squads && errors.squads[index].image}
-              >
-                <FormLabel htmlFor={`squads[${index}].image`}>
-                  Squad image
-                </FormLabel>
+      {fields.map((item, index) => {
+        return (
+          <VStack w="full" key={item.id}>
+            <FormControl isInvalid={errors.squads && errors.squads[index].name}>
+              <FormLabel htmlFor={`squads[${index}].name`}>
+                Squad name
+              </FormLabel>
+              <HStack>
                 <Input
-                  type="file"
-                  placeholder="Image"
-                  {...register(`squads[${index}].image`)}
+                  placeholder="Squad name"
+                  {...register(`squads[${index}].name`, {
+                    required: "This is required",
+                    maxLength: {
+                      value: 150,
+                      message: "Maximum length should be 150",
+                    },
+                  })}
                 />
-                {/* {thumbs} */}
-                <FormErrorMessage>
-                  {errors.squads &&
-                    errors.squads[index].image &&
-                    errors.squads[index].image.message}
-                </FormErrorMessage>
-              </FormControl>
-              <FormControl
-                isInvalid={errors.squads && errors.squads[index].members}
-              >
-                <FormLabel htmlFor={`squads[${index}].members`}>
-                  Squad members
-                </FormLabel>
-                <MembersFieldArray
-                  nestIndex={index}
-                  {...{ control, register }}
-                />
-                <FormErrorMessage>
-                  {errors.squads &&
-                    errors.squads[index].members &&
-                    errors.squads[index].members.message}
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
-          );
-        })}
-      </Flex>
+                <Button
+                  colorScheme="pink"
+                  onClick={() => remove(index)}
+                  aria-label="remove"
+                  size="md"
+                  px="10"
+                >
+                  Remove Squad
+                </Button>
+              </HStack>
+              <FormErrorMessage>
+                {errors.squads &&
+                  errors.squads[index].name &&
+                  errors.squads[index].name.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <SquadImage nestIndex={index} {...{ register, setValue, errors }} />
+
+            <FormControl
+              isInvalid={errors.squads && errors.squads[index].members}
+            >
+              <FormLabel htmlFor={`squads[${index}].members`}>
+                Squad members
+              </FormLabel>
+              <MembersFieldArray nestIndex={index} {...{ control, register }} />
+              <FormErrorMessage>
+                {errors.squads &&
+                  errors.squads[index].members &&
+                  errors.squads[index].members.message}
+              </FormErrorMessage>
+            </FormControl>
+          </VStack>
+        );
+      })}
 
       <Button
         w="full"

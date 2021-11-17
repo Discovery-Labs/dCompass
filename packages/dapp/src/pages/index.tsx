@@ -51,7 +51,6 @@ const Home = () => {
         <Flex maxW="300px" pt="12">
           <Button
             size="lg"
-            colorScheme="aqua"
             onClick={() => goTo("/projects")}
             aria-label="Launch App"
           >
