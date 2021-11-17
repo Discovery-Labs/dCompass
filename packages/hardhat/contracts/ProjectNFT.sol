@@ -130,6 +130,27 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         statusStrings[index] = newName;
     }
 
+    function addProjectContributor(string memory _projectId, address newContributor) external{
+        require(status[_projectId]!= ProjectStatus.NONEXISTENT, "project doesn't exist");
+        require(!projectMinted[_projectId], "project already minted");
+        bool isAllowed = reviewers[_msgSender()];
+        bool notContributor = true;
+        if(!isAllowed){
+            address[] memory currContributors = contributors[_projectId];
+            for(uint i=0; i<currContributors.length; i++){
+                if(_msgSender() == currContributors[i]){
+                    isAllowed = true;
+                }
+                if(newContributor == currContributors[i]){
+                    notContributor = false;
+                }
+            }
+        }
+        require(isAllowed, "must be a project contributor or reviewer");
+        require(notContributor, "already a contributor on project");
+        contributors[_projectId].push(newContributor);
+    }
+
     function setThreshold(uint128 _newThreshold) public onlyReviewer{
         require(_newThreshold > 0 && _newThreshold <=100, "invalid threshold");
         multiSigThreshold = _newThreshold;
