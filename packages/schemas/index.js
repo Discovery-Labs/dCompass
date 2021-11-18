@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { writeFile } = require("node:fs/promises");
+const { promises } = require("fs");
 const { ModelManager } = require("@glazed/devtools");
 const { CeramicClient } = require("@ceramicnetwork/http-client");
 const { DID } = require("dids");
@@ -10,6 +10,8 @@ const basicProfile = require("@datamodels/identity-profile-basic");
 const cryptoAccounts = require("@datamodels/identity-accounts-crypto");
 const webAccounts = require("@datamodels/identity-accounts-web");
 const { schemas } = require("./lib/schemas");
+
+const { writeFile } = promises;
 // The key must be provided as an environment variable
 const createModels = async () => {
   const key = fromString(process.env.DID_KEY || "", "base16");
