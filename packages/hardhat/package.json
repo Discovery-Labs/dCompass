@@ -23,10 +23,7 @@
     "test": "hardhat test --network hardhat",
     "compile": "hardhat compile",
     "accounts": "hardhat accounts",
-    "balance": "hardhat balance",
-    "send": "hardhat send",
-    "faucet": "hardhat --network localhost faucet",
-    "account": "hardhat account"
+    "faucet": "hardhat --network localhost faucet"
   },
   "devDependencies": {
     "@defi-wonderland/smock": "^2.0.7",

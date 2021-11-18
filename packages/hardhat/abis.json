@@ -779,7 +779,7 @@
       "chainId": "31337",
       "contracts": {
         "ProjectNFT": {
-          "address": "0x73511669fd4dE447feD18BB79bAFeAC93aB7F31f",
+          "address": "0x50C6edc0d4204c8e8Af47Cc0773D3B16E8723e43",
           "abi": [
             {
               "inputs": [

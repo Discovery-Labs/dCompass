@@ -4,7 +4,20 @@ A gamified and community driven Web3 learning platform.
 
 ## Tech stack overview
 
-We are using Next.js & TypeScript for our front-end. Ceramic for our main data store in conjunction with Filecoin & IPFS for file storage.
+We are using TypeScript with Next.js on the front-end, and NestJS on the back-end.
+Ceramic is our main data store in conjunction with Filecoin & IPFS for file storage.
+
+### 📁 Folder structure
+
+```
+.
+├── packages # Monorepo using yarn workspaces & lerna
+│ ├── web # Landing page https://www.dcompass.discovery-dao.xyz/
+│ ├── schemas # Ceramic and JSON schemas
+│ ├── dapp # Web3 app for the projects, quests, etc
+│ └── server # Will contain a centralised NodeJS server storing data on a Ceramic instance with a private key
+└── ... config ...
+```
 
 ## 🏄‍♂️ Quick Start
 
@@ -40,6 +53,13 @@ $ git clone https://github.com/Discovery-Labs/dCompass.git
 $ cd dCompass && yarn install
 ```
 
+### 🏺‍ Publish your Ceramic schemas
+
+```sh
+$ cd packages/schemas
+$ yarn build
+```
+
 ### 🛰 Run the backend
 
 ```sh
@@ -48,20 +68,21 @@ $ cd packages/server && yarn start:dev
 
 ### 👷‍ Build it!
 
-run hardhat locally and 🛰 deploy your contract
+run hardhat locally, get some faucet and 🛰 deploy your contract
+Set one of your addresses as the DEV_ADDRESS as well as a dev hot wallet private key as the DEPLOYER_PRIVATE_KEY environment variables in packages/hardhat/.env
 
 ```sh
 $ yarn chain
-$ yarn accounts
-// set one of the addresses as the DEPLOYER_ADDRESS environment variable in packages/hardhat/.env
+$ yarn faucet <YOUR_DEV_ADDRESS>
+
+Deploying on localhost
 $ yarn deploy --network localhost --reset
-```
 
-### 👷‍ Publish your Ceramic schemas
+Deploying on mumbai
+$ yarn deploy --network mumbai --reset
 
-```sh
-$ cd packages/schemas
-$ yarn build
+Deploying on an other testnet (make sure to edit the hardhat.config.js first)
+$ yarn deploy --network mytestnet --reset
 ```
 
 ### Dev Preview
@@ -80,16 +101,4 @@ $ yarn dev
 ```sh
 $ cd packages/web
 $ yarn dev
-```
-
-## Folder structure
-
-```
-.
-├── packages # Monorepo using yarn workspaces & lerna
-│ ├── web # Landing page https://www.dcompass.discovery-dao.xyz/
-│ ├── schemas # Ceramic and JSON schemas
-│ ├── dapp # Web3 app for the projects, quests, etc
-│ └── server # Will contain a centralised NodeJS server storing data on a Ceramic instance with a private key
-└── ... config ...
 ```
