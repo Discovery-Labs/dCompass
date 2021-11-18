@@ -6,7 +6,7 @@ function Card(props: StackProps) {
     <VStack
       bg="spacelightalpha"
       p="8"
-      h="md"
+      h="lg"
       borderRadius="base"
       spacing="4"
       align="start"

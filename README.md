@@ -43,7 +43,7 @@ $ cd dCompass && yarn install
 ### 🛰 Run the backend
 
 ```sh
-$ cd packages/backend && yarn start:dev
+$ cd packages/server && yarn start:dev
 ```
 
 ### 👷‍ Build it!
