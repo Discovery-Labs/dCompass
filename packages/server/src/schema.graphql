@@ -94,6 +94,9 @@ type Query {
   """Gets all the projects in dCompass"""
   getAllProjects: [Project!]
 
+  """Gets a project by its Stream ID"""
+  getProjectById(projectId: String!): Project
+
   """Gets a user by ID and returns its informations"""
   getUserById(input: UserDIDInput!): User
 
@@ -144,7 +147,6 @@ enum RarityEnum {
 type Squad {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  id: String!
   image: String
   members: [String!]!
   name: String!

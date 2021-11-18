@@ -10,8 +10,8 @@ We are using Next.js & TypeScript for our front-end. Ceramic for our main data s
 
 ### Prerequisites
 
-- [Node](https://nodejs.org/en/download/) 
-- [Yarn](https://classic.yarnpkg.com/en/docs/install/) 
+- [Node](https://nodejs.org/en/download/)
+- [Yarn](https://classic.yarnpkg.com/en/docs/install/)
 - [Git](https://git-scm.com/downloads)
 - Accounts and API keys for [NFT.storage](https://nft.storage/) and [WEB3.storage](https://web3.storage/)
 
@@ -40,16 +40,24 @@ $ git clone https://github.com/Discovery-Labs/dCompass.git
 $ cd dCompass && yarn install
 ```
 
+### 🛰 Run the backend
+
+```sh
+$ cd packages/backend && yarn start:dev
+```
+
 ### 👷‍ Build it!
 
 run hardhat locally and 🛰 deploy your contract
 
 ```sh
 $ yarn chain
+$ yarn accounts
+// set one of the addresses as the DEPLOYER_ADDRESS environment variable in packages/hardhat/.env
 $ yarn deploy --network localhost --reset
 ```
 
-publish your ceramic schemas
+### 👷‍ Publish your Ceramic schemas
 
 ```sh
 $ cd packages/schemas
@@ -66,6 +74,7 @@ $ yarn dev
 ```
 
 **Start the 📱 landing page:**
+
 > (Optional, doesn't need anything else to run)
 
 ```sh

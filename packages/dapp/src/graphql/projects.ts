@@ -29,26 +29,13 @@ export const PROJECT_BY_ID_QUERY = gql`
       id
       name
       description
-      color
-      tags {
-        id
+      tokenUri
+      isFeatured
+      logo
+      squads {
         name
-      }
-      courses {
-        id
-        title
-        description
-        courseType
-        difficulty
-        quests {
-          id
-          questions {
-            answer
-            question
-            choices
-          }
-          completedBy
-        }
+        image
+        members
       }
     }
   }

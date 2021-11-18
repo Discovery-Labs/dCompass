@@ -18,7 +18,15 @@
     "access": "public"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "chain": "hardhat node --network hardhat --no-deploy",
+    "deploy": "hardhat deploy --export-all ./abis.json",
+    "test": "hardhat test --network hardhat",
+    "compile": "hardhat compile",
+    "accounts": "hardhat accounts",
+    "balance": "hardhat balance",
+    "send": "hardhat send",
+    "faucet": "hardhat --network localhost faucet",
+    "account": "hardhat account"
   },
   "devDependencies": {
     "@defi-wonderland/smock": "^2.0.7",

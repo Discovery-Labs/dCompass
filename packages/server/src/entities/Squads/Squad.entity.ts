@@ -5,9 +5,6 @@ export type CeramicStreamId = string;
 @ObjectType()
 export class Squad extends BaseEntity {
   @Field()
-  id: string;
-
-  @Field()
   name: string;
 
   @Field()

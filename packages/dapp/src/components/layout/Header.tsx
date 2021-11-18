@@ -99,7 +99,7 @@ const Navbar = (props: any) => {
         <Flex alignItems="center">
           {account && isReviewer && (
             <LinkItem href="/projects/review">
-              <Tag colorScheme="green">
+              <Tag variant="outline" colorScheme="green">
                 <TagLabel>Reviews</TagLabel>
               </Tag>
             </LinkItem>

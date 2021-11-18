@@ -4,6 +4,7 @@ require("dotenv").config();
 require("hardhat-deploy");
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
+require("./tasks/faucet");
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
 
@@ -20,10 +21,10 @@ const { INFURA_ID, DEPLOYER_PRIVATE_KEY } = process.env;
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "hardhat",
+  defaultNetwork: "localhost",
   networks: {
-    hardhat: {
-      chainId: 1337,
+    localhost: {
+      url: "http://localhost:8545",
     },
     mumbai: {
       url: INFURA_ID

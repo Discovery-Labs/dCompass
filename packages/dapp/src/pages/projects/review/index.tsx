@@ -12,29 +12,18 @@ import {
 } from "@chakra-ui/react";
 import { useContext } from "react";
 
-import Card from "../../components/custom/Card";
-import NotReviewerCard from "../../components/custom/NotReviewerCard";
-import CenteredFrame from "../../components/layout/CenteredFrame";
-import Container from "../../components/layout/Container";
-import ProjectCard from "../../components/projects/ProjectCard";
-import { Web3Context } from "../../contexts/Web3Provider";
-import { ALL_PROJECTS_QUERY } from "../../graphql/projects";
+import Card from "../../../components/custom/Card";
+import NotReviewerCard from "../../../components/custom/NotReviewerCard";
+import CenteredFrame from "../../../components/layout/CenteredFrame";
+import Container from "../../../components/layout/Container";
+import ProjectCard from "../../../components/projects/ProjectCard";
+import { Web3Context } from "../../../contexts/Web3Provider";
+import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
 
 function ReviewProjects() {
   const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY);
   const { isReviewer } = useContext(Web3Context);
 
-  // TODO: WIP approve project
-  // // get return values or events
-  // const voteForApprovalTx =
-  //   await contracts.projectNFTContract.voteForApproval(
-  //     contributors,
-  //     10,
-  //     projectId
-  //   );
-  // const receipt = await voteForApprovalTx.wait(2);
-
-  // console.log({ receipt });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   return isReviewer ? (

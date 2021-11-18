@@ -5,14 +5,14 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const devAddress = process.env.DEV_ADDRESS;
+  const { DEPLOYER_ADDRESS, DEV_ADDRESS } = process.env;
 
   await deploy("ProjectNFT", {
-    from: devAddress,
+    from: deployer || DEPLOYER_ADDRESS,
     args: [
-      devAddress,
+      DEV_ADDRESS,
       [
-        devAddress,
+        DEV_ADDRESS,
         "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631",
         "0x2c0B08C414A8EE088596832cf64eFcA283D46703",
         "0x16eBE01dCae1338f8d1802C63712C5279e768d29",

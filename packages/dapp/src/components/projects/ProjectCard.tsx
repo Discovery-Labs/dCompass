@@ -30,7 +30,9 @@ function ProjectCard({
 
   function openProject() {
     router.push(
-      isReviewMode ? `/projects/review/${project.id}` : "/project/example"
+      isReviewMode
+        ? `/projects/review/${project.id.split("://")[1]}`
+        : `/projects/${project.id.split("://")[1]}`
     );
   }
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
