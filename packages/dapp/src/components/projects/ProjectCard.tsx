@@ -49,7 +49,7 @@ function ProjectCard({
         <Text>{project.signals} Signals</Text>
         <Text>Created on {project.created}</Text>
       </Flex>
-      <Button w="100%" fontSize="md" onClick={() => openProject()}>
+      <Button w="full" onClick={() => openProject()}>
         {!isReviewMode ? "View project" : "Review project"}
       </Button>
     </CardMedia>

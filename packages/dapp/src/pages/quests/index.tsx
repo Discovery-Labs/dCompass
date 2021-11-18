@@ -37,7 +37,7 @@ function quests() {
       <Flex w="full">
         <Heading>Quests</Heading>
         <Spacer />
-        <NextLink href="/create-project" passHref>
+        <NextLink href="/create-quest" passHref>
           <Button rightIcon={<AddIcon />}>Create Quest</Button>
         </NextLink>
       </Flex>

@@ -8,7 +8,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 // import { useRouter } from "next/router";
-// import { useDropzone } from "react-dropzone";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import MembersFieldArray from "./MembersFieldArray";
@@ -16,7 +15,6 @@ import SquadDropzone from "./SquadDropzone";
 
 export default function Squads({ control, register, setValue }: any) {
   // const router = useRouter();
-  // const [files, setFiles] = useState([]);
 
   const {
     formState: { errors },
@@ -27,44 +25,6 @@ export default function Squads({ control, register, setValue }: any) {
     name: "squads", // unique name for your Field Array
     // keyName: "id", default to "id", you can change the key name
   });
-
-  // const onDrop = useCallback(
-  //   (acceptedFiles, rejectedFiles, e) => {
-  //     if (acceptedFiles) {
-  //       console.log({ e });
-  //       const { name } = e.target;
-  //       setValue(name, e.target.files);
-  //       setFiles(
-  //         acceptedFiles.map((file: File) =>
-  //           Object.assign(file, {
-  //             preview: URL.createObjectURL(file),
-  //           })
-  //         )
-  //       );
-  //     }
-  //   },
-  //   [setValue]
-  // );
-
-  // TODO: there's currently a bug for useDropzone with useFieldArray
-  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
-  //   accept: "image/*",
-  //   onDrop,
-  // });
-
-  // const thumbs = files.map((file: any) => (
-  //   <div key={file.name}>
-  //     <Image src={file.preview} />
-  //   </div>
-  // ));
-
-  // useEffect(
-  //   () => () => {
-  //     // Make sure to revoke the data uris to avoid memory leaks
-  //     files.forEach((file: any) => URL.revokeObjectURL(file.preview));
-  //   },
-  //   [files]
-  // );
 
   // function goBack() {
   //   router.back();

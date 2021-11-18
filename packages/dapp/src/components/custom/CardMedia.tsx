@@ -5,7 +5,7 @@ function CardMedia({ children, src, ...others }: any) {
     <VStack
       bg="spacelightalpha"
       p="8"
-      h="md"
+      h="lg"
       borderRadius="base"
       spacing="4"
       align="start"
