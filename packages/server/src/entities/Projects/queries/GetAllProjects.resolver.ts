@@ -39,6 +39,7 @@ export class GetAllProjectsResolver {
           };
         }),
       );
+      console.log({ serializedProjects });
       return serializedProjects;
     }
     return undefined;

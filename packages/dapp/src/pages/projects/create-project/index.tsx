@@ -75,6 +75,7 @@ function CreateProjectStepper() {
     const serializedProject = {
       ...values,
       logo: cids.logo,
+      createdBy: account,
       squads: values.squads.map((squad) => {
         const members = squad.members.map(
           (member: any) => member.value
@@ -106,7 +107,7 @@ function CreateProjectStepper() {
       body: formData,
     });
 
-    const { cid } = await nftCidRes.json();
+    const { metadataCids } = await nftCidRes.json();
 
     // Get user's existing projects
     const existingProjects = await self.client.dataStore.get(PROJECTS_ALIAS);
@@ -124,7 +125,7 @@ function CreateProjectStepper() {
     const signature = await provider.provider.send("personal_sign", [
       JSON.stringify({
         id: projectId,
-        tokenUri: cid.url,
+        tokenUris: metadataCids,
       }),
       account,
     ]);
@@ -132,7 +133,7 @@ function CreateProjectStepper() {
       variables: {
         input: {
           id: projectId,
-          tokenUri: cid.url,
+          tokenUris: metadataCids,
           creatorSignature: signature.result,
         },
       },

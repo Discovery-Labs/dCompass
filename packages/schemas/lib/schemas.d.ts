@@ -36,13 +36,13 @@ export declare const schemas: {
                             id: {
                                 $ref: string;
                             };
-                            tokenUri: {
+                            tokenUris: {
                                 type: string;
+                                items: {
+                                    type: string;
+                                };
                             };
                             isFeatured: {
-                                type: string;
-                            };
-                            creatorSignature: {
                                 type: string;
                             };
                         };
@@ -119,9 +119,6 @@ export declare const schemas: {
                         title: string;
                     };
                 };
-                is_featured: {
-                    type: string;
-                };
                 repos: {
                     type: string;
                     items: {
@@ -145,6 +142,9 @@ export declare const schemas: {
                             };
                         };
                     };
+                };
+                createdBy: {
+                    type: string;
                 };
                 tags: {
                     type: string;

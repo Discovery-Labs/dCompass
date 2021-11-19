@@ -39,9 +39,6 @@ export const ProjectSchema = {
         title: "ContractAddress",
       },
     },
-    is_featured: {
-      type: "boolean",
-    },
     repos: {
       type: "array",
       items: {
@@ -65,6 +62,9 @@ export const ProjectSchema = {
           },
         },
       },
+    },
+    createdBy: {
+      type: "string",
     },
     tags: {
       type: "array",

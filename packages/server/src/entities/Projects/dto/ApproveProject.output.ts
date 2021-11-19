@@ -9,11 +9,10 @@ export class ApproveProjectOutput {
   @IsNotEmpty({ message: 'not.empty' })
   id: string;
 
-  @Field()
-  @IsString({ message: 'wrong.type' })
+  @Field(() => [String])
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  tokenUri: string;
+  tokenUris: string[];
 
   @Field(() => Boolean, { defaultValue: false })
   @IsDefined({ message: 'not.defined' })

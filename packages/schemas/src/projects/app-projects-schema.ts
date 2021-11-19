@@ -13,8 +13,11 @@ export const AppProjectsSchema = {
           id: {
             $ref: "#/definitions/CeramicStreamId",
           },
-          tokenUri: {
-            type: "string",
+          tokenUris: {
+            type: "array",
+            items: {
+              type: "string",
+            },
           },
           isFeatured: {
             type: "boolean",

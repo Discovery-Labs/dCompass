@@ -4,7 +4,7 @@ export const CREATE_PROJECT_MUTATION = gql`
   mutation CreateProject($input: CreateProjectInput!) {
     createProject(input: $input) {
       id
-      tokenUri
+      tokenUris
       isFeatured
     }
   }
@@ -14,7 +14,7 @@ export const APPROVE_PROJECT_MUTATION = gql`
   mutation ApproveProject($input: ApproveProjectInput!) {
     approveProject(input: $input) {
       id
-      tokenUri
+      tokenUris
       isFeatured
     }
   }
@@ -24,9 +24,10 @@ export const ALL_PROJECTS_QUERY = gql`
   query getAllProjects {
     getAllProjects {
       id
+      createdBy
       name
       description
-      tokenUri
+      tokenUris
       isFeatured
       logo
     }
@@ -38,8 +39,9 @@ export const PROJECT_BY_ID_QUERY = gql`
     getProjectById(projectId: $projectId) {
       id
       name
+      createdBy
       description
-      tokenUri
+      tokenUris
       isFeatured
       logo
       squads {

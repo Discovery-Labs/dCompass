@@ -61,10 +61,14 @@ function Projects() {
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
               {data.getAllProjects
-                .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-                .map((project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))}
+                ? data.getAllProjects
+                    .filter(
+                      ({ isFeatured }: { isFeatured: boolean }) => isFeatured
+                    )
+                    .map((project) => (
+                      <ProjectCard key={project.name} project={project} />
+                    ))
+                : "No project found"}
             </SimpleGrid>
           </TabPanel>
           <TabPanel>

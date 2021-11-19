@@ -33,6 +33,9 @@ export class Project extends BaseEntity {
   github: string;
 
   @Field()
+  createdBy: string;
+
+  @Field()
   description: string;
 
   @Field()
@@ -41,8 +44,8 @@ export class Project extends BaseEntity {
   @Field(() => [String])
   contracts: string[];
 
-  @Field()
-  tokenUri: string;
+  @Field(() => [String])
+  tokenUris: string[];
 
   @Field(() => Boolean, { defaultValue: false })
   isFeatured: boolean;

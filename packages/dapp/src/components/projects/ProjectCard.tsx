@@ -1,5 +1,6 @@
-import { Avatar, Button, Flex, Heading, Spacer, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Spacer, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import Blockies from "react-blockies";
 
 import CardMedia from "../custom/CardMedia";
 
@@ -8,7 +9,7 @@ type Project = {
   logo: string;
   name: string;
   avatar: string;
-  owner: string;
+  createdBy: string;
   description: string;
   website: string;
   whitepaper: string;
@@ -39,9 +40,11 @@ function ProjectCard({
   return (
     <CardMedia src={imgSrc}>
       <Heading fontSize="2xl">{project.name}</Heading>
-      <Flex align="center">
-        <Avatar mr="0.5rem" boxSize="1.5em" src={project.avatar} />
-        <Text fontSize="sm">{project.owner}</Text>
+      <Flex align="center" maxW="full">
+        <Blockies seed={project.createdBy} className="blockies" />
+        <Text ml="2" fontSize="sm" isTruncated>
+          {project.createdBy}
+        </Text>
       </Flex>
       <Text noOfLines={4}>{project.description}</Text>
       <Spacer />

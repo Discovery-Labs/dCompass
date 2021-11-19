@@ -21,11 +21,11 @@ export class ApproveProjectResolver {
     @UseCeramic()
     { ceramicClient }: UseCeramicClient,
     @Args('input')
-    { id, tokenUri, reviewerSignature, chainId }: ApproveProjectInput,
+    { id, tokenUris, reviewerSignature, chainId }: ApproveProjectInput,
   ): Promise<ApproveProjectOutput[] | null> {
     // Check that the current user is a reviewer
     const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id, tokenUri, chainId }),
+      JSON.stringify({ id, tokenUris, chainId }),
       reviewerSignature,
     );
     const projectNFTContract = this.appService.getContract(
@@ -68,7 +68,7 @@ export class ApproveProjectResolver {
 
     console.log({ existingProjects });
     const allProjectsUpdated = [
-      { id, tokenUri, isFeatured: true },
+      { id, tokenUris, isFeatured: true },
       ...existingProjects,
     ];
 

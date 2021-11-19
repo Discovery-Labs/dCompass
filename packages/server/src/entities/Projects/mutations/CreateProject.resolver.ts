@@ -18,11 +18,11 @@ export class CreateProjectResolver {
   async createProject(
     @UseCeramic()
     { ceramicClient, ceramicCore }: UseCeramicClient,
-    @Args('input') { id, tokenUri, creatorSignature }: CreateProjectInput,
+    @Args('input') { id, tokenUris, creatorSignature }: CreateProjectInput,
   ): Promise<CreateProjectOutput[] | null> {
     // Check that the current user is the owner of the project
     const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id, tokenUri }),
+      JSON.stringify({ id, tokenUris }),
       creatorSignature,
     );
     const ogProject = await ceramicClient.ceramic.loadStream(id);
@@ -42,11 +42,11 @@ export class CreateProjectResolver {
       schemaAliases.APP_PROJECTS_ALIAS,
     );
 
-    console.log({ existingProjects: existingProjects.projects });
-
     const projects = existingProjects?.projects ?? [];
+    console.log({ projects });
+
     await ceramicClient.dataStore.set(schemaAliases.APP_PROJECTS_ALIAS, {
-      projects: [{ id, tokenUri, isFeatured: false }, ...projects],
+      projects: [{ id, tokenUris, isFeatured: false }, ...projects],
     });
 
     const allProjects = await ceramicClient.dataStore.get(

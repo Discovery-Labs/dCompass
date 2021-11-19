@@ -36,17 +36,32 @@ const nftStorage = new NFTStorage({ token: getNFTStorageToken() });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const form = await parseForm(req);
-  const file = form.files.logo[0];
+  const { logo, ...squadFiles } = form.files;
   const properties = JSON.parse(form.fields.metadata);
-  const name = file.originalFilename as string;
-  const f = new File([fs.readFileSync(file.path)], name, { type: "image/*" });
-  const nftCid = await nftStorage.store({
-    name,
-    description: `Genesis ${properties.name} NFT`,
-    image: f,
-    properties,
+  const storeCids = properties.squads.flatMap((squad: any) => {
+    console.log({ squadFiles, squad });
+    const squadFile = squadFiles[squad.name][0];
+    console.log({ squadFile });
+    const name = squadFile.originalFilename as string;
+    const f = new File([fs.readFileSync(squadFile.path)], name, {
+      type: "image/*",
+    });
+
+    return squad.members.map(async (member: string) =>
+      nftStorage.store({
+        name,
+        description: `dCompass NFT for being a member of the ${squad.name} squad in ${properties.name}`,
+        image: f,
+        properties: { OG_NFT_OWNER: member, ...properties },
+      })
+    );
   });
-  res.status(200).json({ cid: nftCid });
+
+  const nftCids = await Promise.all(storeCids);
+
+  return res
+    .status(200)
+    .json({ metadataCids: nftCids.map((cid: any) => cid.url) });
 }
 
 // first we need to disable the default body parser
