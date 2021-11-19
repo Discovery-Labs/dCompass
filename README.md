@@ -72,6 +72,7 @@ run hardhat locally, get some faucet and 🛰 deploy your contract
 Set one of your addresses as the DEV_ADDRESS as well as a dev hot wallet private key as the DEPLOYER_PRIVATE_KEY environment variables in packages/hardhat/.env
 
 ```sh
+$ cd packages/hardhat
 $ yarn chain
 $ yarn faucet <YOUR_DEV_ADDRESS>
 
@@ -84,6 +85,13 @@ $ yarn deploy --network mumbai --reset
 Deploying on an other testnet (make sure to edit the hardhat.config.js first)
 $ yarn deploy --network mytestnet --reset
 ```
+
+#### Testnet Faucets
+
+- [Kovan](https://faucets.chain.link/kovan)
+- [Mumbai](https://faucet.polygon.technology/)
+- [Rinkeby](https://faucet.rinkeby.io/)
+- [BSC](https://testnet.binance.org/faucet-smart)
 
 ### Dev Preview
 
