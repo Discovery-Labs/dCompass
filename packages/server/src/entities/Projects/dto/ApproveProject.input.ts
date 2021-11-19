@@ -1,8 +1,8 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
 
-@ObjectType()
-export class CreateProjectOutput {
+@InputType()
+export class ApproveProjectInput {
   @Field()
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
@@ -15,8 +15,15 @@ export class CreateProjectOutput {
   @IsNotEmpty({ message: 'not.empty' })
   tokenUri: string;
 
-  @Field(() => Boolean, { defaultValue: false })
+  @Field()
+  @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  isFeatured: boolean;
+  reviewerSignature: string;
+
+  @Field()
+  @IsString({ message: 'wrong.type' })
+  @IsDefined({ message: 'not.defined' })
+  @IsNotEmpty({ message: 'not.empty' })
+  chainId: string;
 }

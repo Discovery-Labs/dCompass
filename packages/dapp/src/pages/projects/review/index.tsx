@@ -21,7 +21,9 @@ import { Web3Context } from "../../../contexts/Web3Provider";
 import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
 
 function ReviewProjects() {
-  const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY);
+  const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
+    fetchPolicy: "cache-and-network",
+  });
   const { isReviewer } = useContext(Web3Context);
 
   if (loading) return "Loading...";

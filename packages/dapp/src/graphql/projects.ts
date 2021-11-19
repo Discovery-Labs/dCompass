@@ -10,6 +10,16 @@ export const CREATE_PROJECT_MUTATION = gql`
   }
 `;
 
+export const APPROVE_PROJECT_MUTATION = gql`
+  mutation ApproveProject($input: ApproveProjectInput!) {
+    approveProject(input: $input) {
+      id
+      tokenUri
+      isFeatured
+    }
+  }
+`;
+
 export const ALL_PROJECTS_QUERY = gql`
   query getAllProjects {
     getAllProjects {

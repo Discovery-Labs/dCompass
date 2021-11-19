@@ -1,10 +1,9 @@
-import { redis, pubSub, authRedis } from '../../resources/Redis/redis';
+import { redis, pubSub } from '../../resources/Redis/redis';
 import { Logger } from '@nestjs/common';
 
 export const disconnect = async () => {
   Logger.warn('Disconnecting...');
   pubSub.close();
-  authRedis.disconnect();
   return redis.disconnect();
 };
 

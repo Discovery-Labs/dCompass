@@ -6,6 +6,8 @@ import { RedisModule } from '../../core/resources/Redis/Redis.module';
 import { GetAllProjectsResolver } from './queries/GetAllProjects.resolver';
 import { CreateProjectResolver } from './mutations/CreateProject.resolver';
 import { GetProjectByIdResolver } from './queries/GetProjectById.resolver';
+import { AppService } from '../../app.service';
+import { ApproveProjectResolver } from './mutations/ApproveProject.resolver';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { GetProjectByIdResolver } from './queries/GetProjectById.resolver';
     GetAllProjectsResolver,
     GetProjectByIdResolver,
     CreateProjectResolver,
+    ApproveProjectResolver,
+    AppService,
   ],
   exports: [],
 })

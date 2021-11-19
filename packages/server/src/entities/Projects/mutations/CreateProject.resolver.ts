@@ -42,6 +42,8 @@ export class CreateProjectResolver {
       schemaAliases.APP_PROJECTS_ALIAS,
     );
 
+    console.log({ existingProjects: existingProjects.projects });
+
     const projects = existingProjects?.projects ?? [];
     await ceramicClient.dataStore.set(schemaAliases.APP_PROJECTS_ALIAS, {
       projects: [{ id, tokenUri, isFeatured: false }, ...projects],

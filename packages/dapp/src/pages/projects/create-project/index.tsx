@@ -5,13 +5,16 @@ import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-import NotConnectedCard from "../../components/custom/NotConnectedCard";
-import CenteredFrame from "../../components/layout/CenteredFrame";
-import CreateProjectForm from "../../components/projects/CreateProjectForm";
-import SquadsForm from "../../components/projects/squads/SquadsForm";
-import { Web3Context } from "../../contexts/Web3Provider";
-import { schemaAliases } from "../../core/ceramic";
-import { CREATE_PROJECT_MUTATION } from "../../graphql/projects";
+import NotConnectedCard from "../../../components/custom/NotConnectedCard";
+import CenteredFrame from "../../../components/layout/CenteredFrame";
+import CreateProjectForm from "../../../components/projects/CreateProjectForm";
+import SquadsForm from "../../../components/projects/squads/SquadsForm";
+import { Web3Context } from "../../../contexts/Web3Provider";
+import { schemaAliases } from "../../../core/ceramic";
+import {
+  ALL_PROJECTS_QUERY,
+  CREATE_PROJECT_MUTATION,
+} from "../../../graphql/projects";
 import Card from "components/custom/Card";
 
 const { PROJECTS_ALIAS } = schemaAliases;
@@ -28,30 +31,11 @@ const steps = [
 
 function CreateProjectStepper() {
   const { self, contracts, provider } = useContext(Web3Context);
-  const web3React = useWeb3React();
+  const { account } = useWeb3React();
 
-  const {
-    connector,
-    library,
-    chainId,
-    account,
-    activate,
-    deactivate,
-    active,
-    error,
-  } = web3React;
-  console.log({
-    contracts,
-    connector,
-    library,
-    chainId,
-    account,
-    activate,
-    deactivate,
-    active,
-    error,
+  const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
+    refetchQueries: "all",
   });
-  const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION);
   const { nextStep, prevStep, activeStep } = useSteps({
     initialStep: 0,
   });

@@ -1,10 +1,10 @@
 import { config as dotenvConfig } from 'dotenv';
 dotenvConfig();
-import cookieParser from 'cookie-parser';
+// import cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { sessionMiddleware } from './core/resources/Redis/redis';
+// import { sessionMiddleware } from './core/resources/Redis/redis';
 import { Context } from './core/utils/types';
 import { NextFunction } from 'express';
 import {
@@ -25,7 +25,6 @@ import {
 
 const {
   api: { protocol, hostname, port, corsOptions },
-  sessionOptions,
 } = config();
 
 async function bootstrap() {
@@ -44,17 +43,15 @@ async function bootstrap() {
   const ceramicCore = ceramicCoreFactory();
 
   // app.use(helmet());
-  app.use(cookieParser(sessionOptions.secret));
-  app.use(sessionMiddleware);
-
-  // TODO: verify cookie
+  // app.use(cookieParser(sessionOptions.secret));
+  // app.use(sessionMiddleware);
   /* Cookie & Session cleaner */
-  app.use((req: Context['req'], res: Context['res'], next: NextFunction) => {
-    if (req.cookies[sessionOptions.name] && !req.session?.userId) {
-      res.clearCookie(sessionOptions.name);
-    }
-    next();
-  });
+  // app.use((req: Context['req'], res: Context['res'], next: NextFunction) => {
+  //   if (req.cookies[sessionOptions.name] && !req.session?.userId) {
+  //     res.clearCookie(sessionOptions.name);
+  //   }
+  //   next();
+  // });
 
   app.use((req: Context['req'], _res: Context['res'], next: NextFunction) => {
     req.ceramicClient = ceramicClient;

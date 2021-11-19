@@ -14,7 +14,6 @@ import { pubSub } from './core/resources/Redis/redis';
 import { HealthController } from './core/controllers/health.controller';
 import config from './core/configs/config';
 import { GraphqlConfig } from './core/configs/config.interface';
-import { UserModule } from './entities/User/User.module';
 import { ProjectModule } from './entities/Projects/Project.module';
 // import { KnowsisController } from './core/controllers/knowsis.controller';
 // import { DefinitionsController } from './core/controllers/definitions.controller';
@@ -54,7 +53,6 @@ import { CeramicController } from './core/controllers/validate-quest-completion.
       inject: [ConfigService],
     }),
     TerminusModule,
-    UserModule,
     ProjectModule,
     // CourseModule,
     // QuestModule,

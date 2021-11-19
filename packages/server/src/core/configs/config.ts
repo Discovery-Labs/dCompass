@@ -81,29 +81,20 @@ const config: Config = {
     showFriendlyErrorStack: true,
     autoResubscribe: true,
   },
-  redisAuthConfig: {
-    port: +process.env.AUTH_REDIS_PORT!,
-    host: process.env.AUTH_REDIS_HOST,
-    password: process.env.AUTH_REDIS_PASSWORD,
-    connectTimeout: 15000,
-    enableReadyCheck: true,
-    showFriendlyErrorStack: true,
-    autoResubscribe: true,
-  },
-  sessionOptions: {
-    name: process.env.COOKIE_NAME!,
-    secret: process.env.COOKIE_SECRET!,
-    resave: false,
-    saveUninitialized: false,
-    unset: 'destroy',
-    cookie: {
-      secure: JSON.parse(process.env.IS_SECURE_COOKIE!),
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 144 * 60 * 60 * 1000, // 6 days
-    },
-  },
+  // sessionOptions: {
+  //   name: process.env.COOKIE_NAME!,
+  //   secret: process.env.COOKIE_SECRET!,
+  //   resave: false,
+  //   saveUninitialized: false,
+  //   unset: 'destroy',
+  //   cookie: {
+  //     secure: JSON.parse(process.env.IS_SECURE_COOKIE!),
+  //     httpOnly: true,
+  //     sameSite: 'lax',
+  //     path: '/',
+  //     maxAge: 144 * 60 * 60 * 1000, // 6 days
+  //   },
+  // },
 };
 
 export default (): Config => config;

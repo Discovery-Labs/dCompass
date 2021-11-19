@@ -57,7 +57,7 @@ function ProjectPage() {
       <Flex w="full">
         <Heading>{project.name}</Heading>
         <Spacer />
-        <NextLink href="/create-project" passHref>
+        <NextLink href="/projects/create-project" passHref>
           <Button rightIcon={<EditIcon />}>Edit Project</Button>
         </NextLink>
       </Flex>

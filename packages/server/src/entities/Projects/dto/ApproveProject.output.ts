@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
 
 @ObjectType()
-export class CreateProjectOutput {
+export class ApproveProjectOutput {
   @Field()
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })

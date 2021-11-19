@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -10,6 +11,7 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import { GetServerSideProps } from "next";
 import { useContext, useEffect, useState } from "react";
 
@@ -19,7 +21,10 @@ import NotReviewerCard from "../../../components/custom/NotReviewerCard";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
 import Container from "../../../components/layout/Container";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
+import {
+  APPROVE_PROJECT_MUTATION,
+  PROJECT_BY_ID_QUERY,
+} from "../../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
 
 type Props = {
@@ -56,6 +61,7 @@ export const getServerSideProps: GetServerSideProps<
 
 function ReviewProjectPage({
   id,
+  tokenUri,
   name,
   owner,
   description,
@@ -63,7 +69,11 @@ function ReviewProjectPage({
   created,
   signals,
 }: any) {
-  const { isReviewer, contracts } = useContext(Web3Context);
+  const { isReviewer, contracts, provider } = useContext(Web3Context);
+  const { chainId, account } = useWeb3React();
+  const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
+    refetchQueries: "all",
+  });
   const [status, setStatus] = useState();
 
   useEffect(() => {
@@ -80,23 +90,47 @@ function ReviewProjectPage({
   }, [contracts, id]);
 
   const handleApproveProject = async () => {
-    const contributors = squads.flatMap(
-      ({ members }: { members: string[] }) => members
-    );
-    console.log(contributors);
-    const voteForApprovalTx =
-      await contracts.projectNFTContract.voteForApproval(contributors, 10, id);
-    // get return values or events
-    const receipt = await voteForApprovalTx.wait(2);
-    const statusInt = await contracts.projectNFTContract.status(id);
-    const statusString = await contracts.projectNFTContract.statusStrings(
-      statusInt
-    );
-    setStatus(statusString);
-    console.log({ receipt, statusString });
+    if (chainId && account) {
+      const contributors = squads.flatMap(
+        ({ members }: { members: string[] }) => members
+      );
+      const voteForApprovalTx =
+        await contracts.projectNFTContract.voteForApproval(
+          contributors,
+          10,
+          id
+        );
+      // get return values or events
+      const receipt = await voteForApprovalTx.wait(2);
+      const statusInt = await contracts.projectNFTContract.status(id);
+      const statusString = await contracts.projectNFTContract.statusStrings(
+        statusInt
+      );
+      setStatus(statusString);
+      if (statusString === "APPROVED") {
+        const mutationInput = {
+          id,
+          tokenUri,
+          chainId: chainId.toString(),
+        };
+        const signature = await provider.provider.send("personal_sign", [
+          JSON.stringify(mutationInput),
+          account,
+        ]);
+        return approveProjectMutation({
+          variables: {
+            input: {
+              ...mutationInput,
+              reviewerSignature: signature.result,
+            },
+          },
+        });
+      }
+      console.log({ receipt, statusString });
+      return null;
+    }
   };
 
-  // console.log({ receipt });
   return isReviewer ? (
     <Container>
       <Flex w="full">

@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import { AddIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -15,8 +16,10 @@ import NextLink from "next/link";
 
 import Container from "../../components/layout/Container";
 import ProjectCard from "../../components/projects/ProjectCard";
+import { ALL_PROJECTS_QUERY } from "../../graphql/projects";
 
 const ProjectData = {
+  id: "someid",
   logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
   avatar: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
   owner: "huxwell.eth",
@@ -32,15 +35,18 @@ const ProjectData = {
   created: "2021-09-13",
 };
 
-const allProjects = [ProjectData, ProjectData, ProjectData];
-
-function projects() {
+function Projects() {
+  const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
+    fetchPolicy: "cache-and-network",
+  });
+  if (loading) return "Loading...";
+  if (error) return `Error! ${error.message}`;
   return (
     <Container>
       <Flex w="full">
         <Heading>Projects</Heading>
         <Spacer />
-        <NextLink href="/create-project" passHref>
+        <NextLink href="/projects/create-project" passHref>
           <Button rightIcon={<AddIcon />}>Create Project</Button>
         </NextLink>
       </Flex>
@@ -54,9 +60,11 @@ function projects() {
         <TabPanels>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {allProjects.map((project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))}
+              {data.getAllProjects
+                .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+                .map((project) => (
+                  <ProjectCard key={project.name} project={project} />
+                ))}
             </SimpleGrid>
           </TabPanel>
           <TabPanel>
@@ -70,4 +78,4 @@ function projects() {
   );
 }
 
-export default projects;
+export default Projects;

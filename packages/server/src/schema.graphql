@@ -2,6 +2,19 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ApproveProjectInput {
+  chainId: String!
+  id: String!
+  reviewerSignature: String!
+  tokenUri: String!
+}
+
+type ApproveProjectOutput {
+  id: String!
+  isFeatured: Boolean!
+  tokenUri: String!
+}
+
 type Course {
   courseType: CourseTypeEnum!
 
@@ -56,6 +69,9 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
+  """Approves a new Project in dCompass"""
+  approveProject(input: ApproveProjectInput!): [ApproveProjectOutput!]
+
   """Create a new Project in dCompass"""
   createProject(input: CreateProjectInput!): [CreateProjectOutput!]
 }
@@ -88,20 +104,11 @@ type Project {
 }
 
 type Query {
-  """Checks if a user confirmation token is valid"""
-  confirmationTokenStatus(input: TokenInput!): Int
-
   """Gets all the projects in dCompass"""
   getAllProjects: [Project!]
 
   """Gets a project by its Stream ID"""
   getProjectById(projectId: String!): Project
-
-  """Gets a user by ID and returns its informations"""
-  getUserById(input: UserDIDInput!): User
-
-  """Gets the currently logged in user"""
-  me: User
 }
 
 type Quest {
@@ -166,27 +173,6 @@ type Tag {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
-}
-
-input TokenInput {
-  token: String!
-}
-
-type User {
-  confirmed: Boolean!
-
-  """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
-  did: String!
-  ethAddresses: [String!]!
-  restricted: Boolean!
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
-}
-
-input UserDIDInput {
-  userDID: String!
 }
 
 type Website {
