@@ -5,6 +5,5 @@ import { Merge } from "core/types/merge";
 
 type MotionBoxProps = Merge<HTMLChakraProps<"div">, HTMLMotionProps<"div">>;
 
-const MotionBox: React.FC<MotionBoxProps> = motion(chakra.div);
-
-export default MotionBox;
+// eslint-disable-next-line import/prefer-default-export
+export const MotionBox: React.FC<MotionBoxProps> = motion(chakra.div);

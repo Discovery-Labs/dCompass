@@ -3,7 +3,6 @@ import { BaseEntity } from '../../core/entities/BaseEntity';
 import { Course } from '../Courses/Course.entity';
 import { Squad } from '../Squads/Squad.entity';
 import { Tag } from '../Tags/Tag.entity';
-import { Website } from './dto/WebSite';
 
 export type CeramicStreamId = string;
 @ObjectType()
@@ -20,8 +19,8 @@ export class Project extends BaseEntity {
   @Field()
   whitepaper?: string;
 
-  @Field(() => [Website])
-  websites?: Website[];
+  @Field()
+  website: string;
 
   @Field()
   twitter?: string;
@@ -34,6 +33,9 @@ export class Project extends BaseEntity {
 
   @Field()
   createdBy: string;
+
+  @Field()
+  updatedBy: string;
 
   @Field()
   description: string;

@@ -8,6 +8,7 @@ import { CreateProjectResolver } from './mutations/CreateProject.resolver';
 import { GetProjectByIdResolver } from './queries/GetProjectById.resolver';
 import { AppService } from '../../app.service';
 import { ApproveProjectResolver } from './mutations/ApproveProject.resolver';
+import { EditProjectResolver } from './mutations/EditProject.resolver';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ApproveProjectResolver } from './mutations/ApproveProject.resolver';
     GetAllProjectsResolver,
     GetProjectByIdResolver,
     CreateProjectResolver,
+    EditProjectResolver,
     ApproveProjectResolver,
     AppService,
   ],

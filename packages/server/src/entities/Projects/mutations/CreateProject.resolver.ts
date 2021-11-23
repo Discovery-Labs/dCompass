@@ -46,7 +46,16 @@ export class CreateProjectResolver {
     console.log({ projects });
 
     await ceramicClient.dataStore.set(schemaAliases.APP_PROJECTS_ALIAS, {
-      projects: [{ id, tokenUris, isFeatured: false }, ...projects],
+      projects: [
+        {
+          id,
+          tokenUris,
+          isFeatured: false,
+          createdBy: decodedAddress,
+          createdAt: new Date().toISOString(),
+        },
+        ...projects,
+      ],
     });
 
     const allProjects = await ceramicClient.dataStore.get(

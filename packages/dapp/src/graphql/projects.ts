@@ -10,6 +10,27 @@ export const CREATE_PROJECT_MUTATION = gql`
   }
 `;
 
+export const EDIT_PROJECT_MUTATION = gql`
+  mutation EditProject($input: EditProjectInput!) {
+    editProject(input: $input) {
+      id
+      name
+      createdBy
+      description
+      website
+      whitepaper
+      tokenUris
+      isFeatured
+      logo
+      squads {
+        name
+        image
+        members
+      }
+    }
+  }
+`;
+
 export const APPROVE_PROJECT_MUTATION = gql`
   mutation ApproveProject($input: ApproveProjectInput!) {
     approveProject(input: $input) {
@@ -24,12 +45,19 @@ export const ALL_PROJECTS_QUERY = gql`
   query getAllProjects {
     getAllProjects {
       id
-      createdBy
       name
+      createdBy
       description
       tokenUris
+      website
+      whitepaper
       isFeatured
       logo
+      squads {
+        name
+        image
+        members
+      }
     }
   }
 `;
@@ -43,6 +71,8 @@ export const PROJECT_BY_ID_QUERY = gql`
       description
       tokenUris
       isFeatured
+      website
+      whitepaper
       logo
       squads {
         name

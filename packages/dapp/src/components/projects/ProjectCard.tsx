@@ -41,7 +41,9 @@ function ProjectCard({
     <CardMedia src={imgSrc}>
       <Heading fontSize="2xl">{project.name}</Heading>
       <Flex align="center" maxW="full">
-        <Blockies seed={project.createdBy} className="blockies" />
+        {project.createdBy && (
+          <Blockies seed={project.createdBy} className="blockies" />
+        )}
         <Text ml="2" fontSize="sm" isTruncated>
           {project.createdBy}
         </Text>

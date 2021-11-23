@@ -39,9 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { logo, ...squadFiles } = form.files;
   const properties = JSON.parse(form.fields.metadata);
   const storeCids = properties.squads.flatMap((squad: any) => {
-    console.log({ squadFiles, squad });
     const squadFile = squadFiles[squad.name][0];
-    console.log({ squadFile });
     const name = squadFile.originalFilename as string;
     const f = new File([fs.readFileSync(squadFile.path)], name, {
       type: "image/*",

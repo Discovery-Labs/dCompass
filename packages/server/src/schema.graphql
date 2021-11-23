@@ -68,12 +68,31 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input EditProjectInput {
+  color: String
+  description: String
+  discord: String
+  editorSignature: String!
+  github: String
+  id: String!
+  logo: String
+  name: String
+  squads: [ProjectSquadsInput!]
+  tokenUris: [String!]
+  twitter: String
+  website: String
+  whitepaper: String
+}
+
 type Mutation {
   """Approves a new Project in dCompass"""
   approveProject(input: ApproveProjectInput!): [ApproveProjectOutput!]
 
   """Create a new Project in dCompass"""
   createProject(input: CreateProjectInput!): [CreateProjectOutput!]
+
+  """Edit project in dCompass"""
+  editProject(input: EditProjectInput!): Project
 }
 
 type Project {
@@ -100,8 +119,15 @@ type Project {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
-  websites: [Website!]
+  updatedBy: String!
+  website: String!
   whitepaper: String
+}
+
+input ProjectSquadsInput {
+  image: String!
+  members: [String!]!
+  name: String!
 }
 
 type Query {
@@ -174,9 +200,4 @@ type Tag {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
-}
-
-type Website {
-  name: String!
-  url: String!
 }

@@ -23,18 +23,6 @@ function CreateProjectStepper() {
     error,
   } = web3React;
 
-  console.log({
-    contracts,
-    connector,
-    library,
-    chainId,
-    account,
-    activate,
-    deactivate,
-    active,
-    error,
-  });
-
   const methods = useForm({
     defaultValues: {
       quests: [

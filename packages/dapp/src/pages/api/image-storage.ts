@@ -35,7 +35,6 @@ const web3Storage = new Web3Storage({ token: getWeb3Token() });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const form = await parseForm(req);
-
   const cids = await Promise.all(
     Object.values(form.files)
       .flatMap((file) => file)
@@ -48,7 +47,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return { field: file.fieldName, cid };
       })
   );
-  console.log({ cids });
 
   return res.status(200).json({
     cids: cids.reduce((formattedCids, curr) => {

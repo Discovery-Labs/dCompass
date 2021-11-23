@@ -13,7 +13,13 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default ({ nestIndex, register, setValue, errors, formLabel }: any) => {
+const SquadDropzone = ({
+  nestIndex,
+  register,
+  setValue,
+  errors,
+  formLabel,
+}: any) => {
   const [files, setFiles] = useState([]);
 
   const onDrop = useCallback(
@@ -119,3 +125,5 @@ export default ({ nestIndex, register, setValue, errors, formLabel }: any) => {
     </FormControl>
   );
 };
+
+export default SquadDropzone;

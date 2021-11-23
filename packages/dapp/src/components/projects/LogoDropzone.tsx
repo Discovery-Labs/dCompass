@@ -13,8 +13,18 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default ({ register, setValue, errors }: any) => {
+export const LogoDropzone = ({
+  register,
+  setValue,
+  errors,
+  isRequired = false,
+}: any) => {
   const [files, setFiles] = useState([]);
+  const logoOptions = isRequired
+    ? {
+        required: "This is required",
+      }
+    : {};
 
   const onDrop = useCallback(
     (acceptedFiles, rejectedFiles, e) => {
@@ -83,9 +93,7 @@ export default ({ register, setValue, errors }: any) => {
           <Input
             type="file"
             placeholder="Logo"
-            {...register("logo", {
-              required: "This is required",
-            })}
+            {...register("logo", logoOptions)}
             {...getInputProps()}
           />
         </Center>
@@ -104,9 +112,7 @@ export default ({ register, setValue, errors }: any) => {
           <Input
             type="file"
             placeholder="Logo"
-            {...register("logo", {
-              required: "This is required",
-            })}
+            {...register("logo", logoOptions)}
             {...getInputProps()}
           />
         </Center>
@@ -116,3 +122,5 @@ export default ({ register, setValue, errors }: any) => {
     </FormControl>
   );
 };
+
+export default LogoDropzone;

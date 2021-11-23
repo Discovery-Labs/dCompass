@@ -9,7 +9,7 @@ import {
 import { useFieldArray } from "react-hook-form";
 import { FiX } from "react-icons/fi";
 
-export default ({ nestIndex, control, register }: any) => {
+const MembersFieldArray = ({ nestIndex, control, register }: any) => {
   const { fields, remove, append } = useFieldArray({
     control,
     name: `squads[${nestIndex}].members`,
@@ -44,3 +44,5 @@ export default ({ nestIndex, control, register }: any) => {
     </VStack>
   );
 };
+
+export default MembersFieldArray;

@@ -45,6 +45,128 @@ export declare const schemas: {
                             isFeatured: {
                                 type: string;
                             };
+                            name: {
+                                type: string;
+                                title: string;
+                                maxLength: number;
+                            };
+                            color: {
+                                type: string;
+                            };
+                            whitepaper: {
+                                type: string;
+                            };
+                            website: {
+                                type: string;
+                            };
+                            twitter: {
+                                type: string;
+                            };
+                            discord: {
+                                type: string;
+                            };
+                            github: {
+                                type: string;
+                            };
+                            description: {
+                                type: string;
+                            };
+                            logo: {
+                                type: string;
+                            };
+                            contracts: {
+                                type: string;
+                                items: {
+                                    type: string;
+                                    title: string;
+                                };
+                            };
+                            repos: {
+                                type: string;
+                                items: {
+                                    $ref: string;
+                                };
+                            };
+                            courses: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                    title: string;
+                                    properties: {
+                                        id: {
+                                            $ref: string;
+                                        };
+                                        title: {
+                                            type: string;
+                                            title: string;
+                                            maxLength: number;
+                                        };
+                                    };
+                                };
+                            };
+                            createdBy: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            updatedBy: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            createdAt: {
+                                type: string;
+                                format: string;
+                                maxLength: number;
+                            };
+                            updatedAt: {
+                                type: string;
+                                format: string;
+                                maxLength: number;
+                            };
+                            tags: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                    title: string;
+                                    properties: {
+                                        id: {
+                                            $ref: string;
+                                        };
+                                        name: {
+                                            type: string;
+                                            title: string;
+                                            maxLength: number;
+                                        };
+                                    };
+                                };
+                            };
+                            squads: {
+                                type: string;
+                                items: {
+                                    type: string;
+                                    properties: {
+                                        name: {
+                                            type: string;
+                                        };
+                                        image: {
+                                            type: string;
+                                        };
+                                        members: {
+                                            type: string;
+                                            items: {
+                                                type: string;
+                                            };
+                                        };
+                                    };
+                                };
+                            };
+                            peerProjects: {
+                                type: string;
+                                items: {
+                                    $ref: string;
+                                };
+                            };
                         };
                     };
                 };
@@ -145,6 +267,21 @@ export declare const schemas: {
                 };
                 createdBy: {
                     type: string;
+                    maxLength: number;
+                };
+                updatedBy: {
+                    type: string;
+                    maxLength: number;
+                };
+                createdAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                updatedAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
                 };
                 tags: {
                     type: string;

@@ -1,7 +1,7 @@
 import { Box, Button, Heading, Image } from "@chakra-ui/react";
 import Link from "next/link";
 
-import MotionBox from "components/motion/Box";
+import { MotionBox } from "components/motion/Box";
 
 const Page404 = () => {
   return (

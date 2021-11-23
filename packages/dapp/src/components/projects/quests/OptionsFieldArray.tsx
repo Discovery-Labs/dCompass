@@ -2,7 +2,7 @@ import { Button, HStack, IconButton, Input, VStack } from "@chakra-ui/react";
 import { useFieldArray } from "react-hook-form";
 import { FiX } from "react-icons/fi";
 
-export default ({ nestIndex, control, register }: any) => {
+const OptionsFieldArray = ({ nestIndex, control, register }: any) => {
   const { fields, remove, append } = useFieldArray({
     control,
     name: `quests[${nestIndex}].options`,
@@ -36,3 +36,5 @@ export default ({ nestIndex, control, register }: any) => {
     </VStack>
   );
 };
+
+export default OptionsFieldArray;

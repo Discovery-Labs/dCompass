@@ -18,65 +18,27 @@ import IconWithState from "../custom/IconWithState";
 
 import LogoDropzone from "./LogoDropzone";
 
-const CreateProjectForm: React.FunctionComponent = () => {
+const EditProjectForm: React.FunctionComponent = () => {
   const router = useRouter();
-  const [files, setFiles] = useState([]);
   const {
     register,
     setValue,
     formState: { errors },
   } = useFormContext();
 
-  const onDrop = useCallback(
-    (acceptedFiles, rejectedFiles, e) => {
-      if (acceptedFiles) {
-        const { name } = e.target;
-        setValue(name, e.target.files);
-        setFiles(
-          acceptedFiles.map((file: File) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            })
-          )
-        );
-      }
-    },
-    [setValue]
-  );
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: "image/*",
-    onDrop,
-  });
-
-  const thumbs = files.map((file: any) => (
-    <div key={file.name}>
-      <Image src={file.preview} />
-    </div>
-  ));
-
-  useEffect(
-    () => () => {
-      // Make sure to revoke the data uris to avoid memory leaks
-      files.forEach((file: any) => URL.revokeObjectURL(file.preview));
-    },
-    [files]
-  );
-
   function goBack() {
     router.back();
   }
   return (
     <>
-      <Heading>Create project</Heading>
-      <LogoDropzone {...{ register, setValue, errors, isRequired: true }} />
+      <Heading>Edit project</Heading>
+      <LogoDropzone {...{ register, setValue, errors }} />
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Project name</FormLabel>
         <Input
           placeholder="Project name"
           {...register("name", {
-            required: "This is required",
             maxLength: {
               value: 150,
               message: "Maximum length should be 150",
@@ -93,7 +55,6 @@ const CreateProjectForm: React.FunctionComponent = () => {
         <Textarea
           placeholder="Project description"
           {...register("description", {
-            required: "This is required",
             maxLength: {
               value: 1200,
               message: "Maximum length should be 1200",
@@ -110,7 +71,6 @@ const CreateProjectForm: React.FunctionComponent = () => {
         <Input
           placeholder="Website"
           {...register("website", {
-            required: "This is required",
             maxLength: {
               value: 50,
               message: "Maximum length should be 50",
@@ -127,7 +87,6 @@ const CreateProjectForm: React.FunctionComponent = () => {
         <Input
           placeholder="Whitepaper"
           {...register("whitepaper", {
-            required: "This is required",
             maxLength: {
               value: 150,
               message: "Maximum length should be 150",
@@ -149,4 +108,4 @@ const CreateProjectForm: React.FunctionComponent = () => {
   );
 };
 
-export default CreateProjectForm;
+export default EditProjectForm;

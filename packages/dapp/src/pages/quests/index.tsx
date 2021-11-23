@@ -31,7 +31,7 @@ const QuestData = {
 
 const allQuests = [QuestData, QuestData, QuestData];
 
-function quests() {
+function Quests() {
   return (
     <Container>
       <Flex w="full">
@@ -67,4 +67,4 @@ function quests() {
   );
 }
 
-export default quests;
+export default Quests;

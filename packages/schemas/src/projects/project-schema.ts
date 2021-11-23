@@ -1,116 +1,133 @@
+export const projectProperties = {
+  name: {
+    type: "string",
+    title: "name",
+    maxLength: 100,
+  },
+  color: {
+    type: "string",
+  },
+  whitepaper: {
+    type: "string",
+  },
+  website: {
+    type: "string",
+  },
+  twitter: {
+    type: "string",
+  },
+  discord: {
+    type: "string",
+  },
+  github: {
+    type: "string",
+  },
+  description: {
+    type: "string",
+  },
+  logo: {
+    type: "string",
+  },
+  contracts: {
+    type: "array",
+    items: {
+      type: "string",
+      title: "ContractAddress",
+    },
+  },
+  repos: {
+    type: "array",
+    items: {
+      $ref: "#/definitions/CeramicStreamId",
+    },
+  },
+  courses: {
+    type: "array",
+    title: "courses",
+    items: {
+      type: "object",
+      title: "CourseItem",
+      properties: {
+        id: {
+          $ref: "#/definitions/CeramicStreamId",
+        },
+        title: {
+          type: "string",
+          title: "title",
+          maxLength: 100,
+        },
+      },
+    },
+  },
+  createdBy: {
+    type: "string",
+    maxLength: 42,
+  },
+  updatedBy: {
+    type: "string",
+    maxLength: 42,
+  },
+  createdAt: {
+    type: "string",
+    format: "date-time",
+    maxLength: 30,
+  },
+  updatedAt: {
+    type: "string",
+    format: "date-time",
+    maxLength: 30,
+  },
+  tags: {
+    type: "array",
+    title: "tags",
+    items: {
+      type: "object",
+      title: "TagItem",
+      properties: {
+        id: {
+          $ref: "#/definitions/CeramicStreamId",
+        },
+        name: {
+          type: "string",
+          title: "name",
+          maxLength: 100,
+        },
+      },
+    },
+  },
+  squads: {
+    type: "array",
+    items: {
+      type: "object",
+      properties: {
+        name: {
+          type: "string",
+        },
+        image: {
+          type: "string",
+        },
+        members: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+      },
+    },
+  },
+  peerProjects: {
+    type: "array",
+    items: {
+      $ref: "#/definitions/CeramicStreamId",
+    },
+  },
+};
+
 export const ProjectSchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
   title: "Project",
   type: "object",
-  properties: {
-    name: {
-      type: "string",
-      title: "name",
-      maxLength: 100,
-    },
-    color: {
-      type: "string",
-    },
-    whitepaper: {
-      type: "string",
-    },
-    website: {
-      type: "string",
-    },
-    twitter: {
-      type: "string",
-    },
-    discord: {
-      type: "string",
-    },
-    github: {
-      type: "string",
-    },
-    description: {
-      type: "string",
-    },
-    logo: {
-      type: "string",
-    },
-    contracts: {
-      type: "array",
-      items: {
-        type: "string",
-        title: "ContractAddress",
-      },
-    },
-    repos: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/CeramicStreamId",
-      },
-    },
-    courses: {
-      type: "array",
-      title: "courses",
-      items: {
-        type: "object",
-        title: "CourseItem",
-        properties: {
-          id: {
-            $ref: "#/definitions/CeramicStreamId",
-          },
-          title: {
-            type: "string",
-            title: "title",
-            maxLength: 100,
-          },
-        },
-      },
-    },
-    createdBy: {
-      type: "string",
-    },
-    tags: {
-      type: "array",
-      title: "tags",
-      items: {
-        type: "object",
-        title: "TagItem",
-        properties: {
-          id: {
-            $ref: "#/definitions/CeramicStreamId",
-          },
-          name: {
-            type: "string",
-            title: "name",
-            maxLength: 100,
-          },
-        },
-      },
-    },
-    squads: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          name: {
-            type: "string",
-          },
-          image: {
-            type: "string",
-          },
-          members: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-          },
-        },
-      },
-    },
-    peerProjects: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/CeramicStreamId",
-      },
-    },
-  },
+  properties: projectProperties,
   definitions: {
     IPFSUrl: {
       type: "string",

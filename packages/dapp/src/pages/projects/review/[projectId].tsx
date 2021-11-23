@@ -69,7 +69,6 @@ function ReviewProjectPage({
   description,
   squads,
   created,
-  signals,
 }: any) {
   const { isReviewer, contracts, provider } = useContext(Web3Context);
   const { chainId, account } = useWeb3React();

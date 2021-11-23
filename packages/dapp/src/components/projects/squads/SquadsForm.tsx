@@ -13,7 +13,7 @@ const squadsDefaultValues = {
   ],
 };
 
-function FieldArrayForm() {
+function SquadsForm() {
   const {
     control,
     register,
@@ -48,4 +48,4 @@ function FieldArrayForm() {
   );
 }
 
-export default FieldArrayForm;
+export default SquadsForm;

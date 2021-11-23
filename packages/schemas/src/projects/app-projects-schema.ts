@@ -1,3 +1,5 @@
+import { projectProperties } from "./project-schema";
+
 export const AppProjectsSchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
   title: "AppProjectsList",
@@ -10,6 +12,7 @@ export const AppProjectsSchema = {
         type: "object",
         title: "project",
         properties: {
+          ...projectProperties,
           id: {
             $ref: "#/definitions/CeramicStreamId",
           },

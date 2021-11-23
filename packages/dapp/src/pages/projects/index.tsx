@@ -13,32 +13,34 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useContext } from "react";
 
 import Container from "../../components/layout/Container";
 import ProjectCard from "../../components/projects/ProjectCard";
+import { Web3Context } from "../../contexts/Web3Provider";
 import { ALL_PROJECTS_QUERY } from "../../graphql/projects";
 
-const ProjectData = {
-  id: "someid",
-  logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
-  avatar: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
-  owner: "huxwell.eth",
-  name: "Project Alpha",
-  description:
-    "This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.",
-  website: "https://www.google.com",
-  whitepaper: "https://www.google.com",
+type ProjectData = {
+  id: string;
+  logo: string;
+  avatar: string;
+  owner: string;
+  name: string;
+  description: string;
+  website: string;
+  whitepaper: string;
   social: {
-    github: "https://github.com",
-  },
-  signals: 24,
-  created: "2021-09-13",
+    github: string;
+  };
+  signals: number;
+  created: string;
 };
 
 function Projects() {
   const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
     fetchPolicy: "cache-and-network",
   });
+  const { account } = useContext(Web3Context);
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   return (
@@ -65,7 +67,7 @@ function Projects() {
                     .filter(
                       ({ isFeatured }: { isFeatured: boolean }) => isFeatured
                     )
-                    .map((project) => (
+                    .map((project: any) => (
                       <ProjectCard key={project.name} project={project} />
                     ))
                 : "No project found"}
@@ -73,7 +75,16 @@ function Projects() {
           </TabPanel>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 3]} spacing={10}>
-              <ProjectCard project={ProjectData} />
+              {data.getAllProjects
+                ? data.getAllProjects
+                    .filter(
+                      ({ createdBy }: { createdBy: string }) =>
+                        createdBy === account
+                    )
+                    .map((project: any) => (
+                      <ProjectCard key={project.name} project={project} />
+                    ))
+                : "No project found"}
             </SimpleGrid>
           </TabPanel>
         </TabPanels>
