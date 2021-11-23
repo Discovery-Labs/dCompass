@@ -27,10 +27,11 @@ module.exports = {
       url: "http://localhost:8545",
     },
     mumbai: {
-      url: INFURA_ID
+      url: /*INFURA_ID
         ? `https://polygon-mumbai.infura.io/v3/${INFURA_ID}`
-        : "https://rpc-mumbai.matic.today",
+        :*/ "https://rpc-mumbai.maticvigil.com",
       accounts: [DEPLOYER_PRIVATE_KEY],
+      chainId: 80001
     },
     matic: {
       url: INFURA_ID
