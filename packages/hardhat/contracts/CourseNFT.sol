@@ -25,6 +25,7 @@ contract CourseNFT is ERC721URIStorage, Ownable{
     //mapping (string => uint16[]) public rarityThresholds; // rarity of each image threshold per courseId, uint16 used for packing purposes
     mapping (string => bool) public courseMinted; // tracks if mint has been done
     mapping (string => address[]) internal contributors; //contributors to this course
+    mapping (uint => string) public statusStrings;
     uint[] rarityThresholds;
     mapping (string => string) public projectIdforCourse;//the projectId that is the root
     mapping (string => CourseStatus) public status;
@@ -46,6 +47,10 @@ contract CourseNFT is ERC721URIStorage, Ownable{
         require(rarityTotal == 100, "rarities do not add to 100");
         rarityThresholds = _initRarities;
         projectNFTAddress = _projectNFTAddress;
+        statusStrings[0] = "NONEXISTENT";
+        statusStrings[1] = "PENDING";
+        statusStrings[2] = "DENIED";
+        statusStrings[3] = "APPROVED";
     }
 
     receive() external payable {
