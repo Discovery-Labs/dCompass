@@ -1,31 +1,22 @@
 import { useWeb3React } from "@web3-react/core";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-import NotConnectedCard from "../../components/custom/NotConnectedCard";
-import CenteredFrame from "../../components/layout/CenteredFrame";
-import QuestsForm from "../../components/projects/quests/QuestsForm";
-import { Web3Context } from "../../contexts/Web3Provider";
+import NotConnectedCard from "../../../components/custom/NotConnectedCard";
+import CenteredFrame from "../../../components/layout/CenteredFrame";
+import CoursesForm from "../../../components/projects/courses/CoursesForm";
+import { Web3Context } from "../../../contexts/Web3Provider";
 import Card from "components/custom/Card";
 
-function CreateQuestStepper() {
-  const { self, contracts, provider } = useContext(Web3Context);
+function CreateCourseStepper() {
+  const { contracts } = useContext(Web3Context);
   const web3React = useWeb3React();
 
-  const {
-    connector,
-    library,
-    chainId,
-    account,
-    activate,
-    deactivate,
-    active,
-    error,
-  } = web3React;
+  const { account } = web3React;
 
   const methods = useForm({
     defaultValues: {
-      quests: [
+      courses: [
         {
           question: "Genesis",
           options: ["0x0000000000000"],
@@ -38,7 +29,7 @@ function CreateQuestStepper() {
     <FormProvider {...methods}>
       <CenteredFrame>
         <Card h="full" w="2xl">
-          <QuestsForm />
+          <CoursesForm />
         </Card>
       </CenteredFrame>
     </FormProvider>
@@ -51,4 +42,4 @@ function CreateQuestStepper() {
   );
 }
 
-export default CreateQuestStepper;
+export default CreateCourseStepper;

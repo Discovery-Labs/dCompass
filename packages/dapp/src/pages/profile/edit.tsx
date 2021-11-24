@@ -4,33 +4,37 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  IconButton,
   Stack,
   Image,
+  Link,
   Textarea,
   Box,
+  Select,
 } from "@chakra-ui/react";
-import publishedModel from "@d-profiles/schemas/lib/model.json";
-import { EthereumAuthProvider, SelfID } from "@self.id/web";
-import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import NextLink from "next/link";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
-// import Image from "next/image";
+import { BsGithub } from "react-icons/bs";
 
-import {
-  ceramicCoreFactory,
-  CERAMIC_TESTNET,
-  CERAMIC_TESTNET_NODE_URL,
-} from "../../../ceramic";
-import { getNetwork } from "../../../utils";
+import { Web3Context } from "../../contexts/Web3Provider";
+import { findGitHub } from "../../core/ceramic/identity-link";
+import { GITHUB_HOST } from "../../core/constants";
+import { COUNTRIES } from "../../core/constants/countries";
+import { emojis } from "../../core/constants/emojis";
 
 const EditProfilePage = () => {
-  const router = useRouter();
-  const [mySelf, setMySelf] = useState<SelfID>();
-  const [did, setDid] = useState<string>();
-  const [address, setAddress] = useState<string>();
+  const { account, self } = useContext(Web3Context);
   const [imageURL, setImageURL] = useState<string>();
   const [backgroundURL, setBackgroundURL] = useState<string>();
   const image = useRef(null);
+  const [github, setGithub] = useState<string>();
   const background = useRef(null);
   const {
     handleSubmit,
@@ -39,78 +43,52 @@ const EditProfilePage = () => {
     setValue,
   } = useForm();
 
-  const init = async () => {
-    const addresses = await window.ethereum.enable();
-    console.log({ addresses });
-    const self = await SelfID.authenticate({
-      authProvider: new EthereumAuthProvider(window.ethereum, addresses[0]),
-      ceramic: CERAMIC_TESTNET_NODE_URL,
-      connectNetwork: CERAMIC_TESTNET,
-      model: publishedModel,
-    });
-    setMySelf(self);
-    setAddress(addresses[0]);
-    return self;
-  };
-
-  useEffect(() => {
-    init();
-  }, []);
-
   useEffect(() => {
     // fetch from Ceramic
     (async () => {
-      if (address) {
-        const core = ceramicCoreFactory();
-        const { network } = await getNetwork();
-        let userDID;
-        try {
-          userDID = await core.getAccountDID(
-            `${address}@eip155:${network.chainId}`
+      if (account && self) {
+        const result = await self.get("basicProfile");
+        const webAccounts = await self.get("alsoKnownAs");
+        if (webAccounts.accounts.length > 0) {
+          const githubAccount = webAccounts.accounts.find(
+            (acc: any) => acc.host === GITHUB_HOST
           );
-        } catch (error) {
-          console.log(error);
-          const profile = await init();
-          console.log({ profile });
-          userDID = profile.id;
+          setGithub(
+            `${githubAccount?.protocol}://${githubAccount?.host}/${githubAccount?.id}`
+          );
         }
-        if (userDID) {
-          setDid(userDID);
-          const result = await core.get("basicProfile", userDID);
-          console.log({ result });
-          if (!result) return;
-          Object.entries(result).forEach(([key, value]) => {
-            console.log({ key, value });
-            if (["image", "background"].includes(key)) {
-              const {
-                original: { src: url },
-              } = value as any;
-              const match = url.match(/^ipfs:\/\/(.+)$/);
-              if (match) {
-                const ipfsUrl = `//ipfs.io/ipfs/${match[1]}`;
-                if (key === "image") {
-                  setImageURL(ipfsUrl);
-                }
-                if (key === "background") {
-                  setBackgroundURL(ipfsUrl);
-                }
+        console.log({ webAccounts });
+        if (!result) return;
+        Object.entries(result).forEach(([key, value]) => {
+          if (["image", "background"].includes(key)) {
+            const {
+              original: { src: url },
+            } = value as any;
+            const match = url.match(/^ipfs:\/\/(.+)$/);
+            if (match) {
+              const ipfsUrl = `//ipfs.io/ipfs/${match[1]}`;
+              if (key === "image") {
+                setImageURL(ipfsUrl);
               }
-            } else {
-              setValue(key, value);
+              if (key === "background") {
+                setBackgroundURL(ipfsUrl);
+              }
             }
-          });
-        }
+          } else {
+            setValue(key, value);
+          }
+        });
       }
     })();
-  }, [address, setValue]);
+  }, [account, self, setValue]);
 
   const onFileChange = useCallback((event) => {
     const input = event.target;
     const file = input.files?.[0];
     if (!file) return;
+    const reader = new FileReader();
     const img = image.current as any;
     const bg = background.current as any;
-    const reader = new FileReader();
     reader.addEventListener("load", () => {
       console.log(reader.result); // eslint-disable-line no-console
       if (input.name === "image") {
@@ -145,8 +123,6 @@ const EditProfilePage = () => {
           return response.cids;
         });
 
-      const refs = { image: image.current, background: background.current };
-
       ["image", "background"].forEach((key) => {
         console.log(cids[key]);
         if (cids[key]) {
@@ -171,16 +147,29 @@ const EditProfilePage = () => {
     if (!backgroundFile) {
       delete values.background;
     }
-    if (mySelf) {
-      await mySelf.client.dataStore.merge("basicProfile", values);
-    }
-
-    // return router.push("/profile/edit-private-profile");
+    await self.client.dataStore.merge("basicProfile", values);
   };
   return (
     <Box margin="0 auto" maxWidth={1100} transition="0.5s ease-out">
       <Box margin="8">
-        <Box as="main" marginY={22}>
+        <Box marginY={22}>
+          {github ? (
+            <Link href={github} target="_blank" rel="noopener noreferrer">
+              <IconButton
+                rounded="full"
+                aria-label="Github account"
+                icon={<BsGithub />}
+              />
+            </Link>
+          ) : (
+            <NextLink href="/profile/github" passHref>
+              <IconButton
+                rounded="full"
+                aria-label="Github account"
+                icon={<BsGithub />}
+              />
+            </NextLink>
+          )}
           <Stack as="form" onSubmit={handleSubmit(onSubmit)}>
             <FormControl isInvalid={errors.name}>
               <FormLabel htmlFor="name">Name</FormLabel>
@@ -200,15 +189,13 @@ const EditProfilePage = () => {
             </FormControl>
             <FormControl isInvalid={errors.image}>
               <FormLabel htmlFor="image">Profile Image</FormLabel>
-              <Image ref={image} src={imageURL} alt="personnal image" />
+              <Image ref={image} src={imageURL} />
               <Input
+                {...register("image")}
                 borderColor="purple.500"
                 type="file"
-                defaultValue=""
+                onChange={onFileChange}
                 placeholder="image"
-                {...register("image", {
-                  onChange: onFileChange,
-                })}
               />
               <FormErrorMessage>
                 {errors.image && errors.image.message}
@@ -216,19 +203,13 @@ const EditProfilePage = () => {
             </FormControl>
             <FormControl isInvalid={errors.background}>
               <FormLabel htmlFor="background">Header Background</FormLabel>
-              <Image
-                ref={background}
-                src={backgroundURL}
-                alt="background URL"
-              />
+              <Image ref={background} src={backgroundURL} />
               <Input
                 type="file"
                 borderColor="purple.500"
-                defaultValue=""
+                {...register("background")}
+                onChange={onFileChange}
                 placeholder="background"
-                {...register("background", {
-                  onChange: onFileChange,
-                })}
               />
               <FormErrorMessage>
                 {errors.background && errors.background.message}
@@ -252,13 +233,14 @@ const EditProfilePage = () => {
             </FormControl>
             <FormControl isInvalid={errors.emoji}>
               <FormLabel htmlFor="emoji">Emoji</FormLabel>
-              <Input
-                placeholder="🚀"
-                borderColor="purple.500"
-                {...register("emoji", {
-                  maxLength: 2,
-                })}
-              />
+              <Select borderColor="purple.500" {...register("emoji")}>
+                <option value={undefined}>Select an emoji</option>
+                {emojis.map((emoji) => (
+                  <option value={emoji} key={emoji}>
+                    {emoji}
+                  </option>
+                ))}
+              </Select>
               <FormErrorMessage>
                 {errors.emoji && errors.emoji.message}
               </FormErrorMessage>
@@ -302,14 +284,20 @@ const EditProfilePage = () => {
               </FormErrorMessage>
             </FormControl>
             <FormControl isInvalid={errors.residenceCountry}>
-              <FormLabel htmlFor="residenceCountry">Country Code</FormLabel>
-              <Input
-                placeholder="UK"
+              <FormLabel htmlFor="residenceCountry">Country</FormLabel>
+              <Select
+                placeholder="Select your country of residence"
                 borderColor="purple.500"
-                {...register("residenceCountry", {
-                  maxLength: 2,
-                })}
-              />
+                {...register("residenceCountry")}
+              >
+                {COUNTRIES.map(
+                  ({ name, iso2 }: { name: string; iso2: string }) => (
+                    <option value={iso2} key={iso2}>
+                      {name}
+                    </option>
+                  )
+                )}
+              </Select>
               <FormErrorMessage>
                 {errors.residenceCountry && errors.residenceCountry.message}
               </FormErrorMessage>

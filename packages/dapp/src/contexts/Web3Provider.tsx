@@ -15,7 +15,12 @@ import React, {
 } from "react";
 import Web3Modal from "web3modal";
 
-import { ceramicCoreFactory, CERAMIC_TESTNET } from "../core/ceramic";
+import {
+  ceramicCoreFactory,
+  CERAMIC_TESTNET,
+  findGitHub,
+} from "../core/ceramic";
+import { createGitHub, IdentityLink } from "../core/ceramic/identity-link";
 import NETWORKS from "../core/networks";
 
 import { State, Web3Reducer } from "./Web3Reducer";
@@ -106,6 +111,13 @@ const Web3Provider = ({ children }: { children: any }) => {
     });
   };
 
+  const setIdentityLink = (identityLink: null | any) => {
+    dispatch({
+      type: "SET_IDENTITY_LINK",
+      payload: identityLink,
+    });
+  };
+
   useEffect(() => {
     const coreCeramic = ceramicCoreFactory();
     setCore(coreCeramic);
@@ -177,12 +189,19 @@ const Web3Provider = ({ children }: { children: any }) => {
 
     setAccount(account);
 
+    const identityLinkService = new IdentityLink(
+      process.env.NEXT_PUBLIC_CERAMIC_VERIFICATION_SERVER_URL ||
+        "https://verifications-clay.3boxlabs.com"
+    );
+    setIdentityLink(identityLinkService);
+
     const mySelf = await SelfID.authenticate({
       authProvider: new EthereumAuthProvider(ethersProvider.provider, account),
       ceramic: CERAMIC_TESTNET,
       connectNetwork: CERAMIC_TESTNET,
       model: publishedModel,
     });
+
     setSelf(mySelf);
 
     provider.on("chainChanged", () => {

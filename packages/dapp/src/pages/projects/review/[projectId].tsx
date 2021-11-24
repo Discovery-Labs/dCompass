@@ -68,7 +68,7 @@ function ReviewProjectPage({
   createdBy,
   description,
   squads,
-  created,
+  createdAt,
 }: any) {
   const { isReviewer, contracts, provider } = useContext(Web3Context);
   const { chainId, account } = useWeb3React();
@@ -206,7 +206,7 @@ function ReviewProjectPage({
             </Box>
           );
         })}
-        <Text fontSize="xs">Created on {created}</Text>
+        <Text>Created at: {new Date(createdAt).toLocaleString()}</Text>
         <Flex pt="12" w="full" justify="space-around">
           <IconWithState icon="discord" active />
           <IconWithState icon="gitbook" />

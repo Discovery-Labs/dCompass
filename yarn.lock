@@ -7571,6 +7571,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-blockies@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@types/react-blockies/-/react-blockies-1.4.1.tgz#d5f6fff8ece3e90f2e7708f8f3156c87333312df"
+  integrity sha512-aDX0g0hwzdodkGLSDNUQr6gXxwclGjnhS8jhsR8uQhAfe/7i3GZD/NDcSlQ2SiQiLhfRxX3NlY+nvBwf5Y0tTg==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-dom@^17.0.9":
   version "17.0.11"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.11.tgz#e1eadc3c5e86bdb5f7684e00274ae228e7bcc466"
@@ -27098,6 +27105,13 @@ state-toggle@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/state-toggle/-/state-toggle-1.0.3.tgz#e123b16a88e143139b09c6852221bc9815917dfe"
   integrity sha512-d/5Z4/2iiCnHw6Xzghyhb+GcmF89bxwgXG60wjIiZaxnymbyOmI8Hk4VqHXiVVp6u2ysaskFfXg3ekCj4WNftQ==
+
+states-cities-db@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/states-cities-db/-/states-cities-db-1.4.1.tgz#8bf2a6c2bfb4174fc536eda3b31ea94495846d4b"
+  integrity sha512-d98cuhrFXRu2uolmDaD+57SkaCR36rAfIMuJcvUaeo8NXQ7+xNu75LDwzKFhSyoyPsg08Q5YeEu3ZPBwiLPFyQ==
+  dependencies:
+    lodash "^4.17.4"
 
 static-extend@^0.1.1:
   version "0.1.2"

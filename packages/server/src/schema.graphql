@@ -19,7 +19,7 @@ type Course {
   courseType: CourseTypeEnum!
 
   """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
+  createdAt: String!
   description: String!
   difficulty: CourseDifficultyEnum!
   gitbook: String!
@@ -29,7 +29,7 @@ type Course {
   title: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
+  updatedAt: String!
 }
 
 """
@@ -62,11 +62,6 @@ type CreateProjectOutput {
   isFeatured: Boolean!
   tokenUris: [String!]!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 input EditProjectInput {
   color: String
@@ -101,7 +96,7 @@ type Project {
   courses: [Course!]
 
   """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
+  createdAt: String!
   createdBy: String!
   description: String!
   discord: String
@@ -118,7 +113,7 @@ type Project {
   twitter: String
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
+  updatedAt: String!
   updatedBy: String!
   website: String!
   whitepaper: String
@@ -144,7 +139,7 @@ type Quest {
   courseId: String!
 
   """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
+  createdAt: String!
   description: String!
   id: String!
   name: String!
@@ -152,7 +147,7 @@ type Quest {
   questions: [Question!]
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
+  updatedAt: String!
 }
 
 type QuestNFT {
@@ -180,24 +175,24 @@ enum RarityEnum {
 
 type Squad {
   """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
+  createdAt: String!
   image: String
   members: [String!]!
   name: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
+  updatedAt: String!
 }
 
 type Tag {
   color: String!
 
   """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
+  createdAt: String!
   description: String!
   id: String!
   name: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
+  updatedAt: String!
 }

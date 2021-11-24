@@ -16,6 +16,7 @@ export const EDIT_PROJECT_MUTATION = gql`
       id
       name
       createdBy
+      createdAt
       description
       website
       whitepaper
@@ -51,6 +52,7 @@ export const ALL_PROJECTS_QUERY = gql`
       tokenUris
       website
       whitepaper
+      createdAt
       isFeatured
       logo
       squads {
@@ -68,6 +70,7 @@ export const PROJECT_BY_ID_QUERY = gql`
       id
       name
       createdBy
+      createdAt
       description
       tokenUris
       isFeatured

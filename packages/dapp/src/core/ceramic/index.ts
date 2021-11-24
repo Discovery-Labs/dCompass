@@ -1,4 +1,5 @@
 import { CeramicClient } from "@ceramicnetwork/http-client";
+import { AlsoKnownAs, Account } from "@datamodels/identity-accounts-web";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
 import { DataModel } from "@glazed/datamodel";
 import { DIDDataStore } from "@glazed/did-datastore";
@@ -8,6 +9,8 @@ import { DID } from "dids";
 import { Ed25519Provider } from "key-did-provider-ed25519";
 import { getResolver } from "key-did-resolver";
 import { fromString, toString } from "uint8arrays";
+
+import { GITHUB_HOST } from "../constants";
 
 export const CERAMIC_TESTNET = "testnet-clay";
 export const CERAMIC_TESTNET_NODE_URL = "https://ceramic-clay.3boxlabs.com";
@@ -57,3 +60,16 @@ export const ceramicDataModelFactory = async () => {
   const dataStore = new DIDDataStore({ ceramic, model });
   return { dataStore, model, ceramic, did };
 };
+
+export function findGitHub(
+  { accounts }: AlsoKnownAs,
+  username: string
+): Account | undefined {
+  return accounts.find((a) => a.host === GITHUB_HOST && a.id === username);
+}
+export function findGitHubIndex(
+  { accounts }: AlsoKnownAs,
+  username: string
+): number {
+  return accounts.findIndex((a) => a.host === GITHUB_HOST && a.id === username);
+}

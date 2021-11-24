@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, Spacer, Text } from "@chakra-ui/react";
+import { HStack, Button, Flex, Heading, Spacer, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Blockies from "react-blockies";
 
@@ -13,6 +13,12 @@ type Project = {
   description: string;
   website: string;
   whitepaper: string;
+  createdAt: string;
+  squads: {
+    name: string;
+    image: string;
+    members: string[];
+  }[];
   social: {
     github: string;
   };
@@ -50,9 +56,22 @@ function ProjectCard({
       </Flex>
       <Text noOfLines={4}>{project.description}</Text>
       <Spacer />
-      <Flex direction="column" fontSize="xs">
-        <Text>{project.signals} Signals</Text>
-        <Text>Created on {project.created}</Text>
+      <Flex w="full" direction="column" fontSize="xs">
+        {project.squads && (
+          <HStack justifyContent="space-between">
+            <Text fontSize="xs">
+              {project.squads.length} SQUAD
+              {project.squads.length > 1 ? "s" : ""}
+            </Text>
+            <Text fontSize="xs">
+              {project.squads.flatMap((squad) => squad.members).length} MEMBER
+              {project.squads.flatMap((squad) => squad.members).length > 1
+                ? "s"
+                : ""}
+            </Text>
+          </HStack>
+        )}
+        {/* <Text>CREATED: {new Date(project.createdAt).toLocaleString()}</Text> */}
       </Flex>
       <Button w="full" onClick={() => openProject()}>
         {!isReviewMode ? "View project" : "Review project"}

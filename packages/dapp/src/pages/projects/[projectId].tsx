@@ -11,13 +11,16 @@ import {
   TabPanels,
   Tabs,
   Text,
+  HStack,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
+import { useContext } from "react";
 
 import { initializeApollo } from "../../../lib/apolloClient";
 import Container from "../../components/layout/Container";
 import QuestCard from "../../components/QuestCard";
+import { Web3Context } from "../../contexts/Web3Provider";
 import { PROJECT_BY_ID_QUERY } from "../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
 
@@ -68,18 +71,30 @@ const QuestData = {
 
 const allQuests = [QuestData, QuestData, QuestData];
 
-function ProjectPage({ id, name, createdBy, description, squads, logo }: any) {
+function ProjectPage({
+  id,
+  name,
+  createdBy,
+  description,
+  squads,
+  logo,
+  createdAt,
+}: any) {
+  const { account } = useContext(Web3Context);
+  const isOwner = createdBy === account;
   return (
     <Container>
       <Flex w="full">
         <Heading>{name}</Heading>
         <Spacer />
-        <NextLink
-          href={`/projects/edit-project/${id.split("://")[1]}`}
-          passHref
-        >
-          <Button rightIcon={<EditIcon />}>Edit Project</Button>
-        </NextLink>
+        {isOwner && (
+          <NextLink
+            href={`/projects/edit-project/${id.split("://")[1]}`}
+            passHref
+          >
+            <Button rightIcon={<EditIcon />}>Edit Project</Button>
+          </NextLink>
+        )}
       </Flex>
 
       <Flex w="full" direction="column" pt="4">
@@ -88,7 +103,7 @@ function ProjectPage({ id, name, createdBy, description, squads, logo }: any) {
         <Text pt="8" fontSize="xs">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
         </Text>
-        <Text fontSize="xs">Created on </Text>
+        <Text>Creation date: {new Date(createdAt).toLocaleString()}</Text>
         <Flex pt="12" w="full" justify="space-around">
           <IconWithState icon="discord" active />
           <IconWithState icon="gitbook" />
@@ -98,10 +113,20 @@ function ProjectPage({ id, name, createdBy, description, squads, logo }: any) {
       </Flex>
 
       <Tabs py="2rem" w="full">
-        <TabList>
-          <Tab>All quests</Tab>
-          <Tab>Completed quests</Tab>
-        </TabList>
+        <HStack justifyContent="space-between">
+          <TabList>
+            <Tab>All quests</Tab>
+            <Tab>Completed quests</Tab>
+          </TabList>
+          {isOwner && (
+            <NextLink
+              href={`/projects/add-course/${id.split("://")[1]}`}
+              passHref
+            >
+              <Button rightIcon={<EditIcon />}>Add Course</Button>
+            </NextLink>
+          )}
+        </HStack>
 
         <TabPanels>
           <TabPanel>
