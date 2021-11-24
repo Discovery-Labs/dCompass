@@ -13,7 +13,13 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import MembersFieldArray from "./MembersFieldArray";
 import SquadDropzone from "./SquadDropzone";
 
-export default function Squads({ control, register, setValue }: any) {
+export default function Squads({
+  control,
+  register,
+  setValue,
+  reset,
+  defaultValues,
+}: any) {
   // const router = useRouter();
 
   const {
@@ -36,30 +42,30 @@ export default function Squads({ control, register, setValue }: any) {
         return (
           <VStack w="full" key={item.id}>
             <FormControl isInvalid={errors.squads && errors.squads[index].name}>
-              <FormLabel htmlFor={`squads[${index}].name`}>
-                Squad name
-              </FormLabel>
-              <HStack>
-                <Input
-                  placeholder="Squad name"
-                  {...register(`squads[${index}].name`, {
-                    required: "This is required",
-                    maxLength: {
-                      value: 150,
-                      message: "Maximum length should be 150",
-                    },
-                  })}
-                />
+              <HStack py="2" w="full" justify="space-between">
+                <FormLabel htmlFor={`squads[${index}].name`}>
+                  Squad name
+                </FormLabel>
                 <Button
                   colorScheme="pink"
                   onClick={() => remove(index)}
                   aria-label="remove"
-                  size="md"
-                  px="10"
+                  size="sm"
                 >
                   Remove Squad
                 </Button>
               </HStack>
+              <Input
+                placeholder="Squad name"
+                {...register(`squads[${index}].name`, {
+                  required: "This is required",
+                  maxLength: {
+                    value: 150,
+                    message: "Maximum length should be 150",
+                  },
+                })}
+              />
+
               <FormErrorMessage>
                 {errors.squads &&
                   errors.squads[index].name &&
@@ -76,9 +82,8 @@ export default function Squads({ control, register, setValue }: any) {
             <FormControl
               isInvalid={errors.squads && errors.squads[index].members}
             >
-              <FormLabel htmlFor={`squads[${index}].members`}>
-                Squad members
-              </FormLabel>
+
+
               <MembersFieldArray nestIndex={index} {...{ control, register }} />
               <FormErrorMessage>
                 {errors.squads &&
@@ -90,15 +95,24 @@ export default function Squads({ control, register, setValue }: any) {
         );
       })}
 
-      <Button
-        w="full"
-        type="button"
-        onClick={() => {
-          append({ name: "", members: ["0x0000000000000"], image: null });
-        }}
-      >
-        + New Squad
-      </Button>
+      <HStack w="full" justify="end">
+        <Button
+          size="sm"
+          onClick={() => {
+            append({ name: "", members: ["0x0000000000000"], image: null });
+          }}
+        >
+          + New Squad
+        </Button>
+        <Button
+          size="sm"
+          colorScheme="pink"
+          type="button"
+          onClick={() => reset(defaultValues)}
+        >
+          Reset
+        </Button>
+      </HStack>
     </VStack>
   );
 }

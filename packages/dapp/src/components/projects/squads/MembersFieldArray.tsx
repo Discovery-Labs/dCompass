@@ -1,6 +1,8 @@
+import { AddIcon } from "@chakra-ui/icons";
 import {
-  Button,
+  Center,
   Divider,
+  FormLabel,
   HStack,
   IconButton,
   Input,
@@ -17,6 +19,18 @@ const MembersFieldArray = ({ nestIndex, control, register }: any) => {
 
   return (
     <VStack w="full" align="start" spacing="2">
+      <HStack w="full" justify="space-between">
+        <FormLabel htmlFor={`squads[${nestIndex}].members`}>
+          Squad members
+        </FormLabel>
+
+        <IconButton
+          size="sm"
+          aria-label="Add member"
+          onClick={() => append("")}
+          icon={<AddIcon />}
+        />
+      </HStack>
       {fields.map((item, k) => {
         return (
           <HStack w="full" key={item.id}>
@@ -37,10 +51,9 @@ const MembersFieldArray = ({ nestIndex, control, register }: any) => {
         );
       })}
 
-      <Button mt="2" type="button" onClick={() => append("")}>
-        +
-      </Button>
-      <Divider my="5" />
+      <Center w="full" height="50px">
+        <Divider />
+      </Center>
     </VStack>
   );
 };

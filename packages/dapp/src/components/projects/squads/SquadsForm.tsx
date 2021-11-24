@@ -1,4 +1,4 @@
-import { Heading, Button } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 
 import Squads from "./Squads";
@@ -33,17 +33,10 @@ function SquadsForm() {
           defaultValues: squadsDefaultValues,
           getValues,
           setValue,
+          reset,
           errors,
         }}
       />
-
-      <Button
-        colorScheme="pink"
-        type="button"
-        onClick={() => reset(squadsDefaultValues)}
-      >
-        Reset Squads Form
-      </Button>
     </>
   );
 }
