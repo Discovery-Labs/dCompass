@@ -4,14 +4,14 @@ const defaultSEOConfig = {
   titleTemplate: "%s | dCompass",
   defaultTitle: "dCompass",
   description: "A gamified and community driven Web3 learning platform.",
-  canonical: "https://dCompass.dao",
+  canonical: "https://www.dcompass.discovery-dao.xyz/",
   openGraph: {
-    url: "https://dCompass.dao",
+    url: "https://www.dcompass.discovery-dao.xyz/",
     title: "dCompass",
     description: "A gamified and community driven Web3 learning platform.",
     images: [
       {
-        url: "https://og-image.dCompass.dao/**dCompass**.dCompass.dao.png?theme=dark&md=1&fontSize=125px&images=https%3A%2F%2FdCompass.dao%2Favataaars.svg&widths=250",
+        url: "https://www.dcompass.discovery-dao.xyz/",
         alt: "dCompass.dao og-image",
       },
     ],
