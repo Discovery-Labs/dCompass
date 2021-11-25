@@ -82,8 +82,6 @@ export default function Squads({
             <FormControl
               isInvalid={errors.squads && errors.squads[index].members}
             >
-
-
               <MembersFieldArray nestIndex={index} {...{ control, register }} />
               <FormErrorMessage>
                 {errors.squads &&

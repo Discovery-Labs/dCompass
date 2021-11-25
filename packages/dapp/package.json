@@ -2,7 +2,8 @@
   "name": "@discovery-dao/dapp",
   "version": "0.1.0",
   "private": true,
-  "author": "Super Shadowy Coders",
+  "description": "A gamified and community driven Web3 learning platform.",
+  "author": "Discovery DAO",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

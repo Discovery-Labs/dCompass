@@ -1,21 +1,21 @@
 /** @type {import('next-seo').DefaultSeoProps} */
 const defaultSEOConfig = {
-  title: "nextarter-chakra",
-  titleTemplate: "%s | nextarter-chakra",
-  defaultTitle: "nextarter-chakra",
-  description: "Next.js + chakra-ui + TypeScript template",
-  canonical: "https://nextarter-chakra.dCompass.dao",
+  title: "dCompass",
+  titleTemplate: "%s | dCompass",
+  defaultTitle: "dCompass",
+  description: "A gamified and community driven Web3 learning platform.",
+  canonical: "https://dCompass.dao",
   openGraph: {
-    url: "https://nextarter-chakra.dCompass.dao",
-    title: "nextarter-chakra",
-    description: "Next.js + chakra-ui + TypeScript template",
+    url: "https://dCompass.dao",
+    title: "dCompass",
+    description: "A gamified and community driven Web3 learning platform.",
     images: [
       {
-        url: "https://og-image.dCompass.dao/**nextarter-chakra**.dCompass.dao.png?theme=dark&md=1&fontSize=125px&images=https%3A%2F%2FdCompass.dao%2Favataaars.svg&widths=250",
-        alt: "nextarter-chakra.dCompass.dao og-image",
+        url: "https://og-image.dCompass.dao/**dCompass**.dCompass.dao.png?theme=dark&md=1&fontSize=125px&images=https%3A%2F%2FdCompass.dao%2Favataaars.svg&widths=250",
+        alt: "dCompass.dao og-image",
       },
     ],
-    site_name: "nextarter-chakra",
+    site_name: "dCompass",
   },
   twitter: {
     handle: "@dCompass_",
