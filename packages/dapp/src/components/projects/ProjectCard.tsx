@@ -4,13 +4,20 @@ import Blockies from "react-blockies";
 
 import CardMedia from "../custom/CardMedia";
 
-type Project = {
+export type TagItem = {
+  id: string;
+  name: string;
+};
+
+export type Project = {
   id: string;
   logo: string;
   name: string;
   avatar: string;
   createdBy: string;
   description: string;
+  tags: Array<TagItem>;
+  isFeatured: boolean;
   website: string;
   whitepaper: string;
   createdAt: string;

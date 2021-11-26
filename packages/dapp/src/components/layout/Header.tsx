@@ -79,7 +79,7 @@ const Navbar = (props: any) => {
         />
         <HStack spacing={4} alignItems="center">
           <Box px="2">
-            <NextLink href="/">
+            <NextLink href="/projects">
               <Flex _hover={{ cursor: "pointer" }} align="center" mr={5}>
                 <LogoIcon size="25px" />
                 <Heading fontSize="lg" pl="2">

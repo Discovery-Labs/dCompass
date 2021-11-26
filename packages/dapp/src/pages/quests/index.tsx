@@ -23,6 +23,7 @@ import {
 import Fuse from "fuse.js";
 import NextLink from "next/link";
 import { useEffect, useState } from "react";
+
 import Container from "../../components/layout/Container";
 import QuestCard from "../../components/QuestCard";
 
@@ -167,10 +168,8 @@ function Quests() {
           >
             <MenuList>
               {allTags.map((tag) => (
-                <MenuItem>
-                  <Checkbox key={tag.name} value={tag.name}>
-                    {tag.name}
-                  </Checkbox>
+                <MenuItem key={tag.name}>
+                  <Checkbox value={tag.name}>{tag.name}</Checkbox>
                 </MenuItem>
               ))}
             </MenuList>
@@ -189,14 +188,14 @@ function Quests() {
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
               {allQuests && query.length !== 0 && <SearchedQuestsCard />}
               {allQuests && query.length === 0 && <QuestsCard />}
-              {!allQuests ?? "No project found"}
+              {!allQuests ?? "No quest found"}
             </SimpleGrid>
           </TabPanel>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
               {allQuests && query.length !== 0 && <SearchedQuestsCard />}
               {allQuests && query.length === 0 && <QuestsCard />}
-              {!allQuests ?? "No project found"}
+              {!allQuests ?? "No quest found"}
             </SimpleGrid>
           </TabPanel>
         </TabPanels>

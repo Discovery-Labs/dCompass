@@ -40,6 +40,7 @@ const MembersFieldArray = ({ nestIndex, control, register }: any) => {
               })}
             />
             <IconButton
+              _hover={{ cursor: "pointer" }}
               variant="unstyled"
               color="pink.300"
               size="xs"
