@@ -11,11 +11,13 @@ contract RandomNumberConsumer is VRFConsumerBase, Ownable {
     uint256 internal fee;
     
     mapping(bytes32 => string) public objectRequests;//requestId to objectId (object is course or quest)
+    mapping(bytes32 => uint) public numContributors;//requestId to num of contirbutors at time of approval
+    mapping(string => uint8[]) internal objectRarities;//calculated rarities for course or quest
     mapping(string => uint256) public blockNumberResults;//block number request was fulfilled at
     mapping (string => uint256) public requestResults;
     mapping (address => bool) whiteList;//approved contracts and users that can call this will eventually be multi-sig holders
 
-    event RandomNumberFulilled(string indexed _projectId);
+    event RandomNumberFulfilled(string indexed _projectId);
 
     modifier onlyWhiteList(){
         require(whiteList[_msgSender()], "not authorized");
@@ -48,12 +50,11 @@ contract RandomNumberConsumer is VRFConsumerBase, Ownable {
     /** 
      * Requests randomness 
      */
-
-
-    function getRandomNumber(string memory _objectId) public onlyWhiteList returns (bytes32 requestId){
+    function getRandomNumber(string memory _objectId, uint _numContributors) public onlyWhiteList returns (bytes32 requestId){
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
         requestId = requestRandomness(keyHash, fee);
         objectRequests[requestId] = _objectId;
+        numContributors[requestId] = _numContributors;
         return requestId;
     }
 
@@ -64,12 +65,25 @@ contract RandomNumberConsumer is VRFConsumerBase, Ownable {
         string memory objectId = objectRequests[requestId];
         requestResults[objectId] = randomness;
         blockNumberResults[objectId] = block.number;
-        emit RandomNumberFulilled(objectId);
+        uint currentIndex = 0;
+        uint8[] memory rarities = new uint8[](numContributors[requestId]);
+
+        while(currentIndex < rarities.length){
+            rarities[currentIndex] = uint8((uint256(keccak256(abi.encode(randomness, currentIndex))) % 100) + 1);
+            currentIndex++;
+        }
+
+        objectRarities[objectId] = rarities;
+        emit RandomNumberFulfilled(objectId);
     }
     
     function addContractToWhiteList(address _newWhiteList) public onlyWhiteList{
         require(!whiteList[_newWhiteList], "already approved");
         whiteList[_newWhiteList] = true;
+    }
+    
+    function getObjectRarities(string memory _objectId) public view returns(uint8[] memory){
+        return objectRarities[_objectId];
     }
 
     // function withdrawLink() external {} - Implement a withdraw function to avoid locking your LINK in the contract
