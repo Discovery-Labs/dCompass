@@ -33,13 +33,13 @@ export type Project = {
   created: string;
 };
 
-function ProjectCard({
+export const ProjectCard = ({
   project,
   isReviewMode = false,
 }: {
   project: Project;
   isReviewMode?: boolean;
-}) {
+}) => {
   const router = useRouter();
 
   function openProject() {
@@ -85,6 +85,4 @@ function ProjectCard({
       </Button>
     </CardMedia>
   );
-}
-
-export default ProjectCard;
+};
