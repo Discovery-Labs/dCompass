@@ -29,8 +29,8 @@ export const LogoDropzone = ({
   const onDrop = useCallback(
     (acceptedFiles, rejectedFiles, e) => {
       if (acceptedFiles) {
-        const { name } = e.target;
-        setValue(name, e.target.files);
+        setValue(acceptedFiles[0].name, acceptedFiles);
+
         setFiles(
           acceptedFiles.map((file: File) =>
             Object.assign(file, {

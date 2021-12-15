@@ -11,8 +11,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RandomNumberConsumer.sol";
-
-
+import "./Verify.sol";
 
 contract CourseNFT is ERC721URIStorage, Ownable{
     using Counters for Counters.Counter;
@@ -20,17 +19,16 @@ contract CourseNFT is ERC721URIStorage, Ownable{
     Counters.Counter private _tokenIds;
 
     RandomNumberConsumer vrfContract;//VRF Contract used for randomness
+    Verify verifyContract;//Verify contract instance
     address projectNFTAddress; // address for the projectNFTs
-    //mapping (string => mapping (address => bool)) public courseReviewers;//projectId => contributorAddress=>reviewer
-    //mapping (string => uint16[]) public rarityThresholds; // rarity of each image threshold per courseId, uint16 used for packing purposes
+    mapping (uint => string) public statusStrings;
     mapping (string => bool) public courseMinted; // tracks if mint has been done
     mapping (string => address[]) internal contributors; //contributors to this course
-    mapping (uint => string) public statusStrings;
-    uint[] rarityThresholds;
+    uint8[] internal rarityThresholds;//used for getting cutoffs of common, uncommon et al
     mapping (string => string) public projectIdforCourse;//the projectId that is the root
     mapping (string => CourseStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes per courseId;
-    mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of reviewers for CourseId
+    mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of approved voters for CourseId
 
     enum CourseStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
 
@@ -38,8 +36,9 @@ contract CourseNFT is ERC721URIStorage, Ownable{
     event CourseApproved(string indexed _courseId);
     event NFTCourseMinted(address indexed _to, string indexed _tokenURI, string indexed _courseId);
 
-    constructor(address _vrfAddress, uint[] memory _initRarities, address _projectNFTAddress)ERC721("dCompassCourse", "DCOMC"){
+    constructor(address _vrfAddress, uint8[] memory _initRarities, address _projectNFTAddress, address _verifyAddress)ERC721("dCompassCourse", "DCOMC"){
         vrfContract = RandomNumberConsumer(_vrfAddress);
+        verifyContract = Verify(_verifyAddress);
         uint rarityTotal = 0;
         for (uint8 i =0; i<_initRarities.length; i++){
             rarityTotal += _initRarities[i];
@@ -57,86 +56,50 @@ contract CourseNFT is ERC721URIStorage, Ownable{
         emit ReceiveCalled(msg.sender, msg.value);
     }
 
-    /*
-    function approveMint(string memory _courseId) internal {
-        //(bool success, uint number) = vrfAddress.call(abi.encodeWithSelector(bytes4(keccak256("getRandomNumber(string)")), _courseId));
-        //require(success, "approve call failed");
-        vrfContract.getRandomNumber(_courseId);
-    }*/
-
-    function voteForApproval(address[] memory _contributors, string memory _courseId, string memory _projectId) public {
-        /*
-        1) store array of reviewers from projectID in memory
-        2) iterate and check msgSender is in array
-        3) get projectThreshold from projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("projectThresholds(string)")), _projectId));
-        */
+    function voteForApproval(address[] memory _contributors, string memory _courseId, string memory _projectId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint votesNeeded) public {
         require(status[_courseId] != CourseStatus.DENIED && status[_courseId] != CourseStatus.APPROVED, "finalized course");
-        (bool success, bytes memory data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("getContributors(string)")), _projectId));
-        require(success, "project reviewer call unsuccessful");
-        (address[] memory reviewers) = abi.decode(data, (address[]));
-        bool isReviewer = false;
-        for(uint8 i=0; i < reviewers.length; i++){
-            if(_msgSender() == reviewers[i]){
-                isReviewer = true;
-            }
-        }
-        require(isReviewer, "sender is not a project contributor");
         require(!reviewerVotes[_courseId][_msgSender()], "already voted for this project");
-        (bool successThreshold, bytes memory thresholdData) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("projectThresholds(string)")), _projectId));
-        require(successThreshold, "project threshold call unsuccessful");
-        (uint256 threshold) = abi.decode(thresholdData, (uint256));
+        bool voteAllowed = verifyContract.metaDataVerify(_msgSender(), _courseId, _projectId, r[0], s[0], v[0]);
+        require(voteAllowed, "sender is not approved project voter");
+        bool thresholdCheck = verifyContract.thresholdVerify(_msgSender(), _courseId, votesNeeded, r[1], s[1], v[1]);
+        require(thresholdCheck, "incorrect votes needed sent");
         votes[_courseId]++;
         reviewerVotes[_courseId][_msgSender()] = true;
         if(status[_courseId] == CourseStatus.NONEXISTENT){
             require(_contributors.length >0, "empty array");
-            //rarityThresholds[_courseId] = _rarities;
             contributors[_courseId] = _contributors;
-            if(threshold*reviewers.length/100 == 0){
+            projectIdforCourse[_courseId] = _projectId;
+            if(votesNeeded <= votes[_courseId]){
                 status[_courseId] = CourseStatus.APPROVED;
                 emit CourseApproved(_courseId);
-                //approveMint(_projectId);
-                vrfContract.getRandomNumber(_courseId);
+                vrfContract.getRandomNumber(_courseId, contributors[_courseId].length);
             }
             else{
                 status[_courseId] = CourseStatus.PENDING;
             }
         }
         else{
-            uint minVotes = threshold*reviewers.length/100;
-            if(minVotes * 100 < threshold*reviewers.length){
-                minVotes++;
-            }
-            if(votes[_courseId] >= minVotes){
+            if(votes[_courseId] >= votesNeeded){
                 status[_courseId] = CourseStatus.APPROVED;
                 emit CourseApproved(_courseId);
-                //approveMint(_projectId);
-                vrfContract.getRandomNumber(_courseId);
+                vrfContract.getRandomNumber(_courseId, contributors[_courseId].length);
             }  
         }
-    }
+    } 
 
-    function createToken(uint32[] memory firstURIParts, uint256[] memory secondURIParts, string memory _courseId, uint16[] memory raritiesUsed) public returns(uint[] memory){
+    function createToken(uint32[] memory firstURIParts, uint256[] memory secondURIParts, string memory _courseId, string memory _projectId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint votesNeeded) public returns(uint[] memory){
         require(!courseMinted[_courseId], "already minted");
         require(vrfContract.blockNumberResults(_courseId) > 0, "no request yet");
-        require(contributors[_courseId].length == raritiesUsed.length, "invalid rarities");
-
-        //check on chain that correct image rarities were derived
-        uint256 _randomNumber = vrfContract.requestResults(_courseId);
-        uint256[] memory checkRarities = new uint256[](contributors[_courseId].length);
-        uint currentIndex = 0;
-        uint target;
-        bool allMatch=true;
-
-        while(currentIndex < contributors[_courseId].length){
-            target = (uint256(keccak256(abi.encode(_randomNumber, currentIndex))) % 100) + 1;
-            checkRarities[currentIndex] = target;
-            if (target != raritiesUsed[currentIndex]){
-                allMatch = false;
-            }
-            currentIndex++;
+        require(contributors[_courseId].length == firstURIParts.length && firstURIParts.length==secondURIParts.length, "invalid arrs");
+        bool mintAllowed = verifyContract.metaDataVerify(_msgSender(), _courseId, _projectId, r[0], s[0], v[0]);
+        require(mintAllowed, "sender is not approved project minter");
+        if(status[_courseId]==CourseStatus.PENDING){
+            require(votesNeeded <= votes[_courseId], "not enough votes");
+            bool thresholdCheck = verifyContract.thresholdVerify(_msgSender(), _courseId, votesNeeded, r[1], s[1], v[1]);
+            require(thresholdCheck, "incorrect votes needed sent");
+            status[_courseId] = CourseStatus.APPROVED;
         }
-
-        require(allMatch, "incorrect rarities");
+        require(status[_courseId] == CourseStatus.APPROVED, "can only mint courses in approved status");        
 
         //batch minting
         uint256[] memory newItems = new uint256[](contributors[_courseId].length);
@@ -153,6 +116,7 @@ contract CourseNFT is ERC721URIStorage, Ownable{
         
         emit NFTCourseMinted(contributors[_courseId][i], _tokenURI, _courseId);
         }
+        courseMinted[_courseId] = true;
         return newItems;    
     }
 
@@ -172,8 +136,7 @@ contract CourseNFT is ERC721URIStorage, Ownable{
                 if(count>1){
                     i = i >> 4;
                 }
-                count--;
-                
+                count--; 
             }
             return string(o);
         }
