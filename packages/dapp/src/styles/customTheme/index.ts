@@ -1,5 +1,8 @@
 import { extendTheme } from "@chakra-ui/react";
 import { customTheme } from "@discovery-dao/ui";
+// import { customTheme } from "./theme";
+
+const theme = extendTheme(customTheme);
 
 // Style guide;
 
@@ -27,7 +30,5 @@ import { customTheme } from "@discovery-dao/ui";
 // };
 
 // dapper-ui repo: https://github.com/aeither/dapper-ui/blob/main/src/theme/colors.ts
-
-const theme = extendTheme(customTheme);
 
 export default theme;

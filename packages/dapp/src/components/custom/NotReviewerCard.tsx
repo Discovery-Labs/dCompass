@@ -10,7 +10,7 @@ function NotReviewerCard() {
         Sorry, this address is not a reviewer If you think this is an error,
         please contact our support team.
       </Text>
-      <Button w="100%" fontSize="md" onClick={() => router.push("/projects")}>
+      <Button w="100%" fontSize="md" onClick={() => router.push("/")}>
         Browse projects
       </Button>
     </VStack>

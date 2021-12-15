@@ -33,8 +33,12 @@ export declare const schemas: {
                         type: string;
                         title: string;
                         properties: {
-                            id: {
-                                $ref: string;
+                            pendingBadges: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    $ref: string;
+                                };
                             };
                             tokenUris: {
                                 type: string;
@@ -44,6 +48,9 @@ export declare const schemas: {
                             };
                             isFeatured: {
                                 type: string;
+                            };
+                            id: {
+                                $ref: string;
                             };
                             name: {
                                 type: string;
@@ -87,22 +94,11 @@ export declare const schemas: {
                                     $ref: string;
                                 };
                             };
-                            courses: {
+                            badges: {
                                 type: string;
                                 title: string;
                                 items: {
-                                    type: string;
-                                    title: string;
-                                    properties: {
-                                        id: {
-                                            $ref: string;
-                                        };
-                                        title: {
-                                            type: string;
-                                            title: string;
-                                            maxLength: number;
-                                        };
-                                    };
+                                    $ref: string;
                                 };
                             };
                             createdBy: {
@@ -161,7 +157,10 @@ export declare const schemas: {
                                     };
                                 };
                             };
-                            peerProjects: {
+                            parentProjectId: {
+                                $ref: string;
+                            };
+                            childProjects: {
                                 type: string;
                                 items: {
                                     $ref: string;
@@ -205,6 +204,9 @@ export declare const schemas: {
             title: string;
             type: string;
             properties: {
+                id: {
+                    $ref: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -247,22 +249,11 @@ export declare const schemas: {
                         $ref: string;
                     };
                 };
-                courses: {
+                badges: {
                     type: string;
                     title: string;
                     items: {
-                        type: string;
-                        title: string;
-                        properties: {
-                            id: {
-                                $ref: string;
-                            };
-                            title: {
-                                type: string;
-                                title: string;
-                                maxLength: number;
-                            };
-                        };
+                        $ref: string;
                     };
                 };
                 createdBy: {
@@ -321,7 +312,10 @@ export declare const schemas: {
                         };
                     };
                 };
-                peerProjects: {
+                parentProjectId: {
+                    $ref: string;
+                };
+                childProjects: {
                     type: string;
                     items: {
                         $ref: string;
@@ -382,12 +376,12 @@ export declare const schemas: {
                 };
             };
         };
-        courses: {
+        Badges: {
             $schema: string;
             title: string;
             type: string;
             properties: {
-                courses: {
+                badges: {
                     type: string;
                     title: string;
                     items: {
@@ -396,55 +390,6 @@ export declare const schemas: {
                         properties: {
                             id: {
                                 $ref: string;
-                            };
-                            title: {
-                                type: string;
-                                title: string;
-                                maxLength: number;
-                            };
-                            courseType: {
-                                type: string;
-                                enum: string[];
-                            };
-                            difficulty: {
-                                type: string;
-                                enum: string[];
-                            };
-                            projects: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                    title: string;
-                                    properties: {
-                                        id: {
-                                            $ref: string;
-                                        };
-                                        title: {
-                                            type: string;
-                                            title: string;
-                                            maxLength: number;
-                                        };
-                                    };
-                                };
-                            };
-                            quests: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                    title: string;
-                                    properties: {
-                                        id: {
-                                            $ref: string;
-                                        };
-                                        name: {
-                                            type: string;
-                                            title: string;
-                                            maxLength: number;
-                                        };
-                                    };
-                                };
                             };
                         };
                     };
@@ -458,7 +403,7 @@ export declare const schemas: {
                 };
             };
         };
-        course: {
+        Badge: {
             $schema: string;
             title: string;
             description: string;
@@ -474,49 +419,56 @@ export declare const schemas: {
                     format: string;
                     maxLength: number;
                 };
+                title: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
+                projectId: {
+                    $ref: string;
+                };
+                image: {
+                    type: string;
+                };
                 description: {
                     type: string;
                 };
-                gitbook: {
+                difficulty: {
+                    type: string;
+                    enum: string[];
+                };
+                isFeatured: {
                     type: string;
                 };
-                files: {
+                prerequisites: {
                     type: string;
-                    minItems: number;
                     items: {
                         type: string;
+                    };
+                };
+                quests: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                        title: string;
                         properties: {
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            cid: {
-                                type: string;
+                            id: {
+                                $ref: string;
                             };
                         };
                     };
                 };
-                reviewers: {
+            };
+            definitions: {
+                CeramicStreamId: {
                     type: string;
-                    items: {
-                        type: string;
-                    };
-                };
-                contributors: {
-                    type: string;
-                    items: {
-                        type: string;
-                    };
-                };
-                authors: {
-                    type: string;
-                    items: {
-                        type: string;
-                    };
+                    pattern: string;
+                    maxLength: number;
                 };
             };
         };
-        quests: {
+        Quests: {
             $schema: string;
             title: string;
             type: string;
@@ -536,7 +488,7 @@ export declare const schemas: {
                                 title: string;
                                 maxLength: number;
                             };
-                            courseId: {
+                            badgeId: {
                                 $ref: string;
                             };
                             completedBy: {
@@ -558,7 +510,7 @@ export declare const schemas: {
                 };
             };
         };
-        quest: {
+        Quest: {
             $schema: string;
             title: string;
             description: string;

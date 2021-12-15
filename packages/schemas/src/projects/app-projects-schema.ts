@@ -13,8 +13,12 @@ export const AppProjectsSchema = {
         title: "project",
         properties: {
           ...projectProperties,
-          id: {
-            $ref: "#/definitions/CeramicStreamId",
+          pendingBadges: {
+            type: "array",
+            title: "pending badges",
+            items: {
+              $ref: "#/definitions/CeramicStreamId",
+            },
           },
           tokenUris: {
             type: "array",

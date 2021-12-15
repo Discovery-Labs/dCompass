@@ -4,11 +4,11 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import NotConnectedCard from "../../../components/custom/NotConnectedCard";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
-import CoursesForm from "../../../components/projects/courses/CoursesForm";
+import BadgesForm from "../../../components/projects/badges/BadgesForm";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import Card from "components/custom/Card";
 
-function CreateCourseStepper() {
+function AddBadgeStepper() {
   const { contracts } = useContext(Web3Context);
   const web3React = useWeb3React();
 
@@ -16,10 +16,10 @@ function CreateCourseStepper() {
 
   const methods = useForm({
     defaultValues: {
-      courses: [
+      badges: [
         {
-          question: "Genesis",
-          options: ["0x0000000000000"],
+          title: "",
+          description: "",
         },
       ],
     },
@@ -29,7 +29,7 @@ function CreateCourseStepper() {
     <FormProvider {...methods}>
       <CenteredFrame>
         <Card h="full" w="2xl">
-          <CoursesForm />
+          <BadgesForm />
         </Card>
       </CenteredFrame>
     </FormProvider>
@@ -42,4 +42,4 @@ function CreateCourseStepper() {
   );
 }
 
-export default CreateCourseStepper;
+export default AddBadgeStepper;

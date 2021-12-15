@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import { EditIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -19,8 +20,10 @@ import { useContext } from "react";
 
 import { initializeApollo } from "../../../lib/apolloClient";
 import Container from "../../components/layout/Container";
+import BadgeCard from "../../components/projects/badges/BadgeCard";
 import QuestCard from "../../components/QuestCard";
 import { Web3Context } from "../../contexts/Web3Provider";
+import { GET_ALL_BADGES_BY_PROJECT_ID_QUERY } from "../../graphql/badges";
 import { PROJECT_BY_ID_QUERY } from "../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
 
@@ -81,7 +84,17 @@ function ProjectPage({
   createdAt,
 }: any) {
   const { account } = useContext(Web3Context);
+  const { data, loading, error } = useQuery(
+    GET_ALL_BADGES_BY_PROJECT_ID_QUERY,
+    {
+      variables: {
+        projectId: id,
+      },
+    }
+  );
   const isOwner = createdBy === account;
+  if (loading) return "Loading...";
+  if (error) return `Loading error! ${error.message}`;
   return (
     <Container>
       <Flex w="full">
@@ -115,15 +128,15 @@ function ProjectPage({
       <Tabs py="2rem" w="full">
         <HStack justifyContent="space-between">
           <TabList>
-            <Tab>All quests</Tab>
-            <Tab>Completed quests</Tab>
+            <Tab>All badges</Tab>
+            <Tab>Claimed badges</Tab>
           </TabList>
           {isOwner && (
             <NextLink
-              href={`/projects/add-course/${id.split("://")[1]}`}
+              href={`/projects/add-badge/${id.split("://")[1]}`}
               passHref
             >
-              <Button rightIcon={<EditIcon />}>Add Course</Button>
+              <Button rightIcon={<EditIcon />}>Add badge</Button>
             </NextLink>
           )}
         </HStack>
@@ -131,8 +144,8 @@ function ProjectPage({
         <TabPanels>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {allQuests.map((quest) => (
-                <QuestCard key={quest.name} quest={quest} />
+              {data.getAllBadgesByProjectId.map((badge: any) => (
+                <BadgeCard key={badge.title} badge={badge} />
               ))}
             </SimpleGrid>
           </TabPanel>

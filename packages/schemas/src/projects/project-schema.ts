@@ -1,4 +1,7 @@
 export const projectProperties = {
+  id: {
+    $ref: "#/definitions/CeramicStreamId",
+  },
   name: {
     type: "string",
     title: "name",
@@ -41,22 +44,11 @@ export const projectProperties = {
       $ref: "#/definitions/CeramicStreamId",
     },
   },
-  courses: {
+  badges: {
     type: "array",
-    title: "courses",
+    title: "badges",
     items: {
-      type: "object",
-      title: "CourseItem",
-      properties: {
-        id: {
-          $ref: "#/definitions/CeramicStreamId",
-        },
-        title: {
-          type: "string",
-          title: "title",
-          maxLength: 100,
-        },
-      },
+      $ref: "#/definitions/CeramicStreamId",
     },
   },
   createdBy: {
@@ -115,7 +107,10 @@ export const projectProperties = {
       },
     },
   },
-  peerProjects: {
+  parentProjectId: {
+    $ref: "#/definitions/CeramicStreamId",
+  },
+  childProjects: {
     type: "array",
     items: {
       $ref: "#/definitions/CeramicStreamId",

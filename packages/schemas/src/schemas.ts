@@ -1,6 +1,6 @@
 import { ContributorsSchema } from "./contributors/contributors-schema";
-import { CourseSchema } from "./courses/course-schema";
-import { CoursesSchema } from "./courses/courses-schema";
+import { BadgeSchema } from "./badges/badge-schema";
+import { BadgesSchema } from "./badges/badges-schema";
 import { AppProjectsSchema } from "./projects/app-projects-schema";
 import { ProjectSchema } from "./projects/project-schema";
 import { ProjectsSchema } from "./projects/projects-schema";
@@ -15,10 +15,10 @@ export const schemas = {
     AppProjects: AppProjectsSchema,
     Projects: ProjectsSchema,
     Project: ProjectSchema,
-    courses: CoursesSchema,
-    course: CourseSchema,
-    quests: QuestsSchema,
-    quest: QuestSchema,
+    Badges: BadgesSchema,
+    Badge: BadgeSchema,
+    Quests: QuestsSchema,
+    Quest: QuestSchema,
     Tags: TagsSchema,
     Tag: TagSchema,
   },

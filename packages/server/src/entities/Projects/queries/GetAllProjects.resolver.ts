@@ -31,7 +31,7 @@ export class GetAllProjectsResolver {
         Object.values(projectsWithDetails).map(async (stream) => {
           const additionalFields = allProjects.projects.find(
             ({ id }: { id: string }) => id === stream.id.toUrl(),
-          );
+            );
           return {
             id: stream.id.toUrl(),
             ...stream.state.content,

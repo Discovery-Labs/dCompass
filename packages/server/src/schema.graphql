@@ -15,16 +15,16 @@ type ApproveProjectOutput {
   tokenUris: [String!]!
 }
 
-type Course {
-  courseType: CourseTypeEnum!
-
+type Badge {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
-  difficulty: CourseDifficultyEnum!
-  gitbook: String!
+  difficulty: BadgeDifficultyEnum!
   id: String!
-  projects: [Project!]!
+  image: String!
+  isPending: Boolean
+  prerequisites: [String!]
+  projectId: String!
   quests: [Quest!]
   title: String!
 
@@ -33,9 +33,9 @@ type Course {
 }
 
 """
-The difficulty of a course, from beginner to wizard where wizard is the most difficult mode
+The difficulty of a badge, from beginner to wizard where wizard is the most difficult mode
 """
-enum CourseDifficultyEnum {
+enum BadgeDifficultyEnum {
   ADVANCED
   BEGINNER
   EXPERT
@@ -43,12 +43,9 @@ enum CourseDifficultyEnum {
   WIZARD
 }
 
-"""
-Branched = theorical lessons and Decrypted = technical hands on lessons
-"""
-enum CourseTypeEnum {
-  BRANCHED
-  DECRYPTED
+input CreateBadgeInput {
+  badgeCreatorSignature: String!
+  id: String!
 }
 
 input CreateProjectInput {
@@ -83,6 +80,9 @@ type Mutation {
   """Approves a new Project in dCompass"""
   approveProject(input: ApproveProjectInput!): [ApproveProjectOutput!]
 
+  """Create a new Badge in dCompass"""
+  createBadge(input: CreateBadgeInput!): Badge
+
   """Create a new Project in dCompass"""
   createProject(input: CreateProjectInput!): [CreateProjectOutput!]
 
@@ -91,9 +91,9 @@ type Mutation {
 }
 
 type Project {
+  badges: [Badge!]
   color: String
   contracts: [String!]!
-  courses: [Course!]
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
@@ -126,6 +126,9 @@ input ProjectSquadsInput {
 }
 
 type Query {
+  """Gets all the badges in dCompass"""
+  getAllBadgesByProjectId(projectId: String!): [Badge!]
+
   """Gets all the projects in dCompass"""
   getAllProjects: [Project!]
 
@@ -134,9 +137,9 @@ type Query {
 }
 
 type Quest {
+  badge: Badge!
+  badgeId: String!
   completedBy: [String!]
-  course: Course!
-  courseId: String!
 
   """Identifies the date and time when the object was created."""
   createdAt: String!

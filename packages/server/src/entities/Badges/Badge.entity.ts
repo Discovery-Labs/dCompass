@@ -1,14 +1,13 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
-import { Project } from '../Projects/Project.entity';
 import { Quest } from '../Quests/Quest.entity';
 
-export enum CourseTypeEnum {
+export enum BadgeTypeEnum {
   BRANCHED = 'branched',
   DECRYPTED = 'decrypted',
 }
 
-export enum CourseDifficultyEnum {
+export enum BadgeDifficultyEnum {
   BEGINNER = 'beginner',
   INTERMEDIATE = 'intermediate',
   ADVANCED = 'advanced',
@@ -16,21 +15,21 @@ export enum CourseDifficultyEnum {
   WIZARD = 'wizard',
 }
 
-registerEnumType(CourseTypeEnum, {
-  name: 'CourseTypeEnum',
+registerEnumType(BadgeTypeEnum, {
+  name: 'BadgeTypeEnum',
   description:
     'Branched = theorical lessons and Decrypted = technical hands on lessons',
 });
 
-registerEnumType(CourseDifficultyEnum, {
-  name: 'CourseDifficultyEnum',
+registerEnumType(BadgeDifficultyEnum, {
+  name: 'BadgeDifficultyEnum',
   description:
-    'The difficulty of a course, from beginner to wizard where wizard is the most difficult mode',
+    'The difficulty of a badge, from beginner to wizard where wizard is the most difficult mode',
 });
 
 export type CeramicStreamId = string;
 @ObjectType()
-export class Course extends BaseEntity {
+export class Badge extends BaseEntity {
   @Field()
   id: string;
 
@@ -38,20 +37,23 @@ export class Course extends BaseEntity {
   title: string;
 
   @Field()
-  gitbook: string;
+  projectId: string;
+
+  @Field()
+  image: string;
 
   @Field()
   description: string;
 
-  @Field(() => CourseTypeEnum)
-  courseType: CourseTypeEnum;
+  @Field(() => [String])
+  prerequisites?: string[];
 
-  @Field(() => CourseDifficultyEnum)
-  difficulty: CourseDifficultyEnum;
+  @Field(() => BadgeDifficultyEnum)
+  difficulty: BadgeDifficultyEnum;
 
   @Field(() => [Quest])
   quests?: Quest[];
 
-  @Field(() => [Project])
-  projects: Project[];
+  @Field(() => Boolean)
+  isPending?: boolean;
 }

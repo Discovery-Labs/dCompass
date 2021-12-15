@@ -1,8 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsDefined, IsNotEmpty, IsString } from 'class-validator';
+import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
 
 @InputType()
-export class CourseProjectInput {
+export class CreateBadgeInput {
   @Field()
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
@@ -13,5 +13,5 @@ export class CourseProjectInput {
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  name: string;
+  badgeCreatorSignature: string;
 }

@@ -2,6 +2,7 @@ import { useMutation } from "@apollo/client";
 import { Flex, Button, Stack } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
+import { useRouter } from "next/router";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -30,6 +31,7 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
+  const router = useRouter();
   const { self, contracts, provider } = useContext(Web3Context);
   const { account } = useWeb3React();
 
@@ -90,7 +92,10 @@ function CreateProjectStepper() {
 
     const newProjectDoc = await self.client.dataModel.createTile(
       "Project",
-      serializedProject
+      serializedProject,
+      {
+        pin: true,
+      }
     );
 
     const projectId = newProjectDoc.id.toUrl();
@@ -102,7 +107,7 @@ function CreateProjectStepper() {
       })
     );
 
-    const nftCidRes = await fetch("/api/nft-storage", {
+    const nftCidRes = await fetch("/api/squad-nft-storage", {
       method: "POST",
       body: formData,
     });
@@ -139,6 +144,7 @@ function CreateProjectStepper() {
       },
     });
     console.log({ allProjects });
+    return router.push("/");
   }
 
   return account && contracts ? (

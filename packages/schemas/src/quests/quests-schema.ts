@@ -1,32 +1,32 @@
 export const QuestsSchema = {
-  $schema: 'http://json-schema.org/draft-07/schema#',
-  title: 'QuestsList',
-  type: 'object',
+  $schema: "http://json-schema.org/draft-07/schema#",
+  title: "QuestsList",
+  type: "object",
   properties: {
     quests: {
-      type: 'array',
-      title: 'quests',
+      type: "array",
+      title: "quests",
       items: {
-        type: 'object',
-        title: 'QuestItem',
+        type: "object",
+        title: "QuestItem",
         properties: {
           id: {
-            $ref: '#/definitions/CeramicStreamId',
+            $ref: "#/definitions/CeramicStreamId",
           },
           name: {
-            type: 'string',
-            title: 'name',
+            type: "string",
+            title: "name",
             maxLength: 100,
           },
-          courseId: {
-            $ref: '#/definitions/CeramicStreamId',
+          badgeId: {
+            $ref: "#/definitions/CeramicStreamId",
           },
           completedBy: {
-            type: 'array',
-            title: 'completedBy',
+            type: "array",
+            title: "completedBy",
             items: {
-              type: 'string',
-            }
+              type: "string",
+            },
           },
         },
       },
@@ -34,9 +34,9 @@ export const QuestsSchema = {
   },
   definitions: {
     CeramicStreamId: {
-      type: 'string',
-      pattern: '^ceramic://.+(\\\\?version=.+)?',
+      type: "string",
+      pattern: "^ceramic://.+(\\\\?version=.+)?",
       maxLength: 150,
     },
   },
-}
+};

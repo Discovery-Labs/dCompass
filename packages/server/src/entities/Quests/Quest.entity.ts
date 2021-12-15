@@ -2,7 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
 import { QuestNFT } from './dto/QuestNFT';
 import { Question } from './dto/Question';
-import { Course } from '../Courses/Course.entity';
+import { Badge } from '../Badges/Badge.entity';
 
 export type CeramicStreamId = string;
 @ObjectType()
@@ -17,10 +17,10 @@ export class Quest extends BaseEntity {
   description: string;
 
   @Field()
-  courseId: CeramicStreamId;
+  badgeId: CeramicStreamId;
 
-  @Field(() => Course)
-  course: Course;
+  @Field(() => Badge)
+  badge: Badge;
 
   @Field(() => [String])
   completedBy?: CeramicStreamId[];

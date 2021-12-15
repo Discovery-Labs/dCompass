@@ -6,7 +6,7 @@ export const CREATE_QUEST_MUTATION = gql`
       id
       name
       description
-      courseId
+      badgeId
       questions {
         answer
         choices

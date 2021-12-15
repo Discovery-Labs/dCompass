@@ -22,8 +22,8 @@ export const LogoDropzone = ({
   const [files, setFiles] = useState([]);
   const logoOptions = isRequired
     ? {
-        required: "This is required",
-      }
+      required: "This is required",
+    }
     : {};
 
   const onDrop = useCallback(
@@ -77,7 +77,7 @@ export const LogoDropzone = ({
   );
 
   return (
-    <FormControl iisInvalid={errors.logo} {...getRootProps()}>
+    <FormControl isInvalid={errors.logo} {...getRootProps()}>
       <FormLabel htmlFor="logo">Logo</FormLabel>
       {files && thumbs}
 

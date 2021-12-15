@@ -2,7 +2,7 @@ import { Resolver, Query, Args } from '@nestjs/graphql';
 import { schemaAliases } from '../../../core/constants/idx';
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseCeramicClient } from '../../../core/utils/types';
-// import { CourseItem } from '../../Courses/mutations/CreateCourse.resolver';
+// import { BadgeItem } from '../../Badges/mutations/CreateBadge.resolver';
 // import { QuestItem } from '../../Quests/mutations/CreateQuest.resolver';
 import { Project } from '../Project.entity';
 
@@ -27,21 +27,21 @@ export class GetProjectByIdResolver {
     if (!ogProject) {
       return null;
     }
-    // const projectCourses = record.state.next?.content.courses;
-    // console.log(projectCourses);
-    // if (projectCourses && projectCourses.length > 0) {
-    //   const allCourses = await Promise.all(
-    //     projectCourses.map(async (course: CourseItem) => {
-    //       const fullCourse = await ceramicClient.ceramic.loadStream(course.id);
-    //       const fullCourseQuests = fullCourse.state.next?.content.quests;
-    //       if (!fullCourseQuests) {
+    // const projectBadges = record.state.next?.content.badges;
+    // console.log(projectBadges);
+    // if (projectBadges && projectBadges.length > 0) {
+    //   const allBadges = await Promise.all(
+    //     projectBadges.map(async (badge: BadgeItem) => {
+    //       const fullBadge = await ceramicClient.ceramic.loadStream(badge.id);
+    //       const fullBadgeQuests = fullBadge.state.next?.content.quests;
+    //       if (!fullBadgeQuests) {
     //         return {
-    //           id: course.id,
-    //           ...fullCourse.state.content,
+    //           id: badge.id,
+    //           ...fullBadge.state.content,
     //         };
     //       }
     //       const fullQuests = await Promise.all(
-    //         fullCourseQuests.map(async (quest: QuestItem) => {
+    //         fullBadgeQuests.map(async (quest: QuestItem) => {
     //           const fullQuest = await ceramicClient.ceramic.loadStream(
     //             quest.id,
     //           );
@@ -52,8 +52,8 @@ export class GetProjectByIdResolver {
     //         }),
     //       );
     //       return {
-    //         id: course.id,
-    //         ...fullCourse.state.content,
+    //         id: badge.id,
+    //         ...fullBadge.state.content,
     //         quests: fullQuests,
     //       };
     //     }),
@@ -61,7 +61,7 @@ export class GetProjectByIdResolver {
     //   return {
     //     id: projectId,
     //     ...record.state.content,
-    //     courses: allCourses,
+    //     badges: allBadges,
     //   };
     // }
     return {

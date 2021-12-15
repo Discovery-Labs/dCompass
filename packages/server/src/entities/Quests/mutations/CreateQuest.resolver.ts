@@ -10,7 +10,7 @@
 // export type QuestItem = {
 //   id: string;
 //   name: string;
-//   courseId: string;
+//   badgeId: string;
 //   completedBy: string[];
 // };
 
@@ -53,24 +53,24 @@
 //         {
 //           id: createdQuest.doc.id.toUrl(),
 //           name: quest.name,
-//           courseId: quest.courseId,
+//           badgeId: quest.badgeId,
 //         },
 //         ...quests,
 //       ],
 //     });
 
-//     const courseDoc = await TileDocument.load(
+//     const badgeDoc = await TileDocument.load(
 //       ceramicClient.ceramic,
-//       quest.courseId,
+//       quest.badgeId,
 //     );
-//     const existingQuestsForCourse = existingQuests?.quests.filter(
-//       (q) => q.courseId === quest.courseId,
+//     const existingQuestsForBadge = existingQuests?.quests.filter(
+//       (q) => q.badgeId === quest.badgeId,
 //     );
-//     await courseDoc.update({
-//       ...(courseDoc.content as Record<string, any>),
+//     await badgeDoc.update({
+//       ...(badgeDoc.content as Record<string, any>),
 //       quests: [
 //         { id: createdQuest.doc.id.toUrl(), name: quest.name },
-//         ...(existingQuestsForCourse || []),
+//         ...(existingQuestsForBadge || []),
 //       ],
 //     });
 

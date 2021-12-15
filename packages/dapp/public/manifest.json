@@ -2,7 +2,7 @@
   "short_name": "dCompass",
   "name": "dCompass",
   "lang": "en",
-  "start_url": "/projects",
+  "start_url": "/",
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",
   "dir": "ltr",

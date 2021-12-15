@@ -8,7 +8,7 @@
 // export type TagItem = {
 //   id: string;
 //   name: string;
-//   courseId: string;
+//   badgeId: string;
 //   completedBy: string[];
 // };
 

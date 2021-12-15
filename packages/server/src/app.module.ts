@@ -15,9 +15,8 @@ import { HealthController } from './core/controllers/health.controller';
 import config from './core/configs/config';
 import { GraphqlConfig } from './core/configs/config.interface';
 import { ProjectModule } from './entities/Projects/Project.module';
-// import { KnowsisController } from './core/controllers/knowsis.controller';
-// import { DefinitionsController } from './core/controllers/definitions.controller';
-// import { CourseModule } from './entities/Courses/Course.module';
+import { BadgeModule } from './entities/Badges/Badge.module';
+
 // import { QuestModule } from './entities/Quests/Quest.module';
 // import { TagModule } from './entities/Tags/Tag.module';
 import { CeramicController } from './core/controllers/validate-quest-completion.controller';
@@ -54,17 +53,11 @@ import { CeramicController } from './core/controllers/validate-quest-completion.
     }),
     TerminusModule,
     ProjectModule,
-    // CourseModule,
+    BadgeModule,
     // QuestModule,
     // TagModule,
   ],
-  controllers: [
-    AppController,
-    HealthController,
-    // KnowsisController,
-    // DefinitionsController,
-    CeramicController,
-  ],
+  controllers: [AppController, HealthController, CeramicController],
   providers: [AppService, ConfigService],
 })
 export class AppModule {}

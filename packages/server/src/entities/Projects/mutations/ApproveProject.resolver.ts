@@ -46,14 +46,14 @@ export class ApproveProjectResolver {
 
     console.log({ projects });
 
-    const projectIndexes = projects.find(
+    const projectIndexedFields = projects.find(
       (project: { id: string }) => project.id === id,
     );
-    if (!projectIndexes) {
+    if (!projectIndexedFields) {
       return null;
     }
 
-    console.log({ projectIndexes });
+    console.log({ projectIndexedFields });
 
     const statusId = await projectNFTContract.status(id);
     const status = await projectNFTContract.statusStrings(statusId);
@@ -63,12 +63,12 @@ export class ApproveProjectResolver {
     }
     // remove previously unfeatured project and recreate it as featured
     const existingProjects = projects.filter(
-      (project: { id: string }) => project.id !== projectIndexes.id,
+      (project: { id: string }) => project.id !== projectIndexedFields.id,
     );
 
     console.log({ existingProjects });
     const allProjectsUpdated = [
-      { id, tokenUris, isFeatured: true },
+      { id, ...projectIndexedFields, tokenUris, isFeatured: true },
       ...existingProjects,
     ];
 

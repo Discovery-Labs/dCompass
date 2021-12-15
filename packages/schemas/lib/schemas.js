@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.schemas = void 0;
 const contributors_schema_1 = require("./contributors/contributors-schema");
-const course_schema_1 = require("./courses/course-schema");
-const courses_schema_1 = require("./courses/courses-schema");
+const badge_schema_1 = require("./badges/badge-schema");
+const badges_schema_1 = require("./badges/badges-schema");
 const app_projects_schema_1 = require("./projects/app-projects-schema");
 const project_schema_1 = require("./projects/project-schema");
 const projects_schema_1 = require("./projects/projects-schema");
@@ -17,10 +17,10 @@ exports.schemas = {
         AppProjects: app_projects_schema_1.AppProjectsSchema,
         Projects: projects_schema_1.ProjectsSchema,
         Project: project_schema_1.ProjectSchema,
-        courses: courses_schema_1.CoursesSchema,
-        course: course_schema_1.CourseSchema,
-        quests: quests_schema_1.QuestsSchema,
-        quest: quest_schema_1.QuestSchema,
+        Badges: badges_schema_1.BadgesSchema,
+        Badge: badge_schema_1.BadgeSchema,
+        Quests: quests_schema_1.QuestsSchema,
+        Quest: quest_schema_1.QuestSchema,
         Tags: tags_schema_1.TagsSchema,
         Tag: tag_schema_1.TagSchema,
     },

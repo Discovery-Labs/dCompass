@@ -20,48 +20,11 @@ import LogoDropzone from "./LogoDropzone";
 
 const CreateProjectForm: React.FunctionComponent = () => {
   const router = useRouter();
-  const [files, setFiles] = useState([]);
   const {
     register,
     setValue,
     formState: { errors },
   } = useFormContext();
-
-  const onDrop = useCallback(
-    (acceptedFiles, rejectedFiles, e) => {
-      if (acceptedFiles) {
-        const { name } = e.target;
-        setValue(name, e.target.files);
-        setFiles(
-          acceptedFiles.map((file: File) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            })
-          )
-        );
-      }
-    },
-    [setValue]
-  );
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: "image/*",
-    onDrop,
-  });
-
-  const thumbs = files.map((file: any) => (
-    <div key={file.name}>
-      <Image src={file.preview} />
-    </div>
-  ));
-
-  useEffect(
-    () => () => {
-      // Make sure to revoke the data uris to avoid memory leaks
-      files.forEach((file: any) => URL.revokeObjectURL(file.preview));
-    },
-    [files]
-  );
 
   function goBack() {
     router.back();

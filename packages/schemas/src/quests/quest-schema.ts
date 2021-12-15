@@ -1,7 +1,8 @@
 export const QuestSchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
   title: "Quest",
-  description: "A quest is a challenge that certifies the knowledge aquired during a course",
+  description:
+    "A quest is a challenge that certifies the knowledge aquired during a badge",
   type: "object",
   properties: {
     createdAt: {
@@ -29,19 +30,19 @@ export const QuestSchema = {
             maxItems: 10,
             items: {
               type: "string",
-              maxLength: 500
-            }
+              maxLength: 500,
+            },
           },
           question: {
             type: "string",
-            maxLength: 500
+            maxLength: 500,
           },
           answer: {
             type: "string",
-            maxLength: 200
-          }
+            maxLength: 200,
+          },
         },
-      }
+      },
     },
     nfts: {
       type: "array",
@@ -54,28 +55,28 @@ export const QuestSchema = {
             title: "claimedBy",
             items: {
               type: "string",
-            }
+            },
           },
           rarity: {
             type: "string",
-            enum: ["common", "uncommon", "epic", "legendary"]
+            enum: ["common", "uncommon", "epic", "legendary"],
           },
           name: {
             type: "string",
-            maxLength: 200
+            maxLength: 200,
           },
           url: {
-            $ref: "#/definitions/IPFSUrl"
-          }
+            $ref: "#/definitions/IPFSUrl",
+          },
         },
-      }
+      },
     },
   },
   definitions: {
     IPFSUrl: {
       type: "string",
       pattern: "^ipfs://.+",
-      maxLength: 150
+      maxLength: 150,
     },
-  }
-}
+  },
+};

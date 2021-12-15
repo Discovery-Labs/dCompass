@@ -56,7 +56,7 @@ const Navbar = (props: any) => {
       as="nav"
       w="100%"
       top="0"
-      bg="spacelightalpha"
+      bg="purple.400"
       style={{ backdropFilter: "blur(10px)" }}
       zIndex={1}
       {...props}
@@ -89,7 +89,7 @@ const Navbar = (props: any) => {
             </NextLink>
           </Box>
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
-            <LinkItem href="/projects">Projects</LinkItem>
+            <LinkItem href="/">Projects</LinkItem>
             <LinkItem href="/quests">Quests</LinkItem>
             <LinkItem href="/marketplace">Marketplace</LinkItem>
             <LinkItem href="/dashboard">Dashboard</LinkItem>
@@ -111,7 +111,7 @@ const Navbar = (props: any) => {
       {isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
           <Stack as="nav" spacing={4}>
-            <LinkItem href="/projects">Projects</LinkItem>
+            <LinkItem href="/">Projects</LinkItem>
             <LinkItem href="/quests">Quests</LinkItem>
             <LinkItem href="/marketplace">Marketplace</LinkItem>
             <LinkItem href="/dashboard">Dashboard</LinkItem>
