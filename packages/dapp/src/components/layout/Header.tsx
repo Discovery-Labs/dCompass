@@ -36,7 +36,7 @@ const LinkItem = ({ href, _target, children, ...props }: any) => {
     <NextLink href={href} passHref>
       <Link
         p={2}
-        color={isActive ? "aqua.300" : "stone"}
+        color={isActive ? "primary.300" : "neutralLigher"}
         _target={_target}
         {...props}
       >
@@ -56,7 +56,7 @@ const Navbar = (props: any) => {
       as="nav"
       w="100%"
       top="0"
-      bg="purple.400"
+      bg="neutralDarker"
       style={{ backdropFilter: "blur(10px)" }}
       zIndex={1}
       {...props}
@@ -79,7 +79,7 @@ const Navbar = (props: any) => {
         />
         <HStack spacing={4} alignItems="center">
           <Box px="2">
-            <NextLink href="/projects">
+            <NextLink href="/">
               <Flex _hover={{ cursor: "pointer" }} align="center" mr={5}>
                 <LogoIcon size="25px" />
                 <Heading fontSize="lg" pl="2">
@@ -91,7 +91,6 @@ const Navbar = (props: any) => {
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             <LinkItem href="/">Projects</LinkItem>
             <LinkItem href="/quests">Quests</LinkItem>
-            <LinkItem href="/marketplace">Marketplace</LinkItem>
             <LinkItem href="/dashboard">Dashboard</LinkItem>
           </HStack>
         </HStack>
@@ -113,7 +112,6 @@ const Navbar = (props: any) => {
           <Stack as="nav" spacing={4}>
             <LinkItem href="/">Projects</LinkItem>
             <LinkItem href="/quests">Quests</LinkItem>
-            <LinkItem href="/marketplace">Marketplace</LinkItem>
             <LinkItem href="/dashboard">Dashboard</LinkItem>
           </Stack>
         </Box>

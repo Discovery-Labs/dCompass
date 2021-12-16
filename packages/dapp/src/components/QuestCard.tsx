@@ -32,7 +32,7 @@ function QuestCard({ quest }: { quest: Quest }) {
   }
 
   return (
-    <Card>
+    <Card layerStyle="no-border-hover">
       <Flex w="full">
         <Avatar mr="0.5rem" boxSize="4rem" src={quest.logo} />
         <Spacer />

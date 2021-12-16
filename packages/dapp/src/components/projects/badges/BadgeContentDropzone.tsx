@@ -1,6 +1,6 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
-  Center,
+  Button,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -80,41 +80,16 @@ const BadgeImageDropzone = ({
       <FormLabel htmlFor={`badges[${nestIndex}].image`}>{formLabel}</FormLabel>
       {files && thumbs}
 
-      {files.length === 0 && isDragActive && (
-        <Center
-          _hover={{ cursor: "pointer" }}
-          h="150px"
-          bg="aqua.200"
-          color="space"
-          borderRadius="4"
-        >
-          Drop the files here ...
+      {files.length === 0 && (
+        <Button {...getRootProps()}>
+          Upload
           <Input
             type="file"
             placeholder="Image"
             {...register(`badges[${nestIndex}].image`)}
             {...getInputProps()}
           />
-        </Center>
-      )}
-
-      {files.length === 0 && !isDragActive && (
-        <Center
-          w="full"
-          _hover={{ cursor: "pointer" }}
-          h="150px"
-          bg="aqua.300"
-          color="space"
-          borderRadius="4"
-        >
-          Drag something here or select
-          <Input
-            type="file"
-            placeholder="Image"
-            {...register(`badges[${nestIndex}].image`)}
-            {...getInputProps()}
-          />
-        </Center>
+        </Button>
       )}
 
       <FormErrorMessage>

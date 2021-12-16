@@ -19,12 +19,13 @@ export default function Squads({
   setValue,
   reset,
   defaultValues,
+  errors,
 }: any) {
   // const router = useRouter();
 
-  const {
-    formState: { errors },
-  } = useFormContext();
+  // const {
+  //   formState: { errors },
+  // } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)

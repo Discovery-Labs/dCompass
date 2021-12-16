@@ -68,7 +68,7 @@ function IconWithState({ icon, active = false }: IconWithStateProps) {
       />
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
-        <ModalContent bg="space">
+        <ModalContent>
           <ModalHeader>Discord</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -92,12 +92,7 @@ function IconWithState({ icon, active = false }: IconWithStateProps) {
             </VStack>
           </ModalBody>
           <ModalFooter alignSelf="center">
-            <Button
-              mt={4}
-              colorScheme="pink"
-              isLoading={isSubmitting}
-              type="submit"
-            >
+            <Button mt={4} isLoading={isSubmitting} type="submit">
               Submit
             </Button>
           </ModalFooter>

@@ -177,7 +177,7 @@ function Quests() {
         </Menu>
       </HStack>
 
-      <Tabs w="full">
+      <Tabs w="full" variant="line">
         <TabList>
           <Tab>All quests</Tab>
           <Tab>My quests</Tab>

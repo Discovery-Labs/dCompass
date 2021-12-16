@@ -1,6 +1,6 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
-  Center,
+  Button,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -22,26 +22,24 @@ const LogoDropzone = ({
   const [files, setFiles] = useState([]);
   const logoOptions = isRequired
     ? {
-      required: "This is required",
-    }
+        required: "This is required",
+      }
     : {};
 
-  const onDrop = useCallback(
-    (acceptedFiles, rejectedFiles, e) => {
-      if (acceptedFiles) {
-        setValue(acceptedFiles[0].name, acceptedFiles);
-
-        setFiles(
-          acceptedFiles.map((file: File) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            })
-          )
-        );
-      }
-    },
-    [setValue]
-  );
+  const onDrop = useCallback((acceptedFiles, rejectedFiles, e) => {
+    if (acceptedFiles) {
+      // setValue(acceptedFiles[0].name, acceptedFiles);
+      const { name } = e.target;
+      setValue(name, e.target.files);
+      setFiles(
+        acceptedFiles.map((file: File) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    }
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: "image/*",
@@ -77,45 +75,20 @@ const LogoDropzone = ({
   );
 
   return (
-    <FormControl isInvalid={errors.logo} {...getRootProps()}>
+    <FormControl isInvalid={errors.logo}>
       <FormLabel htmlFor="logo">Logo</FormLabel>
       {files && thumbs}
 
-      {files.length === 0 && isDragActive && (
-        <Center
-          _hover={{ cursor: "pointer" }}
-          h="150px"
-          bg="aqua.200"
-          color="space"
-          borderRadius="4"
-        >
-          Drop the files here ...
+      {files.length === 0 && (
+        <Button {...getRootProps()}>
+          Upload
           <Input
             type="file"
             placeholder="Logo"
             {...register("logo", logoOptions)}
             {...getInputProps()}
           />
-        </Center>
-      )}
-
-      {files.length === 0 && !isDragActive && (
-        <Center
-          w="full"
-          _hover={{ cursor: "pointer" }}
-          h="150px"
-          bg="aqua.300"
-          color="space"
-          borderRadius="4"
-        >
-          Drag something here or select
-          <Input
-            type="file"
-            placeholder="Logo"
-            {...register("logo", logoOptions)}
-            {...getInputProps()}
-          />
-        </Center>
+        </Button>
       )}
 
       <FormErrorMessage>{errors.logo && errors.logo.message}</FormErrorMessage>
