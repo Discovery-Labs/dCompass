@@ -13,7 +13,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-export const LogoDropzone = ({
+const LogoDropzone = ({
   register,
   setValue,
   errors,

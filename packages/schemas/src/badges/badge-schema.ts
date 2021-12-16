@@ -29,6 +29,9 @@ export const BadgeSchema = {
     description: {
       type: "string",
     },
+    createdBy: {
+      type: "string",
+    },
     difficulty: {
       type: "string",
       enum: ["beginner", "intermediate", "advanced", "expert", "wizard"],

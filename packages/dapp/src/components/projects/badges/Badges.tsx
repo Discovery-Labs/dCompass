@@ -9,7 +9,6 @@ import {
   Divider,
   Textarea,
 } from "@chakra-ui/react";
-import { Select } from "chakra-react-select";
 // import { useRouter } from "next/router";
 import { useFieldArray, useFormContext } from "react-hook-form";
 

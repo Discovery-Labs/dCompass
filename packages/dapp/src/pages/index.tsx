@@ -80,7 +80,7 @@ function Projects() {
   }
 
   useEffect(() => {
-    if (data) {
+    if (data?.getAllProjects) {
       setFuse(new Fuse(data.getAllProjects, fuseOptions));
     }
   }, [data, setFuse]);
@@ -122,6 +122,7 @@ function Projects() {
 
   // eslint-disable-next-line consistent-return
   const ProjectsCard = ({ type }: { type: string }) => {
+    console.log({ type });
     if (type === "me") {
       return (
         <>

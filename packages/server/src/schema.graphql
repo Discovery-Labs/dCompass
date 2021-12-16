@@ -18,6 +18,7 @@ type ApproveProjectOutput {
 type Badge {
   """Identifies the date and time when the object was created."""
   createdAt: String!
+  createdBy: String!
   description: String!
   difficulty: BadgeDifficultyEnum!
   id: String!

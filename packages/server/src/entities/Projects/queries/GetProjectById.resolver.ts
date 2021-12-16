@@ -20,11 +20,12 @@ export class GetProjectByIdResolver {
     const allProjects = await ceramicClient.dataStore.get(
       schemaAliases.APP_PROJECTS_ALIAS,
     );
+    const projects = allProjects.projects ?? [];
     const ogProject = await ceramicClient.ceramic.loadStream(projectId);
-    const additionalFields = allProjects.projects.find(
+    const additionalFields = projects.find(
       ({ id }: { id: string }) => id === projectId,
     );
-    if (!ogProject) {
+    if (!ogProject || !additionalFields) {
       return null;
     }
     // const projectBadges = record.state.next?.content.badges;
