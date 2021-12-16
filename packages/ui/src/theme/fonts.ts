@@ -1,8 +1,8 @@
-import { DeepPartial, Theme } from "@chakra-ui/react";
+import { DeepPartial, Theme } from '@chakra-ui/react';
 
-const fonts: DeepPartial<Theme["fonts"]> = {
-  body: "Poppins",
-  heading: "Space Mono",
+const fonts: DeepPartial<Theme['fonts']> = {
+  body: 'Poppins',
+  heading: 'Space Mono',
 };
 
 export default fonts;

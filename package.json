@@ -10,7 +10,10 @@
   ],
   "scripts": {
     "bootstrap": "yarn install; lerna bootstrap;",
-    "start": "lerna run start --parallel"
+    "start": "lerna run start --parallel",
+    "chain": "yarn workspace @discovery-dao/hardhat chain",
+    "deploy": "yarn workspace @discovery-dao/hardhat deploy",
+    "dev": "yarn workspace @discovery-dao/dapp dev"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.2.2",
