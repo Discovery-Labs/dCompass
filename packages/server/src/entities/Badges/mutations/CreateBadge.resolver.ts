@@ -67,6 +67,7 @@ export class CreateBadgeResolver {
       {
         id,
         ...projectIndexedFields,
+        createdBy: decodedAddress,
         pendingBadges: [
           ...(projectIndexedFields.pendingBadges ?? []),
           ogBadge.id.toUrl(),

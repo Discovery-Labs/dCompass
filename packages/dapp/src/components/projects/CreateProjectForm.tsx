@@ -1,17 +1,13 @@
 import {
-  Center,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Heading,
   Input,
-  Image,
   Textarea,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useCallback, useState, useEffect } from "react";
-import { useDropzone } from "react-dropzone";
 import { useFormContext } from "react-hook-form";
 
 import IconWithState from "../custom/IconWithState";

@@ -128,8 +128,9 @@ function ProjectPage({
       <Tabs py="2rem" w="full">
         <HStack justifyContent="space-between">
           <TabList>
-            <Tab>All badges</Tab>
-            <Tab>Claimed badges</Tab>
+            <Tab>Pending badges</Tab>
+            <Tab>Approved badges</Tab>
+            <Tab>My badges</Tab>
           </TabList>
           {isOwner && (
             <NextLink
@@ -144,9 +145,20 @@ function ProjectPage({
         <TabPanels>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllBadgesByProjectId.map((badge: any) => (
-                <BadgeCard key={badge.title} badge={badge} />
-              ))}
+              {data.getAllBadgesByProjectId
+                .filter((badge: any) => badge.isPending)
+                .map((badge: any) => (
+                  <BadgeCard key={badge.title} badge={badge} />
+                ))}
+            </SimpleGrid>
+          </TabPanel>
+          <TabPanel>
+            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+              {data.getAllBadgesByProjectId
+                .filter((badge: any) => !badge.isPending)
+                .map((badge: any) => (
+                  <BadgeCard key={badge.title} badge={badge} />
+                ))}
             </SimpleGrid>
           </TabPanel>
           <TabPanel>

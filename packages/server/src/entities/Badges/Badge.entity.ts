@@ -54,6 +54,9 @@ export class Badge extends BaseEntity {
   @Field(() => [Quest])
   quests?: Quest[];
 
+  @Field()
+  createdBy: string;
+
   @Field(() => Boolean)
   isPending?: boolean;
 }

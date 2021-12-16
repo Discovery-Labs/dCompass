@@ -433,6 +433,9 @@ export declare const schemas: {
                 description: {
                     type: string;
                 };
+                createdBy: {
+                    type: string;
+                };
                 difficulty: {
                     type: string;
                     enum: string[];
