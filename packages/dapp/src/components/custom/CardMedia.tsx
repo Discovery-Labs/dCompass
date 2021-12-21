@@ -3,7 +3,7 @@ import { VStack, Image } from "@chakra-ui/react";
 function CardMedia({ children, src, ...others }: any) {
   return (
     <VStack
-      bg="spacelightalpha"
+      bg="neutralDarker"
       p="8"
       h="lg"
       borderRadius="base"

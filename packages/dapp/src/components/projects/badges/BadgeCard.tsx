@@ -41,7 +41,6 @@ function BadgeCard({
   const router = useRouter();
   const isContributor = account ? projectContributors.includes(account) : false;
   function openBadge() {
-    console.log("Open Badge");
     return router.push(
       `/projects/${badge.projectId.split("://")[1]}/badges/${badge.id.split("://")[1]
       }`
