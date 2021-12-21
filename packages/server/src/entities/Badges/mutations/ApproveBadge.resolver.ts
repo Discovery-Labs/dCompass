@@ -8,6 +8,7 @@ import { Badge } from '../Badge.entity';
 import { schemaAliases } from '../../../core/constants/idx';
 import { ApproveBadgeInput } from '../dto/ApproveBadge.input';
 import { Squad } from '../../Squads/Squad.entity';
+import { NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Badge)
 export class ApproveBadgeResolver {
@@ -22,9 +23,10 @@ export class ApproveBadgeResolver {
   ): Promise<Badge | null | undefined> {
     // Check that the current user is the owner of the project
     const ogBadge = await ceramicClient.ceramic.loadStream(id);
+    const projectId = ogBadge.content.projectId;
     console.log(ogBadge.content);
     const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: ogBadge.content.projectId }),
+      JSON.stringify({ id: id, projectId }),
       badgeApproverSignature,
     );
 
@@ -32,36 +34,43 @@ export class ApproveBadgeResolver {
       schemaAliases.APP_PROJECTS_ALIAS,
     );
     const projects = allProjects?.projects ?? [];
+    const ogProject = await ceramicClient.ceramic.loadStream(projectId);
 
-    console.log({ projects });
-    console.log({ ogBadge: ogBadge.content });
+    const additionalFields = projects.find(
+      (project: { id: string }) => project.id === projectId,
+    );
 
-    const projectIndexedFields = projects.find(
-      (project: { id: string }) => project.id === ogBadge.content.projectId,
-    );
-    const projectContributors = projectIndexedFields.squads.flatMap(
-      (squad: Squad) => squad.members.map((m) => m.toLowerCase()),
-    );
+    if (!ogProject || !additionalFields) {
+      throw new NotFoundException('Project not found');
+    }
+
+    const projectIndexedFields = {
+      ...ogProject.content,
+      ...additionalFields,
+    };
+
+    const projectContributors = projectIndexedFields.squads
+      ? projectIndexedFields.squads.flatMap((squad: Squad) =>
+          squad.members.map((m) => m.toLowerCase()),
+        )
+      : [];
 
     if (
       !projectIndexedFields ||
-      !projectContributors.includes(decodedAddress)
+      !projectContributors.includes(decodedAddress.toLowerCase())
     ) {
       throw new ForbiddenError('Unauthorized');
     }
-
-    console.log({ projectIndexedFields });
 
     // remove previously indexed project and recreate it as with the new pending badge
     const existingProjects = projects.filter(
       (project: { id: string }) => project.id !== projectIndexedFields.id,
     );
 
-    console.log({ existingProjects });
     // Add the new badge for review
     const appProjectsUpdated = [
       {
-        id,
+        id: projectId,
         ...projectIndexedFields,
         // add badge in approved badges
         badges: [...(projectIndexedFields.badges ?? []), ogBadge.id.toUrl()],

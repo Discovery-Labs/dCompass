@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import {
   Avatar,
   Button,
@@ -11,6 +12,7 @@ import { useRouter } from "next/router";
 import { useContext } from "react";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
+import { APPROVE_BADGE_MUTATION } from "../../../graphql/badges";
 import Card from "components/custom/Card";
 
 type Badge = {
@@ -24,14 +26,46 @@ type Badge = {
   createdBy: string;
 };
 
-function BadgeCard({ badge }: { badge: Badge }) {
-  const { account } = useContext(Web3Context);
+function BadgeCard({
+  badge,
+  projectContributors,
+}: {
+  badge: Badge;
+  projectContributors: string[];
+}) {
+  const [approveBadgeMutation] = useMutation(APPROVE_BADGE_MUTATION, {
+    refetchQueries: "all",
+  });
+
+  const { account, provider } = useContext(Web3Context);
   const router = useRouter();
-  const isOwner = badge.createdBy === account;
+  const isContributor = account ? projectContributors.includes(account) : false;
   function openBadge() {
     console.log("Open Badge");
-    return router.push(`/badges/${badge.id}`);
+    return router.push(
+      `/projects/${badge.projectId.split("://")[1]}/badges/${badge.id.split("://")[1]
+      }`
+    );
   }
+
+  const handleApproveBadge = async () => {
+    const signatureInput = {
+      id: badge.id,
+      projectId: badge.projectId,
+    };
+    const signature = await provider.provider.send("personal_sign", [
+      JSON.stringify(signatureInput),
+      account,
+    ]);
+    return approveBadgeMutation({
+      variables: {
+        input: {
+          id: badge.id,
+          badgeApproverSignature: signature.result,
+        },
+      },
+    });
+  };
 
   return (
     <Card>
@@ -51,16 +85,16 @@ function BadgeCard({ badge }: { badge: Badge }) {
       <Spacer />
       <Flex w="full" justify="space-between">
         <Button variant="outline" fontSize="md" onClick={() => openBadge()}>
-          Details
+          Quests
         </Button>
-        {badge.isPending && isOwner && (
-          <Button fontSize="md" onClick={() => console.log("Approve Badge")}>
+        {badge.isPending && isContributor && (
+          <Button fontSize="md" onClick={handleApproveBadge}>
             Approve
           </Button>
         )}
         {!badge.isPending && (
-          <Button fontSize="md" onClick={() => console.log("Approve Badge")}>
-            Approve
+          <Button fontSize="md" onClick={() => console.log("Claim Badge")}>
+            Claim
           </Button>
         )}
       </Flex>

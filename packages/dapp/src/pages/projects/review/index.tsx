@@ -16,7 +16,7 @@ import Card from "../../../components/custom/Card";
 import NotReviewerCard from "../../../components/custom/NotReviewerCard";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
 import Container from "../../../components/layout/Container";
-import ProjectCard from "../../../components/projects/ProjectCard";
+import { ProjectCard } from "../../../components/projects/ProjectCard";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
 
@@ -24,6 +24,7 @@ function ReviewProjects() {
   const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
     fetchPolicy: "cache-and-network",
   });
+  console.log({ data });
   const { isReviewer } = useContext(Web3Context);
 
   if (loading) return "Loading...";

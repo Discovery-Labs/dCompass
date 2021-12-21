@@ -5,6 +5,8 @@ import { RedisModule } from '../../core/resources/Redis/Redis.module';
 
 import { CreateBadgeResolver } from './mutations/CreateBadge.resolver';
 import { GetAllBadgesByProjectIdResolver } from './queries/GetAllBadgesByProjectId.resolver';
+import { ApproveBadgeResolver } from './mutations/ApproveBadge.resolver';
+import { GetBadgeByIdResolver } from './queries/GetBadgeById.resolver';
 // import { GetBadgeByIdResolver } from './queries/GetBadgeById.resolver';
 
 @Module({
@@ -15,7 +17,12 @@ import { GetAllBadgesByProjectIdResolver } from './queries/GetAllBadgesByProject
       maxRedirects: 10,
     }),
   ],
-  providers: [CreateBadgeResolver, GetAllBadgesByProjectIdResolver],
+  providers: [
+    CreateBadgeResolver,
+    ApproveBadgeResolver,
+    GetBadgeByIdResolver,
+    GetAllBadgesByProjectIdResolver,
+  ],
   exports: [],
 })
 export class BadgeModule {}

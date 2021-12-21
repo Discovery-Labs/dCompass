@@ -47,6 +47,8 @@ function BadgesForm() {
           ...badgeOptions,
           difficulty: badge.difficulty.value,
           ...prereqs,
+          createdBy: account,
+          createdAt: new Date().toISOString(),
         };
       }),
     };
@@ -102,7 +104,7 @@ function BadgesForm() {
         })
       )
     );
-    console.log({ addedBadges });
+    return router.push(`/projects/${router.query.projectId}/`);
   }
 
   return (

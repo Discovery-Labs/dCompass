@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ApproveBadgeInput {
+  badgeApproverSignature: String!
+  id: String!
+}
+
 input ApproveProjectInput {
   chainId: String!
   id: String!
@@ -78,6 +83,9 @@ input EditProjectInput {
 }
 
 type Mutation {
+  """Approve a new Badge in dCompass"""
+  approveBadge(input: ApproveBadgeInput!): Badge
+
   """Approves a new Project in dCompass"""
   approveProject(input: ApproveProjectInput!): [ApproveProjectOutput!]
 
@@ -132,6 +140,9 @@ type Query {
 
   """Gets all the projects in dCompass"""
   getAllProjects: [Project!]
+
+  """Gets a badge by its Stream ID"""
+  getBadgeById(badgeId: String!): Badge
 
   """Gets a project by its Stream ID"""
   getProjectById(projectId: String!): Project

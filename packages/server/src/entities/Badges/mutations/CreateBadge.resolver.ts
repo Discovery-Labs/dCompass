@@ -21,9 +21,10 @@ export class CreateBadgeResolver {
   ): Promise<Badge | null | undefined> {
     // Check that the current user is the owner of the project
     const ogBadge = await ceramicClient.ceramic.loadStream(id);
+    const projectId = ogBadge.content.projectId;
     console.log(ogBadge.content);
     const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: ogBadge.content.projectId }),
+      JSON.stringify({ id: projectId }),
       badgeCreatorSignature,
     );
 
@@ -48,7 +49,7 @@ export class CreateBadgeResolver {
     console.log({ ogBadge: ogBadge.content });
 
     const projectIndexedFields = projects.find(
-      (project: { id: string }) => project.id === ogBadge.content.projectId,
+      (project: { id: string }) => project.id === projectId,
     );
     if (!projectIndexedFields) {
       return null;
@@ -67,7 +68,6 @@ export class CreateBadgeResolver {
       {
         id,
         ...projectIndexedFields,
-        createdBy: decodedAddress,
         pendingBadges: [
           ...(projectIndexedFields.pendingBadges ?? []),
           ogBadge.id.toUrl(),
