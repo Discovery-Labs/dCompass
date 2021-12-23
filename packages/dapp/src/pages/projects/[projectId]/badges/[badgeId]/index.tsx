@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { EditIcon } from "@chakra-ui/icons";
+import { EditIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
@@ -20,16 +20,16 @@ import { GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { useContext } from "react";
 
-import { initializeApollo } from "../../../../../lib/apolloClient";
-import Container from "../../../../components/layout/Container";
-import BadgeCard from "../../../../components/projects/badges/BadgeCard";
-import QuestCard from "../../../../components/QuestCard";
-import { Web3Context } from "../../../../contexts/Web3Provider";
+import { initializeApollo } from "../../../../../../lib/apolloClient";
+import IconWithState from "components/custom/IconWithState";
+import Container from "components/layout/Container";
+import BadgeCard from "components/projects/badges/BadgeCard";
+import QuestCard from "components/QuestCard";
+import { Web3Context } from "contexts/Web3Provider";
 import {
   GET_ALL_BADGES_BY_PROJECT_ID_QUERY,
   GET_BADGE_BY_ID_QUERY,
-} from "../../../../graphql/badges";
-import IconWithState from "components/custom/IconWithState";
+} from "graphql/badges";
 
 type Props = {
   projectId: string | null;
@@ -122,7 +122,7 @@ function BadgePage({
             href={`/projects/edit-project/${id.split("://")[1]}`}
             passHref
           >
-            <Button rightIcon={<EditIcon />}>Edit Badge</Button>
+            <Button leftIcon={<EditIcon />}>Edit Badge</Button>
           </NextLink>
         )}
       </Flex>
@@ -149,10 +149,11 @@ function BadgePage({
           </TabList>
           {isOwner && (
             <NextLink
-              href={`/projects/add-badge/${id.split("://")[1]}`}
+              href={`/projects/${projectId.split("://")[1]}/badges/${id.split("://")[1]
+                }/add-quest`}
               passHref
             >
-              <Button rightIcon={<EditIcon />}>Add badge</Button>
+              <Button leftIcon={<PlusSquareIcon />}>Add Quest</Button>
             </NextLink>
           )}
         </HStack>

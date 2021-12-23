@@ -16,17 +16,17 @@ import { useWeb3React } from "@web3-react/core";
 import { GetServerSideProps } from "next";
 import { useContext, useEffect, useState } from "react";
 
-import { initializeApollo } from "../../../../lib/apolloClient";
-import Card from "../../../components/custom/Card";
-import NotReviewerCard from "../../../components/custom/NotReviewerCard";
-import CenteredFrame from "../../../components/layout/CenteredFrame";
-import Container from "../../../components/layout/Container";
-import { Web3Context } from "../../../contexts/Web3Provider";
-import { splitCIDS } from "../../../core/helpers";
+import { initializeApollo } from "../../../../../lib/apolloClient";
+import Card from "../../../../components/custom/Card";
+import NotReviewerCard from "../../../../components/custom/NotReviewerCard";
+import CenteredFrame from "../../../../components/layout/CenteredFrame";
+import Container from "../../../../components/layout/Container";
+import { Web3Context } from "../../../../contexts/Web3Provider";
+import { splitCIDS } from "../../../../core/helpers";
 import {
   APPROVE_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
-} from "../../../graphql/projects";
+} from "../../../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
 
 type Props = {

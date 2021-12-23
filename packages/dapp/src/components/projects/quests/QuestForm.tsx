@@ -1,0 +1,160 @@
+import {
+  Button,
+  Divider,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Heading,
+  Input,
+  Stack,
+  Textarea,
+} from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useFormContext } from "react-hook-form";
+
+import ImageDropzone from "../../custom/ImageDropzone";
+import ControlledSelect from "../../Inputs/ControlledSelect";
+import LogoDropzone from "../LogoDropzone";
+
+import DiscordMemberForm from "./discord/DiscordMemberForm";
+import PoapOwnerForm from "./poap/PoapOwnerForm";
+import SnapshotForm from "./snapshot/SnapshotForm";
+import NFTOwnerForm from "./token/NFTOwnerForm copy";
+import TokenHolderForm from "./token/TokenHolderForm";
+import TwitterFollowerForm from "./twitter/TwitterFollowerForm";
+
+const questTypeOptions = [
+  {
+    label: "Snapshot voter",
+    value: "snapshot-voter",
+  },
+  {
+    label: "Twitter follower",
+    value: "twitter-follower",
+  },
+  {
+    label: "Discord member",
+    value: "discord-member",
+  },
+  {
+    label: "Token holder",
+    value: "token-holder",
+  },
+  {
+    label: "POAP owner",
+    value: "poap-owner",
+  },
+  {
+    label: "NFT owner",
+    value: "nft-owner",
+  },
+  {
+    label: "Quiz",
+    value: "quiz",
+  },
+];
+
+const CreateQuestForm: React.FunctionComponent = () => {
+  const router = useRouter();
+  const {
+    control,
+    register,
+    setValue,
+    watch,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useFormContext();
+
+  const currentValues = watch();
+  const questDetails = {
+    "snapshot-voter": <SnapshotForm />,
+    "twitter-follower": <TwitterFollowerForm />,
+    "poap-owner": <PoapOwnerForm />,
+    "token-holder": <TokenHolderForm />,
+    "nft-owner": <NFTOwnerForm />,
+    "discord-member": <DiscordMemberForm />,
+    defaultOption: "",
+  };
+  const questType = (currentValues?.type?.value ||
+    "defaultOption") as keyof typeof questDetails;
+
+  function goBack() {
+    router.back();
+  }
+  async function onSubmit(values: Record<string, any>) {
+    console.log("submitted", values);
+  }
+
+  return (
+    <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
+      <Heading>Create quest</Heading>
+      <ImageDropzone
+        {...{
+          register,
+          setValue,
+          errors,
+          fieldName: "image",
+          label: "Quest NFT Image",
+          isRequired: true,
+        }}
+      />
+
+      <FormControl isInvalid={errors.name}>
+        <FormLabel htmlFor="name">Quest name</FormLabel>
+        <Input
+          placeholder="Quest name"
+          {...register("name", {
+            required: "This is required",
+            maxLength: {
+              value: 150,
+              message: "Maximum length should be 150",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.name && errors.name.message}
+        </FormErrorMessage>
+      </FormControl>
+
+      <FormControl isInvalid={errors.description}>
+        <FormLabel htmlFor="description">Description</FormLabel>
+        <Textarea
+          placeholder="Quest description"
+          {...register("description", {
+            required: "This is required",
+            maxLength: {
+              value: 1200,
+              message: "Maximum length should be 1200",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.description && errors.description.message}
+        </FormErrorMessage>
+      </FormControl>
+
+      <ControlledSelect
+        control={control}
+        name="type"
+        id="type"
+        label="Type"
+        rules={{
+          required: "This is required",
+        }}
+        options={questTypeOptions}
+      />
+      {questDetails[questType]}
+      <Divider bg="none" py="5" />
+      <Flex w="full" justify="space-between">
+        <Button colorScheme="pink" type="button" onClick={() => reset()}>
+          Reset Quest Form
+        </Button>
+        <Button type="submit">Submit</Button>
+      </Flex>
+    </Stack>
+  );
+};
+
+export default CreateQuestForm;

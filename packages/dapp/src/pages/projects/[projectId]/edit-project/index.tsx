@@ -6,18 +6,17 @@ import { GetServerSideProps } from "next";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { initializeApollo } from "../../../../lib/apolloClient";
-import NotConnectedCard from "../../../components/custom/NotConnectedCard";
-import CenteredFrame from "../../../components/layout/CenteredFrame";
-import EditProjectForm from "../../../components/projects/EditProjectForm";
-import SquadsForm from "../../../components/projects/squads/SquadsForm";
-import { Web3Context } from "../../../contexts/Web3Provider";
-import { schemaAliases } from "../../../core/ceramic";
+import { initializeApollo } from "../../../../../lib/apolloClient";
 import {
   EDIT_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
-} from "../../../graphql/projects";
+} from "../../../../graphql/projects";
 import Card from "components/custom/Card";
+import NotConnectedCard from "components/custom/NotConnectedCard";
+import CenteredFrame from "components/layout/CenteredFrame";
+import EditProjectForm from "components/projects/EditProjectForm";
+import SquadsForm from "components/projects/squads/SquadsForm";
+import { Web3Context } from "contexts/Web3Provider";
 
 type Props = {
   projectId: string | null;

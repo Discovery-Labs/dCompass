@@ -155,7 +155,7 @@ export default function Badges({ control, register, setValue }: any) {
               isMulti
               options={existingQuestsOptions}
             />
-            <Divider py="5" />
+            <Divider bg="none" py="5" />
           </VStack>
         );
       })}

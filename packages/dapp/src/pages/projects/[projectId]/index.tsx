@@ -18,13 +18,13 @@ import { GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { useContext } from "react";
 
-import { initializeApollo } from "../../../lib/apolloClient";
-import Container from "../../components/layout/Container";
-import BadgeCard from "../../components/projects/badges/BadgeCard";
-import QuestCard from "../../components/QuestCard";
-import { Web3Context } from "../../contexts/Web3Provider";
-import { GET_ALL_BADGES_BY_PROJECT_ID_QUERY } from "../../graphql/badges";
-import { PROJECT_BY_ID_QUERY } from "../../graphql/projects";
+import { initializeApollo } from "../../../../lib/apolloClient";
+import Container from "../../../components/layout/Container";
+import BadgeCard from "../../../components/projects/badges/BadgeCard";
+import QuestCard from "../../../components/QuestCard";
+import { Web3Context } from "../../../contexts/Web3Provider";
+import { GET_ALL_BADGES_BY_PROJECT_ID_QUERY } from "../../../graphql/badges";
+import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
 
 type Props = {
@@ -102,10 +102,10 @@ function ProjectPage({
         <Spacer />
         {isOwner && (
           <NextLink
-            href={`/projects/edit-project/${id.split("://")[1]}`}
+            href={`/projects/${id.split("://")[1]}/edit-project/`}
             passHref
           >
-            <Button rightIcon={<EditIcon />}>Edit Project</Button>
+            <Button leftIcon={<EditIcon />}>Edit Project</Button>
           </NextLink>
         )}
       </Flex>
@@ -134,10 +134,10 @@ function ProjectPage({
           </TabList>
           {isOwner && (
             <NextLink
-              href={`/projects/add-badge/${id.split("://")[1]}`}
+              href={`/projects/${id.split("://")[1]}/badges/add-badge/`}
               passHref
             >
-              <Button rightIcon={<EditIcon />}>Add badge</Button>
+              <Button leftIcon={<EditIcon />}>Add badge</Button>
             </NextLink>
           )}
         </HStack>

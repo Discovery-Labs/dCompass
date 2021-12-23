@@ -45,7 +45,7 @@ export const ProjectCard = ({
   function openProject() {
     router.push(
       isReviewMode
-        ? `/projects/review/${project.id.split("://")[1]}`
+        ? `/projects/${project.id.split("://")[1]}/review`
         : `/projects/${project.id.split("://")[1]}`
     );
   }

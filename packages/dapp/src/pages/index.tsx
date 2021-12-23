@@ -166,7 +166,7 @@ function Projects() {
         <Heading>Projects</Heading>
         <Spacer />
         <NextLink href="/projects/create-project" passHref>
-          <Button rightIcon={<AddIcon />}>Create Project</Button>
+          <Button leftIcon={<AddIcon />}>Create Project</Button>
         </NextLink>
       </Flex>
 

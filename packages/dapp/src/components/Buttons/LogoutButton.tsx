@@ -8,7 +8,7 @@ function LogoutButton(props: ButtonProps) {
   const [, , disconnect] = useMultiAuth();
   return (
     <Button
-      rightIcon={<HiOutlineLogout />}
+      leftIcon={<HiOutlineLogout />}
       variant="outline"
       color="red.500"
       onClick={() => disconnect()}

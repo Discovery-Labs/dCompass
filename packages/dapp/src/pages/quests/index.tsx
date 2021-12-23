@@ -134,11 +134,11 @@ function Quests() {
       <>
         {filteredQuests.length !== 0
           ? filteredQuests.map((quest) => (
-              <QuestCard key={quest.name} quest={quest} />
-            ))
+            <QuestCard key={quest.name} quest={quest} />
+          ))
           : allQuests.map((quest) => (
-              <QuestCard key={quest.name} quest={quest} />
-            ))}
+            <QuestCard key={quest.name} quest={quest} />
+          ))}
       </>
     );
   };
@@ -149,7 +149,7 @@ function Quests() {
         <Heading>Quests</Heading>
         <Spacer />
         <NextLink href="/create-quest" passHref>
-          <Button rightIcon={<AddIcon />}>Create Quest</Button>
+          <Button leftIcon={<AddIcon />}>Create Quest</Button>
         </NextLink>
       </Flex>
 

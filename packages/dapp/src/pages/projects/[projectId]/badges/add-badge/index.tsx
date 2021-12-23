@@ -2,11 +2,11 @@ import { useWeb3React } from "@web3-react/core";
 import React, { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-import NotConnectedCard from "../../../components/custom/NotConnectedCard";
-import CenteredFrame from "../../../components/layout/CenteredFrame";
-import BadgesForm from "../../../components/projects/badges/BadgesForm";
-import { Web3Context } from "../../../contexts/Web3Provider";
 import Card from "components/custom/Card";
+import NotConnectedCard from "components/custom/NotConnectedCard";
+import CenteredFrame from "components/layout/CenteredFrame";
+import BadgesForm from "components/projects/badges/BadgesForm";
+import { Web3Context } from "contexts/Web3Provider";
 
 function AddBadgeStepper() {
   const { contracts } = useContext(Web3Context);

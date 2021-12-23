@@ -13,14 +13,16 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-const LogoDropzone = ({
+const ImageDropzone = ({
   register,
   setValue,
   errors,
   isRequired = false,
+  fieldName,
+  label,
 }: any) => {
   const [files, setFiles] = useState([]);
-  const logoOptions = isRequired
+  const fieldOptions = isRequired
     ? {
       required: "This is required",
     }
@@ -44,7 +46,7 @@ const LogoDropzone = ({
     [setValue]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
     onDrop,
   });
@@ -78,8 +80,8 @@ const LogoDropzone = ({
   );
 
   return (
-    <FormControl isInvalid={errors.logo}>
-      <FormLabel htmlFor="logo">Logo</FormLabel>
+    <FormControl isInvalid={errors[fieldName]}>
+      <FormLabel htmlFor={fieldName}>{label}</FormLabel>
       {files && thumbs}
 
       {files.length === 0 && (
@@ -87,16 +89,18 @@ const LogoDropzone = ({
           Upload
           <Input
             type="file"
-            placeholder="Logo"
-            {...register("logo", logoOptions)}
+            placeholder={label}
+            {...register(fieldName, fieldOptions)}
             {...getInputProps()}
           />
         </Button>
       )}
 
-      <FormErrorMessage>{errors.logo && errors.logo.message}</FormErrorMessage>
+      <FormErrorMessage>
+        {errors[fieldName] && errors[fieldName].message}
+      </FormErrorMessage>
     </FormControl>
   );
 };
 
-export default LogoDropzone;
+export default ImageDropzone;

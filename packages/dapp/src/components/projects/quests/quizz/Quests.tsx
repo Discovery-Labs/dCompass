@@ -97,7 +97,7 @@ export default function Quests({ control, register, setValue }: any) {
                   errors.quests[index].answer.message}
               </FormErrorMessage>
             </FormControl>
-            <Divider py="5" />
+            <Divider bg="none" py="5" />
           </VStack>
         );
       })}
