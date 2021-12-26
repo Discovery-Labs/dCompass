@@ -98,8 +98,8 @@ const Navbar = (props: any) => {
         <Flex alignItems="center">
           {account && isReviewer && (
             <LinkItem href="/projects/review">
-              <Tag variant="outline" colorScheme="green">
-                <TagLabel>Reviews</TagLabel>
+              <Tag size="lg" variant="outline">
+                <TagLabel>Admin</TagLabel>
               </Tag>
             </LinkItem>
           )}

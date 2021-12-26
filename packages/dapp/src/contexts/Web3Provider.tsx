@@ -68,7 +68,7 @@ const Web3Context = createContext(initialState);
 
 const Web3Provider = ({ children }: { children: any }) => {
   const [state, dispatch] = useReducer(Web3Reducer, initialState);
-  const { activate, chainId } = useWeb3React();
+  const { activate, chainId, deactivate } = useWeb3React();
   const setAccount = (account: null | string) => {
     dispatch({
       type: "SET_ACCOUNT",
@@ -155,6 +155,7 @@ const Web3Provider = ({ children }: { children: any }) => {
     setIsReviewer(false);
     setContracts(null);
     localStorage.setItem("defaultWallet", "");
+    deactivate();
   };
 
   const connectWeb3 = useCallback(async () => {
