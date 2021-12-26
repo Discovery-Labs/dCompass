@@ -13,21 +13,6 @@ export const QuestsSchema = {
           id: {
             $ref: "#/definitions/CeramicStreamId",
           },
-          name: {
-            type: "string",
-            title: "name",
-            maxLength: 100,
-          },
-          badgeId: {
-            $ref: "#/definitions/CeramicStreamId",
-          },
-          completedBy: {
-            type: "array",
-            title: "completedBy",
-            items: {
-              type: "string",
-            },
-          },
         },
       },
     },
