@@ -38,10 +38,12 @@ function QuestCard({ quest }: { quest: Quest }) {
         <Spacer />
         <Flex align="end" direction="column">
           <Tag>{quest.completed}</Tag>
-          <Text fontSize="sm">{quest.reward}</Text>
+          <Text textStyle="small">{quest.reward}</Text>
         </Flex>
       </Flex>
-      <Heading fontSize="2xl">{quest.name}</Heading>
+      <Text as="h2" textStyle="h2">
+        {quest.name}
+      </Text>
       <Text noOfLines={4}>{quest.description}</Text>
       <Spacer />
       <Flex w="full" justify="space-between">

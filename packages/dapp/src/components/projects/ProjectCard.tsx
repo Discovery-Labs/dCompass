@@ -52,7 +52,9 @@ export const ProjectCard = ({
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
   return (
     <CardMedia src={imgSrc}>
-      <Heading fontSize="2xl">{project.name}</Heading>
+      <Text as="h2" textStyle="h2">
+        {project.name}
+      </Text>
       <Flex align="center" maxW="full">
         {project.createdBy && (
           <Blockies seed={project.createdBy} className="blockies" />

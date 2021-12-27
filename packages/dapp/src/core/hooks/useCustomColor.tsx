@@ -2,7 +2,7 @@ import { useColorModeValue } from "@chakra-ui/react";
 import { colors } from "@discovery-dao/ui";
 
 function useCustomColor() {
-  const primaryColor = useColorModeValue(
+  const getPrimaryColor = useColorModeValue(
     colors.primary[500],
     colors.primary[200]
   );
@@ -10,11 +10,11 @@ function useCustomColor() {
     colors.neutralLighter,
     colors.neutralDarker
   );
-  const accentColor = useColorModeValue(
+  const getAccentColor = useColorModeValue(
     colors.accentLight[500],
     colors.accentDark[500]
   );
-  const coloredText = useColorModeValue(
+  const getColoredText = useColorModeValue(
     colors.neutralDark,
     colors.neutralLight
   );
@@ -28,11 +28,12 @@ function useCustomColor() {
     colors.neutralLightest,
     colors.neutralDarkest
   );
+
   return {
-    primaryColor,
+    getPrimaryColor,
     getOverBgColor,
-    accentColor,
-    coloredText,
+    getAccentColor,
+    getColoredText,
     accentColorScheme,
     getTextColor,
     getBgColor,

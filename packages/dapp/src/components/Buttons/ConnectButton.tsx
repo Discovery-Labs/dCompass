@@ -1,5 +1,6 @@
-import { Button, HStack } from "@chakra-ui/react";
+import { Button, HStack, IconButton } from "@chakra-ui/react";
 import { useContext } from "react";
+import { IoMdExit } from "react-icons/io";
 
 import { Web3Context } from "../../contexts/Web3Provider";
 import Address from "../custom/Address";
@@ -18,8 +19,7 @@ function ConnectButton({ w }: { w?: string }) {
             fontSize="18px"
             size="short"
           />
-          <Button onClick={logout}>Logout</Button>
-          {/* <MenuOptions /> */}
+          <IconButton aria-label="exit" icon={<IoMdExit />} onClick={logout} />
         </>
       ) : (
         <Button onClick={connectWeb3} w={w}>

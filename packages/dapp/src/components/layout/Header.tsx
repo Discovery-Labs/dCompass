@@ -2,28 +2,36 @@ import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
   Container,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
   Flex,
-  Heading,
   HStack,
   IconButton,
   Link,
   Spacer,
-  Stack,
   Tag,
   TagLabel,
+  Text,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useContext } from "react";
-
 import { Web3Context } from "../../contexts/Web3Provider";
+import useCustomColor from "../../core/hooks/useCustomColor";
 import ConnectButton from "../Buttons/ConnectButton";
 import LogoIcon from "../Icons/LogoIcon";
+import ThemeToggle from "./ThemeToggle";
 
 const LinkItem = ({ href, _target, children, ...props }: any) => {
   const { pathname } = useRouter();
   let isActive = false;
+  const { getPrimaryColor, getTextColor } = useCustomColor();
 
   if (href !== "/") {
     const [, path] = href.split("/");
@@ -36,7 +44,7 @@ const LinkItem = ({ href, _target, children, ...props }: any) => {
     <NextLink href={href} passHref>
       <Link
         p={2}
-        color={isActive ? "primary.300" : "neutralLigher"}
+        color={isActive ? getPrimaryColor : getTextColor}
         _target={_target}
         {...props}
       >
@@ -46,9 +54,20 @@ const LinkItem = ({ href, _target, children, ...props }: any) => {
   );
 };
 
+const LinkItems = () => {
+  return (
+    <>
+      <LinkItem href="/">Projects</LinkItem>
+      <LinkItem href="/quests">Quests</LinkItem>
+      <LinkItem href="/dashboard">Dashboard</LinkItem>
+    </>
+  );
+};
+
 const Navbar = (props: any) => {
   const { account, isReviewer } = useContext(Web3Context);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { getOverBgColor } = useCustomColor();
 
   return (
     <Box
@@ -56,7 +75,7 @@ const Navbar = (props: any) => {
       as="nav"
       w="100%"
       top="0"
-      bg="neutralDarker"
+      bg={getOverBgColor}
       style={{ backdropFilter: "blur(10px)" }}
       zIndex={1}
       {...props}
@@ -69,22 +88,12 @@ const Navbar = (props: any) => {
         align="center"
         justify="space-between"
       >
-        <IconButton
-          size="md"
-          px="2"
-          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-          aria-label="Open Menu"
-          display={{ md: "none" }}
-          onClick={isOpen ? onClose : onOpen}
-        />
         <HStack spacing={4} alignItems="center">
           <Box px="2">
             <NextLink href="/">
               <Flex _hover={{ cursor: "pointer" }} align="center" mr={5}>
                 <LogoIcon size="25px" />
-                <Heading fontSize="lg" pl="2">
-                  dCompass
-                </Heading>
+                <Text pl="2">dCompass</Text>
               </Flex>
             </NextLink>
           </Box>
@@ -95,7 +104,8 @@ const Navbar = (props: any) => {
           </HStack>
         </HStack>
         <Spacer />
-        <Flex alignItems="center">
+        <HStack alignItems="center">
+          <ThemeToggle />
           {account && isReviewer && (
             <LinkItem href="/projects/review">
               <Tag size="lg" variant="outline">
@@ -104,17 +114,30 @@ const Navbar = (props: any) => {
             </LinkItem>
           )}
           <ConnectButton />
-        </Flex>
+          <IconButton
+            size="md"
+            px="2"
+            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            aria-label="Open Menu"
+            display={{ md: "none" }}
+            onClick={isOpen ? onClose : onOpen}
+          />
+        </HStack>
       </Container>
 
       {isOpen ? (
-        <Box pb={4} display={{ md: "none" }}>
-          <Stack as="nav" spacing={4}>
-            <LinkItem href="/">Projects</LinkItem>
-            <LinkItem href="/quests">Quests</LinkItem>
-            <LinkItem href="/dashboard">Dashboard</LinkItem>
-          </Stack>
-        </Box>
+        <Drawer placement="right" onClose={onClose} isOpen={isOpen}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader borderBottomWidth="1px">Menu</DrawerHeader>
+            <DrawerBody>
+              <VStack onClick={onClose} align="start" fontSize="lg" spacing="4">
+                <LinkItems />
+              </VStack>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
       ) : null}
     </Box>
   );
