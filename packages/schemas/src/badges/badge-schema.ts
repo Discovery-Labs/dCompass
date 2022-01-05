@@ -47,10 +47,23 @@ export const BadgeSchema = {
     },
     quests: {
       type: "array",
-      title: "quests",
+      title: "Quests",
       items: {
         type: "object",
         title: "QuestItem",
+        properties: {
+          id: {
+            $ref: "#/definitions/CeramicStreamId",
+          },
+        },
+      },
+    },
+    pendingQuests: {
+      type: "array",
+      title: "PendingQuests",
+      items: {
+        type: "object",
+        title: "PendingQuestItem",
         properties: {
           id: {
             $ref: "#/definitions/CeramicStreamId",

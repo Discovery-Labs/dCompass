@@ -7,7 +7,6 @@ import { CreateBadgeResolver } from './mutations/CreateBadge.resolver';
 import { GetAllBadgesByProjectIdResolver } from './queries/GetAllBadgesByProjectId.resolver';
 import { ApproveBadgeResolver } from './mutations/ApproveBadge.resolver';
 import { GetBadgeByIdResolver } from './queries/GetBadgeById.resolver';
-// import { GetBadgeByIdResolver } from './queries/GetBadgeById.resolver';
 
 @Module({
   imports: [

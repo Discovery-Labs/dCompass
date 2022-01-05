@@ -65,6 +65,7 @@ export class CreateBadgeResolver {
     console.log({ existingProjects });
     // Add the new badge for review
     const appProjectsUpdated = [
+      ...existingProjects,
       {
         id,
         ...projectIndexedFields,
@@ -73,7 +74,6 @@ export class CreateBadgeResolver {
           ogBadge.id.toUrl(),
         ],
       },
-      ...existingProjects,
     ];
 
     await ceramicClient.dataStore.set(schemaAliases.APP_PROJECTS_ALIAS, {

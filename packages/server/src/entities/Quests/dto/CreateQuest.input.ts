@@ -1,13 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import {
-  IsString,
-  IsDefined,
-  IsNotEmpty,
-  IsArray,
-  IsOptional,
-} from 'class-validator';
-import { Question } from './Question';
-import { QuestQuestionInput } from './QuestQuestion.input';
+import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class CreateQuestInput {
@@ -15,28 +7,11 @@ export class CreateQuestInput {
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  badgeId: string;
+  id: string;
 
   @Field()
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  name: string;
-
-  @Field()
-  @IsString({ message: 'wrong.type' })
-  @IsDefined({ message: 'not.defined' })
-  @IsNotEmpty({ message: 'not.empty' })
-  description: string;
-
-  @Field(() => [QuestQuestionInput])
-  @IsArray({ message: 'wrong.type' })
-  @IsDefined({ message: 'not.defined' })
-  @IsNotEmpty({ message: 'not.empty' })
-  questions: Question[];
-
-  @Field(() => [String], { nullable: true })
-  @IsArray({ message: 'wrong.type' })
-  @IsOptional()
-  preRequisites?: string[];
+  questCreatorSignature: string;
 }

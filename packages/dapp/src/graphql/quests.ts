@@ -1,17 +1,26 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_QUEST_MUTATION = gql`
-  mutation CreateQuest($quest: CreateQuestInput!) {
-    createQuest(input: $quest) {
+  mutation CreateQuest($input: CreateQuestInput!) {
+    createQuest(input: $input) {
       id
       name
       description
       badgeId
-      questions {
-        answer
-        choices
-        question
-      }
+      questType
+    }
+  }
+`;
+
+export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
+  mutation CreateSnapshotVoterQuest($input: CreateQuestInput!) {
+    createSnapshotVoterQuest(input: $input) {
+      id
+      name
+      description
+      badgeId
+      questType
+      proposalId
     }
   }
 `;
