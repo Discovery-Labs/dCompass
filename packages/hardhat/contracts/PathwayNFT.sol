@@ -37,15 +37,15 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     event PathwayApproved(string indexed _pathwayId);
     event NFTPathwayMinted(address indexed _to, string indexed _tokenURI, string indexed _badgeId);
 
-    constructor(address _vrfAddress, uint8[] memory _initRarities, address _projectNFTAddress, address _verifyAddress)ERC721("dCompassBadge", "DCOMPB"){
+    constructor(address _vrfAddress, address _projectNFTAddress, address _verifyAddress)ERC721("dCompassBadge", "DCOMPB"){
         vrfContract = RandomNumberConsumer(_vrfAddress);
         verifyContract = Verify(_verifyAddress);
-        uint rarityTotal = 0;
-        for (uint8 i =0; i<_initRarities.length; i++){
+        //uint rarityTotal = 0;
+        /*for (uint8 i =0; i<_initRarities.length; i++){
             rarityTotal += _initRarities[i];
         }
         require(rarityTotal == 100, "rarities do not add to 100");
-        rarityThresholds = _initRarities;
+        rarityThresholds = _initRarities;*/
         projectNFTAddress = _projectNFTAddress;
         statusStrings[0] = "NONEXISTENT";
         statusStrings[1] = "PENDING";
@@ -69,7 +69,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         if(status[_pathwayId] == PathwayStatus.NONEXISTENT){
             require(_contributors.length >0, "empty array");
             contributors[_pathwayId] = _contributors;
-            projectIdforCourse[_pathwayId] = _projectId;
+            projectIdforPathway[_pathwayId] = _projectId;
             if(votesNeeded <= votes[_pathwayId]){
                 status[_pathwayId] = PathwayStatus.APPROVED;
                 emit PathwayApproved(_pathwayId);
