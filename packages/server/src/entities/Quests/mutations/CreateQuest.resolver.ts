@@ -16,7 +16,7 @@ export class CreateQuestResolver {
     name: 'createQuest',
   })
   async createQuest(
-    @UseCeramic() { ceramicClient, ceramicCore }: UseCeramicClient,
+    @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args('input') { id, questCreatorSignature }: CreateQuestInput,
   ): Promise<Quest | null | undefined> {
     // Check that the current user is the owner of the quest
@@ -27,7 +27,7 @@ export class CreateQuestResolver {
       questCreatorSignature,
     );
 
-    const ownerAccounts = await ceramicCore.get(
+    const ownerAccounts = await ceramicClient.dataStore.get(
       'cryptoAccounts',
       ogQuest.controllers[0],
     );

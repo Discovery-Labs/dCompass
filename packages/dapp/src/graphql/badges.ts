@@ -17,6 +17,7 @@ export const APPROVE_BADGE_MUTATION = gql`
       id
       title
       difficulty
+      image
       description
       isPending
     }

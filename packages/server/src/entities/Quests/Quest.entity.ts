@@ -27,6 +27,9 @@ export abstract class Quest extends BaseEntity {
   @Field(() => [String])
   completedBy?: CeramicStreamId[];
 
+  @Field(() => Boolean)
+  isPending?: boolean;
+
   @Field()
   image: string;
   // TODO: use this instead of image

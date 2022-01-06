@@ -40,7 +40,6 @@ async function bootstrap() {
   app.enableShutdownHooks(['SIGINT', 'SIGTERM']);
 
   const ceramicClient = await ceramicDataModelFactory();
-  const ceramicCore = ceramicCoreFactory();
 
   // app.use(helmet());
   // app.use(cookieParser(sessionOptions.secret));
@@ -55,7 +54,7 @@ async function bootstrap() {
 
   app.use((req: Context['req'], _res: Context['res'], next: NextFunction) => {
     req.ceramicClient = ceramicClient;
-    req.ceramicCore = ceramicCore;
+    req.ceramicCore = ceramicCoreFactory();
     next();
   });
 

@@ -16,7 +16,7 @@ export class CreateBadgeResolver {
     name: 'createBadge',
   })
   async createBadge(
-    @UseCeramic() { ceramicClient, ceramicCore }: UseCeramicClient,
+    @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args('input') { id, badgeCreatorSignature }: CreateBadgeInput,
   ): Promise<Badge | null | undefined> {
     // Check that the current user is the owner of the project
@@ -28,7 +28,7 @@ export class CreateBadgeResolver {
       badgeCreatorSignature,
     );
 
-    const ownerAccounts = await ceramicCore.get(
+    const ownerAccounts = await ceramicClient.dataStore.get(
       'cryptoAccounts',
       ogBadge.controllers[0],
     );

@@ -93,7 +93,7 @@ export class ApproveBadgeResolver {
     const previousBadges = await ceramicClient.dataStore.get(
       schemaAliases.BADGES_ALIAS,
     );
-    const allBadges = previousBadges.badges ?? [];
+    const allBadges = previousBadges?.badges ?? [];
     await ceramicClient.dataStore.set(schemaAliases.BADGES_ALIAS, {
       badges: [
         ...allBadges,

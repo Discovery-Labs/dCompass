@@ -31,7 +31,7 @@ module.exports = {
         ? `https://polygon-mumbai.infura.io/v3/${INFURA_ID}`
         :*/ "https://rpc-mumbai.maticvigil.com",
       accounts: [DEPLOYER_PRIVATE_KEY],
-      chainId: 80001
+      chainId: 80001,
     },
     matic: {
       url: INFURA_ID
@@ -48,6 +48,11 @@ module.exports = {
       url: INFURA_ID ? `https://rinkeby.infura.io/v3/${INFURA_ID}` : ``,
       accounts: [DEPLOYER_PRIVATE_KEY],
       chainId: 4,
+    },
+    ropsten: {
+      url: INFURA_ID ? `https://ropsten.infura.io/v3/${INFURA_ID}` : ``,
+      accounts: [DEPLOYER_PRIVATE_KEY],
+      chainId: 3,
     },
   },
   solidity: {

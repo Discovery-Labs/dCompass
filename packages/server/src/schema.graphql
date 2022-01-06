@@ -20,6 +20,11 @@ type ApproveProjectOutput {
   tokenUris: [String!]!
 }
 
+input ApproveQuestInput {
+  id: String!
+  questApproverSignature: String!
+}
+
 type Badge {
   """Identifies the date and time when the object was created."""
   createdAt: String!
@@ -94,6 +99,9 @@ type Mutation {
   """Approves a new Project in dCompass"""
   approveProject(input: ApproveProjectInput!): [ApproveProjectOutput!]
 
+  """Approve a new Quest in dCompass"""
+  approveQuest(input: ApproveQuestInput!): Quest
+
   """Create a new Badge in dCompass"""
   createBadge(input: CreateBadgeInput!): Badge
 
@@ -149,6 +157,9 @@ type Query {
   """Gets all the projects in dCompass"""
   getAllProjects: [Project!]
 
+  """Gets all the quests in dCompass"""
+  getAllQuestsByBadgeId(badgeId: String!): [Quest!]
+
   """Gets a badge by its Stream ID"""
   getBadgeById(badgeId: String!): Badge
 
@@ -165,6 +176,7 @@ type Quest {
   description: String!
   id: String!
   image: String!
+  isPending: Boolean
   name: String!
   questType: String!
 
@@ -181,6 +193,7 @@ type SnapshotVoterQuest {
   description: String!
   id: String!
   image: String!
+  isPending: Boolean
   name: String!
   proposalId: String!
   questType: String!

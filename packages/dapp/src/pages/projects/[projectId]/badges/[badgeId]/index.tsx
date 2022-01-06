@@ -21,15 +21,14 @@ import NextLink from "next/link";
 import { useContext } from "react";
 
 import { initializeApollo } from "../../../../../../lib/apolloClient";
+import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
 import Container from "components/layout/Container";
 import BadgeCard from "components/projects/badges/BadgeCard";
 import QuestCard from "components/QuestCard";
 import { Web3Context } from "contexts/Web3Provider";
-import {
-  GET_ALL_BADGES_BY_PROJECT_ID_QUERY,
-  GET_BADGE_BY_ID_QUERY,
-} from "graphql/badges";
+import { GET_BADGE_BY_ID_QUERY } from "graphql/badges";
+import { GET_ALL_QUESTS_BY_BADGE_ID_QUERY } from "graphql/quests";
 
 type Props = {
   projectId: string | null;
@@ -92,17 +91,27 @@ function BadgePage({
   projectId,
 }: any) {
   const { account } = useContext(Web3Context);
-  const { data, loading, error } = useQuery(
-    GET_ALL_BADGES_BY_PROJECT_ID_QUERY,
-    {
-      variables: {
-        projectId,
-      },
-    }
-  );
+  const { data, loading, error } = useQuery(GET_ALL_QUESTS_BY_BADGE_ID_QUERY, {
+    variables: {
+      badgeId: id,
+    },
+  });
+  const {
+    data: projectRes,
+    loading: projectLoading,
+    error: projectError,
+  } = useQuery(PROJECT_BY_ID_QUERY, {
+    variables: {
+      projectId,
+    },
+  });
+
   const isOwner = createdBy === account;
-  if (loading) return "Loading...";
-  if (error) return `Loading error! ${error.message}`;
+  if (loading || projectLoading) return "Loading...";
+  if (error || projectError)
+    return `Loading error! ${error?.message || projectError?.message}`;
+
+  console.log({ projectRes });
   return (
     <Container>
       <Flex w="full">
@@ -161,9 +170,19 @@ function BadgePage({
         <TabPanels>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {allQuests.map((quest: any) => (
-                <QuestCard key={QuestData.name} quest={QuestData} />
-              ))}
+              {data.getAllQuestsByBadgeId
+                .filter((quest: any) => !quest.isPending)
+                .map((quest: any) => (
+                  <QuestCard
+                    key={quest.id}
+                    quest={quest}
+                    projectContributors={
+                      projectRes.getProjectById.squads.flatMap(
+                        (squad: any) => squad.members
+                      ) || []
+                    }
+                  />
+                ))}
             </SimpleGrid>
             {/* <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
               {data.getAllBadgesByProjectId
@@ -175,9 +194,19 @@ function BadgePage({
           </TabPanel>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {allQuests.map((quest: any) => (
-                <QuestCard key={QuestData.name} quest={QuestData} />
-              ))}
+              {data.getAllQuestsByBadgeId
+                .filter((quest: any) => quest.isPending)
+                .map((quest: any) => (
+                  <QuestCard
+                    key={quest.id}
+                    quest={quest}
+                    projectContributors={
+                      projectRes.getProjectById.squads.flatMap(
+                        (squad: any) => squad.members
+                      ) || []
+                    }
+                  />
+                ))}
             </SimpleGrid>
             {/* <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
               {data.getAllBadgesByProjectId

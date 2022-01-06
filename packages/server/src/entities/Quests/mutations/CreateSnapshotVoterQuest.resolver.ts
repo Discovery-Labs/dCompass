@@ -1,12 +1,13 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { ethers } from 'ethers';
-import { ForbiddenError } from 'apollo-server-express';
+// import { ForbiddenError } from 'apollo-server-express';
 
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseCeramicClient } from '../../../core/utils/types';
 import { schemaAliases } from '../../../core/constants/idx';
 import { CreateQuestInput } from '../dto/CreateQuest.input';
 import { SnapshotVoterQuest } from '../SnapshotVoterQuest.entity';
+import { ForbiddenError } from 'apollo-server-express';
 
 @Resolver(() => SnapshotVoterQuest)
 export class CreateSnapshotVoterQuestResolver {
@@ -16,7 +17,7 @@ export class CreateSnapshotVoterQuestResolver {
     name: 'createSnapshotVoterQuest',
   })
   async createSnapshotVoterQuest(
-    @UseCeramic() { ceramicClient, ceramicCore }: UseCeramicClient,
+    @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args('input') { id, questCreatorSignature }: CreateQuestInput,
   ): Promise<SnapshotVoterQuest | null | undefined> {
     // Check that the current user is the owner of the quest
@@ -30,7 +31,7 @@ export class CreateSnapshotVoterQuestResolver {
     );
     console.log({ decodedAddress });
 
-    const ownerAccounts = await ceramicCore.get(
+    const ownerAccounts = await ceramicClient.dataStore.get(
       'cryptoAccounts',
       ogQuest.controllers[0],
     );

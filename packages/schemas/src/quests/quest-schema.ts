@@ -75,5 +75,10 @@ export const QuestSchema = {
       pattern: "^ipfs://.+",
       maxLength: 150,
     },
+    CeramicStreamId: {
+      type: "string",
+      pattern: "^ceramic://.+(\\\\?version=.+)?",
+      maxLength: 150,
+    },
   },
 };

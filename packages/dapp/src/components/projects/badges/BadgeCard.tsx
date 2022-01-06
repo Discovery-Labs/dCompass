@@ -39,7 +39,7 @@ function BadgeCard({
 
   const { account, provider } = useContext(Web3Context);
   const router = useRouter();
-  const isContributor = account ? projectContributors.includes(account) : false;
+  const isContributor = account && projectContributors.includes(account);
   function openBadge() {
     return router.push(
       `/projects/${badge.projectId.split("://")[1]}/badges/${badge.id.split("://")[1]
