@@ -33,6 +33,7 @@ import useResolveEnsName from "../../core/hooks/useResolveEnsName";
 const blockExplorerLink = (address: string, blockExplorer?: string) =>
   `${blockExplorer || "https://etherscan.io/"}${"address/"}${address}`;
 
+// eslint-disable-next-line complexity
 function Address({
   value,
   address,
@@ -59,7 +60,7 @@ function Address({
   const ens = useResolveEnsName(library, address);
   const { hasCopied, onCopy } = useClipboard(account);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { coloredText } = useCustomColor();
+  const { getColoredText } = useCustomColor();
   if (!account) {
     return (
       <Box padding="6" as="span">
@@ -150,7 +151,7 @@ function Address({
           <ModalCloseButton />
           <ModalBody>
             Connected with MetaMask
-            <Text textStyle="small" color={coloredText}>
+            <Text textStyle="small" color={getColoredText}>
               You can copy the address or view on explorer
             </Text>
             <HStack

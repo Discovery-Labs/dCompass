@@ -4,7 +4,7 @@ import {
   Checkbox,
   CheckboxGroup,
   Flex,
-  Heading,
+  Text,
   HStack,
   IconButton,
   Input,
@@ -134,11 +134,11 @@ function Quests() {
       <>
         {filteredQuests.length !== 0
           ? filteredQuests.map((quest) => (
-            <QuestCard key={quest.name} quest={quest} />
-          ))
+              <QuestCard key={quest.name} quest={quest} />
+            ))
           : allQuests.map((quest) => (
-            <QuestCard key={quest.name} quest={quest} />
-          ))}
+              <QuestCard key={quest.name} quest={quest} />
+            ))}
       </>
     );
   };
@@ -146,7 +146,9 @@ function Quests() {
   return (
     <Container>
       <Flex w="full">
-        <Heading>Quests</Heading>
+        <Text as="h1" textStyle="h1">
+          Quests
+        </Text>
         <Spacer />
         <NextLink href="/create-quest" passHref>
           <Button leftIcon={<AddIcon />}>Create Quest</Button>

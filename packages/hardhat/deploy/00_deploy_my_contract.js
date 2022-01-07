@@ -7,7 +7,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
   const { DEPLOYER_PRIVATE_KEY, DEV_ADDRESS, SERVER_ADDRESS } = process.env;
 
-  await deploy("ProjectNFT", {
+  const project = await deploy("ProjectNFT", {
     from: DEPLOYER_PRIVATE_KEY,
     args: [
       DEV_ADDRESS,
@@ -25,7 +25,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
-  await deploy("RandomNumberConsumer", {
+  const vrf = await deploy("RandomNumberConsumer", {
     from: DEPLOYER_PRIVATE_KEY,
     args: [
       [
@@ -41,7 +41,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
-  await deploy("Verify", {
+  const verify = await deploy("Verify", {
     from: DEPLOYER_PRIVATE_KEY,
     args: [
       SERVER_ADDRESS,
@@ -57,6 +57,16 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     ],
     log: true,
   });
+
+  await deploy("PathwayNFT", {
+    from: DEPLOYER_PRIVATE_KEY,
+    args: [
+      vrf.address,
+      project.address,
+      verify.address
+    ],
+    log: true, 
+  })
 
   /*
     // Getting a previously deployed contract
@@ -94,4 +104,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   });
   */
 };
-module.exports.tags = ["ProjectNFT", "RandomNumberConsumer", "Verify"];
+module.exports.tags = ["ProjectNFT", "RandomNumberConsumer", "Verify", "PathwayNFT"];
