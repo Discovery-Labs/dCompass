@@ -1,27 +1,25 @@
-// import { Module } from '@nestjs/common';
-// import { HttpModule } from '@nestjs/axios';
+import { Module } from '@nestjs/common';
 
-// import { RedisModule } from '../../core/resources/Redis/Redis.module';
+import { RedisModule } from '../../core/resources/Redis/Redis.module';
+import { ApproveQuestResolver } from './mutations/ApproveQuest.resolver';
 
 // import { GetAllQuestsResolver } from './queries/GetAllQuests.resolver';
 // import { CreateQuestResolver } from './mutations/CreateQuest.resolver';
 // import { GetQuestByIdResolver } from './queries/GetQuestById.resolver';
 // import { SubmitQuestAnswersResolver } from './mutations/SubmitQuestAnswers.resolver';
+import { CreateSnapshotVoterQuestResolver } from './mutations/CreateSnapshotVoterQuest.resolver';
+import { GetAllQuestsByBadgeIdResolver } from './queries/GetAllQuestsByBadgeId.resolver';
 
-// @Module({
-//   imports: [
-//     RedisModule,
-//     HttpModule.register({
-//       timeout: 60000,
-//       maxRedirects: 10,
-//     }),
-//   ],
-//   providers: [
-//     GetAllQuestsResolver,
-//     CreateQuestResolver,
-//     GetQuestByIdResolver,
-//     SubmitQuestAnswersResolver,
-//   ],
-//   exports: [],
-// })
-// export class QuestModule {}
+@Module({
+  imports: [RedisModule],
+  providers: [
+    CreateSnapshotVoterQuestResolver,
+    ApproveQuestResolver,
+    GetAllQuestsByBadgeIdResolver,
+    // CreateQuestResolver,
+    // GetQuestByIdResolver,
+    // SubmitQuestAnswersResolver,
+  ],
+  exports: [],
+})
+export class QuestModule {}

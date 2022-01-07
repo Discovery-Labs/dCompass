@@ -1,12 +1,11 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
-import { QuestNFT } from './dto/QuestNFT';
-import { Question } from './dto/Question';
-import { Badge } from '../Badges/Badge.entity';
+// import { QuestNFT } from './dto/QuestNFT';
+// import { Badge } from '../Badges/Badge.entity';
 
 export type CeramicStreamId = string;
-@ObjectType()
-export class Quest extends BaseEntity {
+@ObjectType({ isAbstract: true })
+export abstract class Quest extends BaseEntity {
   @Field()
   id: string;
 
@@ -17,17 +16,23 @@ export class Quest extends BaseEntity {
   description: string;
 
   @Field()
+  questType: string;
+
+  @Field()
   badgeId: CeramicStreamId;
 
-  @Field(() => Badge)
-  badge: Badge;
+  // @Field(() => Badge)
+  // badge: Badge;
 
   @Field(() => [String])
   completedBy?: CeramicStreamId[];
 
-  @Field(() => [QuestNFT])
-  nfts?: QuestNFT[];
+  @Field(() => Boolean)
+  isPending?: boolean;
 
-  @Field(() => [Question], { nullable: true })
-  questions?: Question[];
+  @Field()
+  image: string;
+  // TODO: use this instead of image
+  // @Field(() => [QuestNFT])
+  // nfts?: QuestNFT[];
 }

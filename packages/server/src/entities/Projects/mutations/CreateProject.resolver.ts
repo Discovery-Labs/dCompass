@@ -17,7 +17,7 @@ export class CreateProjectResolver {
   })
   async createProject(
     @UseCeramic()
-    { ceramicClient, ceramicCore }: UseCeramicClient,
+    { ceramicClient }: UseCeramicClient,
     @Args('input') { id, tokenUris, creatorSignature }: CreateProjectInput,
   ): Promise<CreateProjectOutput[] | null> {
     // Check that the current user is the owner of the project
@@ -26,7 +26,7 @@ export class CreateProjectResolver {
       creatorSignature,
     );
     const ogProject = await ceramicClient.ceramic.loadStream(id);
-    const ownerAccounts = await ceramicCore.get(
+    const ownerAccounts = await ceramicClient.dataStore.get(
       'cryptoAccounts',
       ogProject.controllers[0],
     );

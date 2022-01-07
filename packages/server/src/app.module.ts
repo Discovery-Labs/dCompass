@@ -13,13 +13,12 @@ import { ApolloComplexityPlugin } from './core/utils/security/ApolloComplexity.p
 import { pubSub } from './core/resources/Redis/redis';
 import { HealthController } from './core/controllers/health.controller';
 import config from './core/configs/config';
+import { CeramicController } from './core/controllers/validate-quest-completion.controller';
 import { GraphqlConfig } from './core/configs/config.interface';
 import { ProjectModule } from './entities/Projects/Project.module';
 import { BadgeModule } from './entities/Badges/Badge.module';
-
-// import { QuestModule } from './entities/Quests/Quest.module';
+import { QuestModule } from './entities/Quests/Quest.module';
 // import { TagModule } from './entities/Tags/Tag.module';
-import { CeramicController } from './core/controllers/validate-quest-completion.controller';
 
 @Module({
   imports: [
@@ -54,7 +53,7 @@ import { CeramicController } from './core/controllers/validate-quest-completion.
     TerminusModule,
     ProjectModule,
     BadgeModule,
-    // QuestModule,
+    QuestModule,
     // TagModule,
   ],
   controllers: [AppController, HealthController, CeramicController],

@@ -20,6 +20,11 @@ type ApproveProjectOutput {
   tokenUris: [String!]!
 }
 
+input ApproveQuestInput {
+  id: String!
+  questApproverSignature: String!
+}
+
 type Badge {
   """Identifies the date and time when the object was created."""
   createdAt: String!
@@ -66,6 +71,11 @@ type CreateProjectOutput {
   tokenUris: [String!]!
 }
 
+input CreateQuestInput {
+  id: String!
+  questCreatorSignature: String!
+}
+
 input EditProjectInput {
   color: String
   description: String
@@ -89,11 +99,17 @@ type Mutation {
   """Approves a new Project in dCompass"""
   approveProject(input: ApproveProjectInput!): [ApproveProjectOutput!]
 
+  """Approve a new Quest in dCompass"""
+  approveQuest(input: ApproveQuestInput!): Quest
+
   """Create a new Badge in dCompass"""
   createBadge(input: CreateBadgeInput!): Badge
 
   """Create a new Project in dCompass"""
   createProject(input: CreateProjectInput!): [CreateProjectOutput!]
+
+  """Create a new Snapshot Voter Quest in dCompass"""
+  createSnapshotVoterQuest(input: CreateQuestInput!): SnapshotVoterQuest
 
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
@@ -141,6 +157,9 @@ type Query {
   """Gets all the projects in dCompass"""
   getAllProjects: [Project!]
 
+  """Gets all the quests in dCompass"""
+  getAllQuestsByBadgeId(badgeId: String!): [Quest!]
+
   """Gets a badge by its Stream ID"""
   getBadgeById(badgeId: String!): Badge
 
@@ -149,7 +168,6 @@ type Query {
 }
 
 type Quest {
-  badge: Badge!
   badgeId: String!
   completedBy: [String!]
 
@@ -157,35 +175,31 @@ type Quest {
   createdAt: String!
   description: String!
   id: String!
+  image: String!
+  isPending: Boolean
   name: String!
-  nfts: [QuestNFT!]
-  questions: [Question!]
+  questType: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
 }
 
-type QuestNFT {
-  claimedBy: [String!]!
+type SnapshotVoterQuest {
+  badgeId: String!
+  completedBy: [String!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+  description: String!
+  id: String!
+  image: String!
+  isPending: Boolean
   name: String!
-  rarity: RarityEnum!
-  url: String!
-}
+  proposalId: String!
+  questType: String!
 
-type Question {
-  answer: String!
-  choices: [String!]!
-  question: String!
-}
-
-"""
-Rarity of the NFT, from lowest to highest rarity: common, uncommon, epic, legendary
-"""
-enum RarityEnum {
-  COMMON
-  EPIC
-  LEGENDARY
-  UNCOMMON
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
 }
 
 type Squad {

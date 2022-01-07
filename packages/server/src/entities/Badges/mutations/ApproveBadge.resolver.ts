@@ -90,6 +90,19 @@ export class ApproveBadgeResolver {
       projects: appProjectsUpdated,
     });
 
+    const previousBadges = await ceramicClient.dataStore.get(
+      schemaAliases.BADGES_ALIAS,
+    );
+    const allBadges = previousBadges?.badges ?? [];
+    await ceramicClient.dataStore.set(schemaAliases.BADGES_ALIAS, {
+      badges: [
+        ...allBadges,
+        {
+          id: ogBadge.id.toUrl(),
+          ...ogBadge.content,
+        },
+      ],
+    });
     return {
       id,
       ...ogBadge.content,

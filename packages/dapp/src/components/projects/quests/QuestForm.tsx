@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import {
   Button,
   Divider,
@@ -11,8 +12,14 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
 
+import { Web3Context } from "../../../contexts/Web3Provider";
+import {
+  CREATE_QUEST_MUTATION,
+  CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
+} from "../../../graphql/quests";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
 import LogoDropzone from "../LogoDropzone";
@@ -56,6 +63,16 @@ const questTypeOptions = [
 ];
 
 const CreateQuestForm: React.FunctionComponent = () => {
+  const { self, provider, account } = useContext(Web3Context);
+  const [createSnapshotQuestMutation] = useMutation(
+    CREATE_SNAPSHOT_VOTER_QUEST_MUTATION
+  );
+  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
+  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
+  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
+  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
+  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
+
   const router = useRouter();
   const {
     control,
@@ -85,6 +102,50 @@ const CreateQuestForm: React.FunctionComponent = () => {
   }
   async function onSubmit(values: Record<string, any>) {
     console.log("submitted", values);
+
+    const formData = new FormData();
+    if (values.image) {
+      formData.append(values.name, values.image[0]);
+    }
+    const cidsRes = await fetch("/api/image-storage", {
+      method: "POST",
+      body: formData,
+    });
+
+    const { cids } = await cidsRes.json();
+    const finalValues = {
+      ...values,
+      image: cids[values.name],
+      badgeId: `ceramic://${router.query.badgeId}`,
+    };
+
+    const questDoc = await self.client.dataModel.createTile(
+      "Quest",
+      finalValues,
+      {
+        pin: true,
+      }
+    );
+
+    const signature = await provider.provider.send("personal_sign", [
+      JSON.stringify({
+        id: questDoc.id.toUrl(),
+        badgeId: `ceramic://${router.query.badgeId}`,
+      }),
+      account,
+    ]);
+
+    const { data } = await createSnapshotQuestMutation({
+      variables: {
+        input: {
+          id: questDoc.id.toUrl(),
+          questCreatorSignature: signature.result,
+        },
+      },
+    });
+
+    const result = data.createSnapshotQuest;
+    console.log({ result });
   }
 
   return (

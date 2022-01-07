@@ -20,7 +20,7 @@ export class GetAllBadgesByProjectIdResolver {
     const allProjects = await ceramicClient.dataStore.get(
       schemaAliases.APP_PROJECTS_ALIAS,
     );
-    const projects = allProjects.projects ?? [];
+    const projects = allProjects?.projects ?? [];
     console.log(projects);
     const foundProject = projects.find(
       (project: Project) => project.id === projectId,

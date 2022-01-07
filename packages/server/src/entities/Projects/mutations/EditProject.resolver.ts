@@ -19,7 +19,7 @@ export class EditProjectResolver {
   })
   async editProject(
     @UseCeramic()
-    { ceramicClient, ceramicCore }: UseCeramicClient,
+    { ceramicClient }: UseCeramicClient,
     @Args('input') { id, editorSignature, ...projectValues }: EditProjectInput,
   ): Promise<Project | null> {
     // Check that the current user is a contributor or the owner of the project
@@ -36,7 +36,7 @@ export class EditProjectResolver {
     const allContributors = ogProject.content.squads.flatMap(
       (squad: Squad) => squad.members,
     );
-    const ownerAccounts = await ceramicCore.get(
+    const ownerAccounts = await ceramicClient.dataStore.get(
       'cryptoAccounts',
       ogProject.controllers[0],
     );

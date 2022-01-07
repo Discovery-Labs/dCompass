@@ -462,6 +462,19 @@ export declare const schemas: {
                         };
                     };
                 };
+                pendingQuests: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                        title: string;
+                        properties: {
+                            id: {
+                                $ref: string;
+                            };
+                        };
+                    };
+                };
             };
             definitions: {
                 CeramicStreamId: {
@@ -486,21 +499,6 @@ export declare const schemas: {
                             id: {
                                 $ref: string;
                             };
-                            name: {
-                                type: string;
-                                title: string;
-                                maxLength: number;
-                            };
-                            badgeId: {
-                                $ref: string;
-                            };
-                            completedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
                         };
                     };
                 };
@@ -519,6 +517,24 @@ export declare const schemas: {
             description: string;
             type: string;
             properties: {
+                name: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
+                description: {
+                    type: string;
+                };
+                badgeId: {
+                    $ref: string;
+                };
+                completedBy: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                    };
+                };
                 createdAt: {
                     type: string;
                     format: string;
@@ -529,34 +545,9 @@ export declare const schemas: {
                     format: string;
                     maxLength: number;
                 };
-                questions: {
+                questType: {
                     type: string;
-                    title: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        title: string;
-                        properties: {
-                            choices: {
-                                type: string;
-                                title: string;
-                                minItems: number;
-                                maxItems: number;
-                                items: {
-                                    type: string;
-                                    maxLength: number;
-                                };
-                            };
-                            question: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            answer: {
-                                type: string;
-                                maxLength: number;
-                            };
-                        };
-                    };
+                    maxLength: number;
                 };
                 nfts: {
                     type: string;
@@ -588,6 +579,11 @@ export declare const schemas: {
             };
             definitions: {
                 IPFSUrl: {
+                    type: string;
+                    pattern: string;
+                    maxLength: number;
+                };
+                CeramicStreamId: {
                     type: string;
                     pattern: string;
                     maxLength: number;

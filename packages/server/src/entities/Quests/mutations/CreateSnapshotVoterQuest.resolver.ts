@@ -1,36 +1,41 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { ethers } from 'ethers';
-import { ForbiddenError } from 'apollo-server-express';
+// import { ForbiddenError } from 'apollo-server-express';
 
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseCeramicClient } from '../../../core/utils/types';
-import { Quest } from '../Quest.entity';
 import { schemaAliases } from '../../../core/constants/idx';
 import { CreateQuestInput } from '../dto/CreateQuest.input';
+import { SnapshotVoterQuest } from '../SnapshotVoterQuest.entity';
+import { ForbiddenError } from 'apollo-server-express';
 
-@Resolver(() => Quest)
-export class CreateQuestResolver {
-  @Mutation(() => Quest, {
+@Resolver(() => SnapshotVoterQuest)
+export class CreateSnapshotVoterQuestResolver {
+  @Mutation(() => SnapshotVoterQuest, {
     nullable: true,
-    description: 'Create a new Quest in dCompass',
-    name: 'createQuest',
+    description: 'Create a new Snapshot Voter Quest in dCompass',
+    name: 'createSnapshotVoterQuest',
   })
-  async createQuest(
+  async createSnapshotVoterQuest(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args('input') { id, questCreatorSignature }: CreateQuestInput,
-  ): Promise<Quest | null | undefined> {
+  ): Promise<SnapshotVoterQuest | null | undefined> {
     // Check that the current user is the owner of the quest
     const ogQuest = await ceramicClient.ceramic.loadStream(id);
+    console.log({ ogQuestCtrl: ogQuest.controllers[0] });
     const badgeId = ogQuest.content.badgeId;
+    console.log({ badgeId, id });
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({ id, badgeId }),
       questCreatorSignature,
     );
+    console.log({ decodedAddress });
 
     const ownerAccounts = await ceramicClient.dataStore.get(
       'cryptoAccounts',
       ogQuest.controllers[0],
     );
+    console.log({ ownerAccounts });
     if (!ownerAccounts) throw new ForbiddenError('Unauthorized');
     const formattedAccounts = Object.keys(ownerAccounts).map(
       (account) => account.split('@')[0],
