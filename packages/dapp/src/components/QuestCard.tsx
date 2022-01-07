@@ -7,6 +7,7 @@ import {
   Spacer,
   Text,
   Tag,
+  HStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useContext } from "react";
@@ -23,6 +24,7 @@ type Quest = {
   badgeId: string;
   owner: string;
   name: string;
+  questType: string;
   description: string;
   isPending: string;
   website: string;
@@ -51,8 +53,6 @@ function QuestCard({
   }
 
   const handleApproveQuest = async () => {
-    console.log("qId", quest.id);
-    console.log("bId", quest.badgeId);
     const signatureInput = {
       id: quest.id,
       badgeId: quest.badgeId,
@@ -76,15 +76,24 @@ function QuestCard({
       <Flex w="full">
         <Avatar
           mr="0.5rem"
-          boxSize="4rem"
+          border="solid 5px gold"
+          boxSize="10rem"
           src={`https://ipfs.io/ipfs/${quest.image}`}
         />
+
         <Spacer />
         <Flex align="end" direction="column">
-          <Tag>{quest.completed || "IN_PROGRESS"}</Tag>
-          <Text fontSize="sm">{quest.reward || "200xp"}</Text>
+          <Tag variant="subtle">{quest.completed || "COMPLETED"}</Tag>
+          <Tag my="2">
+            <Text fontSize="sm">{quest.reward || "200xp"}</Text>
+          </Tag>
         </Flex>
       </Flex>
+      <HStack>
+        <Tag my="2" variant="outline">
+          {quest.questType}
+        </Tag>
+      </HStack>
       <Heading fontSize="2xl">{quest.name}</Heading>
       <Text noOfLines={4}>{quest.description}</Text>
       <Spacer />

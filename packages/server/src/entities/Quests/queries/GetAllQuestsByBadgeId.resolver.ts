@@ -21,7 +21,6 @@ export class GetAllQuestsByBadgeIdResolver {
       schemaAliases.BADGES_ALIAS,
     );
     const badges = allBadges?.badges ?? [];
-    console.log(badges);
     const foundBadge = badges.find((badge: Badge) => badge.id === badgeId);
 
     console.log({ foundBadge });
@@ -66,7 +65,25 @@ export class GetAllQuestsByBadgeIdResolver {
         };
       },
     );
-    console.log({ serializedQuests, serializedPendingQuests });
-    return [...serializedQuests, ...serializedPendingQuests];
+    console.log({
+      serializedQuests: serializedQuests.map((quest) => ({
+        ...quest,
+        questType: quest.type.label,
+      })),
+      serializedPendingQuests: serializedPendingQuests.map((quest) => ({
+        ...quest,
+        questType: quest.type.label,
+      })),
+    });
+    return [
+      ...serializedQuests.map((quest) => ({
+        ...quest,
+        questType: quest.type.label,
+      })),
+      ...serializedPendingQuests.map((quest) => ({
+        ...quest,
+        questType: quest.type.label,
+      })),
+    ];
   }
 }

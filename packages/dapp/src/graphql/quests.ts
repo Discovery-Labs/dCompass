@@ -26,11 +26,13 @@ export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
 `;
 
 export const APPROVE_QUEST_MUTATION = gql`
-  mutation ApproveBadge($input: ApproveQuestInput!) {
+  mutation ApproveQuest($input: ApproveQuestInput!) {
     approveQuest(input: $input) {
       id
       name
       description
+      badgeId
+      questType
       image
       isPending
     }
@@ -44,6 +46,7 @@ export const GET_ALL_QUESTS_BY_BADGE_ID_QUERY = gql`
       name
       description
       badgeId
+      questType
       image
       isPending
     }
