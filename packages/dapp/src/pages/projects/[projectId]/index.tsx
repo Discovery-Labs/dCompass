@@ -15,13 +15,19 @@ import {
   HStack,
   Badge,
   Stack,
+  VStack,
+  Image,
+  Icon,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
+import { BsPeople, BsPerson } from "react-icons/bs";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
+import Card from "../../../components/custom/Card";
+import CardMedia from "../../../components/custom/CardMedia";
 import { Tag } from "../../../core/types";
 import { GET_ALL_BADGES_BY_PROJECT_ID_QUERY } from "../../../graphql/badges";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
@@ -103,7 +109,19 @@ function ProjectPage({
   return (
     <Container>
       <Flex w="full">
-        <Heading>{name}</Heading>
+        <HStack>
+          <Image
+            rounded="full"
+            // TODO: use project color
+            border="solid 5px rebeccapurple"
+            src={`https://ipfs.io/ipfs/${logo}`}
+            w={150}
+            h={150}
+          />
+          <Heading as="h1" size="4xl" pl="4">
+            {name}
+          </Heading>
+        </HStack>
         <Spacer />
         {isOwner && (
           <NextLink
@@ -118,9 +136,14 @@ function ProjectPage({
       <Flex w="full" direction="column" pt="4">
         <Flex align="center" maxW="full">
           {createdBy && <Blockies seed={createdBy} className="blockies" />}
-          <Text ml="2" fontSize="sm" isTruncated>
-            {createdBy}
-          </Text>
+          <VStack align="flex-start" ml="2">
+            <Text fontSize="sm" isTruncated>
+              Creation date: {new Date(createdAt).toLocaleString()}
+            </Text>
+            <Text fontSize="sm" isTruncated>
+              by {createdBy}
+            </Text>
+          </VStack>
         </Flex>
         <Stack direction="row" pt="4">
           {tags.map((tag: Tag) => (
@@ -129,17 +152,48 @@ function ProjectPage({
             </Badge>
           ))}
         </Stack>
-        <Text pt="8">{description}</Text>
-        <Text pt="8" fontSize="xs">
-          {squads.length} Squad{squads.length > 1 ? "s" : ""}
-        </Text>
-        <Text>Creation date: {new Date(createdAt).toLocaleString()}</Text>
-        <Flex pt="12" w="full" justify="space-around">
+        <Flex pt="4" w="full" justify="space-around">
           <IconWithState icon="discord" active />
           <IconWithState icon="gitbook" />
           <IconWithState icon="github" />
           <IconWithState icon="twitter" />
         </Flex>
+        <Text pt="8">{description}</Text>
+        <Heading as="h3" size="lg" py="4">
+          {squads.length} Squad{squads.length > 1 ? "s" : ""}
+        </Heading>
+        <SimpleGrid columns={3} spacing={4}>
+          {squads.map((squad: any) => (
+            <CardMedia
+              h="fit-content"
+              src={`https://ipfs.io/ipfs/${squad.image}`}
+            >
+              <Heading as="h3" size="lg">
+                {squad.name}
+              </Heading>
+              <HStack>
+                <Icon
+                  as={squad.members.length > 1 ? BsPeople : BsPerson}
+                  size="xl"
+                />
+                <Heading as="h4" size="md">
+                  {squad.members.length} MEMBER
+                  {squad.members.length > 1 ? "s" : ""}
+                </Heading>
+              </HStack>
+              <VStack align="center" maxW="full">
+                {squad.members.map((member: string) => (
+                  <HStack w="full">
+                    {member && <Blockies seed={member} className="blockies" />}
+                    <Text ml="2" fontSize="sm" isTruncated>
+                      {member}
+                    </Text>
+                  </HStack>
+                ))}
+              </VStack>
+            </CardMedia>
+          ))}
+        </SimpleGrid>
       </Flex>
 
       <Tabs py="2rem" w="full">
