@@ -76,6 +76,16 @@ input CreateQuestInput {
   questCreatorSignature: String!
 }
 
+input CreateTagInput {
+  color: String!
+  label: String!
+  value: String!
+}
+
+input CreateTagsInput {
+  tags: [CreateTagInput!]!
+}
+
 input EditProjectInput {
   color: String
   description: String
@@ -110,6 +120,12 @@ type Mutation {
 
   """Create a new Snapshot Voter Quest in dCompass"""
   createSnapshotVoterQuest(input: CreateQuestInput!): SnapshotVoterQuest
+
+  """Create a new Tag in Discovery"""
+  createTag(input: CreateTagInput!): Tag
+
+  """Creates multiple new Tags in Discovery"""
+  createTags(input: CreateTagsInput!): [Tag!]
 
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
@@ -159,6 +175,9 @@ type Query {
 
   """Gets all the quests in dCompass"""
   getAllQuestsByBadgeId(badgeId: String!): [Quest!]
+
+  """Gets all the tags in Discovery"""
+  getAllTags: [Tag!]
 
   """Gets a badge by its Stream ID"""
   getBadgeById(badgeId: String!): Badge
@@ -218,10 +237,10 @@ type Tag {
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
-  description: String!
   id: String!
-  name: String!
+  label: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
+  value: String!
 }

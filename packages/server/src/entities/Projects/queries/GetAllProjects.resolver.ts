@@ -31,11 +31,20 @@ export class GetAllProjectsResolver {
         Object.values(projectsWithDetails).map(async (stream) => {
           const additionalFields = allProjects.projects.find(
             ({ id }: { id: string }) => id === stream.id.toUrl(),
-            );
+          );
+          const projectTags = await ceramicClient.ceramic.multiQuery(
+            stream.content.tags.map((tag: { id: string }) => ({
+              streamId: tag.id,
+            })),
+          );
           return {
             id: stream.id.toUrl(),
             ...stream.state.content,
             ...additionalFields,
+            tags: Object.entries(projectTags).map(([streamId, document]) => ({
+              id: streamId,
+              ...document.content,
+            })),
           };
         }),
       );

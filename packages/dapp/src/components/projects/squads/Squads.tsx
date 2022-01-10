@@ -48,7 +48,7 @@ export default function Squads({
                   Squad name
                 </FormLabel>
                 <Button
-                  colorScheme="pink"
+                  colorScheme="secondary"
                   onClick={() => remove(index)}
                   aria-label="remove"
                   size="sm"
@@ -105,7 +105,7 @@ export default function Squads({
         </Button>
         <Button
           size="sm"
-          colorScheme="pink"
+          colorScheme="secondary"
           type="button"
           onClick={() => reset(defaultValues)}
         >

@@ -123,7 +123,7 @@ function BadgesForm() {
 
       <Flex w="full" justify="space-between">
         <Button
-          colorScheme="pink"
+          colorScheme="secondary"
           type="button"
           onClick={() => reset(badgesDefaultValues)}
         >
@@ -131,7 +131,7 @@ function BadgesForm() {
         </Button>
         <Button
           isLoading={isSubmitting}
-          colorScheme="aqua"
+          colorScheme="accentDark"
           type="submit"
           onClick={handleSubmit(onSubmit)}
         >

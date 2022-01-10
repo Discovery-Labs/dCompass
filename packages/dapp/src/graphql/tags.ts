@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client";
 
 export const ALL_TAGS_QUERY = gql`
-  query getAllTags {
+  query {
     getAllTags {
       id
-      name
-      description
+      label
       color
+      value
     }
   }
 `;

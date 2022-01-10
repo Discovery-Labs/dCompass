@@ -29,7 +29,10 @@ import Container from "../components/layout/Container";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Project, ProjectCard } from "../components/projects/ProjectCard";
 import { Web3Context } from "../contexts/Web3Provider";
+import { projectTagsOptions } from "../core/constants/project-tags";
+import { Tag } from "../core/types";
 import { ALL_PROJECTS_QUERY } from "../graphql/projects";
+import { ALL_TAGS_QUERY } from "../graphql/tags";
 
 const fuseOptions = {
   shouldSort: true,
@@ -41,10 +44,13 @@ const fuseOptions = {
   keys: ["name", "description"],
 };
 
-const allTags = [{ name: "ethereum" }, { name: "polygon" }, { name: "DAO" }];
-
 // eslint-disable-next-line complexity
 function Projects() {
+  const {
+    data: tagsData,
+    loading: loadingTags,
+    error: errorTags,
+  } = useQuery(ALL_TAGS_QUERY);
   const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
     fetchPolicy: "cache-and-network",
   });
@@ -55,7 +61,9 @@ function Projects() {
   >([]);
   const [fuse, setFuse] = useState<Fuse<unknown>>();
   const [fiterTags] = useState(() =>
-    allTags && allTags.length > 0 ? allTags.map((tag) => tag.name) : []
+    projectTagsOptions && projectTagsOptions.length > 0
+      ? projectTagsOptions.map((tag) => tag.label)
+      : []
   );
   const [query, setQuery] = useState<string>("");
 
@@ -66,7 +74,7 @@ function Projects() {
       (project: Project) => {
         return (
           project.tags &&
-          project.tags.some((tag: { name: string }) => e.includes(tag.name))
+          project.tags.some((tag: { label: string }) => e.includes(tag.label))
         );
       }
     );
@@ -128,15 +136,15 @@ function Projects() {
         <>
           {filteredProjects.length !== 0
             ? filteredProjects
-                .filter((project) => project.createdBy === account)
-                .map((project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))
+              .filter((project) => project.createdBy === account)
+              .map((project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))
             : data.getAllProjects
-                .filter((project: Project) => project.createdBy === account)
-                .map((project: Project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))}
+              .filter((project: Project) => project.createdBy === account)
+              .map((project: Project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))}
         </>
       );
     }
@@ -145,21 +153,22 @@ function Projects() {
       <>
         {filteredProjects.length !== 0
           ? filteredProjects
-              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-              .map((project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))
+            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+            .map((project) => (
+              <ProjectCard key={project.name} project={project} />
+            ))
           : data.getAllProjects
-              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-              .map((project: Project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))}
+            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+            .map((project: Project) => (
+              <ProjectCard key={project.name} project={project} />
+            ))}
       </>
     );
   };
 
-  if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
+  if (loading || loadingTags) return "Loading...";
+  if (error || errorTags)
+    return `Error! ${error?.message || errorTags?.message}`;
   return (
     <Container>
       <Flex w="full">
@@ -186,9 +195,11 @@ function Projects() {
             defaultValue={fiterTags}
           >
             <MenuList>
-              {allTags.map((tag) => (
-                <MenuItem key={tag.name}>
-                  <Checkbox value={tag.name}>{tag.name}</Checkbox>
+              {tagsData.getAllTags.map(({ id, color, label }: Tag) => (
+                <MenuItem key={id}>
+                  <Checkbox colorScheme={color} value={id}>
+                    {label}
+                  </Checkbox>
                 </MenuItem>
               ))}
             </MenuList>

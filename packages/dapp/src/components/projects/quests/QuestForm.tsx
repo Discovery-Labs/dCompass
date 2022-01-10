@@ -209,7 +209,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       {questDetails[questType]}
       <Divider bg="none" py="5" />
       <Flex w="full" justify="space-between">
-        <Button colorScheme="pink" type="button" onClick={() => reset()}>
+        <Button colorScheme="secondary" type="button" onClick={() => reset()}>
           Reset Quest Form
         </Button>
         <Button type="submit">Submit</Button>

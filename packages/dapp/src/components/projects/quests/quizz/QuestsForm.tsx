@@ -44,7 +44,7 @@ function QuestsForm() {
 
       <Flex w="full" justify="space-between">
         <Button
-          colorScheme="pink"
+          colorScheme="secondary"
           type="button"
           onClick={() => reset(questsDefaultValues)}
         >

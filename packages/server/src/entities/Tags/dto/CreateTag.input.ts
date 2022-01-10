@@ -7,13 +7,13 @@ export class CreateTagInput {
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  name: string;
+  label: string;
 
   @Field()
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  description: string;
+  value: string;
 
   @Field()
   @IsString({ message: 'wrong.type' })

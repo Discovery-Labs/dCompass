@@ -19,7 +19,6 @@ export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
       name
       description
       badgeId
-      questType
       proposalId
     }
   }

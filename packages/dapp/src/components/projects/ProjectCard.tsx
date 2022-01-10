@@ -1,13 +1,18 @@
-import { HStack, Button, Flex, Heading, Spacer, Text } from "@chakra-ui/react";
+import {
+  HStack,
+  Button,
+  Flex,
+  Spacer,
+  Text,
+  Stack,
+  Badge,
+  Tooltip,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Blockies from "react-blockies";
 
+import { Tag } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
-
-export type TagItem = {
-  id: string;
-  name: string;
-};
 
 export type Project = {
   id: string;
@@ -26,6 +31,7 @@ export type Project = {
     image: string;
     members: string[];
   }[];
+  tags: Tag[];
   social: {
     github: string;
   };
@@ -63,7 +69,16 @@ export const ProjectCard = ({
           {project.createdBy}
         </Text>
       </Flex>
-      <Text noOfLines={4}>{project.description}</Text>
+      <Stack direction="row">
+        {project.tags.map((tag) => (
+          <Badge key={tag.id} colorScheme={tag.color}>
+            {tag.label}
+          </Badge>
+        ))}
+      </Stack>
+      <Tooltip label={project.description} hasArrow placement="top">
+        <Text noOfLines={2}>{project.description}</Text>
+      </Tooltip>
       <Spacer />
       <Flex w="full" direction="column" fontSize="xs">
         {project.squads && (

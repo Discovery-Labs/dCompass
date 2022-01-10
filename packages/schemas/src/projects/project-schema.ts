@@ -79,11 +79,6 @@ export const projectProperties = {
         id: {
           $ref: "#/definitions/CeramicStreamId",
         },
-        name: {
-          type: "string",
-          title: "name",
-          maxLength: 100,
-        },
       },
     },
   },

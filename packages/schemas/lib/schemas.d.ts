@@ -129,11 +129,6 @@ export declare const schemas: {
                                         id: {
                                             $ref: string;
                                         };
-                                        name: {
-                                            type: string;
-                                            title: string;
-                                            maxLength: number;
-                                        };
                                     };
                                 };
                             };
@@ -283,11 +278,6 @@ export declare const schemas: {
                         properties: {
                             id: {
                                 $ref: string;
-                            };
-                            name: {
-                                type: string;
-                                title: string;
-                                maxLength: number;
                             };
                         };
                     };
@@ -599,18 +589,7 @@ export declare const schemas: {
                     type: string;
                     title: string;
                     items: {
-                        type: string;
-                        title: string;
-                        properties: {
-                            id: {
-                                $ref: string;
-                            };
-                            name: {
-                                type: string;
-                                title: string;
-                                maxLength: number;
-                            };
-                        };
+                        $ref: string;
                     };
                 };
             };
@@ -638,7 +617,10 @@ export declare const schemas: {
                     format: string;
                     maxLength: number;
                 };
-                description: {
+                label: {
+                    type: string;
+                };
+                value: {
                     type: string;
                 };
                 color: {

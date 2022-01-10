@@ -14,7 +14,10 @@ export declare const TagSchema: {
             format: string;
             maxLength: number;
         };
-        description: {
+        label: {
+            type: string;
+        };
+        value: {
             type: string;
         };
         color: {
