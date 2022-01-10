@@ -18,7 +18,7 @@ import { GraphqlConfig } from './core/configs/config.interface';
 import { ProjectModule } from './entities/Projects/Project.module';
 import { BadgeModule } from './entities/Badges/Badge.module';
 import { QuestModule } from './entities/Quests/Quest.module';
-// import { TagModule } from './entities/Tags/Tag.module';
+import { TagModule } from './entities/Tags/Tag.module';
 
 @Module({
   imports: [
@@ -54,7 +54,7 @@ import { QuestModule } from './entities/Quests/Quest.module';
     ProjectModule,
     BadgeModule,
     QuestModule,
-    // TagModule,
+    TagModule,
   ],
   controllers: [AppController, HealthController, CeramicController],
   providers: [AppService, ConfigService],

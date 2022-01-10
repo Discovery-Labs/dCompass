@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Flex, Button, Stack } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
@@ -12,10 +12,8 @@ import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { schemaAliases } from "../../../core/ceramic";
-import {
-  ALL_PROJECTS_QUERY,
-  CREATE_PROJECT_MUTATION,
-} from "../../../graphql/projects";
+import { Tag } from "../../../core/types";
+import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 import Card from "components/custom/Card";
 
 const { PROJECTS_ALIAS } = schemaAliases;
@@ -51,6 +49,10 @@ function CreateProjectStepper() {
           image: null,
         },
       ],
+      tags: [] as {
+        value: string;
+        label: string;
+      }[],
     },
   });
 
@@ -78,6 +80,7 @@ function CreateProjectStepper() {
       ...values,
       logo: cids.logo,
       createdBy: account,
+      tags: values.tags.map((tag) => ({ id: `ceramic://${tag.value}` })),
       squads: values.squads.map((squad) => {
         const members = squad.members.map(
           (member: any) => member.value

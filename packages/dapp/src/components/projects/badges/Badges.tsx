@@ -95,7 +95,7 @@ export default function Badges({ control, register, setValue }: any) {
                   })}
                 />
                 <Button
-                  colorScheme="pink"
+                  colorScheme="secondary"
                   onClick={() => remove(index)}
                   aria-label="remove"
                   size="md"

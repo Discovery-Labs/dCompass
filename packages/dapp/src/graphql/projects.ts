@@ -28,6 +28,11 @@ export const EDIT_PROJECT_MUTATION = gql`
         image
         members
       }
+      tags {
+        id
+        label
+        color
+      }
     }
   }
 `;
@@ -60,6 +65,11 @@ export const ALL_PROJECTS_QUERY = gql`
         image
         members
       }
+      tags {
+        id
+        label
+        color
+      }
     }
   }
 `;
@@ -81,6 +91,11 @@ export const PROJECT_BY_ID_QUERY = gql`
         name
         image
         members
+      }
+      tags {
+        id
+        label
+        color
       }
     }
   }

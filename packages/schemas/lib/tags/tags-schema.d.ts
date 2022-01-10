@@ -7,18 +7,7 @@ export declare const TagsSchema: {
             type: string;
             title: string;
             items: {
-                type: string;
-                title: string;
-                properties: {
-                    id: {
-                        $ref: string;
-                    };
-                    name: {
-                        type: string;
-                        title: string;
-                        maxLength: number;
-                    };
-                };
+                $ref: string;
             };
         };
     };

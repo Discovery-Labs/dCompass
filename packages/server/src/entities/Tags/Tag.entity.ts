@@ -8,10 +8,10 @@ export class Tag extends BaseEntity {
   id: string;
 
   @Field()
-  name: string;
+  label: string;
 
   @Field()
-  description: string;
+  value: string;
 
   @Field()
   color: string;

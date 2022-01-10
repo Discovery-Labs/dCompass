@@ -43,7 +43,6 @@ function Address({
   minimized = false,
   onChange,
   fontSize,
-  blockiesScale,
 }: {
   value: string;
   address: string;
@@ -53,7 +52,6 @@ function Address({
   minimized?: boolean;
   onChange?: any;
   fontSize?: string;
-  blockiesScale?: number;
 }) {
   const { library } = useWeb3React();
   const account = value || address;
@@ -87,12 +85,7 @@ function Address({
     return (
       <Box as="span" verticalAlign="middle">
         <Link target="_blank" href={etherscanLink} rel="noopener noreferrer">
-          <Blockies
-            seed={account.toLowerCase()}
-            className="blockies"
-            size={8}
-            scale={2}
-          />
+          <Blockies seed={account} className="blockies" size={8} scale={2} />
         </Link>
       </Box>
     );
@@ -137,12 +130,7 @@ function Address({
       fontSize={fontSize ?? 28}
     >
       <Flex _hover={{ cursor: "pointer" }} onClick={onOpen}>
-        <Blockies
-          className="blockies"
-          seed={account.toLowerCase()}
-          size={6}
-          scale={blockiesScale ? blockiesScale / 7 : 4.9}
-        />
+        <Blockies className="blockies" seed={account} />
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

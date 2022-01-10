@@ -4,6 +4,8 @@ export const schemaAliases = {
   BADGE_ALIAS: '@dCompass/badge',
   BADGES_ALIAS: '@dCompass/badges',
   QUESTS_ALIAS: '@dCompass/quests',
+  TAG_ALIAS: '@dCompass/tag',
+  TAGS_ALIAS: '@dCompass/tags',
   LEARNERS_ALIAS: '@dCompass/learners',
   REPOS_ALIAS: '@dCompass/repos',
   CONTRIBUTORS_ALIAS: '@dCompass/contributors',

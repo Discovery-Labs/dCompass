@@ -20,7 +20,7 @@ const OptionsFieldArray = ({ nestIndex, control, register }: any) => {
             />
             <IconButton
               variant="unstyled"
-              color="pink.300"
+              color="secondary.300"
               size="xs"
               aria-label="remove"
               as={FiX}

@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import {
   Flex,
   FormControl,
@@ -10,21 +11,30 @@ import {
 import { useRouter } from "next/router";
 import { useFormContext } from "react-hook-form";
 
+import { Tag } from "../../core/types";
+import { ALL_TAGS_QUERY } from "../../graphql/tags";
 import IconWithState from "../custom/IconWithState";
+import ControlledSelect from "../Inputs/ControlledSelect";
 
 import LogoDropzone from "./LogoDropzone";
 
-const CreateProjectForm: React.FunctionComponent = () => {
+const CreateProjectForm = () => {
+  const { data, loading, error } = useQuery(ALL_TAGS_QUERY);
+
   const router = useRouter();
   const {
     register,
     setValue,
+    control,
     formState: { errors },
   } = useFormContext();
 
   function goBack() {
     router.back();
   }
+
+  if (loading) return "Loading";
+  if (error) return `Error: ${error.message}`;
   return (
     <>
       <Heading>Create project</Heading>
@@ -80,6 +90,22 @@ const CreateProjectForm: React.FunctionComponent = () => {
           {errors.website && errors.website.message}
         </FormErrorMessage>
       </FormControl>
+
+      <ControlledSelect
+        control={control}
+        name="tags"
+        id="tags"
+        label="Tags"
+        isMulti
+        rules={{
+          required: "This is required",
+        }}
+        options={data.getAllTags.map(({ id, color, label }: Tag) => ({
+          value: id,
+          colorScheme: color,
+          label,
+        }))}
+      />
 
       <FormControl isInvalid={errors.whitepaper}>
         <FormLabel htmlFor="whitepaper">Whitepaper</FormLabel>

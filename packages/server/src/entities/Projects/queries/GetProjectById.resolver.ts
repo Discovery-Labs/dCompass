@@ -25,6 +25,11 @@ export class GetProjectByIdResolver {
     const additionalFields = projects.find(
       ({ id }: { id: string }) => id === projectId,
     );
+    const projectTags = await ceramicClient.ceramic.multiQuery(
+      ogProject.content.tags.map((tag: { id: string }) => ({
+        streamId: tag.id,
+      })),
+    );
     if (!ogProject || !additionalFields) {
       return null;
     }
@@ -69,6 +74,10 @@ export class GetProjectByIdResolver {
       id: projectId,
       ...ogProject.state.content,
       ...additionalFields,
+      tags: Object.entries(projectTags).map(([streamId, document]) => ({
+        id: streamId,
+        ...document.content,
+      })),
     };
   }
 }

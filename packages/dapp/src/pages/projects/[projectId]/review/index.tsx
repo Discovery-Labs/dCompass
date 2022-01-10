@@ -163,7 +163,7 @@ function ReviewProjectPage({
               <Button onClick={handleApproveProject} leftIcon={<CheckIcon />}>
                 Approve Project
               </Button>
-              <Button ml="5" colorScheme="pink" leftIcon={<CloseIcon />}>
+              <Button ml="5" colorScheme="secondary" leftIcon={<CloseIcon />}>
                 Reject Project
               </Button>
             </HStack>

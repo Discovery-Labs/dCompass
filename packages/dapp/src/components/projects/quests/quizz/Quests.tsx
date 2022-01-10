@@ -47,7 +47,7 @@ export default function Quests({ control, register, setValue }: any) {
                   })}
                 />
                 <Button
-                  colorScheme="pink"
+                  colorScheme="secondary"
                   onClick={() => remove(index)}
                   aria-label="remove"
                   size="md"

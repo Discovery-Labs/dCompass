@@ -13,19 +13,23 @@ import {
   Tabs,
   Text,
   HStack,
+  Badge,
+  Stack,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { useContext } from "react";
+import Blockies from "react-blockies";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
-import Container from "../../../components/layout/Container";
-import BadgeCard from "../../../components/projects/badges/BadgeCard";
-import QuestCard from "../../../components/QuestCard";
-import { Web3Context } from "../../../contexts/Web3Provider";
+import { Tag } from "../../../core/types";
 import { GET_ALL_BADGES_BY_PROJECT_ID_QUERY } from "../../../graphql/badges";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
+import Container from "components/layout/Container";
+import BadgeCard from "components/projects/badges/BadgeCard";
+import QuestCard from "components/QuestCard";
+import { Web3Context } from "contexts/Web3Provider";
 
 type Props = {
   projectId: string | null;
@@ -81,6 +85,7 @@ function ProjectPage({
   description,
   squads,
   logo,
+  tags,
   createdAt,
 }: any) {
   const { account } = useContext(Web3Context);
@@ -111,7 +116,19 @@ function ProjectPage({
       </Flex>
 
       <Flex w="full" direction="column" pt="4">
-        <Text fontSize="sm">by {createdBy}</Text>
+        <Flex align="center" maxW="full">
+          {createdBy && <Blockies seed={createdBy} className="blockies" />}
+          <Text ml="2" fontSize="sm" isTruncated>
+            {createdBy}
+          </Text>
+        </Flex>
+        <Stack direction="row" pt="4">
+          {tags.map((tag: Tag) => (
+            <Badge key={tag.id} colorScheme={tag.color}>
+              {tag.label}
+            </Badge>
+          ))}
+        </Stack>
         <Text pt="8">{description}</Text>
         <Text pt="8" fontSize="xs">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
