@@ -1,24 +1,23 @@
 import { useQuery } from "@apollo/client";
 import { EditIcon } from "@chakra-ui/icons";
 import {
+  Badge,
   Button,
   Flex,
   Heading,
-  SimpleGrid,
+  HStack,
+  Icon,
   Image,
+  SimpleGrid,
   Spacer,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Text,
-  HStack,
-  Badge,
-  Stack,
   VStack,
-  Image,
-  Icon,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
@@ -27,18 +26,16 @@ import Blockies from "react-blockies";
 import { BsPeople, BsPerson } from "react-icons/bs";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
-import Card from "../../../components/custom/Card";
 import CardMedia from "../../../components/custom/CardMedia";
 import { Tag } from "../../../core/types";
 import { GET_ALL_BADGES_BY_PROJECT_ID_QUERY } from "../../../graphql/badges";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
-import useCustomColor from "core/hooks/useCustomColor";
-import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 import Container from "components/layout/Container";
 import BadgeCard from "components/projects/badges/BadgeCard";
 import QuestCard from "components/QuestCard";
 import { Web3Context } from "contexts/Web3Provider";
+import useCustomColor from "core/hooks/useCustomColor";
 
 type Props = {
   projectId: string | null;
