@@ -5,6 +5,7 @@ import {
   Flex,
   Heading,
   SimpleGrid,
+  Image,
   Spacer,
   Tab,
   TabList,
@@ -13,10 +14,13 @@ import {
   Tabs,
   Text,
   HStack,
+  VStack,
+  Icon,
+  Link,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
-import { useContext } from "react";
+import { Key, useContext } from "react";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
 import Container from "../../../components/layout/Container";
@@ -26,6 +30,8 @@ import { Web3Context } from "../../../contexts/Web3Provider";
 import { GET_ALL_BADGES_BY_PROJECT_ID_QUERY } from "../../../graphql/badges";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
+import useCustomColor from "core/hooks/useCustomColor";
+import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 type Props = {
   projectId: string | null;
@@ -84,6 +90,7 @@ function ProjectPage({
   createdAt,
 }: any) {
   const { account } = useContext(Web3Context);
+  const { getColoredText } = useCustomColor();
   const { data, loading, error } = useQuery(
     GET_ALL_BADGES_BY_PROJECT_ID_QUERY,
     {
@@ -95,10 +102,13 @@ function ProjectPage({
   const isOwner = createdBy === account;
   if (loading) return "Loading...";
   if (error) return `Loading error! ${error.message}`;
+
+  console.log("squads", squads);
+
   return (
     <Container>
       <Flex w="full">
-        <Heading>{name}</Heading>
+        <Text textStyle="h1">{name}</Text>
         <Spacer />
         {isOwner && (
           <NextLink
@@ -111,18 +121,54 @@ function ProjectPage({
       </Flex>
 
       <Flex w="full" direction="column" pt="4">
-        <Text fontSize="sm">by {createdBy}</Text>
+        <Text color={getColoredText} textStyle="small">
+          by {createdBy}
+        </Text>
         <Text pt="8">{description}</Text>
-        <Text pt="8" fontSize="xs">
+        <HStack pt="8">
+          <Link target="_blank" href="https://google.com">
+            <Icon as={SiDiscord} />
+          </Link>
+          <Link target="_blank" href="https://google.com">
+            <Icon as={SiGitbook} />
+          </Link>
+          <Link target="_blank" href="https://google.com">
+            <Icon as={SiGithub} />
+          </Link>
+          <Link target="_blank" href="https://google.com">
+            <Icon as={SiTwitter} />
+          </Link>
+        </HStack>
+        <Text py="8">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
         </Text>
-        <Text>Creation date: {new Date(createdAt).toLocaleString()}</Text>
-        <Flex pt="12" w="full" justify="space-around">
-          <IconWithState icon="discord" active />
-          <IconWithState icon="gitbook" />
-          <IconWithState icon="github" />
-          <IconWithState icon="twitter" />
-        </Flex>
+        {squads.length > 0 &&
+          squads.map((squad: { name: string; image: string; members: any }) => (
+            <VStack
+              layerStyle="no-border-card"
+              align="start"
+              key={`squad ${name}`}
+            >
+              <HStack align="start" justify="center" alignItems="center">
+                <Image
+                  boxSize="50px"
+                  objectFit="cover"
+                  alt="Squad Image"
+                  src={`https://gateway.pinata.cloud/ipfs/${squad.image}`}
+                />
+                <Text textStyle="h2">{squad.name}</Text>
+              </HStack>
+              <Text>Members</Text>
+              <Text textStyle="small">
+                {squad.members > 0 &&
+                  squad.members.map((member: string) => <Text>{member}</Text>)}
+              </Text>
+            </VStack>
+          ))}
+
+        <Text pt="8" color={getColoredText} textStyle="small">
+          Creation date: {new Date(createdAt).toLocaleString()}
+        </Text>
       </Flex>
 
       <Tabs py="2rem" w="full">

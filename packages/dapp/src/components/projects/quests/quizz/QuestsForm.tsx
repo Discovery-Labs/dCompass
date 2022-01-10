@@ -50,7 +50,7 @@ function QuestsForm() {
         >
           Reset Quest Form
         </Button>
-        <Button colorScheme="aqua" type="button" onClick={() => onSubmit()}>
+        <Button type="button" onClick={() => onSubmit()}>
           Submit
         </Button>
       </Flex>
