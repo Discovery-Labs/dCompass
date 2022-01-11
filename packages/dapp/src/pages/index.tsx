@@ -79,6 +79,20 @@ function Projects() {
       }
     );
     setFilteredProjects(newFilteredProjects);
+
+    // const newFilteredProjects2 = newFilteredProjects.filter(
+    //   (project: Project) => {
+    //     return (
+    //       project.tags &&
+    //       project.tags.some((tag: { label: string }) => {
+    //         console.log("inside: ", e);
+    //         console.log("contains", tag.label);
+    //         return e.includes(tag.label);
+    //       })
+    //     );
+    //   }
+    // );
+    // console.log(`newFilteredProjects2`, newFilteredProjects2);
   }
 
   function onSearchQuery(event: React.ChangeEvent<HTMLInputElement>) {
@@ -197,7 +211,7 @@ function Projects() {
             <MenuList>
               {tagsData.getAllTags.map(({ id, color, label }: Tag) => (
                 <MenuItem key={id}>
-                  <Checkbox colorScheme={color} value={id}>
+                  <Checkbox colorScheme={color} value={label}>
                     {label}
                   </Checkbox>
                 </MenuItem>
