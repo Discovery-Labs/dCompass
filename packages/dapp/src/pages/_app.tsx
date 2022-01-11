@@ -3,21 +3,22 @@ import { ApolloProvider } from "@apollo/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
+import { Web3Provider as EthersProvider } from "@ethersproject/providers";
 import "@fontsource/poppins";
 import "@fontsource/space-mono";
-import { Web3Provider as EthersProvider } from "@ethersproject/providers";
 import { Web3ReactProvider } from "@web3-react/core";
+import { appWithTranslation } from "next-i18next";
 import { DefaultSeo } from "next-seo";
 import { AppProps } from "next/app";
 import Head from "next/head";
 
+import createEmotionCache from "styles/createEmotionCache";
+import theme from "styles/customTheme";
+import "styles/globals.css";
 import { useApollo } from "../../lib/apolloClient";
 import defaultSEOConfig from "../../next-seo.config";
 import { Web3Provider } from "../contexts/Web3Provider";
 import Layout from "components/layout";
-import createEmotionCache from "styles/createEmotionCache";
-import theme from "styles/customTheme";
-import "styles/globals.css";
 
 const clientSideEmotionCache = createEmotionCache();
 const getLibrary = (provider: any): EthersProvider => {
@@ -63,4 +64,4 @@ MyApp.defaultProps = {
   emotionCache: clientSideEmotionCache,
 };
 
-export default MyApp;
+export default appWithTranslation(MyApp);

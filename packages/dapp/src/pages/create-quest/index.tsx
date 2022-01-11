@@ -4,7 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import NotConnectedCard from "../../components/custom/NotConnectedCard";
 import CenteredFrame from "../../components/layout/CenteredFrame";
-import QuestsForm from "../../components/projects/quests/QuestsForm";
+import QuestsForm from "../../components/projects/quests/QuestForm";
 import { Web3Context } from "../../contexts/Web3Provider";
 import Card from "components/custom/Card";
 

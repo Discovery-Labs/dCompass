@@ -57,6 +57,7 @@
     "key-did-resolver": "^1.4.0",
     "multiparty": "^4.2.2",
     "next": "^11.1.2",
+    "next-i18next": "^10.2.0",
     "next-pwa": "^5.4.0",
     "next-seo": "^4.28.1",
     "nft.storage": "^3.4.0",
