@@ -18,12 +18,14 @@ import {
   Tabs,
   Text,
   VStack,
+  Link,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
 import { BsPeople, BsPerson } from "react-icons/bs";
+import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
 import CardMedia from "../../../components/custom/CardMedia";
@@ -119,6 +121,7 @@ function ProjectPage({
             // TODO: use project color
             border="solid 5px rebeccapurple"
             src={`https://ipfs.io/ipfs/${logo}`}
+            objectFit="cover"
             w={150}
             h={150}
           />
@@ -141,7 +144,7 @@ function ProjectPage({
         <Flex align="center" maxW="full">
           {createdBy && <Blockies seed={createdBy} className="blockies" />}
           <VStack align="flex-start" ml="2">
-            <Text fontSize="sm" isTruncated>
+            <Text color={getColoredText} textStyle="small" isTruncated>
               Creation date: {new Date(createdAt).toLocaleString()}
             </Text>
             <Text fontSize="sm" isTruncated>
@@ -156,12 +159,20 @@ function ProjectPage({
             </Badge>
           ))}
         </Stack>
-        <Flex pt="4" w="full" justify="space-around">
-          <IconWithState icon="discord" active />
-          <IconWithState icon="gitbook" />
-          <IconWithState icon="github" />
-          <IconWithState icon="twitter" />
-        </Flex>
+        <HStack pt="8" spacing={8}>
+          <Link target="_blank" href="https://google.com">
+            <Icon boxSize={8} as={SiDiscord} />
+          </Link>
+          <Link target="_blank" href="https://google.com">
+            <Icon boxSize={8} as={SiGitbook} />
+          </Link>
+          <Link target="_blank" href="https://google.com">
+            <Icon boxSize={8} as={SiGithub} />
+          </Link>
+          <Link target="_blank" href="https://google.com">
+            <Icon boxSize={8} as={SiTwitter} />
+          </Link>
+        </HStack>
         <Text pt="8">{description}</Text>
         <Heading as="h3" size="lg" py="4">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
@@ -176,10 +187,7 @@ function ProjectPage({
                 {squad.name}
               </Heading>
               <HStack>
-                <Icon
-                  as={squad.members.length > 1 ? BsPeople : BsPerson}
-                  size="xl"
-                />
+                <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
                 <Heading as="h4" size="md">
                   {squad.members.length} MEMBER
                   {squad.members.length > 1 ? "s" : ""}
