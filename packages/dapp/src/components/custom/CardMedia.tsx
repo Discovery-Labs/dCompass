@@ -12,10 +12,23 @@ function CardMedia({ children, src, ...others }: any) {
     >
       <Box w="full" position="relative">
         <Box position="static">
-          <Image position="absolute" top="0px" src={src} filter="blur(10px)" />
+          <Image
+            height="120px"
+            width="full"
+            position="absolute"
+            top="0px"
+            src={src}
+            filter="blur(10px)"
+          />
         </Box>
         <Box position="relative">
-          <Image borderRadius="8" w="full" src={src} objectFit="cover" />
+          <Image
+            height="120px"
+            borderRadius="8"
+            w="full"
+            src={src}
+            objectFit="cover"
+          />
         </Box>
       </Box>
       {children}

@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const withPWA = require("next-pwa");
+const { i18n } = require("./next-i18next.config");
 
 /** @type {import('next').NextConfig} */
 module.exports = withPWA({
+  i18n,
   pwa: {
     disable:
       process.env.NODE_ENV === "development" ||

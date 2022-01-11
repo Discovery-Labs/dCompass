@@ -27,6 +27,7 @@ import useCustomColor from "../../core/hooks/useCustomColor";
 import ConnectButton from "../Buttons/ConnectButton";
 import LogoIcon from "../Icons/LogoIcon";
 import ThemeToggle from "./ThemeToggle";
+import LanguageButton from "../Buttons/LanguageButton";
 
 const LinkItem = ({ href, _target, children, ...props }: any) => {
   const { pathname } = useRouter();
@@ -105,6 +106,7 @@ const Navbar = (props: any) => {
         </HStack>
         <Spacer />
         <HStack alignItems="center">
+          <LanguageButton />
           <ThemeToggle />
           {account && isReviewer && (
             <LinkItem href="/projects/review">
