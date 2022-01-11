@@ -13,9 +13,9 @@ export const AppProjectsSchema = {
         title: "project",
         properties: {
           ...projectProperties,
-          pendingBadges: {
+          pendingPathways: {
             type: "array",
-            title: "pending badges",
+            title: "pending pathways",
             items: {
               $ref: "#/definitions/CeramicStreamId",
             },

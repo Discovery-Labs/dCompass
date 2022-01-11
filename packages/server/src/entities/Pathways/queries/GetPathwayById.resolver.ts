@@ -2,27 +2,27 @@ import { Resolver, Query, Args } from '@nestjs/graphql';
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseCeramicClient } from '../../../core/utils/types';
 
-import { Badge } from '../Badge.entity';
+import { Pathway } from '../Pathway.entity';
 
-@Resolver(() => Badge)
-export class GetBadgeByIdResolver {
-  @Query(() => Badge, {
+@Resolver(() => Pathway)
+export class GetPathwayByIdResolver {
+  @Query(() => Pathway, {
     nullable: true,
-    description: 'Gets a badge by its Stream ID',
-    name: 'getBadgeById',
+    description: 'Gets a pathway by its Stream ID',
+    name: 'getPathwayById',
   })
-  async getBadgeById(
+  async getPathwayById(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
-    @Args('badgeId') badgeId: string,
-  ): Promise<Badge | null | undefined> {
-    console.log('BADGE QUERY');
-    const record = await ceramicClient.ceramic.loadStream(badgeId);
+    @Args('pathwayId') pathwayId: string,
+  ): Promise<Pathway | null | undefined> {
+    console.log('PATHWAY QUERY');
+    const record = await ceramicClient.ceramic.loadStream(pathwayId);
     if (!record) {
       return null;
     }
     console.log({ record });
     return {
-      id: badgeId,
+      id: pathwayId,
       ...record.state.content,
       // quests: record.state.next?.content.quests,
     };

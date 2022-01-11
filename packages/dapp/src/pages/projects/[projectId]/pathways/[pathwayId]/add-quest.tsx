@@ -14,7 +14,7 @@ export const questDefaultValues = {
   description: "",
 };
 
-function AddBadgeStepper() {
+function AddPathwayStepper() {
   const { contracts } = useContext(Web3Context);
   const web3React = useWeb3React();
 
@@ -41,4 +41,4 @@ function AddBadgeStepper() {
   );
 }
 
-export default AddBadgeStepper;
+export default AddPathwayStepper;

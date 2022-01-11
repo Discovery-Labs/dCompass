@@ -12,10 +12,10 @@ import { useRouter } from "next/router";
 import { useContext } from "react";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { APPROVE_BADGE_MUTATION } from "../../../graphql/badges";
+import { APPROVE_PATHWAY_MUTATION } from "../../../graphql/pathways";
 import Card from "components/custom/Card";
 
-type Badge = {
+type Pathway = {
   id: string;
   image: string;
   title: string;
@@ -26,41 +26,41 @@ type Badge = {
   createdBy: string;
 };
 
-function BadgeCard({
-  badge,
+function PathwayCard({
+  pathway,
   projectContributors,
 }: {
-  badge: Badge;
+  pathway: Pathway;
   projectContributors: string[];
 }) {
-  const [approveBadgeMutation] = useMutation(APPROVE_BADGE_MUTATION, {
+  const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
 
   const { account, provider } = useContext(Web3Context);
   const router = useRouter();
   const isContributor = account && projectContributors.includes(account);
-  function openBadge() {
+  function openPathway() {
     return router.push(
-      `/projects/${badge.projectId.split("://")[1]}/badges/${badge.id.split("://")[1]
+      `/projects/${pathway.projectId.split("://")[1]}/pathways/${pathway.id.split("://")[1]
       }`
     );
   }
 
-  const handleApproveBadge = async () => {
+  const handleApprovePathway = async () => {
     const signatureInput = {
-      id: badge.id,
-      projectId: badge.projectId,
+      id: pathway.id,
+      projectId: pathway.projectId,
     };
     const signature = await provider.provider.send("personal_sign", [
       JSON.stringify(signatureInput),
       account,
     ]);
-    return approveBadgeMutation({
+    return approvePathwayMutation({
       variables: {
         input: {
-          id: badge.id,
-          badgeApproverSignature: signature.result,
+          id: pathway.id,
+          pathwayApproverSignature: signature.result,
         },
       },
     });
@@ -72,27 +72,27 @@ function BadgeCard({
         <Avatar
           mr="0.5rem"
           boxSize="4rem"
-          src={`https://ipfs.io/ipfs/${badge.image}`}
+          src={`https://ipfs.io/ipfs/${pathway.image}`}
         />
         <Spacer />
         <Flex align="end" direction="column">
-          <Tag>{badge.difficulty}</Tag>
+          <Tag>{pathway.difficulty}</Tag>
         </Flex>
       </Flex>
-      <Heading fontSize="2xl">{badge.title}</Heading>
-      <Text noOfLines={4}>{badge.description}</Text>
+      <Heading fontSize="2xl">{pathway.title}</Heading>
+      <Text noOfLines={4}>{pathway.description}</Text>
       <Spacer />
       <Flex w="full" justify="space-between">
-        <Button variant="outline" fontSize="md" onClick={() => openBadge()}>
+        <Button variant="outline" fontSize="md" onClick={() => openPathway()}>
           Quests
         </Button>
-        {badge.isPending && isContributor && (
-          <Button fontSize="md" onClick={handleApproveBadge}>
+        {pathway.isPending && isContributor && (
+          <Button fontSize="md" onClick={handleApprovePathway}>
             Approve
           </Button>
         )}
-        {!badge.isPending && (
-          <Button fontSize="md" onClick={() => console.log("Claim Badge")}>
+        {!pathway.isPending && (
+          <Button fontSize="md" onClick={() => console.log("Claim Pathway")}>
             Claim
           </Button>
         )}
@@ -101,4 +101,4 @@ function BadgeCard({
   );
 }
 
-export default BadgeCard;
+export default PathwayCard;

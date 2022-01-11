@@ -7,7 +7,7 @@ export const questBaseProperties = {
   description: {
     type: "string",
   },
-  badgeId: {
+  pathwayId: {
     $ref: "#/definitions/CeramicStreamId",
   },
   completedBy: {
@@ -64,7 +64,7 @@ export const QuestSchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
   title: "Quest",
   description:
-    "A quest is a challenge that certifies the knowledge aquired within a badge",
+    "A quest is a challenge that certifies the knowledge aquired within a pathway",
   type: "object",
   properties: {
     ...questBaseProperties,

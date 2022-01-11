@@ -29,11 +29,11 @@ import { initializeApollo } from "../../../../lib/apolloClient";
 import Card from "../../../components/custom/Card";
 import CardMedia from "../../../components/custom/CardMedia";
 import { Tag } from "../../../core/types";
-import { GET_ALL_BADGES_BY_PROJECT_ID_QUERY } from "../../../graphql/badges";
+import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
 import Container from "components/layout/Container";
-import BadgeCard from "components/projects/badges/BadgeCard";
+import PathwayCard from "components/projects/pathways/PathwayCard";
 import QuestCard from "components/QuestCard";
 import { Web3Context } from "contexts/Web3Provider";
 
@@ -82,8 +82,6 @@ const QuestData = {
   reward: "200 xp",
 };
 
-const allQuests = [QuestData, QuestData, QuestData];
-
 function ProjectPage({
   id,
   name,
@@ -96,7 +94,7 @@ function ProjectPage({
 }: any) {
   const { account } = useContext(Web3Context);
   const { data, loading, error } = useQuery(
-    GET_ALL_BADGES_BY_PROJECT_ID_QUERY,
+    GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
     {
       variables: {
         projectId: id,
@@ -199,16 +197,16 @@ function ProjectPage({
       <Tabs py="2rem" w="full">
         <HStack justifyContent="space-between">
           <TabList>
-            <Tab>All badges</Tab>
-            <Tab>Pending badges</Tab>
-            <Tab>My badges</Tab>
+            <Tab>All pathways</Tab>
+            <Tab>Pending pathways</Tab>
+            <Tab>My pathways</Tab>
           </TabList>
           {isOwner && (
             <NextLink
-              href={`/projects/${id.split("://")[1]}/badges/add-badge/`}
+              href={`/projects/${id.split("://")[1]}/pathways/add-pathway/`}
               passHref
             >
-              <Button leftIcon={<EditIcon />}>Add badge</Button>
+              <Button leftIcon={<EditIcon />}>Add pathway</Button>
             </NextLink>
           )}
         </HStack>
@@ -216,12 +214,12 @@ function ProjectPage({
         <TabPanels>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllBadgesByProjectId
-                .filter((badge: any) => !badge.isPending)
-                .map((badge: any) => (
-                  <BadgeCard
-                    key={badge.title}
-                    badge={badge}
+              {data.getAllPathwaysByProjectId
+                .filter((pathway: any) => !pathway.isPending)
+                .map((pathway: any) => (
+                  <PathwayCard
+                    key={pathway.title}
+                    pathway={pathway}
                     projectContributors={squads.flatMap(
                       (squad: any) => squad.members
                     )}
@@ -231,12 +229,12 @@ function ProjectPage({
           </TabPanel>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllBadgesByProjectId
-                .filter((badge: any) => badge.isPending)
-                .map((badge: any) => (
-                  <BadgeCard
-                    key={badge.title}
-                    badge={badge}
+              {data.getAllPathwaysByProjectId
+                .filter((pathway: any) => pathway.isPending)
+                .map((pathway: any) => (
+                  <PathwayCard
+                    key={pathway.title}
+                    pathway={pathway}
                     projectContributors={squads.flatMap(
                       (squad: any) => squad.members
                     )}

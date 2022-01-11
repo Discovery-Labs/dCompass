@@ -4,33 +4,33 @@ import { ForbiddenError } from 'apollo-server-express';
 
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseCeramicClient } from '../../../core/utils/types';
-import { CreateBadgeInput } from '../dto/CreateBadge.input';
-import { Badge } from '../Badge.entity';
+import { CreatePathwayInput } from '../dto/CreatePathway.input';
+import { Pathway } from '../Pathway.entity';
 import { schemaAliases } from '../../../core/constants/idx';
 
-@Resolver(() => Badge)
-export class CreateBadgeResolver {
-  @Mutation(() => Badge, {
+@Resolver(() => Pathway)
+export class CreatePathwayResolver {
+  @Mutation(() => Pathway, {
     nullable: true,
-    description: 'Create a new Badge in dCompass',
-    name: 'createBadge',
+    description: 'Create a new Pathway in dCompass',
+    name: 'createPathway',
   })
-  async createBadge(
+  async createPathway(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
-    @Args('input') { id, badgeCreatorSignature }: CreateBadgeInput,
-  ): Promise<Badge | null | undefined> {
+    @Args('input') { id, pathwayCreatorSignature }: CreatePathwayInput,
+  ): Promise<Pathway | null | undefined> {
     // Check that the current user is the owner of the project
-    const ogBadge = await ceramicClient.ceramic.loadStream(id);
-    const projectId = ogBadge.content.projectId;
-    console.log(ogBadge.content);
+    const ogPathway = await ceramicClient.ceramic.loadStream(id);
+    const projectId = ogPathway.content.projectId;
+    console.log(ogPathway.content);
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({ id: projectId }),
-      badgeCreatorSignature,
+      pathwayCreatorSignature,
     );
 
     const ownerAccounts = await ceramicClient.dataStore.get(
       'cryptoAccounts',
-      ogBadge.controllers[0],
+      ogPathway.controllers[0],
     );
     if (!ownerAccounts) throw new ForbiddenError('Unauthorized');
     const formattedAccounts = Object.keys(ownerAccounts).map(
@@ -46,7 +46,7 @@ export class CreateBadgeResolver {
     const projects = allProjects?.projects ?? [];
 
     console.log({ projects });
-    console.log({ ogBadge: ogBadge.content });
+    console.log({ ogPathway: ogPathway.content });
 
     const projectIndexedFields = projects.find(
       (project: { id: string }) => project.id === projectId,
@@ -57,21 +57,21 @@ export class CreateBadgeResolver {
 
     console.log({ projectIndexedFields });
 
-    // remove previously indexed project and recreate it as with the new pending badge
+    // remove previously indexed project and recreate it as with the new pending pathway
     const existingProjects = projects.filter(
       (project: { id: string }) => project.id !== projectIndexedFields.id,
     );
 
     console.log({ existingProjects });
-    // Add the new badge for review
+    // Add the new pathway for review
     const appProjectsUpdated = [
       ...existingProjects,
       {
         id,
         ...projectIndexedFields,
-        pendingBadges: [
-          ...(projectIndexedFields.pendingBadges ?? []),
-          ogBadge.id.toUrl(),
+        pendingPathways: [
+          ...(projectIndexedFields.pendingPathways ?? []),
+          ogPathway.id.toUrl(),
         ],
       },
     ];
@@ -82,7 +82,7 @@ export class CreateBadgeResolver {
 
     return {
       id,
-      ...ogBadge.content,
+      ...ogPathway.content,
     };
   }
 }

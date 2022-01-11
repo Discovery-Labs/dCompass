@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
 
 @InputType()
-export class CreateBadgeInput {
+export class ApprovePathwayInput {
   @Field()
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
@@ -13,5 +13,5 @@ export class CreateBadgeInput {
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  badgeCreatorSignature: string;
+  pathwayApproverSignature: string;
 }

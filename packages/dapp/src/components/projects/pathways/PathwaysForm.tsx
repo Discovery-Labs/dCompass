@@ -5,21 +5,21 @@ import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { CREATE_BADGE_MUTATION } from "../../../graphql/badges";
+import { CREATE_PATHWAY_MUTATION } from "../../../graphql/pathways";
 
-import Badges from "./Badges";
+import Pathways from "./Pathways";
 
-const badgesDefaultValues = {
-  badges: [
+const pathwaysDefaultValues = {
+  pathways: [
     {
       title: null,
     },
   ],
 };
 
-function BadgesForm() {
+function PathwaysForm() {
   const router = useRouter();
-  const [addBadgeMutation] = useMutation(CREATE_BADGE_MUTATION);
+  const [addPathwayMutation] = useMutation(CREATE_PATHWAY_MUTATION);
   const { self, account, provider } = useContext(Web3Context);
   const {
     control,
@@ -33,8 +33,8 @@ function BadgesForm() {
 
   async function onSubmit(values: Record<string, any>) {
     const serlializedValues = {
-      badges: values.badges.map((badge: any) => {
-        const { prerequisites, ...badgeOptions } = badge;
+      pathways: values.pathways.map((pathway: any) => {
+        const { prerequisites, ...pathwayOptions } = pathway;
         const prereqs = prerequisites
           ? {
             prerequisites: prerequisites.map(
@@ -44,8 +44,8 @@ function BadgesForm() {
           : {};
 
         return {
-          ...badgeOptions,
-          difficulty: badge.difficulty.value,
+          ...pathwayOptions,
+          difficulty: pathway.difficulty.value,
           ...prereqs,
           createdBy: account,
           createdAt: new Date().toISOString(),
@@ -56,9 +56,9 @@ function BadgesForm() {
     const formData = new FormData();
     formData.append("metadata", JSON.stringify(serlializedValues));
 
-    serlializedValues.badges.forEach((badge: any) => {
-      if (badge.image) {
-        formData.append(badge.title, badge.image[0]);
+    serlializedValues.pathways.forEach((pathway: any) => {
+      if (pathway.image) {
+        formData.append(pathway.title, pathway.image[0]);
       }
     });
     const cidsRes = await fetch("/api/image-storage", {
@@ -68,22 +68,22 @@ function BadgesForm() {
 
     const { cids } = await cidsRes.json();
     const finalValues = {
-      badges: serlializedValues.badges.map((badge: any) => ({
-        ...badge,
-        image: cids[badge.title],
+      pathways: serlializedValues.pathways.map((pathway: any) => ({
+        ...pathway,
+        image: cids[pathway.title],
         projectId: `ceramic://${router.query.projectId}`,
       })),
     };
 
     console.log("submitted", finalValues);
-    const badgeDocs = await Promise.all(
-      finalValues.badges.map(async (badge: any) => {
-        return self.client.dataModel.createTile("Badge", badge, {
+    const pathwayDocs = await Promise.all(
+      finalValues.pathways.map(async (pathway: any) => {
+        return self.client.dataModel.createTile("Pathway", pathway, {
           pin: true,
         });
       })
     );
-    console.log(badgeDocs);
+    console.log(pathwayDocs);
 
     const signature = await provider.provider.send("personal_sign", [
       JSON.stringify({
@@ -92,13 +92,13 @@ function BadgesForm() {
       account,
     ]);
 
-    const addedBadges = await Promise.all(
-      badgeDocs.map((badgeDoc) =>
-        addBadgeMutation({
+    const addedPathways = await Promise.all(
+      pathwayDocs.map((pathwayDoc) =>
+        addPathwayMutation({
           variables: {
             input: {
-              id: badgeDoc.id.toUrl(),
-              badgeCreatorSignature: signature.result,
+              id: pathwayDoc.id.toUrl(),
+              pathwayCreatorSignature: signature.result,
             },
           },
         })
@@ -109,12 +109,12 @@ function BadgesForm() {
 
   return (
     <>
-      <Heading>Add Badge</Heading>
-      <Badges
+      <Heading>Add Pathway</Heading>
+      <Pathways
         {...{
           control,
           register,
-          defaultValues: badgesDefaultValues,
+          defaultValues: pathwaysDefaultValues,
           getValues,
           setValue,
           errors,
@@ -125,9 +125,9 @@ function BadgesForm() {
         <Button
           colorScheme="secondary"
           type="button"
-          onClick={() => reset(badgesDefaultValues)}
+          onClick={() => reset(pathwaysDefaultValues)}
         >
-          Reset Badge Form
+          Reset Pathway Form
         </Button>
         <Button
           isLoading={isSubmitting}
@@ -142,4 +142,4 @@ function BadgesForm() {
   );
 }
 
-export default BadgesForm;
+export default PathwaysForm;

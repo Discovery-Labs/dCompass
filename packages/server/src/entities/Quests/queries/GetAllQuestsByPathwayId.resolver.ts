@@ -3,38 +3,40 @@ import { Resolver, Query, Args } from '@nestjs/graphql';
 import { schemaAliases } from '../../../core/constants/idx';
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseCeramicClient } from '../../../core/utils/types';
-import { Badge } from '../../Badges/Badge.entity';
+import { Pathway } from '../../Pathways/Pathway.entity';
 import { Quest } from '../Quest.entity';
 
 @Resolver(() => [Quest])
-export class GetAllQuestsByBadgeIdResolver {
+export class GetAllQuestsByPathwayIdResolver {
   @Query(() => [Quest], {
     nullable: true,
     description: 'Gets all the quests in dCompass',
-    name: 'getAllQuestsByBadgeId',
+    name: 'getAllQuestsByPathwayId',
   })
-  async getAllQuestsByBadgeId(
+  async getAllQuestsByPathwayId(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
-    @Args('badgeId') badgeId: string,
+    @Args('pathwayId') pathwayId: string,
   ): Promise<Quest[] | null> {
-    const allBadges = await ceramicClient.dataStore.get(
-      schemaAliases.BADGES_ALIAS,
+    const allPathways = await ceramicClient.dataStore.get(
+      schemaAliases.PATHWAYS_ALIAS,
     );
-    const badges = allBadges?.badges ?? [];
-    const foundBadge = badges.find((badge: Badge) => badge.id === badgeId);
+    const pathways = allPathways?.pathways ?? [];
+    const foundPathway = pathways.find(
+      (pathway: Pathway) => pathway.id === pathwayId,
+    );
 
-    console.log({ foundBadge });
-    if (!foundBadge) {
-      throw new NotFoundException('Badge not found');
+    console.log({ foundPathway });
+    if (!foundPathway) {
+      throw new NotFoundException('Pathway not found');
     }
-    const questIds = foundBadge.quests
-      ? foundBadge.quests.map((id: string) => ({
+    const questIds = foundPathway.quests
+      ? foundPathway.quests.map((id: string) => ({
           streamId: id,
         }))
       : [];
 
-    const pendingQuestIds = foundBadge.pendingQuests
-      ? foundBadge.pendingQuests.map((id: string) => ({
+    const pendingQuestIds = foundPathway.pendingQuests
+      ? foundPathway.pendingQuests.map((id: string) => ({
           streamId: id,
         }))
       : [];

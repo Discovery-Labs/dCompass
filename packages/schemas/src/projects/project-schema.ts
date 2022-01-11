@@ -44,9 +44,9 @@ export const projectProperties = {
       $ref: "#/definitions/CeramicStreamId",
     },
   },
-  badges: {
+  pathways: {
     type: "array",
-    title: "badges",
+    title: "pathways",
     items: {
       $ref: "#/definitions/CeramicStreamId",
     },

@@ -20,7 +20,7 @@ export const CERAMIC_LOCAL_NODE_URL = "http://localhost:7007";
 export const schemaAliases = {
   APP_PROJECTS_ALIAS: "@dCompass/appprojects",
   PROJECTS_ALIAS: "@dCompass/projects",
-  BADGES_ALIAS: "@dCompass/badges",
+  PATHWAYS_ALIAS: "@dCompass/pathways",
   LEARNERS_ALIAS: "@dCompass/learners",
   REPOS_ALIAS: "@dCompass/repos",
   CONTRIBUTORS_ALIAS: "@dCompass/contributors",

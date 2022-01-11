@@ -1,14 +1,14 @@
-export const BadgesSchema = {
+export const PathwaysSchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
-  title: "BadgesList",
+  title: "PathwaysList",
   type: "object",
   properties: {
-    badges: {
+    pathways: {
       type: "array",
-      title: "badges",
+      title: "pathways",
       items: {
         type: "object",
-        title: "BadgeItem",
+        title: "PathwayItem",
         properties: {
           id: {
             $ref: "#/definitions/CeramicStreamId",

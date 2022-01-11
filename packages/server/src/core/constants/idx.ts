@@ -1,8 +1,8 @@
 export const schemaAliases = {
   APP_PROJECTS_ALIAS: '@dCompass/appprojects',
   PROJECTS_ALIAS: '@dCompass/projects',
-  BADGE_ALIAS: '@dCompass/badge',
-  BADGES_ALIAS: '@dCompass/badges',
+  PATHWAY_ALIAS: '@dCompass/pathway',
+  PATHWAYS_ALIAS: '@dCompass/pathways',
   QUESTS_ALIAS: '@dCompass/quests',
   TAG_ALIAS: '@dCompass/tag',
   TAGS_ALIAS: '@dCompass/tags',

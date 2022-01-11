@@ -18,16 +18,16 @@ export class GetQuestByIdResolver {
     if (!record) {
       return null;
     }
-    const relatedBadge = await ceramicClient.ceramic.loadStream(
-      record.state.content.badgeId,
+    const relatedPathway = await ceramicClient.ceramic.loadStream(
+      record.state.content.pathwayId,
     );
     return {
       id: questId,
       ...record.state.content,
-      badge: {
-        id: relatedBadge.id.toUrl(),
-        ...relatedBadge.state.content,
-        quests: relatedBadge.state.next?.content.quests,
+      pathway: {
+        id: relatedPathway.id.toUrl(),
+        ...relatedPathway.state.content,
+        quests: relatedPathway.state.next?.content.quests,
       },
     };
   }

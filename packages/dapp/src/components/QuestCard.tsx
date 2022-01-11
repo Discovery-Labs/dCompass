@@ -21,7 +21,7 @@ type Quest = {
   image: string;
   completed: string;
   projectId: string;
-  badgeId: string;
+  pathwayId: string;
   owner: string;
   name: string;
   questType: string;
@@ -55,7 +55,7 @@ function QuestCard({
   const handleApproveQuest = async () => {
     const signatureInput = {
       id: quest.id,
-      badgeId: quest.badgeId,
+      pathwayId: quest.pathwayId,
     };
     const signature = await provider.provider.send("personal_sign", [
       JSON.stringify(signatureInput),

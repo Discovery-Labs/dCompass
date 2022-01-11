@@ -16,7 +16,7 @@ import config from './core/configs/config';
 import { CeramicController } from './core/controllers/validate-quest-completion.controller';
 import { GraphqlConfig } from './core/configs/config.interface';
 import { ProjectModule } from './entities/Projects/Project.module';
-import { BadgeModule } from './entities/Badges/Badge.module';
+import { PathwayModule } from './entities/Pathways/Pathway.module';
 import { QuestModule } from './entities/Quests/Quest.module';
 import { TagModule } from './entities/Tags/Tag.module';
 
@@ -52,7 +52,7 @@ import { TagModule } from './entities/Tags/Tag.module';
     }),
     TerminusModule,
     ProjectModule,
-    BadgeModule,
+    PathwayModule,
     QuestModule,
     TagModule,
   ],

@@ -1,8 +1,8 @@
-export const BadgeSchema = {
+export const PathwaySchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
-  title: "Badge",
+  title: "Pathway",
   description:
-    "A badge covers a specific topic within a project or an ecosystem",
+    "A pathway covers a specific topic within a project or an ecosystem",
   type: "object",
   properties: {
     createdAt: {

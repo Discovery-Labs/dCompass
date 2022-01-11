@@ -24,24 +24,24 @@ import { initializeApollo } from "../../../../../../lib/apolloClient";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
 import IconWithState from "components/custom/IconWithState";
 import Container from "components/layout/Container";
-import BadgeCard from "components/projects/badges/BadgeCard";
+import PathwayCard from "components/projects/pathways/PathwayCard";
 import QuestCard from "components/QuestCard";
 import { Web3Context } from "contexts/Web3Provider";
-import { GET_BADGE_BY_ID_QUERY } from "graphql/badges";
-import { GET_ALL_QUESTS_BY_BADGE_ID_QUERY } from "graphql/quests";
+import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
+import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
 
 type Props = {
   projectId: string | null;
-  badgeId: string | null;
+  pathwayId: string | null;
 };
 
 export const getServerSideProps: GetServerSideProps<
   Props,
-  { projectId: string; badgeId: string }
+  { projectId: string; pathwayId: string }
 > = async (ctx) => {
-  const badgeId = ctx.params?.badgeId ?? null;
+  const pathwayId = ctx.params?.pathwayId ?? null;
   const projectId = ctx.params?.projectId ?? null;
-  if (!badgeId || !projectId) {
+  if (!pathwayId || !projectId) {
     return {
       redirect: { destination: "/", permanent: true },
     };
@@ -49,14 +49,14 @@ export const getServerSideProps: GetServerSideProps<
   const client = initializeApollo();
   try {
     const { data } = await client.query({
-      query: GET_BADGE_BY_ID_QUERY,
+      query: GET_PATHWAY_BY_ID_QUERY,
       variables: {
-        badgeId: `ceramic://${badgeId}`,
+        pathwayId: `ceramic://${pathwayId}`,
       },
     });
     console.log({ data });
     return {
-      props: { id: badgeId, ...data.getBadgeById },
+      props: { id: pathwayId, ...data.getPathwayById },
     };
   } catch (error) {
     return {
@@ -80,7 +80,7 @@ const QuestData = {
 
 const allQuests = [QuestData, QuestData, QuestData];
 
-function BadgePage({
+function PathwayPage({
   id,
   title,
   description,
@@ -91,9 +91,9 @@ function BadgePage({
   projectId,
 }: any) {
   const { account } = useContext(Web3Context);
-  const { data, loading, error } = useQuery(GET_ALL_QUESTS_BY_BADGE_ID_QUERY, {
+  const { data, loading, error } = useQuery(GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY, {
     variables: {
-      badgeId: id,
+      pathwayId: id,
     },
   });
   const {
@@ -131,7 +131,7 @@ function BadgePage({
             href={`/projects/edit-project/${id.split("://")[1]}`}
             passHref
           >
-            <Button leftIcon={<EditIcon />}>Edit Badge</Button>
+            <Button leftIcon={<EditIcon />}>Edit Pathway</Button>
           </NextLink>
         )}
       </Flex>
@@ -158,7 +158,7 @@ function BadgePage({
           </TabList>
           {isOwner && (
             <NextLink
-              href={`/projects/${projectId.split("://")[1]}/badges/${id.split("://")[1]
+              href={`/projects/${projectId.split("://")[1]}/pathways/${id.split("://")[1]
                 }/add-quest`}
               passHref
             >
@@ -170,7 +170,7 @@ function BadgePage({
         <TabPanels>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllQuestsByBadgeId
+              {data.getAllQuestsByPathwayId
                 .filter((quest: any) => !quest.isPending)
                 .map((quest: any) => (
                   <QuestCard
@@ -185,16 +185,16 @@ function BadgePage({
                 ))}
             </SimpleGrid>
             {/* <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllBadgesByProjectId
-                .filter((badge: any) => badge.isPending)
-                .map((badge: any) => (
-                  <BadgeCard key={badge.title} badge={badge} />
+              {data.getAllPathwaysByProjectId
+                .filter((pathway: any) => pathway.isPending)
+                .map((pathway: any) => (
+                  <PathwayCard key={pathway.title} pathway={pathway} />
                 ))}
             </SimpleGrid> */}
           </TabPanel>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllQuestsByBadgeId
+              {data.getAllQuestsByPathwayId
                 .filter((quest: any) => quest.isPending)
                 .map((quest: any) => (
                   <QuestCard
@@ -209,10 +209,10 @@ function BadgePage({
                 ))}
             </SimpleGrid>
             {/* <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllBadgesByProjectId
-                .filter((badge: any) => !badge.isPending)
-                .map((badge: any) => (
-                  <BadgeCard key={badge.title} badge={badge} />
+              {data.getAllPathwaysByProjectId
+                .filter((pathway: any) => !pathway.isPending)
+                .map((pathway: any) => (
+                  <PathwayCard key={pathway.title} pathway={pathway} />
                 ))}
             </SimpleGrid> */}
           </TabPanel>
@@ -227,4 +227,4 @@ function BadgePage({
   );
 }
 
-export default BadgePage;
+export default PathwayPage;

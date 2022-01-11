@@ -21,9 +21,9 @@ export class CreateQuestResolver {
   ): Promise<Quest | null | undefined> {
     // Check that the current user is the owner of the quest
     const ogQuest = await ceramicClient.ceramic.loadStream(id);
-    const badgeId = ogQuest.content.badgeId;
+    const pathwayId = ogQuest.content.pathwayId;
     const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id, badgeId }),
+      JSON.stringify({ id, pathwayId }),
       questCreatorSignature,
     );
 
@@ -39,41 +39,41 @@ export class CreateQuestResolver {
       throw new ForbiddenError('Unauthorized');
     }
 
-    const allBadges = await ceramicClient.dataStore.get(
-      schemaAliases.BADGES_ALIAS,
+    const allPathways = await ceramicClient.dataStore.get(
+      schemaAliases.PATHWAYS_ALIAS,
     );
-    const badges = allBadges?.badges ?? [];
+    const pathways = allPathways?.pathways ?? [];
 
-    const badgeIndexedFields = badges.find(
-      (badge: { id: string }) => badge.id === badgeId,
+    const pathwayIndexedFields = pathways.find(
+      (pathway: { id: string }) => pathway.id === pathwayId,
     );
-    if (!badgeIndexedFields) {
+    if (!pathwayIndexedFields) {
       return null;
     }
 
-    console.log({ badgeIndexedFields });
+    console.log({ pathwayIndexedFields });
 
-    // remove previously indexed badge and recreate it as with the new pending quest
-    const existingBadges = badges.filter(
-      (badge: { id: string }) => badge.id !== badgeIndexedFields.id,
+    // remove previously indexed pathway and recreate it as with the new pending quest
+    const existingPathways = pathways.filter(
+      (pathway: { id: string }) => pathway.id !== pathwayIndexedFields.id,
     );
 
-    console.log({ existingBadges });
+    console.log({ existingPathways });
     // Add the new quest for review
-    const appBadgesUpdated = [
+    const appPathwaysUpdated = [
       {
         id,
-        ...badgeIndexedFields,
+        ...pathwayIndexedFields,
         pendingQuests: [
-          ...(badgeIndexedFields.pendingQuests ?? []),
+          ...(pathwayIndexedFields.pendingQuests ?? []),
           ogQuest.id.toUrl(),
         ],
       },
-      ...existingBadges,
+      ...existingPathways,
     ];
 
-    await ceramicClient.dataStore.set(schemaAliases.BADGES_ALIAS, {
-      badges: appBadgesUpdated,
+    await ceramicClient.dataStore.set(schemaAliases.PATHWAYS_ALIAS, {
+      pathways: appPathwaysUpdated,
     });
 
     return {

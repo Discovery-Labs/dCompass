@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
-import { Badge } from '../Badges/Badge.entity';
+import { Pathway } from '../Pathways/Pathway.entity';
 import { Squad } from '../Squads/Squad.entity';
 import { Tag } from '../Tags/Tag.entity';
 
@@ -55,8 +55,8 @@ export class Project extends BaseEntity {
   @Field(() => [Tag])
   tags?: Tag[];
 
-  @Field(() => [Badge])
-  badges?: Badge[];
+  @Field(() => [Pathway])
+  pathways?: Pathway[];
 
   @Field(() => [Squad])
   squads: Squad[];

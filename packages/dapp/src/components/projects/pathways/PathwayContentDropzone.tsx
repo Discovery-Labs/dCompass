@@ -13,7 +13,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-const BadgeImageDropzone = ({
+const PathwayImageDropzone = ({
   nestIndex,
   register,
   setValue,
@@ -74,10 +74,12 @@ const BadgeImageDropzone = ({
 
   return (
     <FormControl
-      isInvalid={errors.badges && errors.badges[nestIndex].image}
+      isInvalid={errors.pathways && errors.pathways[nestIndex].image}
       {...getRootProps()}
     >
-      <FormLabel htmlFor={`badges[${nestIndex}].image`}>{formLabel}</FormLabel>
+      <FormLabel htmlFor={`pathways[${nestIndex}].image`}>
+        {formLabel}
+      </FormLabel>
       {files && thumbs}
 
       {files.length === 0 && (
@@ -86,19 +88,19 @@ const BadgeImageDropzone = ({
           <Input
             type="file"
             placeholder="Image"
-            {...register(`badges[${nestIndex}].image`)}
+            {...register(`pathways[${nestIndex}].image`)}
             {...getInputProps()}
           />
         </Button>
       )}
 
       <FormErrorMessage>
-        {errors.badges &&
-          errors.badges[nestIndex].image &&
-          errors.badges[nestIndex].image.message}
+        {errors.pathways &&
+          errors.pathways[nestIndex].image &&
+          errors.pathways[nestIndex].image.message}
       </FormErrorMessage>
     </FormControl>
   );
 };
 
-export default BadgeImageDropzone;
+export default PathwayImageDropzone;

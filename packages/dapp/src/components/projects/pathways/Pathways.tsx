@@ -14,9 +14,9 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 
 import ControlledSelect from "../../Inputs/ControlledSelect";
 
-import BadgeImageDropzone from "./BadgeContentDropzone";
+import PathwayImageDropzone from "./PathwayContentDropzone";
 
-export default function Badges({ control, register, setValue }: any) {
+export default function Pathways({ control, register, setValue }: any) {
   // const router = useRouter();
 
   const {
@@ -25,7 +25,7 @@ export default function Badges({ control, register, setValue }: any) {
 
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
-    name: "badges", // unique name for your Field Array
+    name: "pathways", // unique name for your Field Array
     // keyName: "id", default to "id", you can change the key name
   });
   const difficultyOptions = [
@@ -78,15 +78,15 @@ export default function Badges({ control, register, setValue }: any) {
         return (
           <VStack w="full" key={item.id}>
             <FormControl
-              isInvalid={errors.badges && errors.badges[index].title}
+              isInvalid={errors.pathways && errors.pathways[index].title}
             >
-              <FormLabel htmlFor={`badges[${index}].title`}>
-                Badge title
+              <FormLabel htmlFor={`pathways[${index}].title`}>
+                Pathway title
               </FormLabel>
               <HStack>
                 <Input
-                  placeholder="Badge title here..."
-                  {...register(`badges[${index}].title`, {
+                  placeholder="Pathway title here..."
+                  {...register(`pathways[${index}].title`, {
                     required: "This is required",
                     maxLength: {
                       value: 150,
@@ -101,44 +101,44 @@ export default function Badges({ control, register, setValue }: any) {
                   size="md"
                   px="10"
                 >
-                  Remove Badge
+                  Remove Pathway
                 </Button>
               </HStack>
               <FormErrorMessage>
-                {errors.badges &&
-                  errors.badges[index].title &&
-                  errors.badges[index].title.message}
+                {errors.pathways &&
+                  errors.pathways[index].title &&
+                  errors.pathways[index].title.message}
               </FormErrorMessage>
             </FormControl>
 
             <FormControl
-              isInvalid={errors.badges && errors.badges[index].description}
+              isInvalid={errors.pathways && errors.pathways[index].description}
             >
-              <FormLabel htmlFor={`badges[${index}].description`}>
+              <FormLabel htmlFor={`pathways[${index}].description`}>
                 Description
               </FormLabel>
               <Textarea
-                placeholder="Badge description here..."
-                {...register(`badges[${index}].description`, {
+                placeholder="Pathway description here..."
+                {...register(`pathways[${index}].description`, {
                   required: "This is required",
                 })}
               />
               <FormErrorMessage>
-                {errors.badges &&
-                  errors.badges[index].description &&
-                  errors.badges[index].description.message}
+                {errors.pathways &&
+                  errors.pathways[index].description &&
+                  errors.pathways[index].description.message}
               </FormErrorMessage>
             </FormControl>
 
-            <BadgeImageDropzone
+            <PathwayImageDropzone
               nestIndex={index}
-              formLabel="Badge image"
+              formLabel="Pathway image"
               {...{ register, setValue, errors }}
             />
 
             <ControlledSelect
               control={control}
-              name={`badges[${index}].difficulty`}
+              name={`pathways[${index}].difficulty`}
               id={item.id}
               label="Difficulty"
               rules={{
@@ -149,7 +149,7 @@ export default function Badges({ control, register, setValue }: any) {
 
             <ControlledSelect
               control={control}
-              name={`badges[${index}].prerequisites`}
+              name={`pathways[${index}].prerequisites`}
               id={item.id}
               label="Prerequisites"
               isMulti
@@ -167,7 +167,7 @@ export default function Badges({ control, register, setValue }: any) {
           append({ name: "", options: ["0x0000000000000"] });
         }}
       >
-        + New Badge
+        + New Pathway
       </Button>
     </VStack>
   );

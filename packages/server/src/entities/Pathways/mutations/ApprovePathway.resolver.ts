@@ -4,30 +4,30 @@ import { ForbiddenError } from 'apollo-server-express';
 
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseCeramicClient } from '../../../core/utils/types';
-import { Badge } from '../Badge.entity';
+import { Pathway } from '../Pathway.entity';
 import { schemaAliases } from '../../../core/constants/idx';
-import { ApproveBadgeInput } from '../dto/ApproveBadge.input';
+import { ApprovePathwayInput } from '../dto/ApprovePathway.input';
 import { Squad } from '../../Squads/Squad.entity';
 import { NotFoundException } from '@nestjs/common';
 
-@Resolver(() => Badge)
-export class ApproveBadgeResolver {
-  @Mutation(() => Badge, {
+@Resolver(() => Pathway)
+export class ApprovePathwayResolver {
+  @Mutation(() => Pathway, {
     nullable: true,
-    description: 'Approve a new Badge in dCompass',
-    name: 'approveBadge',
+    description: 'Approve a new Pathway in dCompass',
+    name: 'approvePathway',
   })
-  async approveBadge(
+  async approvePathway(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
-    @Args('input') { id, badgeApproverSignature }: ApproveBadgeInput,
-  ): Promise<Badge | null | undefined> {
+    @Args('input') { id, pathwayApproverSignature }: ApprovePathwayInput,
+  ): Promise<Pathway | null | undefined> {
     // Check that the current user is the owner of the project
-    const ogBadge = await ceramicClient.ceramic.loadStream(id);
-    const projectId = ogBadge.content.projectId;
-    console.log(ogBadge.content);
+    const ogPathway = await ceramicClient.ceramic.loadStream(id);
+    const projectId = ogPathway.content.projectId;
+    console.log(ogPathway.content);
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({ id: id, projectId }),
-      badgeApproverSignature,
+      pathwayApproverSignature,
     );
 
     const allProjects = await ceramicClient.dataStore.get(
@@ -62,23 +62,26 @@ export class ApproveBadgeResolver {
       throw new ForbiddenError('Unauthorized');
     }
 
-    // remove previously indexed project and recreate it as with the new pending badge
+    // remove previously indexed project and recreate it as with the new pending pathway
     const existingProjects = projects.filter(
       (project: { id: string }) => project.id !== projectIndexedFields.id,
     );
 
-    // Add the new badge for review
+    // Add the new pathway for review
     const appProjectsUpdated = [
       {
         id: projectId,
         ...projectIndexedFields,
-        // add badge in approved badges
-        badges: [...(projectIndexedFields.badges ?? []), ogBadge.id.toUrl()],
-        // remove badge from pending badges
-        pendingBadges: [
-          ...(projectIndexedFields.pendingBadges
-            ? projectIndexedFields.pendingBadges.filter(
-                (badge: string) => badge !== ogBadge.id.toUrl(),
+        // add pathway in approved pathways
+        pathways: [
+          ...(projectIndexedFields.pathways ?? []),
+          ogPathway.id.toUrl(),
+        ],
+        // remove pathway from pending pathways
+        pendingPathways: [
+          ...(projectIndexedFields.pendingPathways
+            ? projectIndexedFields.pendingPathways.filter(
+                (pathway: string) => pathway !== ogPathway.id.toUrl(),
               )
             : []),
         ],
@@ -90,22 +93,22 @@ export class ApproveBadgeResolver {
       projects: appProjectsUpdated,
     });
 
-    const previousBadges = await ceramicClient.dataStore.get(
-      schemaAliases.BADGES_ALIAS,
+    const previousPathways = await ceramicClient.dataStore.get(
+      schemaAliases.PATHWAYS_ALIAS,
     );
-    const allBadges = previousBadges?.badges ?? [];
-    await ceramicClient.dataStore.set(schemaAliases.BADGES_ALIAS, {
-      badges: [
-        ...allBadges,
+    const allPathways = previousPathways?.pathways ?? [];
+    await ceramicClient.dataStore.set(schemaAliases.PATHWAYS_ALIAS, {
+      pathways: [
+        ...allPathways,
         {
-          id: ogBadge.id.toUrl(),
-          ...ogBadge.content,
+          id: ogPathway.id.toUrl(),
+          ...ogPathway.content,
         },
       ],
     });
     return {
       id,
-      ...ogBadge.content,
+      ...ogPathway.content,
     };
   }
 }

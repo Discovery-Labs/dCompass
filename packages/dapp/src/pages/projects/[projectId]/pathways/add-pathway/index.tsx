@@ -1,14 +1,14 @@
 import { useWeb3React } from "@web3-react/core";
+import PathwaysForm from "components/projects/pathways/PathwaysForm";
 import React, { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import Card from "components/custom/Card";
 import NotConnectedCard from "components/custom/NotConnectedCard";
 import CenteredFrame from "components/layout/CenteredFrame";
-import BadgesForm from "components/projects/badges/BadgesForm";
 import { Web3Context } from "contexts/Web3Provider";
 
-function AddBadgeStepper() {
+function AddPathwayStepper() {
   const { contracts } = useContext(Web3Context);
   const web3React = useWeb3React();
 
@@ -16,7 +16,7 @@ function AddBadgeStepper() {
 
   const methods = useForm({
     defaultValues: {
-      badges: [
+      pathways: [
         {
           title: "",
           description: "",
@@ -29,7 +29,7 @@ function AddBadgeStepper() {
     <FormProvider {...methods}>
       <CenteredFrame>
         <Card h="full" w="2xl">
-          <BadgesForm />
+          <PathwaysForm />
         </Card>
       </CenteredFrame>
     </FormProvider>
@@ -42,4 +42,4 @@ function AddBadgeStepper() {
   );
 }
 
-export default AddBadgeStepper;
+export default AddPathwayStepper;

@@ -35,26 +35,26 @@ const nftStorage = new NFTStorage({ token: getNFTStorageToken() });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const form = await parseForm(req);
-  const badgeFiles = form.files;
+  const pathwayFiles = form.files;
   const properties = JSON.parse(form.fields.metadata);
-  const storeCids = properties.badges.flatMap(async (badge: any) => {
-    const badgeFile = badgeFiles[badge.title][0];
-    const name = badgeFile.originalFilename as string;
-    const f = new File([fs.readFileSync(badgeFile.path)], name, {
+  const storeCids = properties.pathways.flatMap(async (pathway: any) => {
+    const pathwayFile = pathwayFiles[pathway.title][0];
+    const name = pathwayFile.originalFilename as string;
+    const f = new File([fs.readFileSync(pathwayFile.path)], name, {
       type: "image/*",
     });
 
-    const { image, description, title, ...badgeProperties } = badge;
+    const { image, description, title, ...pathwayProperties } = pathway;
     const nftStorageRes = await nftStorage.store({
       name: title,
       description,
       image: f,
       properties: {
-        ...badgeProperties,
+        ...pathwayProperties,
       },
     });
     return {
-      badge: badge.title,
+      pathway: pathway.title,
       url: nftStorageRes.url,
     };
   });

@@ -116,7 +116,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const finalValues = {
       ...values,
       image: cids[values.name],
-      badgeId: `ceramic://${router.query.badgeId}`,
+      pathwayId: `ceramic://${router.query.pathwayId}`,
     };
 
     const questDoc = await self.client.dataModel.createTile(
@@ -130,7 +130,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const signature = await provider.provider.send("personal_sign", [
       JSON.stringify({
         id: questDoc.id.toUrl(),
-        badgeId: `ceramic://${router.query.badgeId}`,
+        pathwayId: `ceramic://${router.query.pathwayId}`,
       }),
       account,
     ]);

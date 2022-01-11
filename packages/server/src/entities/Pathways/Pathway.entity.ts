@@ -2,12 +2,12 @@ import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
 import { Quest } from '../Quests/Quest.entity';
 
-export enum BadgeTypeEnum {
+export enum PathwayTypeEnum {
   BRANCHED = 'branched',
   DECRYPTED = 'decrypted',
 }
 
-export enum BadgeDifficultyEnum {
+export enum PathwayDifficultyEnum {
   BEGINNER = 'beginner',
   INTERMEDIATE = 'intermediate',
   ADVANCED = 'advanced',
@@ -15,21 +15,21 @@ export enum BadgeDifficultyEnum {
   WIZARD = 'wizard',
 }
 
-registerEnumType(BadgeTypeEnum, {
-  name: 'BadgeTypeEnum',
+registerEnumType(PathwayTypeEnum, {
+  name: 'PathwayTypeEnum',
   description:
     'Branched = theorical lessons and Decrypted = technical hands on lessons',
 });
 
-registerEnumType(BadgeDifficultyEnum, {
-  name: 'BadgeDifficultyEnum',
+registerEnumType(PathwayDifficultyEnum, {
+  name: 'PathwayDifficultyEnum',
   description:
-    'The difficulty of a badge, from beginner to wizard where wizard is the most difficult mode',
+    'The difficulty of a pathway, from beginner to wizard where wizard is the most difficult mode',
 });
 
 export type CeramicStreamId = string;
 @ObjectType()
-export class Badge extends BaseEntity {
+export class Pathway extends BaseEntity {
   @Field()
   id: string;
 
@@ -48,8 +48,8 @@ export class Badge extends BaseEntity {
   @Field(() => [String])
   prerequisites?: string[];
 
-  @Field(() => BadgeDifficultyEnum)
-  difficulty: BadgeDifficultyEnum;
+  @Field(() => PathwayDifficultyEnum)
+  difficulty: PathwayDifficultyEnum;
 
   @Field(() => [Quest])
   quests?: Quest[];

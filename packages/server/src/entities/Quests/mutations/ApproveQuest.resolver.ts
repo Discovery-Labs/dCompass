@@ -21,69 +21,69 @@ export class ApproveQuestResolver {
     @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args('input') { id, questApproverSignature }: ApproveQuestInput,
   ): Promise<Quest | null | undefined> {
-    // Check that the current user is the owner of the badge
+    // Check that the current user is the owner of the pathway
     const ogQuest = await ceramicClient.ceramic.loadStream(id);
-    const badgeId = ogQuest.content.badgeId;
+    const pathwayId = ogQuest.content.pathwayId;
     console.log(ogQuest.content);
     const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: id, badgeId }),
+      JSON.stringify({ id: id, pathwayId }),
       questApproverSignature,
     );
 
     console.log({ decodedAddress });
 
-    const allBadges = await ceramicClient.dataStore.get(
-      schemaAliases.BADGES_ALIAS,
+    const allPathways = await ceramicClient.dataStore.get(
+      schemaAliases.PATHWAYS_ALIAS,
     );
-    const badges = allBadges?.badges ?? [];
-    const ogBadge = await ceramicClient.ceramic.loadStream(badgeId);
+    const pathways = allPathways?.pathways ?? [];
+    const ogPathway = await ceramicClient.ceramic.loadStream(pathwayId);
 
-    const additionalFields = badges.find(
-      (badge: { id: string }) => badge.id === badgeId,
+    const additionalFields = pathways.find(
+      (pathway: { id: string }) => pathway.id === pathwayId,
     );
 
-    if (!ogBadge || !additionalFields) {
-      throw new NotFoundException('Badge not found');
+    if (!ogPathway || !additionalFields) {
+      throw new NotFoundException('Pathway not found');
     }
 
-    const badgeIndexedFields = {
-      ...ogBadge.content,
+    const pathwayIndexedFields = {
+      ...ogPathway.content,
       ...additionalFields,
     };
 
-    console.log({ badgeIndexedFields });
+    console.log({ pathwayIndexedFields });
 
     // TODO: check if address is part of project contributors
-    // const badgeContributors = badgeIndexedFields.squads
-    //   ? badgeIndexedFields.squads.flatMap((squad: Squad) =>
+    // const pathwayContributors = pathwayIndexedFields.squads
+    //   ? pathwayIndexedFields.squads.flatMap((squad: Squad) =>
     //       squad.members.map((m) => m.toLowerCase()),
     //     )
     //   : [];
 
     // if (
-    //   !badgeIndexedFields ||
-    //   !badgeContributors.includes(decodedAddress.toLowerCase())
+    //   !pathwayIndexedFields ||
+    //   !pathwayContributors.includes(decodedAddress.toLowerCase())
     // ) {
     //   throw new ForbiddenError('Unauthorized');
     // }
 
-    // remove previously indexed badge and recreate it as with the new pending quest
-    const existingBadges = badges.filter(
-      (badge: { id: string }) => badge.id !== badgeIndexedFields.id,
+    // remove previously indexed pathway and recreate it as with the new pending quest
+    const existingPathways = pathways.filter(
+      (pathway: { id: string }) => pathway.id !== pathwayIndexedFields.id,
     );
 
     // Approve quest and remove it from the pending quests
-    const appBadgesUpdated = [
-      ...existingBadges,
+    const appPathwaysUpdated = [
+      ...existingPathways,
       {
-        id: badgeId,
-        ...badgeIndexedFields,
+        id: pathwayId,
+        ...pathwayIndexedFields,
         // add quest in approved quests
-        quests: [...(badgeIndexedFields.quests ?? []), ogQuest.id.toUrl()],
+        quests: [...(pathwayIndexedFields.quests ?? []), ogQuest.id.toUrl()],
         // remove quest from pending quests
         pendingQuests: [
-          ...(badgeIndexedFields.pendingQuests
-            ? badgeIndexedFields.pendingQuests.filter(
+          ...(pathwayIndexedFields.pendingQuests
+            ? pathwayIndexedFields.pendingQuests.filter(
                 (quest: string) => quest !== ogQuest.id.toUrl(),
               )
             : []),
@@ -91,8 +91,8 @@ export class ApproveQuestResolver {
       },
     ];
 
-    await ceramicClient.dataStore.set(schemaAliases.BADGES_ALIAS, {
-      badges: appBadgesUpdated,
+    await ceramicClient.dataStore.set(schemaAliases.PATHWAYS_ALIAS, {
+      pathways: appPathwaysUpdated,
     });
 
     const previousQuests = await ceramicClient.dataStore.get(

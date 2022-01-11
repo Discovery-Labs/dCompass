@@ -6,7 +6,7 @@ export const CREATE_QUEST_MUTATION = gql`
       id
       name
       description
-      badgeId
+      pathwayId
       questType
     }
   }
@@ -18,7 +18,7 @@ export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
       id
       name
       description
-      badgeId
+      pathwayId
       proposalId
     }
   }
@@ -30,7 +30,7 @@ export const APPROVE_QUEST_MUTATION = gql`
       id
       name
       description
-      badgeId
+      pathwayId
       questType
       image
       isPending
@@ -38,13 +38,13 @@ export const APPROVE_QUEST_MUTATION = gql`
   }
 `;
 
-export const GET_ALL_QUESTS_BY_BADGE_ID_QUERY = gql`
-  query GetAllQuestsByBadgeId($badgeId: String!) {
-    getAllQuestsByBadgeId(badgeId: $badgeId) {
+export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
+  query GetAllQuestsByPathwayId($pathwayId: String!) {
+    getAllQuestsByPathwayId(pathwayId: $pathwayId) {
       id
       name
       description
-      badgeId
+      pathwayId
       questType
       image
       isPending

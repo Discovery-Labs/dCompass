@@ -8,7 +8,7 @@ import { Tag } from '../Tag.entity';
 export type TagItem = {
   id: string;
   name: string;
-  badgeId: string;
+  pathwayId: string;
   completedBy: string[];
 };
 

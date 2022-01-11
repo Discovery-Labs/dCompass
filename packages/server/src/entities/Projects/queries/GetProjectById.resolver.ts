@@ -2,7 +2,7 @@ import { Resolver, Query, Args } from '@nestjs/graphql';
 import { schemaAliases } from '../../../core/constants/idx';
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseCeramicClient } from '../../../core/utils/types';
-// import { BadgeItem } from '../../Badges/mutations/CreateBadge.resolver';
+// import { PathwayItem } from '../../Pathways/mutations/CreatePathway.resolver';
 // import { QuestItem } from '../../Quests/mutations/CreateQuest.resolver';
 import { Project } from '../Project.entity';
 
@@ -33,21 +33,21 @@ export class GetProjectByIdResolver {
     if (!ogProject || !additionalFields) {
       return null;
     }
-    // const projectBadges = record.state.next?.content.badges;
-    // console.log(projectBadges);
-    // if (projectBadges && projectBadges.length > 0) {
-    //   const allBadges = await Promise.all(
-    //     projectBadges.map(async (badge: BadgeItem) => {
-    //       const fullBadge = await ceramicClient.ceramic.loadStream(badge.id);
-    //       const fullBadgeQuests = fullBadge.state.next?.content.quests;
-    //       if (!fullBadgeQuests) {
+    // const projectPathways = record.state.next?.content.pathways;
+    // console.log(projectPathways);
+    // if (projectPathways && projectPathways.length > 0) {
+    //   const allPathways = await Promise.all(
+    //     projectPathways.map(async (pathway: PathwayItem) => {
+    //       const fullPathway = await ceramicClient.ceramic.loadStream(pathway.id);
+    //       const fullPathwayQuests = fullPathway.state.next?.content.quests;
+    //       if (!fullPathwayQuests) {
     //         return {
-    //           id: badge.id,
-    //           ...fullBadge.state.content,
+    //           id: pathway.id,
+    //           ...fullPathway.state.content,
     //         };
     //       }
     //       const fullQuests = await Promise.all(
-    //         fullBadgeQuests.map(async (quest: QuestItem) => {
+    //         fullPathwayQuests.map(async (quest: QuestItem) => {
     //           const fullQuest = await ceramicClient.ceramic.loadStream(
     //             quest.id,
     //           );
@@ -58,8 +58,8 @@ export class GetProjectByIdResolver {
     //         }),
     //       );
     //       return {
-    //         id: badge.id,
-    //         ...fullBadge.state.content,
+    //         id: pathway.id,
+    //         ...fullPathway.state.content,
     //         quests: fullQuests,
     //       };
     //     }),
@@ -67,7 +67,7 @@ export class GetProjectByIdResolver {
     //   return {
     //     id: projectId,
     //     ...record.state.content,
-    //     badges: allBadges,
+    //     pathways: allPathways,
     //   };
     // }
     return {

@@ -33,7 +33,7 @@ export declare const schemas: {
                         type: string;
                         title: string;
                         properties: {
-                            pendingBadges: {
+                            pendingPathways: {
                                 type: string;
                                 title: string;
                                 items: {
@@ -94,7 +94,7 @@ export declare const schemas: {
                                     $ref: string;
                                 };
                             };
-                            badges: {
+                            pathways: {
                                 type: string;
                                 title: string;
                                 items: {
@@ -244,7 +244,7 @@ export declare const schemas: {
                         $ref: string;
                     };
                 };
-                badges: {
+                pathways: {
                     type: string;
                     title: string;
                     items: {
@@ -366,12 +366,12 @@ export declare const schemas: {
                 };
             };
         };
-        Badges: {
+        Pathways: {
             $schema: string;
             title: string;
             type: string;
             properties: {
-                badges: {
+                pathways: {
                     type: string;
                     title: string;
                     items: {
@@ -393,7 +393,7 @@ export declare const schemas: {
                 };
             };
         };
-        Badge: {
+        Pathway: {
             $schema: string;
             title: string;
             description: string;
@@ -515,7 +515,7 @@ export declare const schemas: {
                 description: {
                     type: string;
                 };
-                badgeId: {
+                pathwayId: {
                     $ref: string;
                 };
                 completedBy: {

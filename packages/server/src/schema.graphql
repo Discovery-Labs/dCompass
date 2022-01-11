@@ -2,9 +2,9 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input ApproveBadgeInput {
-  badgeApproverSignature: String!
+input ApprovePathwayInput {
   id: String!
+  pathwayApproverSignature: String!
 }
 
 input ApproveProjectInput {
@@ -25,38 +25,9 @@ input ApproveQuestInput {
   questApproverSignature: String!
 }
 
-type Badge {
-  """Identifies the date and time when the object was created."""
-  createdAt: String!
-  createdBy: String!
-  description: String!
-  difficulty: BadgeDifficultyEnum!
+input CreatePathwayInput {
   id: String!
-  image: String!
-  isPending: Boolean
-  prerequisites: [String!]
-  projectId: String!
-  quests: [Quest!]
-  title: String!
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
-}
-
-"""
-The difficulty of a badge, from beginner to wizard where wizard is the most difficult mode
-"""
-enum BadgeDifficultyEnum {
-  ADVANCED
-  BEGINNER
-  EXPERT
-  INTERMEDIATE
-  WIZARD
-}
-
-input CreateBadgeInput {
-  badgeCreatorSignature: String!
-  id: String!
+  pathwayCreatorSignature: String!
 }
 
 input CreateProjectInput {
@@ -103,8 +74,8 @@ input EditProjectInput {
 }
 
 type Mutation {
-  """Approve a new Badge in dCompass"""
-  approveBadge(input: ApproveBadgeInput!): Badge
+  """Approve a new Pathway in dCompass"""
+  approvePathway(input: ApprovePathwayInput!): Pathway
 
   """Approves a new Project in dCompass"""
   approveProject(input: ApproveProjectInput!): [ApproveProjectOutput!]
@@ -112,8 +83,8 @@ type Mutation {
   """Approve a new Quest in dCompass"""
   approveQuest(input: ApproveQuestInput!): Quest
 
-  """Create a new Badge in dCompass"""
-  createBadge(input: CreateBadgeInput!): Badge
+  """Create a new Pathway in dCompass"""
+  createPathway(input: CreatePathwayInput!): Pathway
 
   """Create a new Project in dCompass"""
   createProject(input: CreateProjectInput!): [CreateProjectOutput!]
@@ -131,8 +102,36 @@ type Mutation {
   editProject(input: EditProjectInput!): Project
 }
 
+type Pathway {
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+  createdBy: String!
+  description: String!
+  difficulty: PathwayDifficultyEnum!
+  id: String!
+  image: String!
+  isPending: Boolean
+  prerequisites: [String!]
+  projectId: String!
+  quests: [Quest!]
+  title: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+}
+
+"""
+The difficulty of a pathway, from beginner to wizard where wizard is the most difficult mode
+"""
+enum PathwayDifficultyEnum {
+  ADVANCED
+  BEGINNER
+  EXPERT
+  INTERMEDIATE
+  WIZARD
+}
+
 type Project {
-  badges: [Badge!]
   color: String
   contracts: [String!]!
 
@@ -146,6 +145,7 @@ type Project {
   isFeatured: Boolean!
   logo: String
   name: String!
+  pathways: [Pathway!]
   peerProjects: [String!]
   repos: [String!]
   squads: [Squad!]!
@@ -167,27 +167,26 @@ input ProjectSquadsInput {
 }
 
 type Query {
-  """Gets all the badges in dCompass"""
-  getAllBadgesByProjectId(projectId: String!): [Badge!]
+  """Gets all the pathways in dCompass"""
+  getAllPathwaysByProjectId(projectId: String!): [Pathway!]
 
   """Gets all the projects in dCompass"""
   getAllProjects: [Project!]
 
   """Gets all the quests in dCompass"""
-  getAllQuestsByBadgeId(badgeId: String!): [Quest!]
+  getAllQuestsByPathwayId(pathwayId: String!): [Quest!]
 
   """Gets all the tags in Discovery"""
   getAllTags: [Tag!]
 
-  """Gets a badge by its Stream ID"""
-  getBadgeById(badgeId: String!): Badge
+  """Gets a pathway by its Stream ID"""
+  getPathwayById(pathwayId: String!): Pathway
 
   """Gets a project by its Stream ID"""
   getProjectById(projectId: String!): Project
 }
 
 type Quest {
-  badgeId: String!
   completedBy: [String!]
 
   """Identifies the date and time when the object was created."""
@@ -197,6 +196,7 @@ type Quest {
   image: String!
   isPending: Boolean
   name: String!
+  pathwayId: String!
   questType: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -204,7 +204,6 @@ type Quest {
 }
 
 type SnapshotVoterQuest {
-  badgeId: String!
   completedBy: [String!]
 
   """Identifies the date and time when the object was created."""
@@ -214,6 +213,7 @@ type SnapshotVoterQuest {
   image: String!
   isPending: Boolean
   name: String!
+  pathwayId: String!
   proposalId: String!
   questType: String!
 
