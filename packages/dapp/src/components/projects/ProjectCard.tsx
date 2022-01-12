@@ -83,14 +83,14 @@ export const ProjectCard = ({
       <Flex w="full" direction="column" fontSize="xs">
         {project.squads && (
           <HStack justifyContent="space-between">
-            <Text fontSize="xs">
+            <Text fontSize="xs" textTransform="uppercase">
               {project.squads.length} SQUAD
               {project.squads.length > 1 ? "s" : ""}
             </Text>
-            <Text fontSize="xs">
+            <Text fontSize="xs" textTransform="uppercase">
               {project.squads.flatMap((squad) => squad.members).length} MEMBER
               {project.squads.flatMap((squad) => squad.members).length > 1
-                ? "s"
+                ? "S"
                 : ""}
             </Text>
           </HStack>

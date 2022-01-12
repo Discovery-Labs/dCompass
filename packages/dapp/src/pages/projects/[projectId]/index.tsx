@@ -186,7 +186,7 @@ function ProjectPage({
               </Heading>
               <HStack>
                 <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
-                <Heading as="h4" size="md">
+                <Heading as="h4" size="md" textTransform="uppercase">
                   {squad.members.length} MEMBER
                   {squad.members.length > 1 ? "s" : ""}
                 </Heading>

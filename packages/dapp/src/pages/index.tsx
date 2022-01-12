@@ -72,9 +72,10 @@ function Projects() {
   function filterWithTags(e: Array<string>) {
     const newFilteredProjects = data.getAllProjects.filter(
       (project: Project) => {
+        console.log("---- FILTERWITHTAGS", e);
         return (
           project.tags &&
-          project.tags.some((tag: { label: string }) => e.includes(tag.label))
+          project.tags.some((tag: { id: string }) => e.includes(tag.id))
         );
       }
     );
@@ -136,15 +137,15 @@ function Projects() {
         <>
           {filteredProjects.length !== 0
             ? filteredProjects
-                .filter((project) => project.createdBy === account)
-                .map((project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))
+              .filter((project) => project.createdBy === account)
+              .map((project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))
             : data.getAllProjects
-                .filter((project: Project) => project.createdBy === account)
-                .map((project: Project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))}
+              .filter((project: Project) => project.createdBy === account)
+              .map((project: Project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))}
         </>
       );
     }
@@ -153,15 +154,15 @@ function Projects() {
       <>
         {filteredProjects.length !== 0
           ? filteredProjects
-              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-              .map((project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))
+            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+            .map((project) => (
+              <ProjectCard key={project.name} project={project} />
+            ))
           : data.getAllProjects
-              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-              .map((project: Project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))}
+            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+            .map((project: Project) => (
+              <ProjectCard key={project.name} project={project} />
+            ))}
       </>
     );
   };

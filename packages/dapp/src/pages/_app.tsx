@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { ApolloProvider } from "@apollo/client";
 import { ChakraProvider } from "@chakra-ui/react";
-import { EmotionCache } from "@emotion/cache";
+// import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { Web3Provider as EthersProvider } from "@ethersproject/providers";
 import "@fontsource/poppins";
@@ -12,7 +12,7 @@ import { DefaultSeo } from "next-seo";
 import { AppProps } from "next/app";
 import Head from "next/head";
 
-import createEmotionCache from "styles/createEmotionCache";
+// import createEmotionCache from "styles/createEmotionCache";
 import theme from "styles/customTheme";
 import "styles/globals.css";
 import { useApollo } from "../../lib/apolloClient";
@@ -20,48 +20,40 @@ import defaultSEOConfig from "../../next-seo.config";
 import { Web3Provider } from "../contexts/Web3Provider";
 import Layout from "components/layout";
 
-const clientSideEmotionCache = createEmotionCache();
+// const clientSideEmotionCache = createEmotionCache();
 const getLibrary = (provider: any): EthersProvider => {
   const library = new EthersProvider(provider);
   library.pollingInterval = 12000;
   return library;
 };
-interface MyAppProps extends AppProps {
-  emotionCache?: EmotionCache;
-}
+type MyAppProps = AppProps;
 
-const MyApp = ({
-  Component,
-  pageProps,
-  emotionCache = clientSideEmotionCache,
-}: MyAppProps) => {
+const MyApp = ({ Component, pageProps }: MyAppProps) => {
   const apolloClient = useApollo(pageProps);
   return (
     <ApolloProvider client={apolloClient}>
       <Web3ReactProvider getLibrary={getLibrary}>
         <Web3Provider>
-          <CacheProvider value={emotionCache}>
-            <ChakraProvider theme={theme}>
-              <Head>
-                <meta
-                  name="viewport"
-                  content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover"
-                />
-              </Head>
-              <DefaultSeo {...defaultSEOConfig} />
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </ChakraProvider>
-          </CacheProvider>
+          <ChakraProvider theme={theme}>
+            <Head>
+              <meta
+                name="viewport"
+                content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover"
+              />
+            </Head>
+            <DefaultSeo {...defaultSEOConfig} />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ChakraProvider>
         </Web3Provider>
       </Web3ReactProvider>
     </ApolloProvider>
   );
 };
 
-MyApp.defaultProps = {
-  emotionCache: clientSideEmotionCache,
-};
+// MyApp.defaultProps = {
+//   emotionCache: clientSideEmotionCache,
+// };
 
 export default appWithTranslation(MyApp);
