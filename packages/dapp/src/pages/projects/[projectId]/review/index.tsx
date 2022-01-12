@@ -10,24 +10,34 @@ import {
   TagLabel,
   HStack,
   VStack,
-  Box,
+  Stack,
+  Badge,
+  Link,
+  Icon,
+  SimpleGrid,
+  Image,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { GetServerSideProps } from "next";
 import { useContext, useEffect, useState } from "react";
+import Blockies from "react-blockies";
+import { BsGlobe, BsPeople, BsPerson } from "react-icons/bs";
+import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 import { initializeApollo } from "../../../../../lib/apolloClient";
 import Card from "../../../../components/custom/Card";
+import CardMedia from "../../../../components/custom/CardMedia";
 import NotReviewerCard from "../../../../components/custom/NotReviewerCard";
 import CenteredFrame from "../../../../components/layout/CenteredFrame";
 import Container from "../../../../components/layout/Container";
 import { Web3Context } from "../../../../contexts/Web3Provider";
 import { splitCIDS } from "../../../../core/helpers";
+import useCustomColor from "../../../../core/hooks/useCustomColor";
+import { Tag as TagType } from "../../../../core/types";
 import {
   APPROVE_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
-import IconWithState from "components/custom/IconWithState";
 
 type Props = {
   projectId: string | null;
@@ -37,6 +47,7 @@ export const getServerSideProps: GetServerSideProps<
   Props,
   { projectId: string }
 > = async (ctx) => {
+  console.log({ pId: ctx.params?.projectId });
   const id = ctx.params?.projectId ?? null;
   if (id === null) {
     return {
@@ -64,11 +75,18 @@ export const getServerSideProps: GetServerSideProps<
 function ReviewProjectPage({
   id,
   tokenUris,
+  logo,
   name,
   createdBy,
   description,
   squads,
   createdAt,
+  tags,
+  website,
+  discord,
+  twitter,
+  github,
+  gitbook,
 }: any) {
   const { isReviewer, contracts, provider } = useContext(Web3Context);
   const { chainId, account } = useWeb3React();
@@ -76,6 +94,7 @@ function ReviewProjectPage({
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
+  const { getColoredText } = useCustomColor();
 
   useEffect(() => {
     async function init() {
@@ -155,7 +174,19 @@ function ReviewProjectPage({
   return isReviewer ? (
     <Container>
       <Flex w="full">
-        <Heading>{name}</Heading>
+        <HStack>
+          <Image
+            rounded="full"
+            src={`https://ipfs.io/ipfs/${logo}`}
+            objectFit="cover"
+            w={150}
+            h={150}
+          />
+          <Heading as="h1" size="4xl" pl="4">
+            {name}
+          </Heading>
+        </HStack>
+
         <Spacer />
         <VStack align="left">
           {status && (status === "PENDING" || status === "NONEXISTENT") && (
@@ -188,31 +219,84 @@ function ReviewProjectPage({
         </VStack>
       </Flex>
       <Flex w="full" direction="column" pt="4">
-        <Text fontSize="sm">by {createdBy}</Text>
-        <Text pt="8">{description}</Text>
-        <Text pt="8" fontSize="xs">
-          {squads.length} Squad{squads.length > 1 ? "s" : ""}
-        </Text>
-        {squads.map((squad: any) => {
-          return (
-            <Box>
-              <Text>{squad.name}</Text>
-              members:{" "}
-              {squad.members.map((member: string) => (
-                <Text py="2" fontSize="xs">
-                  {member}
-                </Text>
-              ))}
-            </Box>
-          );
-        })}
-        <Text>Created at: {new Date(createdAt).toLocaleString()}</Text>
-        <Flex pt="12" w="full" justify="space-around">
-          <IconWithState icon="discord" active />
-          <IconWithState icon="gitbook" />
-          <IconWithState icon="github" />
-          <IconWithState icon="twitter" />
+        <Flex align="center" maxW="full">
+          {createdBy && <Blockies seed={createdBy} className="blockies" />}
+          <VStack align="flex-start" ml="2">
+            <Text color={getColoredText} textStyle="small" isTruncated>
+              Creation date: {new Date(createdAt).toLocaleString()}
+            </Text>
+            <Text fontSize="sm" isTruncated>
+              by {createdBy}
+            </Text>
+          </VStack>
         </Flex>
+        <Stack direction="row" pt="4">
+          {tags.map((tag: TagType) => (
+            <Badge key={tag.id} colorScheme={tag.color}>
+              {tag.label}
+            </Badge>
+          ))}
+        </Stack>
+        <HStack pt="8" spacing={8}>
+          {website && (
+            <Link target="_blank" href={website}>
+              <Icon boxSize={8} as={BsGlobe} />
+            </Link>
+          )}
+          {twitter && (
+            <Link target="_blank" href={twitter}>
+              <Icon boxSize={8} as={SiTwitter} />
+            </Link>
+          )}
+          {discord && (
+            <Link target="_blank" href={discord}>
+              <Icon boxSize={8} as={SiDiscord} />
+            </Link>
+          )}
+          {github && (
+            <Link target="_blank" href={github}>
+              <Icon boxSize={8} as={SiGithub} />
+            </Link>
+          )}
+          {gitbook && (
+            <Link target="_blank" href={gitbook}>
+              <Icon boxSize={8} as={SiGitbook} />
+            </Link>
+          )}
+        </HStack>
+        <Text pt="8">{description}</Text>
+        <Heading as="h3" size="lg" py="4">
+          {squads.length} Squad{squads.length > 1 ? "s" : ""}
+        </Heading>
+        <SimpleGrid columns={3} spacing={4}>
+          {squads.map((squad: any) => (
+            <CardMedia
+              h="fit-content"
+              src={`https://ipfs.io/ipfs/${squad.image}`}
+            >
+              <Heading as="h3" size="lg">
+                {squad.name}
+              </Heading>
+              <HStack>
+                <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
+                <Heading as="h4" size="md" textTransform="uppercase">
+                  {squad.members.length} MEMBER
+                  {squad.members.length > 1 ? "s" : ""}
+                </Heading>
+              </HStack>
+              <VStack align="center" maxW="full">
+                {squad.members.map((member: string) => (
+                  <HStack w="full">
+                    {member && <Blockies seed={member} className="blockies" />}
+                    <Text ml="2" fontSize="sm" isTruncated>
+                      {member}
+                    </Text>
+                  </HStack>
+                ))}
+              </VStack>
+            </CardMedia>
+          ))}
+        </SimpleGrid>
       </Flex>
     </Container>
   ) : (

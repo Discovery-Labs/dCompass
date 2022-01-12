@@ -20,6 +20,7 @@ import {
   MenuList,
   Checkbox,
   CheckboxGroup,
+  Heading,
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
 import NextLink from "next/link";
@@ -72,7 +73,6 @@ function Projects() {
   function filterWithTags(e: Array<string>) {
     const newFilteredProjects = data.getAllProjects.filter(
       (project: Project) => {
-        console.log("---- FILTERWITHTAGS", e);
         return (
           project.tags &&
           project.tags.some((tag: { id: string }) => e.includes(tag.id))
@@ -187,9 +187,9 @@ function Projects() {
   return (
     <Container>
       <Flex w="full">
-        <Text as="h1" textStyle="h1">
+        <Heading as="h1" size="2xl">
           Projects
-        </Text>
+        </Heading>
         <Spacer />
         <NextLink href="/projects/create-project" passHref>
           <Button leftIcon={<AddIcon />}>Create Project</Button>

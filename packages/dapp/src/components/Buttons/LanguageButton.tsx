@@ -1,17 +1,15 @@
 import {
   IconButton,
-  useColorMode,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   CheckboxGroup,
-  Link,
   Text,
 } from "@chakra-ui/react";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { BiWorld } from "react-icons/bi";
-import { useTranslation } from "next-i18next";
 
 const LanguageButton = () => {
   const router = useRouter();
@@ -22,7 +20,6 @@ const LanguageButton = () => {
 
   return (
     <>
-      {" "}
       <Menu closeOnSelect={false}>
         <MenuButton
           as={IconButton}

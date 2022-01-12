@@ -26,8 +26,10 @@ const CreateProjectForm = () => {
     register,
     setValue,
     control,
+    watch,
     formState: { errors },
   } = useFormContext();
+  const currentValues = watch();
 
   function goBack() {
     router.back();
@@ -107,7 +109,7 @@ const CreateProjectForm = () => {
         }))}
       />
 
-      <FormControl isInvalid={errors.whitepaper}>
+      {/* <FormControl isInvalid={errors.whitepaper}>
         <FormLabel htmlFor="whitepaper">Whitepaper</FormLabel>
         <Input
           placeholder="Whitepaper"
@@ -122,13 +124,33 @@ const CreateProjectForm = () => {
         <FormErrorMessage>
           {errors.whitepaper && errors.whitepaper.message}
         </FormErrorMessage>
-      </FormControl>
+      </FormControl> */}
 
       <Flex p="4" w="full" justify="space-around">
-        <IconWithState icon="discord" active />
-        <IconWithState icon="gitbook" />
-        <IconWithState icon="github" />
-        <IconWithState icon="twitter" />
+        <IconWithState
+          icon="twitter"
+          label="Twitter"
+          active={!!currentValues.twitter}
+          placeholder="Twitter account url"
+        />
+        <IconWithState
+          icon="discord"
+          active={!!currentValues.discord}
+          label="Discord"
+          placeholder="Discord server invite url"
+        />
+        <IconWithState
+          icon="gitbook"
+          active={!!currentValues.gitbook}
+          label="Gitbook"
+          placeholder="Gitbook repository url"
+        />
+        <IconWithState
+          icon="github"
+          active={!!currentValues.github}
+          label="Github"
+          placeholder="Github organization url"
+        />
       </Flex>
     </>
   );

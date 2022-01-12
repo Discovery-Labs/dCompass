@@ -21,6 +21,10 @@ export const EDIT_PROJECT_MUTATION = gql`
       website
       whitepaper
       tokenUris
+      discord
+      twitter
+      github
+      gitbook
       isFeatured
       logo
       squads {
@@ -57,6 +61,10 @@ export const ALL_PROJECTS_QUERY = gql`
       tokenUris
       website
       whitepaper
+      discord
+      twitter
+      github
+      gitbook
       createdAt
       isFeatured
       logo
@@ -86,6 +94,10 @@ export const PROJECT_BY_ID_QUERY = gql`
       isFeatured
       website
       whitepaper
+      discord
+      twitter
+      github
+      gitbook
       logo
       squads {
         name

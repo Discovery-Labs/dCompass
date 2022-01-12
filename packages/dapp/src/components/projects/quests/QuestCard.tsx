@@ -12,8 +12,8 @@ import {
 import { useRouter } from "next/router";
 import { useContext } from "react";
 
-import { Web3Context } from "../contexts/Web3Provider";
-import { APPROVE_QUEST_MUTATION } from "../graphql/quests";
+import { Web3Context } from "../../../contexts/Web3Provider";
+import { APPROVE_QUEST_MUTATION } from "../../../graphql/quests";
 import Card from "components/custom/Card";
 
 type Quest = {

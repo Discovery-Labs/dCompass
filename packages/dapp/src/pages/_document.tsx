@@ -14,7 +14,7 @@ import Document, {
 } from "next/document";
 import * as React from "react";
 
-import createEmotionCache from "styles/createEmotionCache";
+// import createEmotionCache from "styles/createEmotionCache";
 
 const APP_NAME = "quadratic-diplomacy";
 const APP_DESCRIPTION =
@@ -23,34 +23,33 @@ const APP_DESCRIPTION =
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
     const originalRenderPage = ctx.renderPage;
-    const cache = createEmotionCache();
+    // const cache = createEmotionCache();
 
-    const { extractCriticalToChunks } = createEmotionServer(cache);
+    // const { extractCriticalToChunks } = createEmotionServer(cache);
 
     ctx.renderPage = () =>
       originalRenderPage({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        enhanceApp: (App: any) => (props) =>
-          <App emotionCache={cache} {...props} />,
+        enhanceApp: (App: any) => (props) => <App {...props} />,
       });
 
     const initialProps = await Document.getInitialProps(ctx);
 
-    const emotionStyles = extractCriticalToChunks(initialProps.html);
-    const emotionStyleTags = emotionStyles.styles.map((style) => (
-      <style
-        data-emotion={`${style.key} ${style.ids.join(" ")}`}
-        key={style.key}
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: style.css }}
-      />
-    ));
+    // const emotionStyles = extractCriticalToChunks(initialProps.html);
+    // const emotionStyleTags = emotionStyles.styles.map((style) => (
+    //   <style
+    //     data-emotion={`${style.key} ${style.ids.join(" ")}`}
+    //     key={style.key}
+    //     // eslint-disable-next-line react/no-danger
+    //     dangerouslySetInnerHTML={{ __html: style.css }}
+    //   />
+    // ));
 
     return {
       ...initialProps,
       styles: [
         ...React.Children.toArray(initialProps.styles),
-        ...emotionStyleTags,
+        // ...emotionStyleTags,
       ],
     };
   }

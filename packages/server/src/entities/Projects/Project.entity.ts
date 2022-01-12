@@ -29,7 +29,10 @@ export class Project extends BaseEntity {
   discord?: string;
 
   @Field()
-  github: string;
+  github?: string;
+
+  @Field()
+  gitbook?: string;
 
   @Field()
   createdBy: string;

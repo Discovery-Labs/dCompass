@@ -25,7 +25,7 @@ import NextLink from "next/link";
 import { useEffect, useState } from "react";
 
 import Container from "../../components/layout/Container";
-import QuestCard from "../../components/QuestCard";
+import QuestCard from "../../components/projects/quests/QuestCard";
 
 export type TagItem = {
   name: string;
@@ -134,11 +134,11 @@ function Quests() {
       <>
         {filteredQuests.length !== 0
           ? filteredQuests.map((quest) => (
-              <QuestCard key={quest.name} quest={quest} />
-            ))
+            <QuestCard key={quest.name} quest={quest} />
+          ))
           : allQuests.map((quest) => (
-              <QuestCard key={quest.name} quest={quest} />
-            ))}
+            <QuestCard key={quest.name} quest={quest} />
+          ))}
       </>
     );
   };

@@ -9,33 +9,33 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 type IconWithStateProps = {
   icon: string;
   active?: boolean;
+  label: string;
+  placeholder: string;
 };
 
-function IconWithState({ icon, active = false }: IconWithStateProps) {
+function IconWithState({
+  icon,
+  active = false,
+  label,
+  placeholder,
+}: IconWithStateProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const {
-    handleSubmit,
     register,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm();
-
-  function onSubmit(values: any) {
-    console.log(values);
-  }
+    formState: { errors },
+  } = useFormContext();
 
   let SiIcon;
   switch (icon) {
@@ -58,26 +58,26 @@ function IconWithState({ icon, active = false }: IconWithStateProps) {
     <>
       <IconButton
         variant="unstyled"
-        aria-label="Discord"
+        aria-label="Social medias and resources"
         w="8"
         h="8"
         as={SiIcon}
         onClick={onOpen}
-        color={active ? "aqua.200" : "stone"}
-        _hover={{ color: "aqua.300" }}
+        color={active ? "accentDark.200" : "stone"}
+        _hover={{ color: "accentDark.300" }}
       />
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Discord</ModalHeader>
+          <ModalHeader>Social medias &amp; resources</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <VStack w="full" onSubmit={handleSubmit(onSubmit)}>
-              <FormControl isInvalid={errors.name}>
-                <FormLabel htmlFor="name">Username</FormLabel>
+            <VStack w="full">
+              <FormControl isInvalid={errors[icon]}>
+                <FormLabel htmlFor={icon}>{label}</FormLabel>
                 <Input
-                  placeholder="Project name"
-                  {...register("name", {
+                  placeholder={placeholder}
+                  {...register(icon, {
                     required: "This is required",
                     maxLength: {
                       value: 150,
@@ -86,16 +86,11 @@ function IconWithState({ icon, active = false }: IconWithStateProps) {
                   })}
                 />
                 <FormErrorMessage>
-                  {errors.name && errors.name.message}
+                  {errors[icon] && errors[icon].message}
                 </FormErrorMessage>
               </FormControl>
             </VStack>
           </ModalBody>
-          <ModalFooter alignSelf="center">
-            <Button mt={4} isLoading={isSubmitting} type="submit">
-              Submit
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

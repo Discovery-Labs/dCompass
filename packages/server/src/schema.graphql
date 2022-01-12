@@ -140,7 +140,8 @@ type Project {
   createdBy: String!
   description: String!
   discord: String
-  github: String!
+  gitbook: String
+  github: String
   id: String!
   isFeatured: Boolean!
   logo: String

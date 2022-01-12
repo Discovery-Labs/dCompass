@@ -24,18 +24,17 @@ import { GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
-import { BsPeople, BsPerson } from "react-icons/bs";
+import { BsGlobe, BsPeople, BsPerson } from "react-icons/bs";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
 import CardMedia from "../../../components/custom/CardMedia";
+import QuestCard from "../../../components/projects/quests/QuestCard";
 import { Tag } from "../../../core/types";
 import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
-import IconWithState from "components/custom/IconWithState";
 import Container from "components/layout/Container";
 import PathwayCard from "components/projects/pathways/PathwayCard";
-import QuestCard from "components/QuestCard";
 import { Web3Context } from "contexts/Web3Provider";
 import useCustomColor from "core/hooks/useCustomColor";
 
@@ -93,6 +92,11 @@ function ProjectPage({
   logo,
   tags,
   createdAt,
+  website,
+  discord,
+  twitter,
+  github,
+  gitbook,
 }: any) {
   const { account } = useContext(Web3Context);
   const { getColoredText } = useCustomColor();
@@ -116,8 +120,6 @@ function ProjectPage({
         <HStack>
           <Image
             rounded="full"
-            // TODO: use project color
-            border="solid 5px rebeccapurple"
             src={`https://ipfs.io/ipfs/${logo}`}
             objectFit="cover"
             w={150}
@@ -158,18 +160,31 @@ function ProjectPage({
           ))}
         </Stack>
         <HStack pt="8" spacing={8}>
-          <Link target="_blank" href="https://google.com">
-            <Icon boxSize={8} as={SiDiscord} />
-          </Link>
-          <Link target="_blank" href="https://google.com">
-            <Icon boxSize={8} as={SiGitbook} />
-          </Link>
-          <Link target="_blank" href="https://google.com">
-            <Icon boxSize={8} as={SiGithub} />
-          </Link>
-          <Link target="_blank" href="https://google.com">
-            <Icon boxSize={8} as={SiTwitter} />
-          </Link>
+          {website && (
+            <Link target="_blank" href={website}>
+              <Icon boxSize={8} as={BsGlobe} />
+            </Link>
+          )}
+          {twitter && (
+            <Link target="_blank" href={twitter}>
+              <Icon boxSize={8} as={SiTwitter} />
+            </Link>
+          )}
+          {discord && (
+            <Link target="_blank" href={discord}>
+              <Icon boxSize={8} as={SiDiscord} />
+            </Link>
+          )}
+          {github && (
+            <Link target="_blank" href={github}>
+              <Icon boxSize={8} as={SiGithub} />
+            </Link>
+          )}
+          {gitbook && (
+            <Link target="_blank" href={gitbook}>
+              <Icon boxSize={8} as={SiGitbook} />
+            </Link>
+          )}
         </HStack>
         <Text pt="8">{description}</Text>
         <Heading as="h3" size="lg" py="4">
