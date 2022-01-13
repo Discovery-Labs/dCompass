@@ -2,15 +2,10 @@ import { useQuery } from "@apollo/client";
 import { AddIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Checkbox,
+  CheckboxGroup,
   Flex,
-  Text,
-  SimpleGrid,
-  Spacer,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
+  Heading,
   HStack,
   IconButton,
   Input,
@@ -18,11 +13,17 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Checkbox,
-  CheckboxGroup,
-  Heading,
+  SimpleGrid,
+  Spacer,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useContext, useEffect, useState } from "react";
 
@@ -47,6 +48,7 @@ const fuseOptions = {
 
 // eslint-disable-next-line complexity
 function Projects() {
+  const { t } = useTranslation("common");
   const {
     data: tagsData,
     loading: loadingTags,
@@ -80,20 +82,6 @@ function Projects() {
       }
     );
     setFilteredProjects(newFilteredProjects);
-
-    // const newFilteredProjects2 = newFilteredProjects.filter(
-    //   (project: Project) => {
-    //     return (
-    //       project.tags &&
-    //       project.tags.some((tag: { label: string }) => {
-    //         console.log("inside: ", e);
-    //         console.log("contains", tag.label);
-    //         return e.includes(tag.label);
-    //       })
-    //     );
-    //   }
-    // );
-    // console.log(`newFilteredProjects2`, newFilteredProjects2);
   }
 
   function onSearchQuery(event: React.ChangeEvent<HTMLInputElement>) {
@@ -151,15 +139,15 @@ function Projects() {
         <>
           {filteredProjects.length !== 0
             ? filteredProjects
-              .filter((project) => project.createdBy === account)
-              .map((project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))
+                .filter((project) => project.createdBy === account)
+                .map((project) => (
+                  <ProjectCard key={project.name} project={project} />
+                ))
             : data.getAllProjects
-              .filter((project: Project) => project.createdBy === account)
-              .map((project: Project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))}
+                .filter((project: Project) => project.createdBy === account)
+                .map((project: Project) => (
+                  <ProjectCard key={project.name} project={project} />
+                ))}
         </>
       );
     }
@@ -168,15 +156,15 @@ function Projects() {
       <>
         {filteredProjects.length !== 0
           ? filteredProjects
-            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-            .map((project) => (
-              <ProjectCard key={project.name} project={project} />
-            ))
+              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+              .map((project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))
           : data.getAllProjects
-            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-            .map((project: Project) => (
-              <ProjectCard key={project.name} project={project} />
-            ))}
+              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+              .map((project: Project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))}
       </>
     );
   };
@@ -188,11 +176,11 @@ function Projects() {
     <Container>
       <Flex w="full">
         <Heading as="h1" size="2xl">
-          Projects
+          {t("projects")}
         </Heading>
         <Spacer />
         <NextLink href="/projects/create-project" passHref>
-          <Button leftIcon={<AddIcon />}>Create Project</Button>
+          <Button leftIcon={<AddIcon />}>{t("create-project")}</Button>
         </NextLink>
       </Flex>
 
@@ -212,7 +200,7 @@ function Projects() {
             <MenuList>
               {tagsData.getAllTags.map(({ id, color, label }: Tag) => (
                 <MenuItem key={id}>
-                  <Checkbox colorScheme={color} value={label}>
+                  <Checkbox colorScheme={color} value={id}>
                     {label}
                   </Checkbox>
                 </MenuItem>
@@ -224,8 +212,8 @@ function Projects() {
 
       <Tabs w="full" variant="line">
         <TabList>
-          <Tab>All projects</Tab>
-          <Tab>My projects</Tab>
+          <Tab>{t("all-projects")}</Tab>
+          <Tab>{t("my-projects")}</Tab>
         </TabList>
 
         <TabPanels>
@@ -248,13 +236,22 @@ function Projects() {
               {data.getAllProjects && query.length === 0 && (
                 <ProjectsCard type="me" />
               )}
-              {!data.getAllProjects ?? "No project found"}
+              {!data.getAllProjects ?? t("project-not-found")}
             </SimpleGrid>
           </TabPanel>
         </TabPanels>
       </Tabs>
     </Container>
   );
+}
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      // Will be passed to the page component as props
+    },
+  };
 }
 
 export default Projects;
