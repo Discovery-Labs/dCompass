@@ -1,7 +1,9 @@
-import { useMutation, useQuery } from "@apollo/client";
-import { Flex, Button, Stack } from "@chakra-ui/react";
+import { useMutation } from "@apollo/client";
+import { Button, Flex, Stack } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -12,7 +14,6 @@ import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { schemaAliases } from "../../../core/ceramic";
-import { Tag } from "../../../core/types";
 import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 import Card from "components/custom/Card";
 
@@ -29,6 +30,7 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
+  const { t } = useTranslation("common");
   const router = useRouter();
   const { self, contracts, provider } = useContext(Web3Context);
   const { account } = useWeb3React();
@@ -170,7 +172,7 @@ function CreateProjectStepper() {
                   px="1.25rem"
                   fontSize="md"
                 >
-                  Prev
+                  {t("prev")}
                 </Button>
               )}
               {activeStep < 1 && (
@@ -180,7 +182,7 @@ function CreateProjectStepper() {
                   px="1.25rem"
                   fontSize="md"
                 >
-                  Next
+                  {t("next")}
                 </Button>
               )}
               {activeStep === 1 && (
@@ -192,7 +194,7 @@ function CreateProjectStepper() {
                   px="1.25rem"
                   fontSize="md"
                 >
-                  Submit
+                  {t("submit")}
                 </Button>
               )}
             </Flex>
@@ -207,6 +209,15 @@ function CreateProjectStepper() {
       </Card>
     </CenteredFrame>
   );
+}
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      // Will be passed to the page component as props
+    },
+  };
 }
 
 export default CreateProjectStepper;
