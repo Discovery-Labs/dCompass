@@ -1,5 +1,6 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
+import { ExpandedServerSignature } from '../../core/utils/security/ExpandedServerSignature';
 import { Quest } from '../Quests/Quest.entity';
 
 export enum PathwayTypeEnum {
@@ -53,6 +54,9 @@ export class Pathway extends BaseEntity {
 
   @Field(() => [Quest])
   quests?: Quest[];
+
+  @Field(() => [ExpandedServerSignature])
+  expandedServerSignatures?: ExpandedServerSignature[];
 
   @Field()
   createdBy: string;

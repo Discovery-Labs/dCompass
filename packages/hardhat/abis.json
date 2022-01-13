@@ -1553,7 +1553,7 @@
       "chainId": "42",
       "contracts": {
         "PathwayNFT": {
-          "address": "0xdF39041068EC2F0AD0480059121bc16C30bF2789",
+          "address": "0xAd6E7551bf4E0f105dCCA02f519881100516C34a",
           "abi": [
             {
               "inputs": [
@@ -2238,19 +2238,19 @@
                   "type": "string"
                 },
                 {
-                  "internalType": "bytes32[2]",
+                  "internalType": "bytes32[]",
                   "name": "r",
-                  "type": "bytes32[2]"
+                  "type": "bytes32[]"
                 },
                 {
-                  "internalType": "bytes32[2]",
+                  "internalType": "bytes32[]",
                   "name": "s",
-                  "type": "bytes32[2]"
+                  "type": "bytes32[]"
                 },
                 {
-                  "internalType": "uint8[2]",
+                  "internalType": "uint8[]",
                   "name": "v",
-                  "type": "uint8[2]"
+                  "type": "uint8[]"
                 },
                 {
                   "internalType": "uint256",
@@ -3305,7 +3305,7 @@
           ]
         },
         "Verify": {
-          "address": "0x9f0f6853ae0CDE82558f5456403482DD1bC44077",
+          "address": "0x085cF156B9D7890432516518BDe9fd92Ce1a82c3",
           "abi": [
             {
               "inputs": [

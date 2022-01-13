@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
 
 @InputType()
@@ -14,4 +14,10 @@ export class ApprovePathwayInput {
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
   pathwayApproverSignature: string;
+
+  @Field()
+  namespace?: string;
+
+  @Field(() => Int)
+  chainId: number;
 }

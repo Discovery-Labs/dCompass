@@ -21,11 +21,10 @@ import NextLink from "next/link";
 import { useContext } from "react";
 
 import { initializeApollo } from "../../../../../../lib/apolloClient";
+import QuestCard from "../../../../../components/projects/quests/QuestCard";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
-import IconWithState from "components/custom/IconWithState";
 import Container from "components/layout/Container";
 import PathwayCard from "components/projects/pathways/PathwayCard";
-import QuestCard from "components/QuestCard";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
 import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
@@ -91,11 +90,14 @@ function PathwayPage({
   projectId,
 }: any) {
   const { account } = useContext(Web3Context);
-  const { data, loading, error } = useQuery(GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY, {
-    variables: {
-      pathwayId: id,
-    },
-  });
+  const { data, loading, error } = useQuery(
+    GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
+    {
+      variables: {
+        pathwayId: id,
+      },
+    }
+  );
   const {
     data: projectRes,
     loading: projectLoading,
@@ -158,8 +160,9 @@ function PathwayPage({
           </TabList>
           {isOwner && (
             <NextLink
-              href={`/projects/${projectId.split("://")[1]}/pathways/${id.split("://")[1]
-                }/add-quest`}
+              href={`/projects/${projectId.split("://")[1]}/pathways/${
+                id.split("://")[1]
+              }/add-quest`}
               passHref
             >
               <Button leftIcon={<PlusSquareIcon />}>Add Quest</Button>

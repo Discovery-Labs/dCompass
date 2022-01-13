@@ -20,6 +20,11 @@ export const APPROVE_PATHWAY_MUTATION = gql`
       image
       description
       isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
 `;
