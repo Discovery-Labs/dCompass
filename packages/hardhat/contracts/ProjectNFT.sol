@@ -41,7 +41,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     event ReceiveCalled(address _caller, uint _value);
     event ProjectApproved(string indexed _projectId);
 
-    constructor(address payable _walletAddress, address[] memory _reviewers, uint128 _initialThreshold) ERC721("dCompassProject", "DCOMPROJ") public{
+    constructor(address payable _walletAddress, address[] memory _reviewers, uint128 _initialThreshold) ERC721("dCompassProject", "DCOMPROJ"){
         require(_reviewers.length > 0, "Must have at least 1 reviewer");
         require(_initialThreshold > 0 && _initialThreshold <=100, "invalid threshold");
         multiSigThreshold = _initialThreshold;
@@ -164,6 +164,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
 
     function setStatusString(uint index, string memory newName) external onlyReviewer{
         statusStrings[index] = newName;
+    }
+
+    function setStake(uint newStake) external onlyReviewer{
+        stakeAmount = newStake;
     }
 
     function addProjectContributor(string memory _projectId, address newContributor) external{
