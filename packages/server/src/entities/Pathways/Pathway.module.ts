@@ -7,6 +7,7 @@ import { CreatePathwayResolver } from './mutations/CreatePathway.resolver';
 import { GetAllPathwaysByProjectIdResolver } from './queries/GetAllPathwaysByProjectId.resolver';
 import { ApprovePathwayResolver } from './mutations/ApprovePathway.resolver';
 import { GetPathwayByIdResolver } from './queries/GetPathwayById.resolver';
+import { AppService } from '../../app.service';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { GetPathwayByIdResolver } from './queries/GetPathwayById.resolver';
     ApprovePathwayResolver,
     GetPathwayByIdResolver,
     GetAllPathwaysByProjectIdResolver,
+    AppService,
   ],
   exports: [],
 })

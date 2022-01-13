@@ -3,7 +3,9 @@
 # ------------------------------------------------------
 
 input ApprovePathwayInput {
+  chainId: Int!
   id: String!
+  namespace: String
   pathwayApproverSignature: String!
 }
 
@@ -73,6 +75,12 @@ input EditProjectInput {
   whitepaper: String
 }
 
+type ExpandedServerSignature {
+  r: String!
+  s: String!
+  v: Int!
+}
+
 type Mutation {
   """Approve a new Pathway in dCompass"""
   approvePathway(input: ApprovePathwayInput!): Pathway
@@ -108,6 +116,7 @@ type Pathway {
   createdBy: String!
   description: String!
   difficulty: PathwayDifficultyEnum!
+  expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
