@@ -19,7 +19,9 @@ const pathwaysDefaultValues = {
 
 function PathwaysForm() {
   const router = useRouter();
-  const [addPathwayMutation] = useMutation(CREATE_PATHWAY_MUTATION);
+  const [addPathwayMutation] = useMutation(CREATE_PATHWAY_MUTATION, {
+    refetchQueries: "all",
+  });
   const { self, account, provider } = useContext(Web3Context);
   const {
     control,

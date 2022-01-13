@@ -136,7 +136,12 @@ const Web3Provider = ({ children }: { children: any }) => {
             abis[strChainId][network.name].contracts.ProjectNFT.abi,
             signer
           );
-          setContracts({ projectNFTContract });
+          const pathwayNFTContract = new ethers.Contract(
+            abis[strChainId][network.name].contracts.PathwayNFT.address,
+            abis[strChainId][network.name].contracts.PathwayNFT.abi,
+            signer
+          );
+          setContracts({ projectNFTContract, pathwayNFTContract });
           const isValidReviewer = await projectNFTContract.reviewers(
             state.account
           );
@@ -182,7 +187,12 @@ const Web3Provider = ({ children }: { children: any }) => {
           abis[strChainId][network.name].contracts.ProjectNFT.abi,
           signer
         );
-        setContracts({ projectNFTContract });
+        const pathwayNFTContract = new ethers.Contract(
+          abis[strChainId][network.name].contracts.PathwayNFT.address,
+          abis[strChainId][network.name].contracts.PathwayNFT.abi,
+          signer
+        );
+        setContracts({ projectNFTContract, pathwayNFTContract });
         const isValidReviewer = await projectNFTContract.reviewers(account);
         setIsReviewer(isValidReviewer);
       }

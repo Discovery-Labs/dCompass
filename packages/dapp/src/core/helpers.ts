@@ -20,4 +20,18 @@ function splitCIDS(cids: string[]) {
   return { base16cids, firstParts, secondParts };
 }
 
-export { capitalize, convertToKebabCase, splitCIDS };
+function streamIdToUrl(streamId: string) {
+  return `ceramic://${streamId}`;
+}
+
+function streamUrlToId(streamUrl: string) {
+  return streamUrl.split("://")[1];
+}
+
+export {
+  capitalize,
+  convertToKebabCase,
+  splitCIDS,
+  streamIdToUrl,
+  streamUrlToId,
+};

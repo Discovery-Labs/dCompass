@@ -98,7 +98,7 @@ function ProjectPage({
   github,
   gitbook,
 }: any) {
-  const { account } = useContext(Web3Context);
+  const { account, isReviewer } = useContext(Web3Context);
   const { getColoredText } = useCustomColor();
   const { data, loading, error } = useQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
@@ -111,8 +111,6 @@ function ProjectPage({
   const isOwner = createdBy === account;
   if (loading) return "Loading...";
   if (error) return `Loading error! ${error.message}`;
-
-  console.log("squads", squads);
 
   return (
     <Container>
@@ -225,7 +223,7 @@ function ProjectPage({
         <HStack justifyContent="space-between">
           <TabList>
             <Tab>All pathways</Tab>
-            <Tab>Pending pathways</Tab>
+            {isReviewer && <Tab>Pending pathways</Tab>}
             <Tab>My pathways</Tab>
           </TabList>
           {isOwner && (
@@ -254,21 +252,23 @@ function ProjectPage({
                 ))}
             </SimpleGrid>
           </TabPanel>
-          <TabPanel>
-            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllPathwaysByProjectId
-                .filter((pathway: any) => pathway.isPending)
-                .map((pathway: any) => (
-                  <PathwayCard
-                    key={pathway.title}
-                    pathway={pathway}
-                    projectContributors={squads.flatMap(
-                      (squad: any) => squad.members
-                    )}
-                  />
-                ))}
-            </SimpleGrid>
-          </TabPanel>
+          {isReviewer && (
+            <TabPanel>
+              <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                {data.getAllPathwaysByProjectId
+                  .filter((pathway: any) => pathway.isPending)
+                  .map((pathway: any) => (
+                    <PathwayCard
+                      key={pathway.title}
+                      pathway={pathway}
+                      projectContributors={squads.flatMap(
+                        (squad: any) => squad.members
+                      )}
+                    />
+                  ))}
+              </SimpleGrid>
+            </TabPanel>
+          )}
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
               <QuestCard key={QuestData.name} quest={QuestData} />
