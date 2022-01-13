@@ -4,9 +4,11 @@ import { IoMdExit } from "react-icons/io";
 
 import { Web3Context } from "../../contexts/Web3Provider";
 import Address from "../custom/Address";
+import { useTranslation } from "next-i18next";
 
 function ConnectButton({ w }: { w?: string }) {
   const { account, connectWeb3, logout } = useContext(Web3Context);
+  const { t } = useTranslation("common");
 
   return (
     <HStack w="full">
@@ -23,7 +25,7 @@ function ConnectButton({ w }: { w?: string }) {
         </>
       ) : (
         <Button onClick={connectWeb3} w={w}>
-          Connect
+          {t("connect")}
         </Button>
       )}
     </HStack>

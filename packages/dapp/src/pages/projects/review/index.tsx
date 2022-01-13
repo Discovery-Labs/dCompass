@@ -20,7 +20,11 @@ import { ProjectCard } from "../../../components/projects/ProjectCard";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
 
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 function ReviewProjects() {
+  const { t } = useTranslation("common");
   const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
     fetchPolicy: "cache-and-network",
   });
@@ -32,14 +36,14 @@ function ReviewProjects() {
   return isReviewer ? (
     <Container>
       <Flex w="full">
-        <Heading>Review Projects</Heading>
+        <Heading>{t("review-projects")}</Heading>
         <Spacer />
       </Flex>
 
       <Tabs py="2rem" w="full">
         <TabList>
-          <Tab>Pending projects</Tab>
-          <Tab>Approved projects</Tab>
+          <Tab>{t("pending-projects")}</Tab>
+          <Tab>{t("approved-projects")}</Tab>
         </TabList>
 
         <TabPanels>
@@ -82,6 +86,15 @@ function ReviewProjects() {
       </Card>
     </CenteredFrame>
   );
+}
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      // Will be passed to the page component as props
+    },
+  };
 }
 
 export default ReviewProjects;

@@ -27,6 +27,9 @@ import { useEffect, useState } from "react";
 import Container from "../../components/layout/Container";
 import QuestCard from "../../components/projects/quests/QuestCard";
 
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 export type TagItem = {
   name: string;
 };
@@ -87,6 +90,7 @@ const allQuests = [QuestData, QuestData2, QuestData];
 const allTags = [{ name: "ethereum" }, { name: "polygon" }];
 
 function Quests() {
+  const { t } = useTranslation("common");
   const [filteredQuests, setFilteredQuests] = useState<Array<IQuestData>>([]);
   const [searchedQuests, setSearchedQuests] = useState<
     Array<Fuse.FuseResult<IQuestData>>
@@ -134,11 +138,11 @@ function Quests() {
       <>
         {filteredQuests.length !== 0
           ? filteredQuests.map((quest) => (
-            <QuestCard key={quest.name} quest={quest} />
-          ))
+              <QuestCard key={quest.name} quest={quest} />
+            ))
           : allQuests.map((quest) => (
-            <QuestCard key={quest.name} quest={quest} />
-          ))}
+              <QuestCard key={quest.name} quest={quest} />
+            ))}
       </>
     );
   };
@@ -147,11 +151,11 @@ function Quests() {
     <Container>
       <Flex w="full">
         <Text as="h1" textStyle="h1">
-          Quests
+          {t("quests")}
         </Text>
         <Spacer />
         <NextLink href="/create-quest" passHref>
-          <Button leftIcon={<AddIcon />}>Create Quest</Button>
+          <Button leftIcon={<AddIcon />}>{t("create-quest")}</Button>
         </NextLink>
       </Flex>
 
@@ -181,8 +185,8 @@ function Quests() {
 
       <Tabs w="full" variant="line">
         <TabList>
-          <Tab>All quests</Tab>
-          <Tab>My quests</Tab>
+          <Tab>{t("all-quests")}</Tab>
+          <Tab>{t("my-quests")}</Tab>
         </TabList>
 
         <TabPanels>
@@ -204,6 +208,15 @@ function Quests() {
       </Tabs>
     </Container>
   );
+}
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      // Will be passed to the page component as props
+    },
+  };
 }
 
 export default Quests;
