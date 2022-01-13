@@ -2,8 +2,8 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 /**
- * @title dCompassCourseNFT
- * @dev NFTs for creating courses
+ * @title dCompassBadgeNFT
+ * @dev NFTs for creating badges
 */
 
 import "@openzeppelin/contracts/utils/Counters.sol";

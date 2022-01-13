@@ -20,7 +20,8 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     mapping (address => bool) public reviewers;
     uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )
     uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation
-    address payable _projectWallet;//sign in a script and also withdraw
+    address payable projectWallet;//sign in a script and also withdraw
+    address payable appDiamond;//address of the app level diamond
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
     mapping (string => address[]) internal contributors;
@@ -40,7 +41,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         require(_reviewers.length > 0, "Must have at least 1 reviewer");
         require(_initialThreshold > 0 && _initialThreshold <=100, "invalid threshold");
         multiSigThreshold = _initialThreshold;
-        _projectWallet = _walletAddress;
+        projectWallet = _walletAddress;
         for (uint i=0; i<_reviewers.length; i++){
             if(_reviewers[i]!= address(0) && !reviewers[_reviewers[i]]){
                 reviewers[_reviewers[i]] = true;
@@ -113,6 +114,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         
         _mint(contributors[_projectId][i], newItemId);
         _setTokenURI(newItemId, _tokenURI);
+
+        //set the approval within app Diamond contract
+        (bool success, ) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("setApproved(string)")), _projectId));
+        require(success, "diamond approval failed");
         
         emit NFTProjectMinted(contributors[_projectId][i], _tokenURI, _projectId);
         }
@@ -194,5 +199,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
 
     function getContributors(string memory _projectId) external view returns(address[] memory){
         return contributors[_projectId];
+    }
+
+    function setAppDiamond(address payable _appDiamond) external onlyReviewer{
+        require(_appDiamond != address(0));
+        appDiamond = _appDiamond;
     }
 }
