@@ -36,32 +36,27 @@ const nftStorage = new NFTStorage({ token: getNFTStorageToken() });
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const form = await parseForm(req);
   const pathwayFiles = form.files;
-  const properties = JSON.parse(form.fields.metadata);
-  const storeCids = properties.pathways.flatMap(async (pathway: any) => {
-    const pathwayFile = pathwayFiles[pathway.title][0];
-    const name = pathwayFile.originalFilename as string;
-    const f = new File([fs.readFileSync(pathwayFile.path)], name, {
-      type: "image/*",
-    });
-
-    const { image, description, title, ...pathwayProperties } = pathway;
-    const nftStorageRes = await nftStorage.store({
-      name: title,
-      description,
-      image: f,
-      properties: {
-        ...pathwayProperties,
-      },
-    });
-    return {
-      pathway: pathway.title,
-      url: nftStorageRes.url,
-    };
+  const pathway = JSON.parse(form.fields.metadata);
+  const pathwayFile = pathwayFiles.image[0];
+  const name = pathwayFile.originalFilename as string;
+  const f = new File([fs.readFileSync(pathwayFile.path)], name, {
+    type: "image/*",
   });
 
-  const nftCids = await Promise.all(storeCids);
+  const { image, description, title, ...pathwayProperties } = pathway;
+  const nftStorageRes = await nftStorage.store({
+    name: title,
+    description,
+    image: f,
+    properties: {
+      ...pathwayProperties,
+    },
+  });
 
-  return res.status(200).json({ metadataCids: nftCids });
+  return res.status(200).json({
+    pathway: pathway.title,
+    url: nftStorageRes.url,
+  });
 }
 
 // first we need to disable the default body parser

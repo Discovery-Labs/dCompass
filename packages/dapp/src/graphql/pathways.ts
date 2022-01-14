@@ -29,6 +29,24 @@ export const APPROVE_PATHWAY_MUTATION = gql`
   }
 `;
 
+export const VERIFY_PATHWAY_MUTATION = gql`
+  mutation VerifyPathway($input: VerifyPathwayInput!) {
+    verifyPathway(input: $input) {
+      id
+      title
+      difficulty
+      image
+      description
+      isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
+    }
+  }
+`;
+
 export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
   query GetAllPathwaysByProjectId($projectId: String!) {
     getAllPathwaysByProjectId(projectId: $projectId) {
