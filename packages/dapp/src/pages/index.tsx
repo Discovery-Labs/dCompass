@@ -169,7 +169,7 @@ function Projects() {
     );
   };
 
-  if (loading || loadingTags) return "Loading...";
+  if (loading || loadingTags) return t("loading");
   if (error || errorTags)
     return `Error! ${error?.message || errorTags?.message}`;
   return (

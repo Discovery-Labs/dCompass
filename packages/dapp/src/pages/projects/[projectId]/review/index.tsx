@@ -39,6 +39,9 @@ import {
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
 
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 type Props = {
   projectId: string | null;
 };
@@ -88,6 +91,7 @@ function ReviewProjectPage({
   github,
   gitbook,
 }: any) {
+  const { t } = useTranslation("common");
   const { isReviewer, contracts, provider } = useContext(Web3Context);
   const { chainId, account } = useWeb3React();
   const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
@@ -192,17 +196,17 @@ function ReviewProjectPage({
           {status && (status === "PENDING" || status === "NONEXISTENT") && (
             <HStack>
               <Button onClick={handleApproveProject} leftIcon={<CheckIcon />}>
-                Approve Project
+                {t("approve-project")}
               </Button>
               <Button ml="5" colorScheme="secondary" leftIcon={<CloseIcon />}>
-                Reject Project
+                {t("reject-project")}
               </Button>
             </HStack>
           )}
           {status && status === "APPROVED" && (
             <HStack>
               <Button onClick={handleCreateToken} leftIcon={<CheckIcon />}>
-                Create Token
+                {t("create-token")}
               </Button>
             </HStack>
           )}
@@ -223,10 +227,10 @@ function ReviewProjectPage({
           {createdBy && <Blockies seed={createdBy} className="blockies" />}
           <VStack align="flex-start" ml="2">
             <Text color={getColoredText} textStyle="small" isTruncated>
-              Creation date: {new Date(createdAt).toLocaleString()}
+              {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
             <Text fontSize="sm" isTruncated>
-              by {createdBy}
+              {t("by")} {createdBy}
             </Text>
           </VStack>
         </Flex>
@@ -306,6 +310,15 @@ function ReviewProjectPage({
       </Card>
     </CenteredFrame>
   );
+}
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      // Will be passed to the page component as props
+    },
+  };
 }
 
 export default ReviewProjectPage;

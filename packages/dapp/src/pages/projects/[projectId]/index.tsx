@@ -38,14 +38,19 @@ import PathwayCard from "components/projects/pathways/PathwayCard";
 import { Web3Context } from "contexts/Web3Provider";
 import useCustomColor from "core/hooks/useCustomColor";
 
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 type Props = {
   projectId: string | null;
+  locale: string;
 };
 
 export const getServerSideProps: GetServerSideProps<
   Props,
-  { projectId: string }
+  { projectId: string; locale: string }
 > = async (ctx) => {
+  const locale = ctx.locale || "en";
   const id = ctx.params?.projectId ?? null;
   if (id === null) {
     return {
@@ -61,7 +66,11 @@ export const getServerSideProps: GetServerSideProps<
       },
     });
     return {
-      props: { id, ...data.getProjectById },
+      props: {
+        id,
+        ...data.getProjectById,
+        ...(await serverSideTranslations(locale, ["common"])),
+      },
     };
   } catch (error) {
     return {
@@ -98,6 +107,8 @@ function ProjectPage({
   github,
   gitbook,
 }: any) {
+  const { t } = useTranslation("common");
+
   const { account, isReviewer } = useContext(Web3Context);
   const { getColoredText } = useCustomColor();
   const { data, loading, error } = useQuery(
@@ -109,7 +120,7 @@ function ProjectPage({
     }
   );
   const isOwner = createdBy === account;
-  if (loading) return "Loading...";
+  if (loading) return t("loading");
   if (error) return `Loading error! ${error.message}`;
 
   return (
@@ -143,10 +154,10 @@ function ProjectPage({
           {createdBy && <Blockies seed={createdBy} className="blockies" />}
           <VStack align="flex-start" ml="2">
             <Text color={getColoredText} textStyle="small" isTruncated>
-              Creation date: {new Date(createdAt).toLocaleString()}
+              {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
             <Text fontSize="sm" isTruncated>
-              by {createdBy}
+              {t("by")} {createdBy}
             </Text>
           </VStack>
         </Flex>
@@ -200,7 +211,7 @@ function ProjectPage({
               <HStack>
                 <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
                 <Heading as="h4" size="md" textTransform="uppercase">
-                  {squad.members.length} MEMBER
+                  {squad.members.length} {t("member")}
                   {squad.members.length > 1 ? "s" : ""}
                 </Heading>
               </HStack>
@@ -222,16 +233,16 @@ function ProjectPage({
       <Tabs py="2rem" w="full">
         <HStack justifyContent="space-between">
           <TabList>
-            <Tab>All pathways</Tab>
-            {isReviewer && <Tab>Pending pathways</Tab>}
-            <Tab>My pathways</Tab>
+            <Tab>{t("all-pathways")}</Tab>
+            {isReviewer && <Tab>{t("pending-pathways")}</Tab>}
+            <Tab>{t("my-pathways")}</Tab>
           </TabList>
           {isOwner && (
             <NextLink
               href={`/projects/${id.split("://")[1]}/pathways/add-pathway/`}
               passHref
             >
-              <Button leftIcon={<EditIcon />}>Add pathway</Button>
+              <Button leftIcon={<EditIcon />}>{t("add-pathway")}</Button>
             </NextLink>
           )}
         </HStack>

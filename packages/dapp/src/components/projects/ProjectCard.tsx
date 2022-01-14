@@ -18,6 +18,7 @@ import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 import { Tag } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
+import { useTranslation } from "next-i18next";
 
 export type Project = {
   id: string;
@@ -49,6 +50,8 @@ export const ProjectCard = ({
   project: Project;
   isReviewMode?: boolean;
 }) => {
+  const { t } = useTranslation("common");
+
   const router = useRouter();
   console.log({ project, isReviewMode, id: project.id.split("://")[1] });
 
@@ -124,7 +127,7 @@ export const ProjectCard = ({
         )}
       </Flex>
       <Button w="full" onClick={() => openProject()}>
-        {!isReviewMode ? "View project" : "Review project"}
+        {!isReviewMode ? t("view-project") : t("review-project")}
       </Button>
     </CardMedia>
   );

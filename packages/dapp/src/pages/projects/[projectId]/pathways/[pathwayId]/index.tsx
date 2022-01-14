@@ -30,15 +30,20 @@ import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
 import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
 
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 type Props = {
   projectId: string | null;
   pathwayId: string | null;
+  locale: string;
 };
 
 export const getServerSideProps: GetServerSideProps<
   Props,
-  { projectId: string; pathwayId: string }
+  { projectId: string; pathwayId: string; locale: string }
 > = async (ctx) => {
+  const locale = ctx.locale || "en";
   const pathwayId = ctx.params?.pathwayId ?? null;
   const projectId = ctx.params?.projectId ?? null;
   if (!pathwayId || !projectId) {
@@ -56,7 +61,11 @@ export const getServerSideProps: GetServerSideProps<
     });
     console.log({ data });
     return {
-      props: { id: pathwayId, ...data.getPathwayById },
+      props: {
+        id: pathwayId,
+        ...data.getPathwayById,
+        ...(await serverSideTranslations(locale, ["common"])),
+      },
     };
   } catch (error) {
     return {
@@ -90,6 +99,7 @@ function PathwayPage({
   createdAt,
   projectId,
 }: any) {
+  const { t } = useTranslation("common");
   const { account } = useContext(Web3Context);
   const { getColoredText } = useCustomColor();
 
@@ -139,7 +149,7 @@ function PathwayPage({
             href={`/projects/${id.split("://")[1]}/edit-project/`}
             passHref
           >
-            <Button leftIcon={<EditIcon />}>Edit Pathway</Button>
+            <Button leftIcon={<EditIcon />}>{t("all-projects")}</Button>
           </NextLink>
         )}
       </Flex>
@@ -149,10 +159,10 @@ function PathwayPage({
           {createdBy && <Blockies seed={createdBy} className="blockies" />}
           <VStack align="flex-start" ml="2">
             <Text color={getColoredText} textStyle="small" isTruncated>
-              Creation date: {new Date(createdAt).toLocaleString()}
+              {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
             <Text fontSize="sm" isTruncated>
-              by {createdBy}
+              {t("by")} {createdBy}
             </Text>
           </VStack>
         </Flex>
@@ -168,14 +178,15 @@ function PathwayPage({
       <Tabs py="2rem" w="full">
         <HStack justifyContent="space-between">
           <TabList>
-            <Tab>All quests</Tab>
-            <Tab>Pending quests</Tab>
-            <Tab>Completed quests</Tab>
+            <Tab>{t("all-quests")}</Tab>
+            <Tab>{t("pending-quests")}</Tab>
+            <Tab>{t("completed-quests")}</Tab>
           </TabList>
           {isOwner && (
             <NextLink
-              href={`/projects/${projectId.split("://")[1]}/pathways/${id.split("://")[1]
-                }/add-quest`}
+              href={`/projects/${projectId.split("://")[1]}/pathways/${
+                id.split("://")[1]
+              }/add-quest`}
               passHref
             >
               <Button leftIcon={<PlusSquareIcon />}>Add Quest</Button>

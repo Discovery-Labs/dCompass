@@ -18,14 +18,19 @@ import EditProjectForm from "components/projects/EditProjectForm";
 import SquadsForm from "components/projects/squads/SquadsForm";
 import { Web3Context } from "contexts/Web3Provider";
 
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 type Props = {
   projectId: string | null;
+  locale: string;
 };
 
 export const getServerSideProps: GetServerSideProps<
   Props,
-  { projectId: string }
+  { projectId: string; locale: string }
 > = async (ctx) => {
+  const locale = ctx.locale || "en";
   const id = ctx.params?.projectId ?? null;
   if (id === null) {
     return {
@@ -41,7 +46,11 @@ export const getServerSideProps: GetServerSideProps<
       },
     });
     return {
-      props: { id, ...data.getProjectById },
+      props: {
+        id,
+        ...data.getProjectById,
+        ...(await serverSideTranslations(locale, ["common"])),
+      },
     };
   } catch (error) {
     return {
@@ -62,6 +71,7 @@ const steps = [
 ];
 
 function EditProjectStepper(project) {
+  const { t } = useTranslation("common");
   const { self, contracts, provider } = useContext(Web3Context);
   const { account } = useWeb3React();
 
@@ -177,7 +187,7 @@ function EditProjectStepper(project) {
                   px="1.25rem"
                   fontSize="md"
                 >
-                  Prev
+                  {t("prev")}
                 </Button>
               )}
               {activeStep < 1 && (
@@ -187,7 +197,7 @@ function EditProjectStepper(project) {
                   px="1.25rem"
                   fontSize="md"
                 >
-                  Next
+                  {t("next")}
                 </Button>
               )}
               {activeStep === 1 && (
@@ -199,7 +209,7 @@ function EditProjectStepper(project) {
                   px="1.25rem"
                   fontSize="md"
                 >
-                  Submit
+                  {t("submit")}
                 </Button>
               )}
             </Flex>
