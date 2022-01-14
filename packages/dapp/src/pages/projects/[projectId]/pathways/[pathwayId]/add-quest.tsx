@@ -1,4 +1,3 @@
-import { Button, Flex, Stack } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import React, { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";

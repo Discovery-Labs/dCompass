@@ -17,20 +17,25 @@ import { useFormContext } from "react-hook-form";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
 import {
-  CREATE_QUEST_MUTATION,
+  CREATE_QUIZ_QUEST_MUTATION,
   CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
 } from "../../../graphql/quests";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
-import LogoDropzone from "../LogoDropzone";
 
 import DiscordMemberForm from "./discord/DiscordMemberForm";
 import PoapOwnerForm from "./poap/PoapOwnerForm";
+import QuestionsForm from "./quizz/QuestionsForm";
 import SnapshotForm from "./snapshot/SnapshotForm";
 import NFTOwnerForm from "./token/NFTOwnerForm copy";
 import TokenHolderForm from "./token/TokenHolderForm";
 import TwitterFollowerForm from "./twitter/TwitterFollowerForm";
 
+type QuestionFormItemType = {
+  question: string;
+  options: { value: string }[];
+  answer: string;
+};
 const questTypeOptions = [
   {
     label: "Snapshot voter",
@@ -64,9 +69,13 @@ const questTypeOptions = [
 
 const CreateQuestForm: React.FunctionComponent = () => {
   const { self, provider, account } = useContext(Web3Context);
-  const [createSnapshotQuestMutation] = useMutation(
-    CREATE_SNAPSHOT_VOTER_QUEST_MUTATION
+  const [createSnapshotVoterQuest] = useMutation(
+    CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
+    { refetchQueries: "all" }
   );
+  const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
+    refetchQueries: "all",
+  });
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
@@ -92,6 +101,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     "token-holder": <TokenHolderForm />,
     "nft-owner": <NFTOwnerForm />,
     "discord-member": <DiscordMemberForm />,
+    quiz: <QuestionsForm />,
     defaultOption: "",
   };
   const questType = (currentValues?.type?.value ||
@@ -113,11 +123,25 @@ const CreateQuestForm: React.FunctionComponent = () => {
     });
 
     const { cids } = await cidsRes.json();
-    const finalValues = {
-      ...values,
-      image: cids[values.name],
-      pathwayId: `ceramic://${router.query.pathwayId}`,
-    };
+    const finalValues =
+      questType === "quiz"
+        ? {
+          ...values,
+          questions: values.questions.map(
+            ({ question, options, answer }: QuestionFormItemType) => ({
+              question,
+              choices: options.map((option) => option.value),
+              answer,
+            })
+          ),
+          image: cids[values.name],
+          pathwayId: `ceramic://${router.query.pathwayId}`,
+        }
+        : {
+          ...values,
+          image: cids[values.name],
+          pathwayId: `ceramic://${router.query.pathwayId}`,
+        };
 
     const questDoc = await self.client.dataModel.createTile(
       "Quest",
@@ -135,17 +159,33 @@ const CreateQuestForm: React.FunctionComponent = () => {
       account,
     ]);
 
-    const { data } = await createSnapshotQuestMutation({
-      variables: {
-        input: {
-          id: questDoc.id.toUrl(),
-          questCreatorSignature: signature.result,
+    let result;
+    if (questType === "snapshot-voter") {
+      const { data } = await createSnapshotVoterQuest({
+        variables: {
+          input: {
+            id: questDoc.id.toUrl(),
+            questCreatorSignature: signature.result,
+          },
         },
-      },
-    });
+      });
+      result = data.createSnapshotVoterQuest;
+    }
 
-    const result = data.createSnapshotQuest;
+    if (questType === "quiz") {
+      const { data } = await createQuizQuestMutation({
+        variables: {
+          input: {
+            id: questDoc.id.toUrl(),
+            questCreatorSignature: signature.result,
+          },
+        },
+      });
+      result = data.createQuizQuest;
+    }
     console.log({ result });
+
+    return goBack();
   }
 
   return (
