@@ -17,17 +17,21 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     Counters.Counter private _tokenIds;
     Counters.Counter private _multiSigRequest;
     
+    uint public stakeAmount = 0.001 ether;
     mapping (address => bool) public reviewers;
     uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )
     uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation
-    address payable projectWallet;//sign in a script and also withdraw
+    address payable appWallet;//sign in a script and also withdraw slashed stakes
     address payable appDiamond;//address of the app level diamond
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
     mapping (string => address[]) internal contributors;
+    mapping (string => address) public projectWallets;
+    mapping (string => uint) internal stakePerProject;
     mapping (uint => string) public statusStrings;
     mapping (string => ProjectStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes;
+    mapping (string => uint) public votesReject;//tally of rejection votes;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of reviewers for ProjectId
     //mapping (string => uint16[]) public rarities; // rarities of each image uint16 used for pakcing purposes
     mapping (string => bool) public projectMinted; // tracks if mint has been done
@@ -37,11 +41,11 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     event ReceiveCalled(address _caller, uint _value);
     event ProjectApproved(string indexed _projectId);
 
-    constructor(address payable _walletAddress, address[] memory _reviewers, uint128 _initialThreshold) ERC721("dCompassProject", "DCOMPROJ") public{
+    constructor(address payable _walletAddress, address[] memory _reviewers, uint128 _initialThreshold) ERC721("dCompassProject", "DCOMPROJ"){
         require(_reviewers.length > 0, "Must have at least 1 reviewer");
         require(_initialThreshold > 0 && _initialThreshold <=100, "invalid threshold");
         multiSigThreshold = _initialThreshold;
-        projectWallet = _walletAddress;
+        appWallet = _walletAddress;
         for (uint i=0; i<_reviewers.length; i++){
             if(_reviewers[i]!= address(0) && !reviewers[_reviewers[i]]){
                 reviewers[_reviewers[i]] = true;
@@ -76,6 +80,8 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             projectThresholds[_projectId] = _threshold;
             if(multiSigThreshold*numReviewers/100 == 0){
                 status[_projectId] = ProjectStatus.APPROVED;
+                (bool success,) = payable(projectWallets[_projectId]).call{value : stakePerProject[_projectId]}("");
+                require(success, "transfer failed");
                 emit ProjectApproved(_projectId);
                 //approveMint(_projectId);
             }
@@ -90,9 +96,23 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             }
             if(votes[_projectId] >= minVotes){
                 status[_projectId] = ProjectStatus.APPROVED;
+                (bool success,) = payable(projectWallets[_projectId]).call{value : stakePerProject[_projectId]}("");
+                require(success, "transfer failed");
                 emit ProjectApproved(_projectId);
                 //approveMint(_projectId);
             }  
+        }
+    }
+
+    function voteForRejection(string memory _projectId) public onlyReviewer{
+        require(status[_projectId] == ProjectStatus.PENDING, "project not pending");
+        require(!reviewerVotes[_projectId][_msgSender()], "already voted for this project");
+        votesReject[_projectId]++;
+        reviewerVotes[_projectId][_msgSender()] = true;
+        if(votesReject[_projectId] >= projectThresholds[_projectId]){
+            status[_projectId] = ProjectStatus.DENIED;
+            (bool success,) = appWallet.call{value : stakePerProject[_projectId]}("");
+            require(success, "transfer failed");
         }
     }
     
@@ -125,6 +145,17 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         return newItems;    
     }
 
+    function addProjectWallet(string memory _projectId) external payable{
+        require (projectWallets[_projectId] == address(0), "already project wallet");
+        require (msg.value >= stakeAmount, "not enough staked");
+        projectWallets[_projectId] = _msgSender();
+        stakePerProject[_projectId] = stakeAmount;
+        if(msg.value > stakeAmount){
+            (bool success, ) = payable(_msgSender()).call{value : msg.value - stakeAmount}("");
+            require(success, "failed refund");
+        }
+    }
+
     function addReviewer(address _reviewer) public onlyReviewer {
         require (!reviewers[_reviewer], "already reviewer");
         reviewers[_reviewer]=true;
@@ -133,6 +164,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
 
     function setStatusString(uint index, string memory newName) external onlyReviewer{
         statusStrings[index] = newName;
+    }
+
+    function setStake(uint newStake) external onlyReviewer{
+        stakeAmount = newStake;
     }
 
     function addProjectContributor(string memory _projectId, address newContributor) external{
