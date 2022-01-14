@@ -58,7 +58,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
-  await deploy("PathwayNFT", {
+  const pathway = await deploy("PathwayNFT", {
     from: DEPLOYER_PRIVATE_KEY,
     args: [
       vrf.address,
@@ -67,6 +67,19 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     ],
     log: true, 
   })
+
+  const appDiamond = await deploy("AppDiamond", {
+    from: DEPLOYER_PRIVATE_KEY,
+    args: [
+      project.address,
+      verify.address,
+      SERVER_ADDRESS
+    ],
+    log: true, 
+  })
+
+  await project.deployed();
+  await project.setAppDiamond(appDiamond.address);
 
   /*
     // Getting a previously deployed contract
@@ -104,4 +117,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   });
   */
 };
-module.exports.tags = ["ProjectNFT", "RandomNumberConsumer", "Verify", "PathwayNFT"];
+module.exports.tags = ["ProjectNFT", "RandomNumberConsumer", "Verify", "PathwayNFT", "AppDiamond"];

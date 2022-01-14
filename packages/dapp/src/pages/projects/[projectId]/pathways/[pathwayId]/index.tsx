@@ -19,12 +19,13 @@ import {
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { useContext } from "react";
+import Blockies from "react-blockies";
 
 import { initializeApollo } from "../../../../../../lib/apolloClient";
 import QuestCard from "../../../../../components/projects/quests/QuestCard";
+import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
 import Container from "components/layout/Container";
-import PathwayCard from "components/projects/pathways/PathwayCard";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
 import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
@@ -90,6 +91,8 @@ function PathwayPage({
   projectId,
 }: any) {
   const { account } = useContext(Web3Context);
+  const { getColoredText } = useCustomColor();
+
   const { data, loading, error } = useQuery(
     GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
     {
@@ -119,18 +122,21 @@ function PathwayPage({
       <Flex w="full">
         <HStack>
           <Image
-            rounded="full"
-            border="solid 5px gold"
+            rounded="md"
             src={`https://ipfs.io/ipfs/${image}`}
-            w={100}
-            h={100}
+            objectFit="cover"
+            w={150}
+            h={150}
           />
-          <Heading>{title}</Heading>
+          <Heading as="h1" size="4xl" pl="4">
+            {title}
+          </Heading>
         </HStack>
         <Spacer />
         {isOwner && (
+          // TODO: edit pathway form
           <NextLink
-            href={`/projects/edit-project/${id.split("://")[1]}`}
+            href={`/projects/${id.split("://")[1]}/edit-project/`}
             passHref
           >
             <Button leftIcon={<EditIcon />}>Edit Pathway</Button>
@@ -139,10 +145,18 @@ function PathwayPage({
       </Flex>
 
       <Flex w="full" direction="column" pt="4">
-        <Text fontSize="sm">by {createdBy}</Text>
-        <Text fontSize="xs">
-          Creation date: {new Date(createdAt).toLocaleString()}
-        </Text>
+        <Flex align="center" maxW="full">
+          {createdBy && <Blockies seed={createdBy} className="blockies" />}
+          <VStack align="flex-start" ml="2">
+            <Text color={getColoredText} textStyle="small" isTruncated>
+              Creation date: {new Date(createdAt).toLocaleString()}
+            </Text>
+            <Text fontSize="sm" isTruncated>
+              by {createdBy}
+            </Text>
+          </VStack>
+        </Flex>
+
         <Text pt="8">{description}</Text>
         {quests && (
           <Text pt="8" fontSize="xs">
@@ -160,9 +174,8 @@ function PathwayPage({
           </TabList>
           {isOwner && (
             <NextLink
-              href={`/projects/${projectId.split("://")[1]}/pathways/${
-                id.split("://")[1]
-              }/add-quest`}
+              href={`/projects/${projectId.split("://")[1]}/pathways/${id.split("://")[1]
+                }/add-quest`}
               passHref
             >
               <Button leftIcon={<PlusSquareIcon />}>Add Quest</Button>

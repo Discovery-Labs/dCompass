@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { RedisModule } from '../../core/resources/Redis/Redis.module';
 import { ApproveQuestResolver } from './mutations/ApproveQuest.resolver';
+import { CreateQuizQuestResolver } from './mutations/CreateQuizQuest.resolver';
 
 // import { GetAllQuestsResolver } from './queries/GetAllQuests.resolver';
 // import { CreateQuestResolver } from './mutations/CreateQuest.resolver';
@@ -14,6 +15,7 @@ import { GetAllQuestsByPathwayIdResolver } from './queries/GetAllQuestsByPathway
   imports: [RedisModule],
   providers: [
     CreateSnapshotVoterQuestResolver,
+    CreateQuizQuestResolver,
     ApproveQuestResolver,
     GetAllQuestsByPathwayIdResolver,
     // CreateQuestResolver,
