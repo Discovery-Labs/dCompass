@@ -1,11 +1,16 @@
 import { useQuery } from "@apollo/client";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Heading,
   Input,
+  Spinner,
   Textarea,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -35,8 +40,15 @@ const CreateProjectForm = () => {
     router.back();
   }
 
-  if (loading) return "Loading";
-  if (error) return `Error: ${error.message}`;
+  if (loading) return <Spinner />;
+  if (error)
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle mr={2}>Network error</AlertTitle>
+        <AlertDescription>{error.message}</AlertDescription>
+      </Alert>
+    );
   return (
     <>
       <Heading>Create project</Heading>

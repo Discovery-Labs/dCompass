@@ -54,6 +54,8 @@ function IconWithState({
     default:
       SiIcon = SiDiscord;
   }
+  const defaulColor = active ? "accentDark.200" : "stone";
+  const color = errors[icon] ? "red.300" : defaulColor;
   return (
     <>
       <IconButton
@@ -63,7 +65,7 @@ function IconWithState({
         h="8"
         as={SiIcon}
         onClick={onOpen}
-        color={active ? "accentDark.200" : "stone"}
+        color={color}
         _hover={{ color: "accentDark.300" }}
       />
       <Modal onClose={onClose} isOpen={isOpen}>
