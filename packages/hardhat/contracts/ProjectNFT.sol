@@ -70,6 +70,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     function voteForApproval(address[] memory _contributors, uint _threshold, string memory _projectId) public onlyReviewer{
         require(status[_projectId] != ProjectStatus.DENIED && status[_projectId] != ProjectStatus.APPROVED, "finalized project");
         require(!reviewerVotes[_projectId][_msgSender()], "already voted for this project");
+        //require (projectWallets[_projectId] != address(0), "no project wallet");
         votes[_projectId]++;
         reviewerVotes[_projectId][_msgSender()] = true;
         if(status[_projectId] == ProjectStatus.NONEXISTENT){
@@ -109,14 +110,17 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         require(!reviewerVotes[_projectId][_msgSender()], "already voted for this project");
         votesReject[_projectId]++;
         reviewerVotes[_projectId][_msgSender()] = true;
-        if(votesReject[_projectId] >= projectThresholds[_projectId]){
+        uint minVotes = multiSigThreshold*numReviewers/100;
+        if(minVotes * 100 < multiSigThreshold*numReviewers){
+            minVotes++;
+        }
+        if(votesReject[_projectId] >= minVotes){
             status[_projectId] = ProjectStatus.DENIED;
             (bool success,) = appWallet.call{value : stakePerProject[_projectId]}("");
             require(success, "transfer failed");
         }
     }
     
-
     function createToken(uint32[] memory firstURIParts, uint256[] memory secondURIParts, string memory _projectId) public onlyReviewer returns(uint[] memory){
         require(status[_projectId] == ProjectStatus.APPROVED, "job not approved yet");
         require(!projectMinted[_projectId], "already minted");
