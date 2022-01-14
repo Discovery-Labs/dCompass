@@ -13,7 +13,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 
 import OptionsFieldArray from "./OptionsFieldArray";
 
-export default function Quests({ control, register, setValue }: any) {
+export default function Questions({ control, register, setValue }: any) {
   // const router = useRouter();
 
   const {
@@ -22,7 +22,7 @@ export default function Quests({ control, register, setValue }: any) {
 
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
-    name: "quests", // unique name for your Field Array
+    name: "questions", // unique name for your Field Array
     // keyName: "id", default to "id", you can change the key name
   });
 
@@ -31,14 +31,16 @@ export default function Quests({ control, register, setValue }: any) {
       {fields.map((item, index) => {
         return (
           <VStack w="full" key={item.id}>
-            <FormControl isInvalid={errors.quests && errors.quests[index].name}>
-              <FormLabel htmlFor={`quests[${index}].name`}>
-                Quest title
+            <FormControl
+              isInvalid={errors.questions && errors.questions[index].question}
+            >
+              <FormLabel htmlFor={`questions[${index}].question`}>
+                Question
               </FormLabel>
               <HStack>
                 <Input
                   placeholder="Question here..."
-                  {...register(`quests[${index}].name`, {
+                  {...register(`questions[${index}].question`, {
                     required: "This is required",
                     maxLength: {
                       value: 150,
@@ -57,33 +59,35 @@ export default function Quests({ control, register, setValue }: any) {
                 </Button>
               </HStack>
               <FormErrorMessage>
-                {errors.quests &&
-                  errors.quests[index].name &&
-                  errors.quests[index].name.message}
+                {errors.questions &&
+                  errors.questions[index].question &&
+                  errors.questions[index].question.message}
               </FormErrorMessage>
             </FormControl>
 
             <FormControl
-              isInvalid={errors.quests && errors.quests[index].options}
+              isInvalid={errors.questions && errors.questions[index].options}
             >
-              <FormLabel htmlFor={`quests[${index}].options`}>
+              <FormLabel htmlFor={`questions[${index}].options`}>
                 Options
               </FormLabel>
               <OptionsFieldArray nestIndex={index} {...{ control, register }} />
               <FormErrorMessage>
-                {errors.quests &&
-                  errors.quests[index].options &&
-                  errors.quests[index].options.message}
+                {errors.questions &&
+                  errors.questions[index].options &&
+                  errors.questions[index].options.message}
               </FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.quests && errors.quests[index].name}>
-              <FormLabel htmlFor={`quests[${index}].answer`}>
+            <FormControl
+              isInvalid={errors.questions && errors.questions[index].answer}
+            >
+              <FormLabel htmlFor={`questions[${index}].answer`}>
                 Correct Answer
               </FormLabel>
               <Input
                 placeholder="Omega"
-                {...register(`quests[${index}].answer`, {
+                {...register(`questions[${index}].answer`, {
                   required: "This is required",
                   maxLength: {
                     value: 150,
@@ -92,9 +96,9 @@ export default function Quests({ control, register, setValue }: any) {
                 })}
               />
               <FormErrorMessage>
-                {errors.quests &&
-                  errors.quests[index].answer &&
-                  errors.quests[index].answer.message}
+                {errors.questions &&
+                  errors.questions[index].answer &&
+                  errors.questions[index].answer.message}
               </FormErrorMessage>
             </FormControl>
             <Divider bg="none" py="5" />
@@ -106,7 +110,11 @@ export default function Quests({ control, register, setValue }: any) {
         w="full"
         type="button"
         onClick={() => {
-          append({ name: "", options: ["0x0000000000000"] });
+          append({
+            question: "",
+            options: [""],
+            answer: "",
+          });
         }}
       >
         + New Question
