@@ -20,7 +20,10 @@ import { useContext, useState, useEffect } from "react";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { streamUrlToId } from "../../../core/helpers";
-import { APPROVE_PATHWAY_MUTATION } from "../../../graphql/pathways";
+import {
+  APPROVE_PATHWAY_MUTATION,
+  VERIFY_PATHWAY_MUTATION,
+} from "../../../graphql/pathways";
 import Card from "components/custom/Card";
 
 type Pathway = {
@@ -42,6 +45,9 @@ function PathwayCard({
   projectContributors: string[];
 }) {
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
+    refetchQueries: "all",
+  });
+  const [verifyPathwayMutation] = useMutation(VERIFY_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
@@ -126,41 +132,71 @@ function PathwayCard({
       );
       console.log({ statusString });
       setStatus(statusString);
-      if (statusString === "APPROVED") {
-        return approvePathwayMutation({
-          variables: {
-            input: {
-              id: pathway.id,
-              pathwayApproverSignature: signature.result,
-              chainId,
-            },
-          },
-        });
-      }
-      console.log({ receipt, statusString });
+
+      // console.log({ receipt, statusString });
     }
     return null;
   };
 
   const handleCreateToken = async () => {
-    console.log("create token");
-    // if (chainId && account) {
-    //   const cids = tokenUris.map(
-    //     (uri: string) => uri.split("://")[1].split("/")[0]
-    //   );
-    //   const { firstParts, secondParts } = splitCIDS(cids);
-    //   const createTokenTx = await contracts.projectNFTContract.createToken(
-    //     firstParts,
-    //     secondParts,
-    //     id
-    //   );
-    //   // get return values or events
-    //   const receipt = await createTokenTx.wait(2);
-    //   const isMinted = await contracts.projectNFTContract.projectMinted(id);
-    //   setStatus("MINTED");
-    //   console.log({ receipt, isMinted });
-    // }
-    // return null;
+    if (chainId && account) {
+      const formData = new FormData();
+      const ogFile = await fetch(`https://ipfs.io/ipfs/${pathway.image}`);
+      const pathwayImage = await ogFile.blob();
+      formData.append("image", pathwayImage);
+      formData.append(
+        "metadata",
+        JSON.stringify({
+          ...pathway,
+        })
+      );
+
+      const nftCidRes = await fetch("/api/pathway-nft-storage", {
+        method: "POST",
+        body: formData,
+      });
+
+      const signatureInput = {
+        id: pathway.id,
+        projectId: pathway.projectId,
+      };
+      const signature = await provider.provider.send("personal_sign", [
+        JSON.stringify(signatureInput),
+        account,
+      ]);
+
+      const { data } = await verifyPathwayMutation({
+        variables: {
+          input: {
+            id: pathway.id,
+            pathwayMinterSignature: signature.result,
+            chainId,
+          },
+        },
+      });
+
+      const [metadataVerifySignature, thresholdVerifySignature] =
+        data.verifyPathway.expandedServerSignatures;
+
+      const { url } = await nftCidRes.json();
+      const createTokenTx = await contracts.pathwayNFTContract.createToken(
+        url,
+        id,
+        streamUrlToId(pathway.projectId),
+        [metadataVerifySignature.r, thresholdVerifySignature.r],
+        [metadataVerifySignature.s, thresholdVerifySignature.s],
+        [metadataVerifySignature.v, thresholdVerifySignature.v],
+        1
+      );
+
+      // get return values or events
+      // const receipt = await createTokenTx.wait(2);
+      const isMinted = await contracts.pathwayNFTContract.pathwayMinted(id);
+      if (isMinted) {
+        setStatus("MINTED");
+      }
+    }
+    return null;
   };
 
   return (
@@ -178,7 +214,7 @@ function PathwayCard({
       </Flex>
       <Heading fontSize="2xl">{pathway.title}</Heading>
       <Text noOfLines={2}>{pathway.description}</Text>
-      {pathway.isPending && isContributor && (
+      {isContributor && (
         <VStack align="left">
           {status && (status === "PENDING" || status === "NONEXISTENT") && (
             <HStack>

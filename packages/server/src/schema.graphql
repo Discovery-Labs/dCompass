@@ -108,6 +108,9 @@ type Mutation {
 
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
+
+  """Verify a new Pathway right before minting in dCompass"""
+  verifyPathway(input: VerifyPathwayInput!): Pathway
 }
 
 type Pathway {
@@ -253,4 +256,11 @@ type Tag {
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
   value: String!
+}
+
+input VerifyPathwayInput {
+  chainId: Int!
+  id: String!
+  namespace: String
+  pathwayMinterSignature: String!
 }
