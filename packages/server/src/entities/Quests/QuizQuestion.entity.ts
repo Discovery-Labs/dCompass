@@ -5,6 +5,7 @@ export class QuizQuestion {
   @Field()
   question: string;
 
+  // TODO: handle both sign & multiple answers
   @Field()
   answer: string;
 

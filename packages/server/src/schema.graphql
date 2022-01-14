@@ -97,6 +97,9 @@ type Mutation {
   """Create a new Project in dCompass"""
   createProject(input: CreateProjectInput!): [CreateProjectOutput!]
 
+  """Create a new Quiz quest in dCompass"""
+  createQuizQuest(input: CreateQuestInput!): QuizQuest
+
   """Create a new Snapshot Voter Quest in dCompass"""
   createSnapshotVoterQuest(input: CreateQuestInput!): SnapshotVoterQuest
 
@@ -214,6 +217,30 @@ type Quest {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
+}
+
+type QuizQuest {
+  completedBy: [String!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+  description: String!
+  id: String!
+  image: String!
+  isPending: Boolean
+  name: String!
+  pathwayId: String!
+  questType: String!
+  questions: [QuizQuestion!]!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+}
+
+type QuizQuestion {
+  answer: String!
+  choices: [String!]!
+  question: String!
 }
 
 type SnapshotVoterQuest {

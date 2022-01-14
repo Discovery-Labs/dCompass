@@ -24,6 +24,22 @@ export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
   }
 `;
 
+export const CREATE_QUIZ_QUEST_MUTATION = gql`
+  mutation CreateQuizQuest($input: CreateQuestInput!) {
+    createQuizQuest(input: $input) {
+      id
+      name
+      description
+      pathwayId
+      questions {
+        question
+        choices
+        answer
+      }
+    }
+  }
+`;
+
 export const APPROVE_QUEST_MUTATION = gql`
   mutation ApproveQuest($input: ApproveQuestInput!) {
     approveQuest(input: $input) {

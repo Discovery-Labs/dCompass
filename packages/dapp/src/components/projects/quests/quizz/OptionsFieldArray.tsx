@@ -5,7 +5,7 @@ import { FiX } from "react-icons/fi";
 const OptionsFieldArray = ({ nestIndex, control, register }: any) => {
   const { fields, remove, append } = useFieldArray({
     control,
-    name: `quests[${nestIndex}].options`,
+    name: `questions[${nestIndex}].options`,
   });
 
   return (
@@ -14,7 +14,7 @@ const OptionsFieldArray = ({ nestIndex, control, register }: any) => {
         return (
           <HStack w="full" key={item.id}>
             <Input
-              {...register(`quests[${nestIndex}].options[${k}].value`, {
+              {...register(`questions[${nestIndex}].options[${k}].value`, {
                 required: true,
               })}
             />
