@@ -1,10 +1,13 @@
 import { VStack, Image, Box } from "@chakra-ui/react";
 
+import useCustomColor from "../../core/hooks/useCustomColor";
+
 function CardMedia({ children, src, ...others }: any) {
+  const { getOverBgColor } = useCustomColor();
   return (
     <VStack
       layerStyle="no-border-card"
-      bg="neutralDarker"
+      bg={getOverBgColor}
       h="lg"
       spacing="4"
       align="start"

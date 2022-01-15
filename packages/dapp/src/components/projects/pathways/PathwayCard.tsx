@@ -20,6 +20,7 @@ import { useContext, useState, useEffect } from "react";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { streamUrlToId } from "../../../core/helpers";
+import useCustomColor from "../../../core/hooks/useCustomColor";
 import {
   APPROVE_PATHWAY_MUTATION,
   VERIFY_PATHWAY_MUTATION,
@@ -44,6 +45,7 @@ function PathwayCard({
   pathway: Pathway;
   projectContributors: string[];
 }) {
+  const { getTextColor } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
@@ -212,7 +214,9 @@ function PathwayCard({
           <Tag>{pathway.difficulty}</Tag>
         </Flex>
       </Flex>
-      <Heading fontSize="2xl">{pathway.title}</Heading>
+      <Heading fontSize="2xl" color={getTextColor}>
+        {pathway.title}
+      </Heading>
       <Text noOfLines={2}>{pathway.description}</Text>
       {isContributor && (
         <VStack align="left">

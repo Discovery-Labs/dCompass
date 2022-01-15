@@ -19,8 +19,15 @@ import {
   Text,
   VStack,
   Link,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
@@ -37,9 +44,6 @@ import Container from "components/layout/Container";
 import PathwayCard from "components/projects/pathways/PathwayCard";
 import { Web3Context } from "contexts/Web3Provider";
 import useCustomColor from "core/hooks/useCustomColor";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 type Props = {
   projectId: string | null;
@@ -108,9 +112,8 @@ function ProjectPage({
   gitbook,
 }: any) {
   const { t } = useTranslation("common");
-
+  const { getTextColor, getColoredText, getOverBgColor } = useCustomColor();
   const { account, isReviewer } = useContext(Web3Context);
-  const { getColoredText } = useCustomColor();
   const { data, loading, error } = useQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
     {
@@ -126,18 +129,30 @@ function ProjectPage({
   return (
     <Container>
       <Flex w="full">
-        <HStack>
+        <VStack w="full">
           <Image
             rounded="full"
             src={`https://ipfs.io/ipfs/${logo}`}
             objectFit="cover"
-            w={150}
-            h={150}
+            w={200}
+            h={200}
           />
-          <Heading as="h1" size="4xl" pl="4">
-            {name}
-          </Heading>
-        </HStack>
+          <Stack direction="row">
+            {tags.map((tag: Tag) => (
+              <Badge key={tag.id} fontSize="lg" colorScheme={tag.color}>
+                {tag.label}
+              </Badge>
+            ))}
+          </Stack>
+          <VStack>
+            <Heading as="h1" size="4xl" pl="4" color={getTextColor}>
+              {name}
+            </Heading>
+            <Heading py="2" as="h2" size="md" color={getTextColor}>
+              {description}
+            </Heading>
+          </VStack>
+        </VStack>
         <Spacer />
         {isOwner && (
           <NextLink
@@ -149,26 +164,8 @@ function ProjectPage({
         )}
       </Flex>
 
-      <Flex w="full" direction="column" pt="4">
-        <Flex align="center" maxW="full">
-          {createdBy && <Blockies seed={createdBy} className="blockies" />}
-          <VStack align="flex-start" ml="2">
-            <Text color={getColoredText} textStyle="small" isTruncated>
-              {t("creation-date")} {new Date(createdAt).toLocaleString()}
-            </Text>
-            <Text fontSize="sm" isTruncated>
-              {t("by")} {createdBy}
-            </Text>
-          </VStack>
-        </Flex>
-        <Stack direction="row" pt="4">
-          {tags.map((tag: Tag) => (
-            <Badge key={tag.id} colorScheme={tag.color}>
-              {tag.label}
-            </Badge>
-          ))}
-        </Stack>
-        <HStack pt="8" spacing={8}>
+      <Flex w="full" direction="column">
+        <HStack spacing={8} justifyContent="space-between">
           {website && (
             <Link target="_blank" href={website}>
               <Icon boxSize={8} as={BsGlobe} />
@@ -194,43 +191,72 @@ function ProjectPage({
               <Icon boxSize={8} as={SiGitbook} />
             </Link>
           )}
+          <Flex align="center" maxW="full">
+            {createdBy && <Blockies seed={createdBy} className="blockies" />}
+            <VStack align="flex-start" ml="2">
+              <Text color={getColoredText} textStyle="small" isTruncated>
+                {t("creation-date")} {new Date(createdAt).toLocaleString()}
+              </Text>
+              <Text fontSize="sm" isTruncated>
+                {t("by")} {createdBy}
+              </Text>
+            </VStack>
+          </Flex>
         </HStack>
-        <Text pt="8">{description}</Text>
-        <Heading as="h3" size="lg" py="4">
-          {squads.length} Squad{squads.length > 1 ? "s" : ""}
-        </Heading>
-        <SimpleGrid columns={3} spacing={4}>
-          {squads.map((squad: any) => (
-            <CardMedia
-              h="fit-content"
-              src={`https://ipfs.io/ipfs/${squad.image}`}
-            >
-              <Heading as="h3" size="lg">
-                {squad.name}
+
+        <Accordion allowToggle py="4">
+          <AccordionItem>
+            <AccordionButton>
+              <Heading as="h3" size="lg" color={getColoredText}>
+                {squads.length} Squad{squads.length > 1 ? "s" : ""}
               </Heading>
-              <HStack>
-                <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
-                <Heading as="h4" size="md" textTransform="uppercase">
-                  {squad.members.length} {t("member")}
-                  {squad.members.length > 1 ? "s" : ""}
-                </Heading>
-              </HStack>
-              <VStack align="center" maxW="full">
-                {squad.members.map((member: string) => (
-                  <HStack w="full">
-                    {member && <Blockies seed={member} className="blockies" />}
-                    <Text ml="2" fontSize="sm" isTruncated>
-                      {member}
-                    </Text>
-                  </HStack>
+              <AccordionIcon ml="4" fontSize="2xl" />
+            </AccordionButton>
+            <AccordionPanel>
+              <SimpleGrid columns={3} spacing={4}>
+                {squads.map((squad: any) => (
+                  <CardMedia
+                    h="fit-content"
+                    src={`https://ipfs.io/ipfs/${squad.image}`}
+                  >
+                    <Heading as="h3" size="lg" color={getTextColor}>
+                      {squad.name}
+                    </Heading>
+                    <HStack>
+                      <Icon
+                        as={squad.members.length > 1 ? BsPeople : BsPerson}
+                      />
+                      <Heading
+                        as="h4"
+                        size="md"
+                        textTransform="uppercase"
+                        color={getTextColor}
+                      >
+                        {squad.members.length} {t("member")}
+                        {squad.members.length > 1 ? "s" : ""}
+                      </Heading>
+                    </HStack>
+                    <VStack align="center" maxW="full">
+                      {squad.members.map((member: string) => (
+                        <HStack w="full">
+                          {member && (
+                            <Blockies seed={member} className="blockies" />
+                          )}
+                          <Text ml="2" fontSize="sm" isTruncated>
+                            {member}
+                          </Text>
+                        </HStack>
+                      ))}
+                    </VStack>
+                  </CardMedia>
                 ))}
-              </VStack>
-            </CardMedia>
-          ))}
-        </SimpleGrid>
+              </SimpleGrid>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </Flex>
 
-      <Tabs py="2rem" w="full">
+      <Tabs w="full">
         <HStack justifyContent="space-between">
           <TabList>
             <Tab>{t("all-pathways")}</Tab>

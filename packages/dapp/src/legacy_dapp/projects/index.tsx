@@ -127,43 +127,43 @@ function Projects() {
       <SimpleGrid columns={3} spacing={10} justifyItems="center">
         {sortedProjects.length !== 0
           ? sortedProjects.map((project, i) => {
-              return (
-                <CardWithImage
-                  key={i}
-                  heading={project.item.name}
-                  avatarSrc={project.item.logo}
-                  coverSrc={project.item.logo}
-                  stat2="5"
-                  stat2Label="Staked"
-                  stat1="5"
-                  stat1Label="Signaled"
-                  description={project.item.description}
-                  primaryAction="Stake"
-                  primaryActionOnClick={() => console.log("hello")}
-                  secondaryAction="Signal"
-                  secondaryActionOnClick={() => console.log("hello")}
-                />
-              );
-            })
+            return (
+              <CardWithImage
+                key={i}
+                heading={project.item.name}
+                avatarSrc={project.item.logo}
+                coverSrc={project.item.logo}
+                stat2="5"
+                stat2Label="Staked"
+                stat1="5"
+                stat1Label="Signaled"
+                description={project.item.description}
+                primaryAction="Stake"
+                primaryActionOnClick={() => console.log("hello")}
+                secondaryAction="Signal"
+                secondaryActionOnClick={() => console.log("hello")}
+              />
+            );
+          })
           : projects.map((project, i) => {
-              return (
-                <CardWithImage
-                  key={i}
-                  heading={project.name}
-                  avatarSrc={project.logo}
-                  coverSrc={project.logo}
-                  stat2="5"
-                  stat2Label="Staked"
-                  stat1="5"
-                  stat1Label="Signaled"
-                  description={project.description}
-                  primaryAction="Stake"
-                  primaryActionOnClick={() => console.log("hello")}
-                  secondaryAction="Signal"
-                  secondaryActionOnClick={() => console.log("hello")}
-                />
-              );
-            })}
+            return (
+              <CardWithImage
+                key={i}
+                heading={project.name}
+                avatarSrc={project.logo}
+                coverSrc={project.logo}
+                stat2="5"
+                stat2Label="Staked"
+                stat1="5"
+                stat1Label="Signaled"
+                description={project.description}
+                primaryAction="Stake"
+                primaryActionOnClick={() => console.log("hello")}
+                secondaryAction="Signal"
+                secondaryActionOnClick={() => console.log("hello")}
+              />
+            );
+          })}
       </SimpleGrid>
     </Box>
   );

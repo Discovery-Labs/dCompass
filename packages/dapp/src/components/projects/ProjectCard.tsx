@@ -11,14 +11,15 @@ import {
   Link,
   Heading,
 } from "@chakra-ui/react";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import Blockies from "react-blockies";
 import { BsGlobe } from "react-icons/bs";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
+import useCustomColor from "../../core/hooks/useCustomColor";
 import { Tag } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
-import { useTranslation } from "next-i18next";
 
 export type Project = {
   id: string;
@@ -51,6 +52,7 @@ export const ProjectCard = ({
   isReviewMode?: boolean;
 }) => {
   const { t } = useTranslation("common");
+  const { getTextColor } = useCustomColor();
 
   const router = useRouter();
   console.log({ project, isReviewMode, id: project.id.split("://")[1] });
@@ -65,7 +67,7 @@ export const ProjectCard = ({
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
   return (
     <CardMedia src={imgSrc}>
-      <Heading as="h2" size="lg">
+      <Heading as="h2" size="lg" color={getTextColor}>
         {project.name}
       </Heading>
 
@@ -77,7 +79,7 @@ export const ProjectCard = ({
         ))}
       </Stack>
       <Tooltip label={project.description} hasArrow placement="top">
-        <Heading noOfLines={3} as="h4" fontSize="md">
+        <Heading noOfLines={3} as="h4" fontSize="md" color={getTextColor}>
           {project.description}
         </Heading>
       </Tooltip>

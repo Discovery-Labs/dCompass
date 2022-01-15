@@ -32,6 +32,7 @@ import Container from "../components/layout/Container";
 import { Project, ProjectCard } from "../components/projects/ProjectCard";
 import { Web3Context } from "../contexts/Web3Provider";
 import { projectTagsOptions } from "../core/constants/project-tags";
+import useCustomColor from "../core/hooks/useCustomColor";
 import { Tag } from "../core/types";
 import { ALL_PROJECTS_QUERY } from "../graphql/projects";
 import { ALL_TAGS_QUERY } from "../graphql/tags";
@@ -49,6 +50,7 @@ const fuseOptions = {
 // eslint-disable-next-line complexity
 function Projects() {
   const { t } = useTranslation("common");
+  const { getTextColor } = useCustomColor();
   const {
     data: tagsData,
     loading: loadingTags,
@@ -139,15 +141,15 @@ function Projects() {
         <>
           {filteredProjects.length !== 0
             ? filteredProjects
-                .filter((project) => project.createdBy === account)
-                .map((project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))
+              .filter((project) => project.createdBy === account)
+              .map((project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))
             : data.getAllProjects
-                .filter((project: Project) => project.createdBy === account)
-                .map((project: Project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))}
+              .filter((project: Project) => project.createdBy === account)
+              .map((project: Project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))}
         </>
       );
     }
@@ -156,15 +158,15 @@ function Projects() {
       <>
         {filteredProjects.length !== 0
           ? filteredProjects
-              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-              .map((project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))
+            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+            .map((project) => (
+              <ProjectCard key={project.name} project={project} />
+            ))
           : data.getAllProjects
-              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-              .map((project: Project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))}
+            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+            .map((project: Project) => (
+              <ProjectCard key={project.name} project={project} />
+            ))}
       </>
     );
   };
@@ -175,7 +177,7 @@ function Projects() {
   return (
     <Container>
       <Flex w="full">
-        <Heading as="h1" size="2xl">
+        <Heading as="h1" size="2xl" color={getTextColor}>
           {t("projects")}
         </Heading>
         <Spacer />
