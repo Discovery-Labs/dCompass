@@ -37,7 +37,10 @@ import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
 import CardMedia from "../../../components/custom/CardMedia";
+import SocialLinks from "../../../components/custom/SocialLinks";
+import BreadcrumbItems from "../../../components/layout/BreadcrumbItems";
 import QuestCard from "../../../components/projects/quests/QuestCard";
+import { streamUrlToId } from "../../../core/helpers";
 import { Tag } from "../../../core/types";
 import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
@@ -129,6 +132,19 @@ function ProjectPage({
 
   return (
     <Container>
+      <BreadcrumbItems
+        breadCrumbs={[
+          {
+            label: "Projects",
+            href: "/",
+          },
+          {
+            label: name,
+            href: `/projects/${streamUrlToId(id)}`,
+            isCurrentPage: true,
+          },
+        ]}
+      />
       <Flex w="full">
         <VStack w="full">
           <Image
@@ -166,32 +182,7 @@ function ProjectPage({
       </Flex>
 
       <Flex w="full" direction="column">
-        <HStack spacing={8} justifyContent="space-between">
-          {website && (
-            <Link target="_blank" href={website}>
-              <Icon boxSize={8} as={BsGlobe} />
-            </Link>
-          )}
-          {twitter && (
-            <Link target="_blank" href={twitter}>
-              <Icon boxSize={8} as={SiTwitter} />
-            </Link>
-          )}
-          {discord && (
-            <Link target="_blank" href={discord}>
-              <Icon boxSize={8} as={SiDiscord} />
-            </Link>
-          )}
-          {github && (
-            <Link target="_blank" href={github}>
-              <Icon boxSize={8} as={SiGithub} />
-            </Link>
-          )}
-          {gitbook && (
-            <Link target="_blank" href={gitbook}>
-              <Icon boxSize={8} as={SiGitbook} />
-            </Link>
-          )}
+        <HStack justifyContent="space-between">
           <Flex align="center" maxW="full">
             {createdBy && <Blockies seed={createdBy} className="blockies" />}
             <VStack align="flex-start" ml="2">
@@ -203,6 +194,13 @@ function ProjectPage({
               </Text>
             </VStack>
           </Flex>
+          <SocialLinks
+            website={website}
+            discord={discord}
+            twitter={twitter}
+            github={github}
+            gitbook={gitbook}
+          />
         </HStack>
 
         <Accordion allowToggle py="4">

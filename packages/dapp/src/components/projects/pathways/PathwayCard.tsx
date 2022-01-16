@@ -243,20 +243,6 @@ function PathwayCard({
           <Avatar
             boxSize="4.5rem"
             src={`https://ipfs.io/ipfs/${pathway.image}`}
-            position="relative"
-            zIndex={2}
-            _before={{
-              content: '""',
-              width: "full",
-              height: "full",
-              rounded: "full",
-              transform: "scale(1.125)",
-              bg: "purple.500",
-              position: "absolute",
-              zIndex: -1,
-              top: 0,
-              left: 0,
-            }}
           />
           <Text color="purple.500" fontSize="3xl" fontWeight="bold">
             NFT
@@ -275,19 +261,6 @@ function PathwayCard({
             rounded="full"
             width={useBreakpointValue({ base: "44px", md: "60px" })}
             height={useBreakpointValue({ base: "44px", md: "60px" })}
-            position="relative"
-            _before={{
-              content: '""',
-              width: "full",
-              height: "full",
-              rounded: "full",
-              transform: "scale(1.125)",
-              bgGradient: "linear(to-bl, purple.400,purple.500)",
-              position: "absolute",
-              zIndex: -1,
-              top: 0,
-              left: 0,
-            }}
           >
             <Text fontSize="3xl" fontWeight="bold">
               0.1 ETH

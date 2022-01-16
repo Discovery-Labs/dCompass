@@ -47,7 +47,6 @@ export const APPROVE_QUEST_MUTATION = gql`
       name
       description
       pathwayId
-      questType
       image
       isPending
     }

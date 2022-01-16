@@ -8,11 +8,18 @@ import {
   Text,
   Tag,
   HStack,
+  Tooltip,
+  Stack,
+  Icon,
+  VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useContext } from "react";
+import { GiSwordwoman, GiTwoCoins } from "react-icons/gi";
+import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
+import useCustomColor from "../../../core/hooks/useCustomColor";
 import { APPROVE_QUEST_MUTATION } from "../../../graphql/quests";
 import Card from "components/custom/Card";
 
@@ -40,6 +47,8 @@ function QuestCard({
   projectContributors: string[];
 }) {
   const router = useRouter();
+  const { getTextColor, getColoredText, getBgColor, getAccentColor } =
+    useCustomColor();
   const { account, provider } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION, {
     refetchQueries: "all",
@@ -72,14 +81,17 @@ function QuestCard({
   };
 
   return (
-    <Card layerStyle="no-border-hover">
-      <Flex w="full">
-        <Avatar
-          mr="0.5rem"
-          border="solid 5px gold"
-          boxSize="10rem"
-          src={`https://ipfs.io/ipfs/${quest.image}`}
-        />
+    <Card h="lg" layerStyle="no-border-hover" spacing="6">
+      <Flex w="full" minH="56px">
+        <Heading
+          noOfLines={2}
+          as="h2"
+          fontSize="2xl"
+          color={getTextColor}
+          textTransform="uppercase"
+        >
+          {quest.name}
+        </Heading>
 
         <Spacer />
         <Flex align="end" direction="column">
@@ -89,14 +101,80 @@ function QuestCard({
           </Tag>
         </Flex>
       </Flex>
-      <HStack>
-        <Tag my="2" variant="outline">
-          {quest.questType}
-        </Tag>
-      </HStack>
-      <Heading fontSize="2xl">{quest.name}</Heading>
-      <Text noOfLines={4}>{quest.description}</Text>
-      <Spacer />
+      <Tooltip label={quest.description} hasArrow placement="top">
+        <Heading
+          noOfLines={3}
+          as="h4"
+          size="md"
+          color={getColoredText}
+          minH="65px"
+        >
+          {quest.description}
+        </Heading>
+      </Tooltip>
+      <VStack w="full" align="left">
+        <HStack>
+          <Icon as={RiSwordLine} />
+          <Text
+            fontWeight="bold"
+            fontSize="xl"
+            color={getTextColor}
+            textTransform="uppercase"
+          >
+            Quest type
+          </Text>
+        </HStack>
+        <HStack>
+          <Tag variant="outline" size="lg">
+            Snapshot Voter
+          </Tag>
+        </HStack>
+        <HStack>
+          <Icon as={GiTwoCoins} />
+          <Text
+            fontWeight="bold"
+            fontSize="xl"
+            color={getTextColor}
+            textTransform="uppercase"
+          >
+            Rewards
+          </Text>
+        </HStack>
+
+        <Stack
+          w="full"
+          justifyContent="space-between"
+          direction="row"
+          spacing={4}
+          align="center"
+        >
+          <Avatar
+            boxSize="4.8rem"
+            src={`https://ipfs.io/ipfs/${quest.image}`}
+            position="relative"
+          />
+          <Text color="purple.500" fontSize="3xl" fontWeight="bold">
+            NFT
+          </Text>
+          <Text fontFamily="heading" fontSize={{ base: "4xl", md: "6xl" }}>
+            +
+          </Text>
+          <Flex
+            align="center"
+            justify="center"
+            fontFamily="heading"
+            fontWeight="bold"
+            fontSize={{ base: "sm", md: "lg" }}
+            color="purple.500"
+            rounded="full"
+          >
+            <Text fontSize="3xl" fontWeight="bold">
+              0.1 ETH
+            </Text>
+          </Flex>
+        </Stack>
+      </VStack>
+
       <Flex w="full" justify="space-between">
         {quest.isPending && isContributor && (
           <>
@@ -115,13 +193,18 @@ function QuestCard({
         {!quest.isPending && (
           <>
             <Button
-              variant="outline"
+              leftIcon={<GiSwordwoman />}
               fontSize="md"
               onClick={() => console.log("Start Quest")}
             >
-              Start Quest
+              Start
             </Button>
-            <Button fontSize="md" onClick={() => console.log("Claim Reward")}>
+            <Button
+              fontSize="md"
+              onClick={() => console.log("Claim Reward")}
+              variant="outline"
+              leftIcon={<RiHandCoinFill />}
+            >
               Claim
             </Button>
           </>

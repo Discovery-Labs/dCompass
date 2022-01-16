@@ -37,7 +37,7 @@ import { initializeApollo } from "../../../../../../lib/apolloClient";
 import CardMedia from "../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../components/layout/BreadcrumbItems";
 import QuestCard from "../../../../../components/projects/quests/QuestCard";
-import { streamUrlToId } from "../../../../../core/helpers";
+import { streamIdToUrl, streamUrlToId } from "../../../../../core/helpers";
 import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
 import Container from "components/layout/Container";
@@ -166,24 +166,14 @@ function PathwayPage({
         ]}
       />
 
-      <VStack align="left" w="full" minH="56px">
-        <Heading noOfLines={2} as="h1" size="3xl" color={getTextColor}>
+      <VStack align="left" w="full">
+        <Heading as="h1" size="3xl" color={getTextColor}>
           {title}
         </Heading>
         <Heading as="h2" size="xl" color={getColoredText} py="4">
           {description}
         </Heading>
       </VStack>
-
-      {isOwner && (
-        // TODO: edit pathway form
-        <NextLink
-          href={`/projects/${id.split("://")[1]}/edit-project/`}
-          passHref
-        >
-          <Button leftIcon={<EditIcon />}>{t("all-projects")}</Button>
-        </NextLink>
-      )}
 
       <HStack w="full" align="left" justifyContent="space-between">
         <VStack align="left">
@@ -245,14 +235,32 @@ function PathwayPage({
           </HStack>
         </VStack>
         <Flex align="center" maxW="full" py="4">
-          {createdBy && <Blockies seed={createdBy} className="blockies" />}
-          <VStack align="flex-start" ml="2">
+          {createdBy && (
+            <Blockies
+              seed={createdBy}
+              className="blockies"
+              size={7}
+              scale={10}
+            />
+          )}
+          <VStack align="flex-start" mx="2">
             <Text color={getColoredText} textStyle="small" isTruncated>
               {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
             <Text fontSize="sm" isTruncated>
               {t("by")} {createdBy}
             </Text>
+            {isOwner && (
+              // TODO: edit pathway form
+              <NextLink
+                href={`/projects/${streamUrlToId(
+                  projectId
+                )}/pathways/${streamUrlToId(id)}/edit-pathway`}
+                passHref
+              >
+                <Button leftIcon={<EditIcon />}>{t("edit-pathway")}</Button>
+              </NextLink>
+            )}
           </VStack>
         </Flex>
       </HStack>
