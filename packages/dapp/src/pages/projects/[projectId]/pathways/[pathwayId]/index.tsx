@@ -15,23 +15,35 @@ import {
   HStack,
   VStack,
   Image,
+  useBreakpointValue,
+  Avatar,
+  Icon,
+  Stack,
+  Tag,
+  Tooltip,
+  Progress,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
+import { BsBarChartFill } from "react-icons/bs";
+import { GiTwoCoins } from "react-icons/gi";
+import { GoTasklist } from "react-icons/go";
 
 import { initializeApollo } from "../../../../../../lib/apolloClient";
+import CardMedia from "../../../../../components/custom/CardMedia";
+import BreadcrumbItems from "../../../../../components/layout/BreadcrumbItems";
 import QuestCard from "../../../../../components/projects/quests/QuestCard";
+import { streamUrlToId } from "../../../../../core/helpers";
 import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
 import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 type Props = {
   projectId: string | null;
@@ -95,13 +107,15 @@ function PathwayPage({
   description,
   image,
   quests = [],
+  difficulty,
   createdBy,
   createdAt,
   projectId,
 }: any) {
   const { t } = useTranslation("common");
   const { account } = useContext(Web3Context);
-  const { getColoredText } = useCustomColor();
+  const { getTextColor, getColoredText, getBgColor, getAccentColor } =
+    useCustomColor();
 
   const { data, loading, error } = useQuery(
     GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
@@ -126,36 +140,111 @@ function PathwayPage({
   if (error || projectError)
     return `Loading error! ${error?.message || projectError?.message}`;
 
-  console.log({ projectRes });
   return (
     <Container>
-      <Flex w="full">
-        <HStack>
-          <Image
-            rounded="md"
-            src={`https://ipfs.io/ipfs/${image}`}
-            objectFit="cover"
-            w={150}
-            h={150}
-          />
-          <Heading as="h1" size="4xl" pl="4">
-            {title}
-          </Heading>
-        </HStack>
-        <Spacer />
-        {isOwner && (
-          // TODO: edit pathway form
-          <NextLink
-            href={`/projects/${id.split("://")[1]}/edit-project/`}
-            passHref
-          >
-            <Button leftIcon={<EditIcon />}>{t("all-projects")}</Button>
-          </NextLink>
-        )}
-      </Flex>
+      <BreadcrumbItems
+        breadCrumbs={[
+          {
+            label: "Projects",
+            href: "/",
+          },
+          {
+            label: projectRes.getProjectById.name,
+            href: `/projects/${streamUrlToId(projectId)}`,
+          },
+          {
+            label: "Pathways",
+            href: `/projects/${streamUrlToId(projectId)}/pathways`,
+          },
+          {
+            label: title,
+            href: `/projects/${streamUrlToId(
+              projectId
+            )}/pathways/${streamUrlToId(id)}/`,
+            isCurrentPage: true,
+          },
+        ]}
+      />
 
-      <Flex w="full" direction="column" pt="4">
-        <Flex align="center" maxW="full">
+      <VStack align="left" w="full" minH="56px">
+        <Heading noOfLines={2} as="h1" size="3xl" color={getTextColor}>
+          {title}
+        </Heading>
+        <Heading as="h2" size="xl" color={getColoredText} py="4">
+          {description}
+        </Heading>
+      </VStack>
+
+      {isOwner && (
+        // TODO: edit pathway form
+        <NextLink
+          href={`/projects/${id.split("://")[1]}/edit-project/`}
+          passHref
+        >
+          <Button leftIcon={<EditIcon />}>{t("all-projects")}</Button>
+        </NextLink>
+      )}
+
+      <HStack w="full" align="left" justifyContent="space-between">
+        <VStack align="left">
+          <HStack>
+            <Icon as={BsBarChartFill} />
+            <Text
+              fontWeight="bold"
+              fontSize="xl"
+              color={getTextColor}
+              textTransform="uppercase"
+            >
+              Difficulty
+            </Text>
+            <Spacer />
+            <Flex align="end" direction="column">
+              <Tag>{difficulty}</Tag>
+            </Flex>
+          </HStack>
+          <Tooltip
+            label="50% - 4/8 quests completed"
+            hasArrow
+            fontWeight="extrabold"
+            placement="right"
+          >
+            <VStack w="full" align="left">
+              <HStack>
+                <Icon as={GoTasklist} />
+                <Text
+                  fontWeight="bold"
+                  fontSize="xl"
+                  color={getTextColor}
+                  textTransform="uppercase"
+                >
+                  Progress
+                </Text>
+                <Progress
+                  w="full"
+                  size="md"
+                  rounded="md"
+                  value={50}
+                  border={`solid 1px ${getAccentColor}`}
+                  hasStripe
+                  colorScheme="accentDark"
+                  bgColor={getBgColor}
+                />
+              </HStack>
+            </VStack>
+          </Tooltip>
+          <HStack w="full">
+            <Icon as={GiTwoCoins} />
+            <Text
+              fontWeight="bold"
+              fontSize="xl"
+              color={getTextColor}
+              textTransform="uppercase"
+            >
+              Rewards
+            </Text>
+          </HStack>
+        </VStack>
+        <Flex align="center" maxW="full" py="4">
           {createdBy && <Blockies seed={createdBy} className="blockies" />}
           <VStack align="flex-start" ml="2">
             <Text color={getColoredText} textStyle="small" isTruncated>
@@ -166,14 +255,82 @@ function PathwayPage({
             </Text>
           </VStack>
         </Flex>
+      </HStack>
+      {quests && (
+        <Text pt="8" fontSize="xs">
+          {quests.length} Quest{quests.length > 1 ? "s" : ""}
+        </Text>
+      )}
 
-        <Text pt="8">{description}</Text>
-        {quests && (
-          <Text pt="8" fontSize="xs">
-            {quests.length} Quest{quests.length > 1 ? "s" : ""}
-          </Text>
-        )}
-      </Flex>
+      <HStack w="full" align="left">
+        <CardMedia
+          h="xs"
+          src={`https://ipfs.io/ipfs/${image}`}
+          imageHeight="160px"
+        >
+          <VStack w="full" align="left">
+            <Stack
+              w="full"
+              justifyContent="space-between"
+              direction="row"
+              spacing={4}
+              align="center"
+            >
+              <Avatar
+                boxSize="4.5rem"
+                src={`https://ipfs.io/ipfs/${image}`}
+                position="relative"
+                zIndex={2}
+                _before={{
+                  content: '""',
+                  width: "full",
+                  height: "full",
+                  rounded: "full",
+                  transform: "scale(1.125)",
+                  bg: "purple.500",
+                  position: "absolute",
+                  zIndex: -1,
+                  top: 0,
+                  left: 0,
+                }}
+              />
+              <Text color="purple.500" fontSize="3xl" fontWeight="bold">
+                NFT
+              </Text>
+              <Text fontFamily="heading" fontSize={{ base: "4xl", md: "6xl" }}>
+                +
+              </Text>
+              <Flex
+                align="center"
+                justify="center"
+                fontFamily="heading"
+                fontWeight="bold"
+                fontSize={{ base: "sm", md: "lg" }}
+                bg="violet.100"
+                color={getTextColor}
+                rounded="full"
+                position="relative"
+                _before={{
+                  content: '""',
+                  width: "full",
+                  height: "full",
+                  rounded: "full",
+                  transform: "scale(1.125)",
+                  bgGradient: "linear(to-bl, purple.400,purple.500)",
+                  position: "absolute",
+                  zIndex: -1,
+                  top: 0,
+                  left: 0,
+                }}
+              >
+                <Text fontSize="3xl" fontWeight="bold">
+                  0.1 ETH
+                </Text>
+              </Flex>
+            </Stack>
+          </VStack>
+        </CardMedia>
+      </HStack>
 
       <Tabs py="2rem" w="full">
         <HStack justifyContent="space-between">
@@ -184,9 +341,9 @@ function PathwayPage({
           </TabList>
           {isOwner && (
             <NextLink
-              href={`/projects/${projectId.split("://")[1]}/pathways/${
-                id.split("://")[1]
-              }/add-quest`}
+              href={`/projects/${streamUrlToId(
+                projectId
+              )}/pathways/${streamUrlToId(id)}/add-quest`}
               passHref
             >
               <Button leftIcon={<PlusSquareIcon />}>Add Quest</Button>

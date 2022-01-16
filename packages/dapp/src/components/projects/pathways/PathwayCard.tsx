@@ -12,11 +12,20 @@ import {
   VStack,
   HStack,
   TagLabel,
+  Progress,
+  Stack,
+  Icon,
+  useBreakpointValue,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 // import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useContext, useState, useEffect } from "react";
+import { BsBarChartFill } from "react-icons/bs";
+import { GiTwoCoins } from "react-icons/gi";
+import { GoTasklist } from "react-icons/go";
+import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { streamUrlToId } from "../../../core/helpers";
@@ -45,7 +54,8 @@ function PathwayCard({
   pathway: Pathway;
   projectContributors: string[];
 }) {
-  const { getTextColor } = useCustomColor();
+  const { getTextColor, getColoredText, getBgColor, getAccentColor } =
+    useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
@@ -104,16 +114,6 @@ function PathwayCard({
 
       const [metadataVerifySignature, thresholdVerifySignature] =
         data.approvePathway.expandedServerSignatures;
-
-      console.log({
-        projectContributors,
-        id,
-        projectId: streamUrlToId(pathway.projectId),
-        Rs: [metadataVerifySignature.r, thresholdVerifySignature.r],
-        Ss: [metadataVerifySignature.s, thresholdVerifySignature.s],
-        Vs: [metadataVerifySignature.v, thresholdVerifySignature.v],
-        votesNeeded: 1,
-      });
 
       const voteForApprovalTx =
         await contracts.pathwayNFTContract.voteForApproval(
@@ -202,27 +202,166 @@ function PathwayCard({
   };
 
   return (
-    <Card h="md">
-      <Flex w="full">
-        <Avatar
-          mr="0.5rem"
-          boxSize="4rem"
-          src={`https://ipfs.io/ipfs/${pathway.image}`}
-        />
-        <Spacer />
-        <Flex align="end" direction="column">
-          <Tag>{pathway.difficulty}</Tag>
-        </Flex>
+    <Card h={isContributor ? "xl" : "lg"}>
+      <Flex w="full" minH="56px">
+        <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
+          {pathway.title}
+        </Heading>
       </Flex>
-      <Heading fontSize="2xl" color={getTextColor}>
-        {pathway.title}
-      </Heading>
-      <Text noOfLines={2}>{pathway.description}</Text>
+      <Tooltip label={pathway.description} hasArrow placement="top">
+        <Heading
+          noOfLines={3}
+          as="h4"
+          fontSize="md"
+          color={getColoredText}
+          minH="65px"
+        >
+          {pathway.description}
+        </Heading>
+      </Tooltip>
+
+      <VStack w="full" align="left">
+        <HStack>
+          <Icon as={GiTwoCoins} />
+          <Text
+            fontWeight="bold"
+            fontSize="xl"
+            color={getTextColor}
+            textTransform="uppercase"
+          >
+            Rewards
+          </Text>
+        </HStack>
+
+        <Stack
+          w="full"
+          justifyContent="space-between"
+          direction="row"
+          spacing={4}
+          align="center"
+        >
+          <Avatar
+            boxSize="4.5rem"
+            src={`https://ipfs.io/ipfs/${pathway.image}`}
+            position="relative"
+            zIndex={2}
+            _before={{
+              content: '""',
+              width: "full",
+              height: "full",
+              rounded: "full",
+              transform: "scale(1.125)",
+              bg: "purple.500",
+              position: "absolute",
+              zIndex: -1,
+              top: 0,
+              left: 0,
+            }}
+          />
+          <Text color="purple.500" fontSize="3xl" fontWeight="bold">
+            NFT
+          </Text>
+          <Text fontFamily="heading" fontSize={{ base: "4xl", md: "6xl" }}>
+            +
+          </Text>
+          <Flex
+            align="center"
+            justify="center"
+            fontFamily="heading"
+            fontWeight="bold"
+            fontSize={{ base: "sm", md: "lg" }}
+            bg="violet.100"
+            color="purple.500"
+            rounded="full"
+            width={useBreakpointValue({ base: "44px", md: "60px" })}
+            height={useBreakpointValue({ base: "44px", md: "60px" })}
+            position="relative"
+            _before={{
+              content: '""',
+              width: "full",
+              height: "full",
+              rounded: "full",
+              transform: "scale(1.125)",
+              bgGradient: "linear(to-bl, purple.400,purple.500)",
+              position: "absolute",
+              zIndex: -1,
+              top: 0,
+              left: 0,
+            }}
+          >
+            <Text fontSize="3xl" fontWeight="bold">
+              0.1 ETH
+            </Text>
+          </Flex>
+        </Stack>
+      </VStack>
+      <VStack w="full" align="left">
+        <HStack>
+          <Icon as={BsBarChartFill} />
+          <Text
+            fontWeight="bold"
+            fontSize="xl"
+            color={getTextColor}
+            textTransform="uppercase"
+          >
+            Difficulty
+          </Text>
+          <Spacer />
+          <Flex align="end" direction="column">
+            <Tag>{pathway.difficulty}</Tag>
+          </Flex>
+        </HStack>
+      </VStack>
+      <Tooltip label="50% - 4/8 quests completed" hasArrow placement="top">
+        <VStack w="full" align="left">
+          <HStack>
+            <Icon as={GoTasklist} />
+            <Text
+              fontWeight="bold"
+              fontSize="xl"
+              color={getTextColor}
+              textTransform="uppercase"
+            >
+              Progress
+            </Text>
+            <Progress
+              w="full"
+              size="md"
+              rounded="md"
+              value={50}
+              border={`solid 1px ${getAccentColor}`}
+              hasStripe
+              colorScheme="accentDark"
+              bgColor={getBgColor}
+            />
+          </HStack>
+        </VStack>
+      </Tooltip>
+
       {isContributor && (
-        <VStack align="left">
+        <VStack w="full" align="left">
+          <HStack>
+            <Text>Token status:</Text>
+            <Tag
+              variant="outline"
+              w="fit-content"
+              colorScheme={
+                status === "APPROVED" || status === "MINTED"
+                  ? "green"
+                  : "orange"
+              }
+              size="sm"
+            >
+              <TagLabel>{status}</TagLabel>
+            </Tag>
+          </HStack>
           {status && (status === "PENDING" || status === "NONEXISTENT") && (
-            <HStack>
-              <Button onClick={handleApprovePathway} leftIcon={<CheckIcon />}>
+            <HStack w="full" justifyContent="space-between">
+              <Button
+                colorScheme="accentDark"
+                onClick={handleApprovePathway}
+                leftIcon={<CheckIcon />}
+              >
                 Approve
               </Button>
               <Button ml="5" colorScheme="secondary" leftIcon={<CloseIcon />}>
@@ -237,26 +376,25 @@ function PathwayCard({
               </Button>
             </HStack>
           )}
-          <Tag
-            variant="outline"
-            w="fit-content"
-            colorScheme={
-              status === "APPROVED" || status === "MINTED" ? "green" : "orange"
-            }
-            size="sm"
-          >
-            <TagLabel>{status}</TagLabel>
-          </Tag>
         </VStack>
       )}
-      <Spacer />
       <Flex w="full" justify="space-between">
-        <Button variant="outline" fontSize="md" onClick={() => openPathway()}>
-          Quests
+        <Button
+          leftIcon={<RiSwordLine />}
+          fontSize="md"
+          onClick={() => openPathway()}
+        >
+          8 Quests
         </Button>
 
         {!pathway.isPending && (
-          <Button fontSize="md" onClick={() => console.log("Claim Pathway")}>
+          <Button
+            fontSize="md"
+            variant="outline"
+            leftIcon={<RiHandCoinFill />}
+            disabled
+            onClick={() => console.log("Claim Pathway")}
+          >
             Claim
           </Button>
         )}

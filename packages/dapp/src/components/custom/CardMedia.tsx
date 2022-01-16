@@ -2,7 +2,7 @@ import { VStack, Image, Box } from "@chakra-ui/react";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
 
-function CardMedia({ children, src, ...others }: any) {
+function CardMedia({ children, src, imageHeight = "120px", ...others }: any) {
   const { getOverBgColor } = useCustomColor();
   return (
     <VStack
@@ -16,7 +16,7 @@ function CardMedia({ children, src, ...others }: any) {
       <Box w="full" position="relative">
         <Box position="static">
           <Image
-            height="120px"
+            height={imageHeight}
             width="full"
             position="absolute"
             top="0px"
@@ -26,7 +26,7 @@ function CardMedia({ children, src, ...others }: any) {
         </Box>
         <Box position="relative">
           <Image
-            height="120px"
+            height={imageHeight}
             borderRadius="8"
             w="full"
             src={src}
