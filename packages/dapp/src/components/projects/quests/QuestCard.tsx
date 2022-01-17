@@ -12,6 +12,8 @@ import {
   Stack,
   Icon,
   VStack,
+  Box,
+  Center,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useContext } from "react";
@@ -22,6 +24,8 @@ import { Web3Context } from "../../../contexts/Web3Provider";
 import useCustomColor from "../../../core/hooks/useCustomColor";
 import { APPROVE_QUEST_MUTATION } from "../../../graphql/quests";
 import Card from "components/custom/Card";
+
+import { LockIcon } from "@chakra-ui/icons";
 
 type Quest = {
   id: string;
@@ -37,7 +41,9 @@ type Quest = {
   website: string;
   network: string;
   reward: string;
+  // unlocked: boolean;
 };
+const unlocked = false;
 
 function QuestCard({
   quest,
@@ -80,8 +86,30 @@ function QuestCard({
     });
   };
 
+  const LockedScreen = () => {
+    return (
+      <Box
+        zIndex="overlay"
+        borderRadius="8"
+        bgColor={getBgColor}
+        position="absolute"
+        top="0"
+        right="0"
+        left="0"
+        bottom="0"
+        opacity="0.6"
+      >
+        <Flex height="full" align="center" justify="center">
+          <LockIcon w={32} h={32} color={getColoredText} />
+        </Flex>
+      </Box>
+    );
+  };
+
   return (
-    <Card h="lg" layerStyle="no-border-hover" spacing="6">
+    <Card position="relative" h="lg" layerStyle="no-border-hover" spacing="6">
+      {!unlocked && <LockedScreen />}
+
       <Flex w="full" minH="56px">
         <Heading
           noOfLines={2}
