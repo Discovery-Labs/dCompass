@@ -14,19 +14,17 @@ import {
   NumberInputField,
   NumberInputStepper,
 } from "@chakra-ui/react";
-import DEFAULT_TOKEN_LIST from "@uniswap/default-token-list";
-import { useWeb3React } from "@web3-react/core";
 import { useRouter } from "next/router";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
+import useTokenList from "../../../core/hooks/useTokenList";
 import ControlledSelect from "../../Inputs/ControlledSelect";
 
 import PathwayImageDropzone from "./PathwayContentDropzone";
 
 export default function Pathways({ control, register, setValue }: any) {
   const router = useRouter();
-  const { chainId } = useWeb3React();
-
+  const { tokens, defaultMainnetDAIToken } = useTokenList();
   const {
     formState: { errors },
   } = useFormContext();
@@ -80,18 +78,6 @@ export default function Pathways({ control, register, setValue }: any) {
       colorScheme: "purple",
     },
   ];
-
-  const DAI_DEFAULT_CURRENCY = DEFAULT_TOKEN_LIST.tokens
-    .filter((token) => token.chainId === chainId)
-    .find((token) => token.symbol === "DAI") || {
-    name: "Dai Stablecoin",
-    address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-    symbol: "DAI",
-    decimals: 18,
-    chainId: 1,
-    logoURI:
-      "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png",
-  };
 
   return (
     <VStack w="full">
@@ -194,15 +180,13 @@ export default function Pathways({ control, register, setValue }: any) {
                   required: "This is required",
                 }}
                 defaultValue={{
-                  label: `${DAI_DEFAULT_CURRENCY.symbol} - ${DAI_DEFAULT_CURRENCY.name}`,
-                  value: `${DAI_DEFAULT_CURRENCY.chainId}:${DAI_DEFAULT_CURRENCY.address}`,
+                  label: `${defaultMainnetDAIToken.symbol} - ${defaultMainnetDAIToken.name}`,
+                  value: `${defaultMainnetDAIToken.chainId}:${defaultMainnetDAIToken.address}`,
                 }}
-                options={DEFAULT_TOKEN_LIST.tokens
-                  .filter((token) => token.chainId === chainId)
-                  .map((token) => ({
-                    label: `${token.symbol} - ${token.name}`,
-                    value: `${token.chainId}:${token.address}`,
-                  }))}
+                options={tokens.map((token) => ({
+                  label: `${token.symbol} - ${token.name}`,
+                  value: `${token.chainId}:${token.address}`,
+                }))}
               />
             </HStack>
 

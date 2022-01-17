@@ -1,0 +1,398 @@
+{
+  "address": "0x4B4812E571CC967EB8EC3D4FEe874e56301B0C76",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_projectNFTAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_verifyAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_appSigningAddr",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "appSigningAddr",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_projectId",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "appSign",
+          "type": "bool"
+        },
+        {
+          "internalType": "address",
+          "name": "projectSigningAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "r",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "s",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint8",
+          "name": "v",
+          "type": "uint8"
+        }
+      ],
+      "name": "deployDiamond",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "multiSigThreshold",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "",
+          "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "numReviewers",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "",
+          "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "projectDiamondAddrs",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "reviewers",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_projectId",
+          "type": "string"
+        }
+      ],
+      "name": "setApproved",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_newNFTAddr",
+          "type": "address"
+        }
+      ],
+      "name": "setprojectNFTAddr",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xcf1f7dba4e96e1710fb824ba40441fe53cf879ee2be9c83f36041b19b95f0af5",
+  "receipt": {
+    "to": null,
+    "from": "0x7E13623dd5D070967c8568066bE81a3E5bF75226",
+    "contractAddress": "0x4B4812E571CC967EB8EC3D4FEe874e56301B0C76",
+    "transactionIndex": 2,
+    "gasUsed": "536019",
+    "logsBloom": "0x00008000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000200000000000000000001000000000000000000000000001000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000040000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x68eeb568ab8f97a1f70fdaaeb4f75024d026e9399d851be074fca4dd72a44d39",
+    "transactionHash": "0xcf1f7dba4e96e1710fb824ba40441fe53cf879ee2be9c83f36041b19b95f0af5",
+    "logs": [
+      {
+        "transactionIndex": 2,
+        "blockNumber": 29313931,
+        "transactionHash": "0xcf1f7dba4e96e1710fb824ba40441fe53cf879ee2be9c83f36041b19b95f0af5",
+        "address": "0x4B4812E571CC967EB8EC3D4FEe874e56301B0C76",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007e13623dd5d070967c8568066be81a3e5bf75226"
+        ],
+        "data": "0x",
+        "logIndex": 4,
+        "blockHash": "0x68eeb568ab8f97a1f70fdaaeb4f75024d026e9399d851be074fca4dd72a44d39"
+      }
+    ],
+    "blockNumber": 29313931,
+    "cumulativeGasUsed": "698403",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xD031A08028561EC2329d2CA22595448E31927D1A",
+    "0xd95dD181D0e75E064b71457b23ADb8C61E1b2333",
+    "0x5eF593FF381b7d36028c795B51e138428d009C20"
+  ],
+  "solcInputHash": "8fd304358dbe062342bf4ba0ef2216b2",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.7+commit.e28d00a7\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_projectNFTAddr\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_verifyAddr\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_appSigningAddr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"appSigningAddr\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_projectId\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"appSign\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"projectSigningAddr\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"}],\"name\":\"deployDiamond\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"multiSigThreshold\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"numReviewers\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"projectDiamondAddrs\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"reviewers\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_projectId\",\"type\":\"string\"}],\"name\":\"setApproved\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newNFTAddr\",\"type\":\"address\"}],\"name\":\"setprojectNFTAddr\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/AppDiamond.sol\":\"AppDiamond\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _setOwner(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _setOwner(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _setOwner(newOwner);\\n    }\\n\\n    function _setOwner(address newOwner) private {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x6bb804a310218875e89d12c053e94a13a4607cdf7cc2052f3e52bd32a0dc50a1\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0x90565a39ae45c80f0468dc96c7b20d0afc3055f344c8203a0c9258239f350b9f\",\"license\":\"MIT\"},\"contracts/AppDiamond.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity >=0.7.0 <0.9.0;\\n\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\n\\ncontract AppDiamond is Ownable {\\n    address projectNFTAddr;//address that mints NFT after approval process to project\\n    address verifyAddr;//address that verifies deployments and updates\\n    mapping (address => bool) public reviewers;//same ones who can approve projectNFT\\n    uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )\\n    uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation\\n    mapping (string => bool) projApproved;//is Project NFt already approved and minted\\n    mapping (string => address) public projectDiamondAddrs; //mapping of address of deployed diamonds for \\n    address public appSigningAddr;\\n\\n    constructor(address _projectNFTAddr, address _verifyAddr, address _appSigningAddr){\\n        projectNFTAddr = _projectNFTAddr;\\n        verifyAddr = _verifyAddr;\\n        appSigningAddr = _appSigningAddr;\\n    }\\n\\n    //eventually will need to make this multiSig, but onlyOwner for right now\\n    function setprojectNFTAddr(address _newNFTAddr) public onlyOwner{\\n        projectNFTAddr = _newNFTAddr;\\n    }\\n\\n    function setApproved(string memory _projectId) external {\\n        require(_msgSender() == projectNFTAddr);\\n        projApproved[_projectId] = true;\\n    } \\n      \\n    function deployDiamond(string memory _projectId, bool appSign, address projectSigningAddr, bytes32 r, bytes32 s, uint8 v) external {\\n        require(projectDiamondAddrs[_projectId] == address(0), \\\"project had a diamond already\\\");//for now immutable diamond\\n        require(projApproved[_projectId], \\\"project NFT not minted\\\");\\n        //call verify to make sure this is ok to deploy...\\n        //deploy diamond for project\\n    }\\n\\n\\n}\",\"keccak256\":\"0xd51e89f9432906574edc86253db89d46a92e6defc1d09f32cd37ea50ba058386\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161083738038061083783398101604081905261002f916100e6565b6100383361007a565b600180546001600160a01b039485166001600160a01b031991821617909155600280549385169382169390931790925560078054919093169116179055610129565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80516001600160a01b03811681146100e157600080fd5b919050565b6000806000606084860312156100fb57600080fd5b610104846100ca565b9250610112602085016100ca565b9150610120604085016100ca565b90509250925092565b6106ff806101386000396000f3fe608060405234801561001057600080fd5b50600436106100a95760003560e01c8063a5207df511610071578063a5207df514610158578063b2f3f80c1461016b578063c50441ae14610185578063d8ded0f314610198578063f2fde38b146101ab578063f7cbb1b2146101be57600080fd5b80634badfeb2146100ae57806355c4e77f146100de57806365a35964146100f3578063715018a61461013f5780638da5cb5b14610147575b600080fd5b6004546100c1906001600160801b031681565b6040516001600160801b0390911681526020015b60405180910390f35b6100f16100ec3660046105b1565b6101f1565b005b610127610101366004610574565b80516020818301810180516006825292820191909301209152546001600160a01b031681565b6040516001600160a01b0390911681526020016100d5565b6100f16102e7565b6000546001600160a01b0316610127565b600754610127906001600160a01b031681565b6004546100c190600160801b90046001600160801b031681565b6100f1610193366004610574565b61031d565b6100f16101a6366004610552565b610372565b6100f16101b9366004610552565b6103be565b6101e16101cc366004610552565b60036020526000908152604090205460ff1681565b60405190151581526020016100d5565b60006001600160a01b031660068760405161020c9190610643565b908152604051908190036020019020546001600160a01b0316146102775760405162461bcd60e51b815260206004820152601d60248201527f70726f6a656374206861642061206469616d6f6e6420616c726561647900000060448201526064015b60405180910390fd5b6005866040516102879190610643565b9081526040519081900360200190205460ff166102df5760405162461bcd60e51b81526020600482015260166024820152751c1c9bda9958dd08139195081b9bdd081b5a5b9d195960521b604482015260640161026e565b505050505050565b6000546001600160a01b031633146103115760405162461bcd60e51b815260040161026e9061067e565b61031b6000610459565b565b6001546001600160a01b0316336001600160a01b03161461033d57600080fd5b600160058260405161034f9190610643565b908152604051908190036020019020805491151560ff1990921691909117905550565b6000546001600160a01b0316331461039c5760405162461bcd60e51b815260040161026e9061067e565b600180546001600160a01b0319166001600160a01b0392909216919091179055565b6000546001600160a01b031633146103e85760405162461bcd60e51b815260040161026e9061067e565b6001600160a01b03811661044d5760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b606482015260840161026e565b61045681610459565b50565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80356001600160a01b03811681146104c057600080fd5b919050565b600082601f8301126104d657600080fd5b813567ffffffffffffffff808211156104f1576104f16106b3565b604051601f8301601f19908116603f01168101908282118183101715610519576105196106b3565b8160405283815286602085880101111561053257600080fd5b836020870160208301376000602085830101528094505050505092915050565b60006020828403121561056457600080fd5b61056d826104a9565b9392505050565b60006020828403121561058657600080fd5b813567ffffffffffffffff81111561059d57600080fd5b6105a9848285016104c5565b949350505050565b60008060008060008060c087890312156105ca57600080fd5b863567ffffffffffffffff8111156105e157600080fd5b6105ed89828a016104c5565b9650506020870135801515811461060357600080fd5b9450610611604088016104a9565b9350606087013592506080870135915060a087013560ff8116811461063557600080fd5b809150509295509295509295565b6000825160005b81811015610664576020818601810151858301520161064a565b81811115610673576000828501525b509190910192915050565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b634e487b7160e01b600052604160045260246000fdfea264697066735822122024b84b866b65fb7b0fffc20893d18c4d1755bac320f5be835a24898afca348e064736f6c63430008070033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100a95760003560e01c8063a5207df511610071578063a5207df514610158578063b2f3f80c1461016b578063c50441ae14610185578063d8ded0f314610198578063f2fde38b146101ab578063f7cbb1b2146101be57600080fd5b80634badfeb2146100ae57806355c4e77f146100de57806365a35964146100f3578063715018a61461013f5780638da5cb5b14610147575b600080fd5b6004546100c1906001600160801b031681565b6040516001600160801b0390911681526020015b60405180910390f35b6100f16100ec3660046105b1565b6101f1565b005b610127610101366004610574565b80516020818301810180516006825292820191909301209152546001600160a01b031681565b6040516001600160a01b0390911681526020016100d5565b6100f16102e7565b6000546001600160a01b0316610127565b600754610127906001600160a01b031681565b6004546100c190600160801b90046001600160801b031681565b6100f1610193366004610574565b61031d565b6100f16101a6366004610552565b610372565b6100f16101b9366004610552565b6103be565b6101e16101cc366004610552565b60036020526000908152604090205460ff1681565b60405190151581526020016100d5565b60006001600160a01b031660068760405161020c9190610643565b908152604051908190036020019020546001600160a01b0316146102775760405162461bcd60e51b815260206004820152601d60248201527f70726f6a656374206861642061206469616d6f6e6420616c726561647900000060448201526064015b60405180910390fd5b6005866040516102879190610643565b9081526040519081900360200190205460ff166102df5760405162461bcd60e51b81526020600482015260166024820152751c1c9bda9958dd08139195081b9bdd081b5a5b9d195960521b604482015260640161026e565b505050505050565b6000546001600160a01b031633146103115760405162461bcd60e51b815260040161026e9061067e565b61031b6000610459565b565b6001546001600160a01b0316336001600160a01b03161461033d57600080fd5b600160058260405161034f9190610643565b908152604051908190036020019020805491151560ff1990921691909117905550565b6000546001600160a01b0316331461039c5760405162461bcd60e51b815260040161026e9061067e565b600180546001600160a01b0319166001600160a01b0392909216919091179055565b6000546001600160a01b031633146103e85760405162461bcd60e51b815260040161026e9061067e565b6001600160a01b03811661044d5760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b606482015260840161026e565b61045681610459565b50565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80356001600160a01b03811681146104c057600080fd5b919050565b600082601f8301126104d657600080fd5b813567ffffffffffffffff808211156104f1576104f16106b3565b604051601f8301601f19908116603f01168101908282118183101715610519576105196106b3565b8160405283815286602085880101111561053257600080fd5b836020870160208301376000602085830101528094505050505092915050565b60006020828403121561056457600080fd5b61056d826104a9565b9392505050565b60006020828403121561058657600080fd5b813567ffffffffffffffff81111561059d57600080fd5b6105a9848285016104c5565b949350505050565b60008060008060008060c087890312156105ca57600080fd5b863567ffffffffffffffff8111156105e157600080fd5b6105ed89828a016104c5565b9650506020870135801515811461060357600080fd5b9450610611604088016104a9565b9350606087013592506080870135915060a087013560ff8116811461063557600080fd5b809150509295509295509295565b6000825160005b81811015610664576020818601810151858301520161064a565b81811115610673576000828501525b509190910192915050565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b634e487b7160e01b600052604160045260246000fdfea264697066735822122024b84b866b65fb7b0fffc20893d18c4d1755bac320f5be835a24898afca348e064736f6c63430008070033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 273,
+        "contract": "contracts/AppDiamond.sol:AppDiamond",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 2482,
+        "contract": "contracts/AppDiamond.sol:AppDiamond",
+        "label": "projectNFTAddr",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      },
+      {
+        "astId": 2484,
+        "contract": "contracts/AppDiamond.sol:AppDiamond",
+        "label": "verifyAddr",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_address"
+      },
+      {
+        "astId": 2488,
+        "contract": "contracts/AppDiamond.sol:AppDiamond",
+        "label": "reviewers",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 2490,
+        "contract": "contracts/AppDiamond.sol:AppDiamond",
+        "label": "multiSigThreshold",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint128"
+      },
+      {
+        "astId": 2492,
+        "contract": "contracts/AppDiamond.sol:AppDiamond",
+        "label": "numReviewers",
+        "offset": 16,
+        "slot": "4",
+        "type": "t_uint128"
+      },
+      {
+        "astId": 2496,
+        "contract": "contracts/AppDiamond.sol:AppDiamond",
+        "label": "projApproved",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_string_memory_ptr,t_bool)"
+      },
+      {
+        "astId": 2500,
+        "contract": "contracts/AppDiamond.sol:AppDiamond",
+        "label": "projectDiamondAddrs",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_mapping(t_string_memory_ptr,t_address)"
+      },
+      {
+        "astId": 2502,
+        "contract": "contracts/AppDiamond.sol:AppDiamond",
+        "label": "appSigningAddr",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_address"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_string_memory_ptr,t_address)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_mapping(t_string_memory_ptr,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_uint128": {
+        "encoding": "inplace",
+        "label": "uint128",
+        "numberOfBytes": "16"
+      }
+    }
+  }
+}

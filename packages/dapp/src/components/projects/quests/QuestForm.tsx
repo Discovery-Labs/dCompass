@@ -7,7 +7,13 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
+  HStack,
   Input,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
   Stack,
   Textarea,
 } from "@chakra-ui/react";
@@ -16,6 +22,7 @@ import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
+import useTokenList from "../../../core/hooks/useTokenList";
 import {
   CREATE_QUIZ_QUEST_MUTATION,
   CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
@@ -68,6 +75,7 @@ const questTypeOptions = [
 ];
 
 const CreateQuestForm: React.FunctionComponent = () => {
+  const { tokens, defaultMainnetDAIToken } = useTokenList();
   const { self, provider, account } = useContext(Web3Context);
   const [createSnapshotVoterQuest] = useMutation(
     CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
@@ -191,16 +199,55 @@ const CreateQuestForm: React.FunctionComponent = () => {
   return (
     <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
       <Heading>Create quest</Heading>
+
       <ImageDropzone
         {...{
           register,
           setValue,
           errors,
           fieldName: "image",
-          label: "Quest NFT Image",
+          label: "Quest NFT Image reward",
           isRequired: true,
         }}
       />
+
+      <HStack w="full" alignItems="center">
+        <FormControl isInvalid={errors.rewardAmout}>
+          <FormLabel htmlFor="rewardAmout">Quest reward amount</FormLabel>
+          <NumberInput step={1_000} defaultValue={1_000}>
+            <NumberInputField
+              placeholder=""
+              {...register("rewardAmout", {
+                required: "This is required",
+              })}
+            />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          <FormErrorMessage>
+            {errors.rewardAmout && errors.rewardAmout.message}
+          </FormErrorMessage>
+        </FormControl>
+
+        <ControlledSelect
+          control={control}
+          name="rewardCurrency"
+          label="Reward currency"
+          rules={{
+            required: "This is required",
+          }}
+          defaultValue={{
+            label: `${defaultMainnetDAIToken.symbol} - ${defaultMainnetDAIToken.name}`,
+            value: `${defaultMainnetDAIToken.chainId}:${defaultMainnetDAIToken.address}`,
+          }}
+          options={tokens.map((token) => ({
+            label: `${token.symbol} - ${token.name}`,
+            value: `${token.chainId}:${token.address}`,
+          }))}
+        />
+      </HStack>
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Quest name</FormLabel>
