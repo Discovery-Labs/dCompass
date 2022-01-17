@@ -26,6 +26,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
     mapping (string => address[]) internal contributors;
+    mapping (string => address[]) internal approvedERC20Addrs;
     mapping (string => address) public projectWallets;
     mapping (string => uint) internal stakePerProject;
     mapping (uint => string) public statusStrings;
@@ -67,7 +68,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         emit ReceiveCalled(msg.sender, msg.value);
     }
     
-    function voteForApproval(address[] memory _contributors, uint _threshold, string memory _projectId) public onlyReviewer{
+    function voteForApproval(address[] memory _contributors,  address[] memory approvedAddrs, uint _threshold, string memory _projectId) public onlyReviewer{
         require(status[_projectId] != ProjectStatus.DENIED && status[_projectId] != ProjectStatus.APPROVED, "finalized project");
         require(!reviewerVotes[_projectId][_msgSender()], "already voted for this project");
         //require (projectWallets[_projectId] != address(0), "no project wallet");
@@ -79,6 +80,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             //rarities[_projectId] = _rarities;
             contributors[_projectId] = _contributors;
             projectThresholds[_projectId] = _threshold;
+            approvedERC20Addrs[_projectId] = approvedAddrs;
             if(multiSigThreshold*numReviewers/100 == 0){
                 status[_projectId] = ProjectStatus.APPROVED;
                 (bool success,) = payable(projectWallets[_projectId]).call{value : stakePerProject[_projectId]}("");
@@ -238,6 +240,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
 
     function getContributors(string memory _projectId) external view returns(address[] memory){
         return contributors[_projectId];
+    }
+
+    function getApprovedAddrs(string memory _projectId) external view returns(address[] memory){
+        return approvedERC20Addrs[_projectId];
     }
 
     function setAppDiamond(address payable _appDiamond) external onlyReviewer{
