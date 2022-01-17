@@ -154,7 +154,7 @@ function PathwayPage({
           },
           {
             label: "Pathways",
-            href: `/projects/${streamUrlToId(projectId)}/pathways`,
+            href: `/projects/${streamUrlToId(projectId)}`,
           },
           {
             label: title,

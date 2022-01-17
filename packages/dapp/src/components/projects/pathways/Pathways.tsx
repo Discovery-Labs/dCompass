@@ -8,8 +8,15 @@ import {
   VStack,
   Divider,
   Textarea,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
 } from "@chakra-ui/react";
-// import { useRouter } from "next/router";
+import DEFAULT_TOKEN_LIST from "@uniswap/default-token-list";
+import { useWeb3React } from "@web3-react/core";
+import { useRouter } from "next/router";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import ControlledSelect from "../../Inputs/ControlledSelect";
@@ -17,7 +24,8 @@ import ControlledSelect from "../../Inputs/ControlledSelect";
 import PathwayImageDropzone from "./PathwayContentDropzone";
 
 export default function Pathways({ control, register, setValue }: any) {
-  // const router = useRouter();
+  const router = useRouter();
+  const { chainId } = useWeb3React();
 
   const {
     formState: { errors },
@@ -72,6 +80,19 @@ export default function Pathways({ control, register, setValue }: any) {
       colorScheme: "purple",
     },
   ];
+
+  const DAI_DEFAULT_CURRENCY = DEFAULT_TOKEN_LIST.tokens
+    .filter((token) => token.chainId === chainId)
+    .find((token) => token.symbol === "DAI") || {
+    name: "Dai Stablecoin",
+    address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    symbol: "DAI",
+    decimals: 18,
+    chainId: 1,
+    logoURI:
+      "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png",
+  };
+
   return (
     <VStack w="full">
       {fields.map((item, index) => {
@@ -132,9 +153,58 @@ export default function Pathways({ control, register, setValue }: any) {
 
             <PathwayImageDropzone
               nestIndex={index}
-              formLabel="Pathway image"
+              formLabel="NFT image reward"
               {...{ register, setValue, errors }}
             />
+
+            <HStack w="full" alignItems="center">
+              <FormControl
+                isInvalid={
+                  errors.pathways && errors.pathways[index].rewardAmout
+                }
+              >
+                <FormLabel htmlFor={`pathways[${index}].rewardAmout`}>
+                  Pathway reward amount
+                </FormLabel>
+                <NumberInput step={1_000} defaultValue={1_000}>
+                  <NumberInputField
+                    placeholder=""
+                    {...register(`pathways[${index}].rewardAmout`, {
+                      required: "This is required",
+                    })}
+                  />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+                <FormErrorMessage>
+                  {errors.pathways &&
+                    errors.pathways[index].rewardAmout &&
+                    errors.pathways[index].rewardAmout.message}
+                </FormErrorMessage>
+              </FormControl>
+
+              <ControlledSelect
+                control={control}
+                name={`pathways[${index}].currency`}
+                id={item.id}
+                label="Reward currency"
+                rules={{
+                  required: "This is required",
+                }}
+                defaultValue={{
+                  label: `${DAI_DEFAULT_CURRENCY.symbol} - ${DAI_DEFAULT_CURRENCY.name}`,
+                  value: `${DAI_DEFAULT_CURRENCY.chainId}:${DAI_DEFAULT_CURRENCY.address}`,
+                }}
+                options={DEFAULT_TOKEN_LIST.tokens
+                  .filter((token) => token.chainId === chainId)
+                  .map((token) => ({
+                    label: `${token.symbol} - ${token.name}`,
+                    value: `${token.chainId}:${token.address}`,
+                  }))}
+              />
+            </HStack>
 
             <ControlledSelect
               control={control}
