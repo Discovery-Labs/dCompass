@@ -110,134 +110,136 @@ function QuestCard({
     <Card position="relative" h="lg" layerStyle="no-border-hover" spacing="6">
       {!unlocked && <LockedScreen />}
 
-      <Flex w="full" minH="56px">
-        <Heading
-          noOfLines={2}
-          as="h2"
-          fontSize="2xl"
-          color={getTextColor}
-          textTransform="uppercase"
-        >
-          {quest.name}
-        </Heading>
-
-        <Spacer />
-        <Flex align="end" direction="column">
-          <Tag variant="subtle">{quest.completed || "COMPLETED"}</Tag>
-          <Tag my="2">
-            <Text fontSize="sm">{quest.reward || "200xp"}</Text>
-          </Tag>
-        </Flex>
-      </Flex>
-      <Tooltip label={quest.description} hasArrow placement="top">
-        <Heading
-          noOfLines={3}
-          as="h4"
-          size="md"
-          color={getColoredText}
-          minH="65px"
-        >
-          {quest.description}
-        </Heading>
-      </Tooltip>
-      <VStack w="full" align="left">
-        <HStack>
-          <Icon as={RiSwordLine} />
-          <Text
-            fontWeight="bold"
-            fontSize="xl"
+      <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"}>
+        <Flex w="full" minH="56px">
+          <Heading
+            noOfLines={2}
+            as="h2"
+            fontSize="2xl"
             color={getTextColor}
             textTransform="uppercase"
           >
-            Quest type
-          </Text>
-        </HStack>
-        <HStack>
-          <Tag variant="outline" size="lg">
-            Snapshot Voter
-          </Tag>
-        </HStack>
-        <HStack>
-          <Icon as={GiTwoCoins} />
-          <Text
-            fontWeight="bold"
-            fontSize="xl"
-            color={getTextColor}
-            textTransform="uppercase"
-          >
-            Rewards
-          </Text>
-        </HStack>
+            {quest.name}
+          </Heading>
 
-        <Stack
-          w="full"
-          justifyContent="space-between"
-          direction="row"
-          spacing={4}
-          align="center"
-        >
-          <Avatar
-            boxSize="4.8rem"
-            src={`https://ipfs.io/ipfs/${quest.image}`}
-            position="relative"
-          />
-          <Text color="purple.500" fontSize="3xl" fontWeight="bold">
-            NFT
-          </Text>
-          <Text fontFamily="heading" fontSize={{ base: "4xl", md: "6xl" }}>
-            +
-          </Text>
-          <Flex
-            align="center"
-            justify="center"
-            fontFamily="heading"
-            fontWeight="bold"
-            fontSize={{ base: "sm", md: "lg" }}
-            color="purple.500"
-            rounded="full"
-          >
-            <Text fontSize="3xl" fontWeight="bold">
-              0.1 ETH
-            </Text>
+          <Spacer />
+          <Flex align="end" direction="column">
+            <Tag variant="subtle">{quest.completed || "COMPLETED"}</Tag>
+            <Tag my="2">
+              <Text fontSize="sm">{quest.reward || "200xp"}</Text>
+            </Tag>
           </Flex>
-        </Stack>
-      </VStack>
+        </Flex>
+        <Tooltip label={quest.description} hasArrow placement="top">
+          <Heading
+            noOfLines={3}
+            as="h4"
+            size="md"
+            color={getColoredText}
+            minH="65px"
+          >
+            {quest.description}
+          </Heading>
+        </Tooltip>
+        <VStack w="full" align="left">
+          <HStack>
+            <Icon as={RiSwordLine} />
+            <Text
+              fontWeight="bold"
+              fontSize="xl"
+              color={getTextColor}
+              textTransform="uppercase"
+            >
+              Quest type
+            </Text>
+          </HStack>
+          <HStack>
+            <Tag variant="outline" size="lg">
+              Snapshot Voter
+            </Tag>
+          </HStack>
+          <HStack>
+            <Icon as={GiTwoCoins} />
+            <Text
+              fontWeight="bold"
+              fontSize="xl"
+              color={getTextColor}
+              textTransform="uppercase"
+            >
+              Rewards
+            </Text>
+          </HStack>
 
-      <Flex w="full" justify="space-between">
-        {quest.isPending && isContributor && (
-          <>
-            <Button
-              variant="outline"
-              fontSize="md"
-              onClick={() => console.log("Details")}
+          <Stack
+            w="full"
+            justifyContent="space-between"
+            direction="row"
+            spacing={4}
+            align="center"
+          >
+            <Avatar
+              boxSize="4.8rem"
+              src={`https://ipfs.io/ipfs/${quest.image}`}
+              position="relative"
+            />
+            <Text color="purple.500" fontSize="3xl" fontWeight="bold">
+              NFT
+            </Text>
+            <Text fontFamily="heading" fontSize={{ base: "4xl", md: "6xl" }}>
+              +
+            </Text>
+            <Flex
+              align="center"
+              justify="center"
+              fontFamily="heading"
+              fontWeight="bold"
+              fontSize={{ base: "sm", md: "lg" }}
+              color="purple.500"
+              rounded="full"
             >
-              Details
-            </Button>
-            <Button fontSize="md" onClick={handleApproveQuest}>
-              Approve
-            </Button>
-          </>
-        )}
-        {!quest.isPending && (
-          <>
-            <Button
-              leftIcon={<GiSwordwoman />}
-              fontSize="md"
-              onClick={() => console.log("Start Quest")}
-            >
-              Start
-            </Button>
-            <Button
-              fontSize="md"
-              onClick={() => console.log("Claim Reward")}
-              variant="outline"
-              leftIcon={<RiHandCoinFill />}
-            >
-              Claim
-            </Button>
-          </>
-        )}
-      </Flex>
+              <Text fontSize="3xl" fontWeight="bold">
+                0.1 ETH
+              </Text>
+            </Flex>
+          </Stack>
+        </VStack>
+
+        <Flex w="full" justify="space-between">
+          {quest.isPending && isContributor && (
+            <>
+              <Button
+                variant="outline"
+                fontSize="md"
+                onClick={() => console.log("Details")}
+              >
+                Details
+              </Button>
+              <Button fontSize="md" onClick={handleApproveQuest}>
+                Approve
+              </Button>
+            </>
+          )}
+          {!quest.isPending && (
+            <>
+              <Button
+                leftIcon={<GiSwordwoman />}
+                fontSize="md"
+                onClick={() => console.log("Start Quest")}
+              >
+                Start
+              </Button>
+              <Button
+                fontSize="md"
+                onClick={() => console.log("Claim Reward")}
+                variant="outline"
+                leftIcon={<RiHandCoinFill />}
+              >
+                Claim
+              </Button>
+            </>
+          )}
+        </Flex>
+      </Box>
     </Card>
   );
 }

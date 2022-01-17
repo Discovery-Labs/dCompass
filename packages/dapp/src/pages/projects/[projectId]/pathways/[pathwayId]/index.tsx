@@ -354,7 +354,7 @@ function PathwayPage({
               )}/pathways/${streamUrlToId(id)}/add-quest`}
               passHref
             >
-              <Button leftIcon={<PlusSquareIcon />}>Add Quest</Button>
+              <Button leftIcon={<PlusSquareIcon />}>{t("add-quest")}</Button>
             </NextLink>
           )}
         </HStack>
