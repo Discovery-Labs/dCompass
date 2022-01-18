@@ -19,6 +19,8 @@ import {
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import { BsGlobe, BsPeople, BsPerson } from "react-icons/bs";
@@ -39,9 +41,6 @@ import {
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
 
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
 type Props = {
   projectId: string | null;
 };
@@ -50,7 +49,6 @@ export const getServerSideProps: GetServerSideProps<
   Props,
   { projectId: string }
 > = async (ctx) => {
-  console.log({ pId: ctx.params?.projectId });
   const id = ctx.params?.projectId ?? null;
   if (id === null) {
     return {
@@ -65,8 +63,13 @@ export const getServerSideProps: GetServerSideProps<
         projectId: `ceramic://${id}`,
       },
     });
+
     return {
-      props: { id, ...data.getProjectById },
+      props: {
+        id,
+        ...data.getProjectById,
+        ...(await serverSideTranslations(ctx.locale || "en", ["common"])),
+      },
     };
   } catch (error) {
     return {
@@ -310,15 +313,6 @@ function ReviewProjectPage({
       </Card>
     </CenteredFrame>
   );
-}
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-      // Will be passed to the page component as props
-    },
-  };
 }
 
 export default ReviewProjectPage;

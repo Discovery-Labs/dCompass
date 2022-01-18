@@ -15,9 +15,7 @@ export const questDefaultValues = {
 
 function AddPathwayStepper() {
   const { contracts } = useContext(Web3Context);
-  const web3React = useWeb3React();
-
-  const { account } = web3React;
+  const { account } = useWeb3React();
 
   const methods = useForm({
     defaultValues: questDefaultValues,

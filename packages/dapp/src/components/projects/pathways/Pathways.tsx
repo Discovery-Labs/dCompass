@@ -8,17 +8,23 @@ import {
   VStack,
   Divider,
   Textarea,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
 } from "@chakra-ui/react";
-// import { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
+import useTokenList from "../../../core/hooks/useTokenList";
 import ControlledSelect from "../../Inputs/ControlledSelect";
 
 import PathwayImageDropzone from "./PathwayContentDropzone";
 
 export default function Pathways({ control, register, setValue }: any) {
-  // const router = useRouter();
-
+  const router = useRouter();
+  const { tokens, defaultMainnetDAIToken } = useTokenList();
   const {
     formState: { errors },
   } = useFormContext();
@@ -72,6 +78,7 @@ export default function Pathways({ control, register, setValue }: any) {
       colorScheme: "purple",
     },
   ];
+
   return (
     <VStack w="full">
       {fields.map((item, index) => {
@@ -132,9 +139,56 @@ export default function Pathways({ control, register, setValue }: any) {
 
             <PathwayImageDropzone
               nestIndex={index}
-              formLabel="Pathway image"
+              formLabel="NFT image reward"
               {...{ register, setValue, errors }}
             />
+
+            <HStack w="full" alignItems="center">
+              <FormControl
+                isInvalid={
+                  errors.pathways && errors.pathways[index].rewardAmout
+                }
+              >
+                <FormLabel htmlFor={`pathways[${index}].rewardAmout`}>
+                  Pathway reward amount
+                </FormLabel>
+                <NumberInput step={1_000} defaultValue={1_000}>
+                  <NumberInputField
+                    placeholder=""
+                    {...register(`pathways[${index}].rewardAmout`, {
+                      required: "This is required",
+                    })}
+                  />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+                <FormErrorMessage>
+                  {errors.pathways &&
+                    errors.pathways[index].rewardAmout &&
+                    errors.pathways[index].rewardAmout.message}
+                </FormErrorMessage>
+              </FormControl>
+
+              <ControlledSelect
+                control={control}
+                name={`pathways[${index}].rewardCurrency`}
+                id={item.id}
+                label="Reward currency"
+                rules={{
+                  required: "This is required",
+                }}
+                defaultValue={{
+                  label: `${defaultMainnetDAIToken.symbol} - ${defaultMainnetDAIToken.name}`,
+                  value: `${defaultMainnetDAIToken.chainId}:${defaultMainnetDAIToken.address}`,
+                }}
+                options={tokens.map((token) => ({
+                  label: `${token.symbol} - ${token.name}`,
+                  value: `${token.chainId}:${token.address}`,
+                }))}
+              />
+            </HStack>
 
             <ControlledSelect
               control={control}

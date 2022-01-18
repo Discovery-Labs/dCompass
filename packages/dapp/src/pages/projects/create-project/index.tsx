@@ -5,10 +5,11 @@ import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import NotConnectedCard from "../../../components/custom/NotConnectedCard";
+import ThreeTierPricing from "../../../components/custom/Pricing";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
@@ -20,6 +21,7 @@ import Card from "components/custom/Card";
 const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
 const CreateSquads = <SquadsForm />;
+// const Pricing = <ThreeTierPricing />;
 
 const steps = [
   {
@@ -27,6 +29,7 @@ const steps = [
     content: CreateProject,
   },
   { label: "Step 2", content: CreateSquads },
+  // { label: "Step 3", content: Pricing },
 ];
 
 function CreateProjectStepper() {
@@ -34,6 +37,7 @@ function CreateProjectStepper() {
   const router = useRouter();
   const { self, contracts, provider } = useContext(Web3Context);
   const { account } = useWeb3React();
+  const [hasPass, setHasPass] = useState(false);
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -150,6 +154,10 @@ function CreateProjectStepper() {
     });
     console.log({ allProjects });
     return router.push("/");
+  }
+
+  if (!hasPass) {
+    return <ThreeTierPricing onPassChange={() => setHasPass(true)} />;
   }
 
   return account && contracts ? (
