@@ -433,6 +433,12 @@ export declare const schemas: {
                 isFeatured: {
                     type: string;
                 };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
                 prerequisites: {
                     type: string;
                     items: {
@@ -538,6 +544,12 @@ export declare const schemas: {
                 questType: {
                     type: string;
                     maxLength: number;
+                };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
                 };
                 nfts: {
                     type: string;

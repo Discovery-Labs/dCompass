@@ -173,7 +173,7 @@ export default function Pathways({ control, register, setValue }: any) {
 
               <ControlledSelect
                 control={control}
-                name={`pathways[${index}].currency`}
+                name={`pathways[${index}].rewardCurrency`}
                 id={item.id}
                 label="Reward currency"
                 rules={{
