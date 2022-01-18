@@ -1,5 +1,7 @@
 // deploy/00_deploy_your_contract.js
 
+const { ethers } = require("ethers");
+
 // const { ethers } = require("hardhat");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
@@ -78,8 +80,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true, 
   })
 
-  await project.deployed();
-  await project.setAppDiamond(appDiamond.address);
+  
+  await deployments.execute("ProjectNFT", {from : DEPLOYER_PRIVATE_KEY}, "setAppDiamond", appDiamond.address);
+  /*const executeCheck = await deployments.read("ProjectNFT", "appDiamond")
+  console.log(executeCheck)*/
+  
 
   /*
     // Getting a previously deployed contract
