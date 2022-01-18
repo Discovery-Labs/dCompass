@@ -5,7 +5,7 @@ import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import NotConnectedCard from "../../../components/custom/NotConnectedCard";
@@ -37,6 +37,7 @@ function CreateProjectStepper() {
   const router = useRouter();
   const { self, contracts, provider } = useContext(Web3Context);
   const { account } = useWeb3React();
+  const [hasPass, setHasPass] = useState(false);
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -155,11 +156,8 @@ function CreateProjectStepper() {
     return router.push("/");
   }
 
-  // Check if wallet has NFT
-  const hasPass = false;
-
   if (!hasPass) {
-    return <ThreeTierPricing />;
+    return <ThreeTierPricing onPassChange={() => setHasPass(true)} />;
   }
 
   return account && contracts ? (

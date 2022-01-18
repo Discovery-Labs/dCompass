@@ -51,9 +51,9 @@ function PriceWrapper(props: any) {
   );
 }
 
-export default function ThreeTierPricing() {
+export default function ThreeTierPricing({ onPassChange }: any) {
   const { getBgColor } = useCustomColor();
-  const [selectedPass, setSelectedPass] = useState("");
+  const [selectedPass, setSelectedPass] = useState("gold");
   function selectPlan(plan: string) {
     setSelectedPass(plan);
     console.log(`Plan selected: ${plan}`);
@@ -221,8 +221,17 @@ export default function ThreeTierPricing() {
 
       <Center>
         <VStack>
-          <Text>Your selected pass is {selectedPass} </Text>
-          <Button>Contribute</Button>
+          <HStack>
+            <Text>Your selected pass is</Text>{" "}
+            <Text color={selectedPass === "diamond" ? "cyan" : selectedPass}>
+              {selectedPass}
+            </Text>
+          </HStack>
+
+          {/* TODO: handle mint */}
+          <Button onClick={() => onPassChange()}>
+            Mint &amp; Create project
+          </Button>
         </VStack>
       </Center>
     </Box>
