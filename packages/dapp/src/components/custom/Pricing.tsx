@@ -2,37 +2,74 @@ import {
   Box,
   Stack,
   HStack,
+  VStack,
   Heading,
   Text,
-  VStack,
   useColorModeValue,
   List,
   ListItem,
   ListIcon,
   Button,
+  useRadio,
+  useRadioGroup,
+  Center,
 } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
 
-function PriceWrapper({ children }: { children: ReactNode }) {
+function PriceWrapper(props: any) {
+  const { getAccentColor } = useCustomColor();
+
+  const { getInputProps, getCheckboxProps } = useRadio(props);
+  const { children } = props;
+
+  const input = getInputProps();
+  const checkbox = getCheckboxProps();
+
   return (
-    <Box
-      mb={4}
-      shadow="base"
-      borderWidth="1px"
-      alignSelf={{ base: "center", lg: "flex-start" }}
-      borderColor={useColorModeValue("primary.200", "primary.500")}
-      borderRadius="xl"
-    >
-      {children}
+    <Box as="label">
+      <input {...input} />
+      <Box
+        {...checkbox}
+        cursor="pointer"
+        mb={4}
+        shadow="base"
+        borderWidth="1px"
+        alignSelf={{ base: "center", lg: "flex-start" }}
+        borderColor={useColorModeValue("primary.200", "primary.500")}
+        borderRadius="xl"
+        _checked={{
+          borderColor: getAccentColor,
+          borderWidth: "2px",
+        }}
+      >
+        {children}
+      </Box>
     </Box>
   );
 }
 
 export default function ThreeTierPricing() {
   const { getBgColor } = useCustomColor();
+  const [selectedPass, setSelectedPass] = useState("");
+  function selectPlan(plan: string) {
+    setSelectedPass(plan);
+    console.log(`Plan selected: ${plan}`);
+  }
+
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: "pricing",
+    defaultValue: "gold",
+    onChange: selectPlan,
+  });
+
+  const group = getRootProps();
+  const radioSilver = getRadioProps({ value: "silver" });
+  const radioGold = getRadioProps({ value: "gold" });
+  const radioDiamond = getRadioProps({ value: "diamond" });
+
   return (
     <Box py={12}>
       <VStack spacing={2} textAlign="center">
@@ -50,8 +87,9 @@ export default function ThreeTierPricing() {
         justify="center"
         spacing={{ base: 4, lg: 10 }}
         py={10}
+        {...group}
       >
-        <PriceWrapper>
+        <PriceWrapper key="silver" {...radioSilver}>
           <Box py={4} px={12}>
             <Heading fontWeight="500" size="2xl" color="silver">
               Silver
@@ -88,7 +126,7 @@ export default function ThreeTierPricing() {
           </VStack>
         </PriceWrapper>
 
-        <PriceWrapper>
+        <PriceWrapper key="gold" {...radioGold}>
           <Box position="relative">
             <Box
               position="absolute"
@@ -143,7 +181,7 @@ export default function ThreeTierPricing() {
             </VStack>
           </Box>
         </PriceWrapper>
-        <PriceWrapper>
+        <PriceWrapper key="diamond" {...radioDiamond}>
           <Box py={4} px={12}>
             <Heading fontWeight="500" size="2xl" color="cyan">
               Diamond
@@ -180,6 +218,13 @@ export default function ThreeTierPricing() {
           </VStack>
         </PriceWrapper>
       </Stack>
+
+      <Center>
+        <VStack>
+          <Text>Your selected pass is {selectedPass} </Text>
+          <Button>Contribute</Button>
+        </VStack>
+      </Center>
     </Box>
   );
 }

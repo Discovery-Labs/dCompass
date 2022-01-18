@@ -21,7 +21,7 @@ import Card from "components/custom/Card";
 const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
 const CreateSquads = <SquadsForm />;
-const Pricing = <ThreeTierPricing />;
+// const Pricing = <ThreeTierPricing />;
 
 const steps = [
   {
@@ -29,7 +29,7 @@ const steps = [
     content: CreateProject,
   },
   { label: "Step 2", content: CreateSquads },
-  { label: "Step 3", content: Pricing },
+  // { label: "Step 3", content: Pricing },
 ];
 
 function CreateProjectStepper() {
@@ -155,10 +155,17 @@ function CreateProjectStepper() {
     return router.push("/");
   }
 
+  // Check if wallet has NFT
+  const hasPass = false;
+
+  if (!hasPass) {
+    return <ThreeTierPricing />;
+  }
+
   return account && contracts ? (
     <FormProvider {...methods}>
       <CenteredFrame>
-        <Card h="full" w={activeStep !== 2 ? "2xl" : "fit-content"}>
+        <Card h="full" w="2xl">
           <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
             <Steps colorScheme="purple" activeStep={activeStep}>
               {steps.map(({ label, content }) => (
@@ -168,7 +175,7 @@ function CreateProjectStepper() {
               ))}
             </Steps>
             <Flex w="full" justify="center">
-              {activeStep > 0 && activeStep <= 2 && (
+              {activeStep > 0 && activeStep <= 1 && (
                 <Button
                   variant="outline"
                   onClick={() => prevStep()}
@@ -178,7 +185,7 @@ function CreateProjectStepper() {
                   {t("prev")}
                 </Button>
               )}
-              {activeStep < 2 && (
+              {activeStep < 1 && (
                 <Button
                   ml="0.5rem"
                   onClick={() => nextStep()}
@@ -188,7 +195,7 @@ function CreateProjectStepper() {
                   {t("next")}
                 </Button>
               )}
-              {activeStep === 2 && (
+              {activeStep === 1 && (
                 <Button
                   ml="0.5rem"
                   // colorScheme="accentDark"
