@@ -91,6 +91,9 @@ type Mutation {
   """Approve a new Quest in dCompass"""
   approveQuest(input: ApproveQuestInput!): Quest
 
+  """Create a new NFT Owner Quest in dCompass"""
+  createNFTOwnerQuest(input: CreateQuestInput!): NFTOwnerQuest
+
   """Create a new Pathway in dCompass"""
   createPathway(input: CreatePathwayInput!): Pathway
 
@@ -116,6 +119,29 @@ type Mutation {
   verifyPathway(input: VerifyPathwayInput!): Pathway
 }
 
+type NFTOwnerQuest {
+  chainId: Int!
+  collectionContractAddress: String!
+  completedBy: [String!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+  description: String!
+  id: String!
+  image: String!
+  isPending: Boolean
+  name: String!
+  namespace: String!
+  pathwayId: String!
+  questType: String!
+  rewardAmount: Float!
+  rewardCurrency: String!
+  rewardUserCap: Int!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+}
+
 type Pathway {
   """Identifies the date and time when the object was created."""
   createdAt: String!
@@ -129,8 +155,9 @@ type Pathway {
   prerequisites: [String!]
   projectId: String!
   quests: [Quest!]
-  rewardAmount: String!
+  rewardAmount: Float!
   rewardCurrency: String!
+  rewardUserCap: Int!
   title: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -218,8 +245,9 @@ type Quest {
   name: String!
   pathwayId: String!
   questType: String!
-  rewardAmount: String!
+  rewardAmount: Float!
   rewardCurrency: String!
+  rewardUserCap: Int!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -238,8 +266,9 @@ type QuizQuest {
   pathwayId: String!
   questType: String!
   questions: [QuizQuestion!]!
-  rewardAmount: String!
+  rewardAmount: Float!
   rewardCurrency: String!
+  rewardUserCap: Int!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -264,8 +293,9 @@ type SnapshotVoterQuest {
   pathwayId: String!
   proposalId: String!
   questType: String!
-  rewardAmount: String!
+  rewardAmount: Float!
   rewardCurrency: String!
+  rewardUserCap: Int!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!

@@ -12,13 +12,13 @@ function NFTOwnerForm() {
     formState: { errors },
   } = useFormContext();
   return (
-    <FormControl isInvalid={errors.nftCollectionContractAddress}>
-      <FormLabel htmlFor="nftCollectionContractAddress">
+    <FormControl isInvalid={errors.collectionContractAddress}>
+      <FormLabel htmlFor="collectionContractAddress">
         Collection Contract Address
       </FormLabel>
       <Input
         placeholder="Collection Contract Address"
-        {...register("nftCollectionContractAddress", {
+        {...register("collectionContractAddress", {
           required: "This is required",
           maxLength: {
             value: 150,

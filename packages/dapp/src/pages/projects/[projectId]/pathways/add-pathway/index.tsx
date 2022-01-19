@@ -1,11 +1,11 @@
 import { useWeb3React } from "@web3-react/core";
-import PathwaysForm from "components/projects/pathways/PathwaysForm";
 import React, { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import Card from "components/custom/Card";
 import NotConnectedCard from "components/custom/NotConnectedCard";
 import CenteredFrame from "components/layout/CenteredFrame";
+import PathwayFormWrapper from "components/projects/pathways/PathwayFormWrapper";
 import { Web3Context } from "contexts/Web3Provider";
 
 function AddPathwayStepper() {
@@ -29,7 +29,7 @@ function AddPathwayStepper() {
     <FormProvider {...methods}>
       <CenteredFrame>
         <Card h="full" w="2xl">
-          <PathwaysForm />
+          <PathwayFormWrapper />
         </Card>
       </CenteredFrame>
     </FormProvider>

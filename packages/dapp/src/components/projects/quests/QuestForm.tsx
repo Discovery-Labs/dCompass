@@ -1,5 +1,7 @@
 import { useMutation } from "@apollo/client";
 import {
+  Alert,
+  AlertIcon,
   Button,
   Divider,
   Flex,
@@ -15,7 +17,10 @@ import {
   NumberInputField,
   NumberInputStepper,
   Stack,
+  Tag,
+  Text,
   Textarea,
+  VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useContext } from "react";
@@ -24,6 +29,7 @@ import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useTokenList from "../../../core/hooks/useTokenList";
 import {
+  CREATE_NFT_OWNER_QUEST_MUTATION,
   CREATE_QUIZ_QUEST_MUTATION,
   CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
 } from "../../../graphql/quests";
@@ -84,6 +90,12 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
     refetchQueries: "all",
   });
+  const [createNFTOwnerQuestMutation] = useMutation(
+    CREATE_NFT_OWNER_QUEST_MUTATION,
+    {
+      refetchQueries: "all",
+    }
+  );
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
@@ -102,6 +114,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
   } = useFormContext();
 
   const currentValues = watch();
+
+  const { rewardAmount, rewardCurrency, rewardUserCap } = currentValues;
+
   const questDetails = {
     "snapshot-voter": <SnapshotForm />,
     "twitter-follower": <TwitterFollowerForm />,
@@ -143,11 +158,15 @@ const CreateQuestForm: React.FunctionComponent = () => {
             })
           ),
           image: cids[values.name],
+          rewardCurrency: values.rewardCurrency.value,
+          rewardAmount: parseFloat(values.rewardAmount),
           pathwayId: `ceramic://${router.query.pathwayId}`,
         }
         : {
           ...values,
+          rewardCurrency: values.rewardCurrency.value,
           image: cids[values.name],
+          rewardAmount: parseFloat(values.rewardAmount),
           pathwayId: `ceramic://${router.query.pathwayId}`,
         };
 
@@ -167,27 +186,31 @@ const CreateQuestForm: React.FunctionComponent = () => {
       account,
     ]);
 
+    const createQuestMutationVariables = {
+      input: {
+        id: questDoc.id.toUrl(),
+        questCreatorSignature: signature.result,
+      },
+    };
+
     let result;
     if (questType === "snapshot-voter") {
       const { data } = await createSnapshotVoterQuest({
-        variables: {
-          input: {
-            id: questDoc.id.toUrl(),
-            questCreatorSignature: signature.result,
-          },
-        },
+        variables: createQuestMutationVariables,
       });
       result = data.createSnapshotVoterQuest;
     }
 
     if (questType === "quiz") {
       const { data } = await createQuizQuestMutation({
-        variables: {
-          input: {
-            id: questDoc.id.toUrl(),
-            questCreatorSignature: signature.result,
-          },
-        },
+        variables: createQuestMutationVariables,
+      });
+      result = data.createQuizQuest;
+    }
+
+    if (questType === "nft-owner") {
+      const { data } = await createNFTOwnerQuestMutation({
+        variables: createQuestMutationVariables,
       });
       result = data.createQuizQuest;
     }
@@ -195,6 +218,12 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     return goBack();
   }
+
+  const rewardPerUser = parseFloat(rewardAmount) / parseInt(rewardUserCap, 10);
+  const erc20Options = tokens.map((token) => ({
+    label: `${token.symbol} - ${token.name}`,
+    value: `${token.chainId}:${token.address}`,
+  }));
 
   return (
     <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
@@ -213,11 +242,11 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
       <HStack w="full" alignItems="center">
         <FormControl isInvalid={errors.rewardAmount}>
-          <FormLabel htmlFor="rewardAmount">Quest reward amount</FormLabel>
-          <NumberInput step={1_000} defaultValue={1_000}>
+          <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
+          <NumberInput step={10_000} defaultValue={10_000}>
             <NumberInputField
               placeholder=""
-              {...register("rewardAmount", {
+              {...register(`rewardAmount`, {
                 required: "This is required",
               })}
             />
@@ -238,16 +267,44 @@ const CreateQuestForm: React.FunctionComponent = () => {
           rules={{
             required: "This is required",
           }}
-          defaultValue={{
-            label: `${defaultMainnetDAIToken.symbol} - ${defaultMainnetDAIToken.name}`,
-            value: `${defaultMainnetDAIToken.chainId}:${defaultMainnetDAIToken.address}`,
-          }}
-          options={tokens.map((token) => ({
-            label: `${token.symbol} - ${token.name}`,
-            value: `${token.chainId}:${token.address}`,
-          }))}
+          options={erc20Options}
+          placeholder="WETH, DAI,..."
         />
       </HStack>
+
+      <VStack alignItems="center" w="full">
+        <FormControl isInvalid={errors.rewardUserCap}>
+          <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
+          <NumberInput step={1_000} defaultValue={1_000}>
+            <NumberInputField
+              roundedBottom="none"
+              placeholder=""
+              {...register(`rewardUserCap`, {
+                required: "This is required",
+              })}
+            />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          {rewardCurrency && (
+            <Alert roundedBottom="lg" w="full" status="info">
+              <AlertIcon />
+              <Text fontSize="md">
+                A user that claims the pathway rewards will receive{" "}
+              </Text>
+              <Tag>
+                {rewardPerUser}{" "}
+                {rewardCurrency?.label && rewardCurrency.label.split(" - ")[0]}
+              </Tag>
+            </Alert>
+          )}
+          <FormErrorMessage>
+            {errors.rewardUserCap && errors.rewardUserCap.message}
+          </FormErrorMessage>
+        </FormControl>
+      </VStack>
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Quest name</FormLabel>

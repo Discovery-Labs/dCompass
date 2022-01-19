@@ -24,6 +24,18 @@ export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
   }
 `;
 
+export const CREATE_NFT_OWNER_QUEST_MUTATION = gql`
+  mutation CreateNFTOwnerQuest($input: CreateQuestInput!) {
+    createNFTOwnerQuest(input: $input) {
+      id
+      name
+      description
+      pathwayId
+      collectionContractAddress
+    }
+  }
+`;
+
 export const CREATE_QUIZ_QUEST_MUTATION = gql`
   mutation CreateQuizQuest($input: CreateQuestInput!) {
     createQuizQuest(input: $input) {
@@ -62,6 +74,8 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
       pathwayId
       questType
       image
+      rewardCurrency
+      rewardAmount
       isPending
     }
   }

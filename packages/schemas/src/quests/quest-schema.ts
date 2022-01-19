@@ -34,6 +34,9 @@ export const questBaseProperties = {
   rewardAmount: {
     type: "number",
   },
+  rewardUserCap: {
+    type: "number",
+  },
   rewardCurrency: {
     type: "string",
   },

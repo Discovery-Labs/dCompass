@@ -1,4 +1,5 @@
 import { useMutation } from "@apollo/client";
+import { LockIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Button,
@@ -22,10 +23,9 @@ import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useCustomColor from "../../../core/hooks/useCustomColor";
+import useTokenList from "../../../core/hooks/useTokenList";
 import { APPROVE_QUEST_MUTATION } from "../../../graphql/quests";
 import Card from "components/custom/Card";
-
-import { LockIcon } from "@chakra-ui/icons";
 
 type Quest = {
   id: string;
@@ -40,10 +40,11 @@ type Quest = {
   isPending: string;
   website: string;
   network: string;
-  reward: string;
+  rewardAmount: string;
+  rewardCurrency: string;
   // unlocked: boolean;
 };
-const unlocked = false;
+const unlocked = true;
 
 function QuestCard({
   quest,
@@ -53,6 +54,8 @@ function QuestCard({
   projectContributors: string[];
 }) {
   const router = useRouter();
+  const { getRewardCurrency } = useTokenList();
+
   const { getTextColor, getColoredText, getBgColor, getAccentColor } =
     useCustomColor();
   const { account, provider } = useContext(Web3Context);
@@ -107,7 +110,7 @@ function QuestCard({
   };
 
   return (
-    <Card position="relative" h="lg" layerStyle="no-border-hover" spacing="6">
+    <Card position="relative" h="md" layerStyle="no-border-hover" spacing="6">
       {!unlocked && <LockedScreen />}
 
       <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"}>
@@ -126,7 +129,7 @@ function QuestCard({
           <Flex align="end" direction="column">
             <Tag variant="subtle">{quest.completed || "COMPLETED"}</Tag>
             <Tag my="2">
-              <Text fontSize="sm">{quest.reward || "200xp"}</Text>
+              {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
             </Tag>
           </Flex>
         </Flex>
@@ -198,13 +201,13 @@ function QuestCard({
               rounded="full"
             >
               <Text fontSize="3xl" fontWeight="bold">
-                0.1 ETH
+                {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
               </Text>
             </Flex>
           </Stack>
         </VStack>
 
-        <Flex w="full" justify="space-between">
+        <Flex w="full" justify="space-between" pt="4">
           {quest.isPending && isContributor && (
             <>
               <Button

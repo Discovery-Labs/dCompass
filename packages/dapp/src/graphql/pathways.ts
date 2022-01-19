@@ -59,6 +59,9 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
       rewardAmount
       isPending
       projectId
+      quests {
+        id
+      }
     }
   }
 `;

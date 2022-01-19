@@ -42,6 +42,9 @@ export const PathwaySchema = {
     rewardAmount: {
       type: "number",
     },
+    rewardUserCap: {
+      type: "number",
+    },
     rewardCurrency: {
       type: "string",
     },

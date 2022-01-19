@@ -10,18 +10,17 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useContext } from "react";
 
 import Card from "../../../components/custom/Card";
 import NotReviewerCard from "../../../components/custom/NotReviewerCard";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
 import Container from "../../../components/layout/Container";
-import { ProjectCard } from "../../../components/projects/ProjectCard";
+import ProjectCard from "../../../components/projects/ProjectCard";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 function ReviewProjects() {
   const { t } = useTranslation("common");

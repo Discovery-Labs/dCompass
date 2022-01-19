@@ -18,33 +18,10 @@ import { BsGlobe } from "react-icons/bs";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
-import { Tag } from "../../core/types";
+import { Project, Tag } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
 
-export type Project = {
-  id: string;
-  logo: string;
-  name: string;
-  avatar: string;
-  createdBy: string;
-  description: string;
-  isFeatured: boolean;
-  website: string;
-  discord: string;
-  twitter: string;
-  github: string;
-  gitbook: string;
-  whitepaper: string;
-  createdAt: string;
-  squads: {
-    name: string;
-    image: string;
-    members: string[];
-  }[];
-  tags: Tag[];
-};
-
-export const ProjectCard = ({
+const ProjectCard = ({
   project,
   isReviewMode = false,
 }: {
@@ -134,3 +111,5 @@ export const ProjectCard = ({
     </CardMedia>
   );
 };
+
+export default ProjectCard;

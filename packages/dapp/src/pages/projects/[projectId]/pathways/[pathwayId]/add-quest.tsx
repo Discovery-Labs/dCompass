@@ -13,7 +13,7 @@ export const questDefaultValues = {
   description: "",
 };
 
-function AddPathwayStepper() {
+function AddQuestForm() {
   const { contracts } = useContext(Web3Context);
   const { account } = useWeb3React();
 
@@ -38,4 +38,4 @@ function AddPathwayStepper() {
   );
 }
 
-export default AddPathwayStepper;
+export default AddQuestForm;

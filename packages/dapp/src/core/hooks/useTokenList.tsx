@@ -50,13 +50,18 @@ function useTokenList(): {
   }, [chainId]);
 
   const getRewardCurrency = (rewardCurrency: string) => {
-    const [chainIdStr, tokenAddress] = rewardCurrency.split(":");
-    const currencyChainId = parseInt(chainIdStr, 10);
-    const foundToken = tokens.find(
-      (token) =>
-        token.address === tokenAddress && token.chainId === currencyChainId
-    );
-    return foundToken?.symbol || defaultToken.symbol;
+    if (rewardCurrency) {
+      const [chainIdStr, tokenAddress] = rewardCurrency.split(":");
+      const currencyChainId = parseInt(chainIdStr, 10);
+      const foundToken = tokens.find(
+        (token) =>
+          token.address === tokenAddress && token.chainId === currencyChainId
+      );
+      if (foundToken?.symbol) {
+        return foundToken?.symbol;
+      }
+    }
+    return defaultToken.symbol;
   };
 
   return {

@@ -457,6 +457,9 @@ export declare const schemas: {
                 rewardAmount: {
                     type: string;
                 };
+                rewardUserCap: {
+                    type: string;
+                };
                 rewardCurrency: {
                     type: string;
                 };
@@ -567,6 +570,9 @@ export declare const schemas: {
                     maxLength: number;
                 };
                 rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
                     type: string;
                 };
                 rewardCurrency: {

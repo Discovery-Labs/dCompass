@@ -115,6 +115,7 @@ function PathwayPage({
   rewardCurrency,
   projectId,
 }: any) {
+  console.log({ rewardAmount, rewardCurrency });
   const { t } = useTranslation("common");
   const { getRewardCurrency } = useTokenList();
 

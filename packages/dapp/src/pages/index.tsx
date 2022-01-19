@@ -29,11 +29,11 @@ import { useContext, useEffect, useState } from "react";
 
 import Container from "../components/layout/Container";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Project, ProjectCard } from "../components/projects/ProjectCard";
+import ProjectCard from "../components/projects/ProjectCard";
 import { Web3Context } from "../contexts/Web3Provider";
 import { projectTagsOptions } from "../core/constants/project-tags";
 import useCustomColor from "../core/hooks/useCustomColor";
-import { Tag } from "../core/types";
+import { Project, Tag } from "../core/types";
 import { ALL_PROJECTS_QUERY } from "../graphql/projects";
 import { ALL_TAGS_QUERY } from "../graphql/tags";
 
@@ -141,15 +141,15 @@ function Projects() {
         <>
           {filteredProjects.length !== 0
             ? filteredProjects
-                .filter((project) => project.createdBy === account)
-                .map((project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))
+              .filter((project) => project.createdBy === account)
+              .map((project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))
             : data.getAllProjects
-                .filter((project: Project) => project.createdBy === account)
-                .map((project: Project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))}
+              .filter((project: Project) => project.createdBy === account)
+              .map((project: Project) => (
+                <ProjectCard key={project.name} project={project} />
+              ))}
         </>
       );
     }
@@ -158,15 +158,15 @@ function Projects() {
       <>
         {filteredProjects.length !== 0
           ? filteredProjects
-              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-              .map((project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))
+            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+            .map((project) => (
+              <ProjectCard key={project.name} project={project} />
+            ))
           : data.getAllProjects
-              .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-              .map((project: Project) => (
-                <ProjectCard key={project.name} project={project} />
-              ))}
+            .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
+            .map((project: Project) => (
+              <ProjectCard key={project.name} project={project} />
+            ))}
       </>
     );
   };
