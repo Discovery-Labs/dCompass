@@ -5,11 +5,8 @@ export type CeramicStreamId = string;
 @ObjectType()
 export class Contributor extends BaseEntity {
   @Field()
-  githubUsername: string;
+  did: string;
 
   @Field(() => [String])
   projects?: CeramicStreamId[];
-
-  @Field(() => [String])
-  repos?: CeramicStreamId[];
 }

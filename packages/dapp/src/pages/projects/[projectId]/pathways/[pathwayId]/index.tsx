@@ -39,6 +39,7 @@ import BreadcrumbItems from "../../../../../components/layout/BreadcrumbItems";
 import QuestCard from "../../../../../components/projects/quests/QuestCard";
 import { streamIdToUrl, streamUrlToId } from "../../../../../core/helpers";
 import useCustomColor from "../../../../../core/hooks/useCustomColor";
+import useTokenList from "../../../../../core/hooks/useTokenList";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
@@ -110,9 +111,13 @@ function PathwayPage({
   difficulty,
   createdBy,
   createdAt,
+  rewardAmount,
+  rewardCurrency,
   projectId,
 }: any) {
   const { t } = useTranslation("common");
+  const { getRewardCurrency } = useTokenList();
+
   const { account } = useContext(Web3Context);
   const { getTextColor, getColoredText, getBgColor, getAccentColor } =
     useCustomColor();
@@ -332,7 +337,7 @@ function PathwayPage({
                 }}
               >
                 <Text fontSize="3xl" fontWeight="bold">
-                  0.1 ETH
+                  {rewardAmount} {getRewardCurrency(rewardCurrency)}
                 </Text>
               </Flex>
             </Stack>

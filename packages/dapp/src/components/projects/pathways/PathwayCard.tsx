@@ -30,6 +30,7 @@ import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { streamUrlToId } from "../../../core/helpers";
 import useCustomColor from "../../../core/hooks/useCustomColor";
+import useTokenList from "../../../core/hooks/useTokenList";
 import {
   APPROVE_PATHWAY_MUTATION,
   VERIFY_PATHWAY_MUTATION,
@@ -43,6 +44,8 @@ type Pathway = {
   description: string;
   projectId: string;
   difficulty: string;
+  rewardCurrency: string;
+  rewardAmount: string;
   isPending: boolean;
   createdBy: string;
 };
@@ -54,6 +57,7 @@ function PathwayCard({
   pathway: Pathway;
   projectContributors: string[];
 }) {
+  const { getRewardCurrency } = useTokenList();
   const { getTextColor, getColoredText, getBgColor, getAccentColor } =
     useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
@@ -204,9 +208,11 @@ function PathwayCard({
   return (
     <Card h={isContributor ? "xl" : "lg"}>
       <Flex w="full" minH="56px">
-        <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
-          {pathway.title}
-        </Heading>
+        <Tooltip label={pathway.title} hasArrow placement="top">
+          <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
+            {pathway.title}
+          </Heading>
+        </Tooltip>
       </Flex>
       <Tooltip label={pathway.description} hasArrow placement="top">
         <Heading
@@ -214,7 +220,8 @@ function PathwayCard({
           as="h4"
           fontSize="md"
           color={getColoredText}
-          minH="65px"
+          minH="75px"
+          w="full"
         >
           {pathway.description}
         </Heading>
@@ -263,7 +270,7 @@ function PathwayCard({
             height={useBreakpointValue({ base: "44px", md: "60px" })}
           >
             <Text fontSize="3xl" fontWeight="bold">
-              0.1 ETH
+              {pathway.rewardAmount} {getRewardCurrency(pathway.rewardCurrency)}
             </Text>
           </Flex>
         </Stack>

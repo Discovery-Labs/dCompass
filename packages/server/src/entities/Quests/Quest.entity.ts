@@ -19,6 +19,12 @@ export abstract class Quest extends BaseEntity {
   questType: string;
 
   @Field()
+  rewardCurrency: string;
+
+  @Field()
+  rewardAmount: string;
+
+  @Field()
   pathwayId: CeramicStreamId;
 
   // @Field(() => Pathway)

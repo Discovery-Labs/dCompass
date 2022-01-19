@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { EditIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Badge,
   Button,
@@ -33,6 +33,7 @@ import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
 import { BsGlobe, BsPeople, BsPerson } from "react-icons/bs";
+import { MdPersonAddAlt1 } from "react-icons/md";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
@@ -171,14 +172,19 @@ function ProjectPage({
           </VStack>
         </VStack>
         <Spacer />
-        {isOwner && (
-          <NextLink
-            href={`/projects/${id.split("://")[1]}/edit-project/`}
-            passHref
-          >
-            <Button leftIcon={<EditIcon />}>Edit Project</Button>
-          </NextLink>
-        )}
+        <VStack align="flex-end">
+          <Button leftIcon={<MdPersonAddAlt1 />}>Apply</Button>
+          {isOwner && (
+            <NextLink
+              href={`/projects/${id.split("://")[1]}/edit-project/`}
+              passHref
+            >
+              <Button variant="outline" leftIcon={<EditIcon />}>
+                Edit Project
+              </Button>
+            </NextLink>
+          )}
+        </VStack>
       </Flex>
 
       <Flex w="full" direction="column">
@@ -202,109 +208,119 @@ function ProjectPage({
             gitbook={gitbook}
           />
         </HStack>
-
-        <Accordion allowToggle py="4">
-          <AccordionItem>
-            <AccordionButton>
-              <Heading as="h3" size="lg" color={getColoredText}>
-                {squads.length} Squad{squads.length > 1 ? "s" : ""}
-              </Heading>
-              <AccordionIcon ml="4" fontSize="2xl" />
-            </AccordionButton>
-            <AccordionPanel>
-              <SimpleGrid columns={3} spacing={4}>
-                {squads.map((squad: any) => (
-                  <CardMedia
-                    h="fit-content"
-                    src={`https://ipfs.io/ipfs/${squad.image}`}
-                  >
-                    <Heading as="h3" size="lg" color={getTextColor}>
-                      {squad.name}
-                    </Heading>
-                    <HStack>
-                      <Icon
-                        as={squad.members.length > 1 ? BsPeople : BsPerson}
-                      />
-                      <Heading
-                        as="h4"
-                        size="md"
-                        textTransform="uppercase"
-                        color={getTextColor}
-                      >
-                        {squad.members.length} {t("member")}
-                        {squad.members.length > 1 ? "s" : ""}
-                      </Heading>
-                    </HStack>
-                    <VStack align="center" maxW="full">
-                      {squad.members.map((member: string) => (
-                        <HStack w="full">
-                          {member && (
-                            <Blockies seed={member} className="blockies" />
-                          )}
-                          <Text ml="2" fontSize="sm" isTruncated>
-                            {member}
-                          </Text>
-                        </HStack>
-                      ))}
-                    </VStack>
-                  </CardMedia>
-                ))}
-              </SimpleGrid>
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
       </Flex>
 
       <Tabs w="full">
         <HStack justifyContent="space-between">
           <TabList>
-            <Tab>{t("all-pathways")}</Tab>
-            {isReviewer && <Tab>{t("pending-pathways")}</Tab>}
-            <Tab>{t("my-pathways")}</Tab>
+            <Tab>{t("pathways")}</Tab>
+            <Tab>{t("guilds")}</Tab>
+            <Tab>{t("bounties")}</Tab>
           </TabList>
-          {isOwner && (
-            <NextLink
-              href={`/projects/${id.split("://")[1]}/pathways/add-pathway/`}
-              passHref
-            >
-              <Button leftIcon={<EditIcon />}>{t("add-pathway")}</Button>
-            </NextLink>
-          )}
         </HStack>
 
         <TabPanels>
-          <TabPanel>
-            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllPathwaysByProjectId
-                .filter((pathway: any) => !pathway.isPending)
-                .map((pathway: any) => (
-                  <PathwayCard
-                    key={pathway.title}
-                    pathway={pathway}
-                    projectContributors={squads.flatMap(
-                      (squad: any) => squad.members
-                    )}
-                  />
-                ))}
+          <TabPanel px="0">
+            <Tabs w="full" variant="line">
+              <HStack justifyContent="space-between">
+                <TabList>
+                  <Tab>{t("all-pathways")}</Tab>
+                  {isReviewer && <Tab>{t("pending-pathways")}</Tab>}
+                  <Tab>{t("my-pathways")}</Tab>
+                </TabList>
+                {isOwner && (
+                  <NextLink
+                    href={`/projects/${id.split("://")[1]
+                      }/pathways/add-pathway/`}
+                    passHref
+                  >
+                    <Button variant="outline" leftIcon={<AddIcon />}>
+                      {t("add-pathway")}
+                    </Button>
+                  </NextLink>
+                )}
+              </HStack>
+
+              <TabPanels>
+                <TabPanel>
+                  <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                    {data.getAllPathwaysByProjectId
+                      .filter((pathway: any) => !pathway.isPending)
+                      .map((pathway: any) => (
+                        <PathwayCard
+                          key={pathway.title}
+                          pathway={pathway}
+                          projectContributors={squads.flatMap(
+                            (squad: any) => squad.members
+                          )}
+                        />
+                      ))}
+                  </SimpleGrid>
+                </TabPanel>
+                {isReviewer && (
+                  <TabPanel>
+                    <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                      {data.getAllPathwaysByProjectId
+                        .filter((pathway: any) => pathway.isPending)
+                        .map((pathway: any) => (
+                          <PathwayCard
+                            key={pathway.title}
+                            pathway={pathway}
+                            projectContributors={squads.flatMap(
+                              (squad: any) => squad.members
+                            )}
+                          />
+                        ))}
+                    </SimpleGrid>
+                  </TabPanel>
+                )}
+                <TabPanel>
+                  <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                    <QuestCard key={QuestData.name} quest={QuestData} />
+                  </SimpleGrid>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </TabPanel>
+          <TabPanel px="0">
+            <SimpleGrid columns={3} spacing={4}>
+              {squads.map((squad: any) => (
+                <CardMedia
+                  h="fit-content"
+                  src={`https://ipfs.io/ipfs/${squad.image}`}
+                >
+                  <Heading as="h3" size="lg" color={getTextColor}>
+                    {squad.name}
+                  </Heading>
+                  <HStack>
+                    <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
+                    <Heading
+                      as="h4"
+                      size="md"
+                      textTransform="uppercase"
+                      color={getTextColor}
+                    >
+                      {squad.members.length} {t("member")}
+                      {squad.members.length > 1 ? "s" : ""}
+                    </Heading>
+                  </HStack>
+                  <VStack align="center" maxW="full">
+                    {squad.members.map((member: string) => (
+                      <HStack w="full">
+                        {member && (
+                          <Blockies seed={member} className="blockies" />
+                        )}
+                        <Text ml="2" fontSize="sm" isTruncated>
+                          {member}
+                        </Text>
+                      </HStack>
+                    ))}
+                  </VStack>
+                </CardMedia>
+              ))}
             </SimpleGrid>
           </TabPanel>
-          {isReviewer && (
-            <TabPanel>
-              <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-                {data.getAllPathwaysByProjectId
-                  .filter((pathway: any) => pathway.isPending)
-                  .map((pathway: any) => (
-                    <PathwayCard
-                      key={pathway.title}
-                      pathway={pathway}
-                      projectContributors={squads.flatMap(
-                        (squad: any) => squad.members
-                      )}
-                    />
-                  ))}
-              </SimpleGrid>
-            </TabPanel>
-          )}
+
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
               <QuestCard key={QuestData.name} quest={QuestData} />

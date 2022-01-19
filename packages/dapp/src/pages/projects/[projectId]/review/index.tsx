@@ -30,11 +30,13 @@ import { initializeApollo } from "../../../../../lib/apolloClient";
 import Card from "../../../../components/custom/Card";
 import CardMedia from "../../../../components/custom/CardMedia";
 import NotReviewerCard from "../../../../components/custom/NotReviewerCard";
+import SocialLinks from "../../../../components/custom/SocialLinks";
 import CenteredFrame from "../../../../components/layout/CenteredFrame";
 import Container from "../../../../components/layout/Container";
 import { Web3Context } from "../../../../contexts/Web3Provider";
 import { splitCIDS } from "../../../../core/helpers";
 import useCustomColor from "../../../../core/hooks/useCustomColor";
+import useTokenList from "../../../../core/hooks/useTokenList";
 import { Tag as TagType } from "../../../../core/types";
 import {
   APPROVE_PROJECT_MUTATION,
@@ -95,6 +97,7 @@ function ReviewProjectPage({
   gitbook,
 }: any) {
   const { t } = useTranslation("common");
+  const { defaultMainnetDAIToken } = useTokenList();
   const { isReviewer, contracts, provider } = useContext(Web3Context);
   const { chainId, account } = useWeb3React();
   const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
@@ -125,6 +128,7 @@ function ReviewProjectPage({
       const voteForApprovalTx =
         await contracts.projectNFTContract.voteForApproval(
           contributors,
+          [defaultMainnetDAIToken.address],
           10,
           id
         );
@@ -156,7 +160,6 @@ function ReviewProjectPage({
       }
       console.log({ receipt, statusString });
     }
-    return null;
   };
   const handleCreateToken = async () => {
     if (chainId && account) {
@@ -244,33 +247,13 @@ function ReviewProjectPage({
             </Badge>
           ))}
         </Stack>
-        <HStack pt="8" spacing={8}>
-          {website && (
-            <Link target="_blank" href={website}>
-              <Icon boxSize={8} as={BsGlobe} />
-            </Link>
-          )}
-          {twitter && (
-            <Link target="_blank" href={twitter}>
-              <Icon boxSize={8} as={SiTwitter} />
-            </Link>
-          )}
-          {discord && (
-            <Link target="_blank" href={discord}>
-              <Icon boxSize={8} as={SiDiscord} />
-            </Link>
-          )}
-          {github && (
-            <Link target="_blank" href={github}>
-              <Icon boxSize={8} as={SiGithub} />
-            </Link>
-          )}
-          {gitbook && (
-            <Link target="_blank" href={gitbook}>
-              <Icon boxSize={8} as={SiGitbook} />
-            </Link>
-          )}
-        </HStack>
+        <SocialLinks
+          website={website}
+          discord={discord}
+          twitter={twitter}
+          github={github}
+          gitbook={gitbook}
+        />
         <Text pt="8">{description}</Text>
         <Heading as="h3" size="lg" py="4">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}

@@ -129,6 +129,8 @@ type Pathway {
   prerequisites: [String!]
   projectId: String!
   quests: [Quest!]
+  rewardAmount: String!
+  rewardCurrency: String!
   title: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -160,9 +162,11 @@ type Project {
   id: String!
   isFeatured: Boolean!
   logo: String
+  members: [String!]
   name: String!
   pathways: [Pathway!]
   peerProjects: [String!]
+  pendingMembers: [String!]
   repos: [String!]
   squads: [Squad!]!
   tags: [Tag!]
@@ -214,6 +218,8 @@ type Quest {
   name: String!
   pathwayId: String!
   questType: String!
+  rewardAmount: String!
+  rewardCurrency: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -232,6 +238,8 @@ type QuizQuest {
   pathwayId: String!
   questType: String!
   questions: [QuizQuestion!]!
+  rewardAmount: String!
+  rewardCurrency: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -256,6 +264,8 @@ type SnapshotVoterQuest {
   pathwayId: String!
   proposalId: String!
   questType: String!
+  rewardAmount: String!
+  rewardCurrency: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!

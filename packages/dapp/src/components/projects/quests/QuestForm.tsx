@@ -212,12 +212,12 @@ const CreateQuestForm: React.FunctionComponent = () => {
       />
 
       <HStack w="full" alignItems="center">
-        <FormControl isInvalid={errors.rewardAmout}>
-          <FormLabel htmlFor="rewardAmout">Quest reward amount</FormLabel>
+        <FormControl isInvalid={errors.rewardAmount}>
+          <FormLabel htmlFor="rewardAmount">Quest reward amount</FormLabel>
           <NumberInput step={1_000} defaultValue={1_000}>
             <NumberInputField
               placeholder=""
-              {...register("rewardAmout", {
+              {...register("rewardAmount", {
                 required: "This is required",
               })}
             />
@@ -227,7 +227,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             </NumberInputStepper>
           </NumberInput>
           <FormErrorMessage>
-            {errors.rewardAmout && errors.rewardAmout.message}
+            {errors.rewardAmount && errors.rewardAmount.message}
           </FormErrorMessage>
         </FormControl>
 

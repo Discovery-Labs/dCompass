@@ -146,16 +146,16 @@ export default function Pathways({ control, register, setValue }: any) {
             <HStack w="full" alignItems="center">
               <FormControl
                 isInvalid={
-                  errors.pathways && errors.pathways[index].rewardAmout
+                  errors.pathways && errors.pathways[index].rewardAmount
                 }
               >
-                <FormLabel htmlFor={`pathways[${index}].rewardAmout`}>
+                <FormLabel htmlFor={`pathways[${index}].rewardAmount`}>
                   Pathway reward amount
                 </FormLabel>
                 <NumberInput step={1_000} defaultValue={1_000}>
                   <NumberInputField
                     placeholder=""
-                    {...register(`pathways[${index}].rewardAmout`, {
+                    {...register(`pathways[${index}].rewardAmount`, {
                       required: "This is required",
                     })}
                   />
@@ -166,8 +166,8 @@ export default function Pathways({ control, register, setValue }: any) {
                 </NumberInput>
                 <FormErrorMessage>
                   {errors.pathways &&
-                    errors.pathways[index].rewardAmout &&
-                    errors.pathways[index].rewardAmout.message}
+                    errors.pathways[index].rewardAmount &&
+                    errors.pathways[index].rewardAmount.message}
                 </FormErrorMessage>
               </FormControl>
 

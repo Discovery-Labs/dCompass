@@ -46,6 +46,12 @@ export class Pathway extends BaseEntity {
   @Field()
   description: string;
 
+  @Field()
+  rewardCurrency: string;
+
+  @Field()
+  rewardAmount: string;
+
   @Field(() => [String])
   prerequisites?: string[];
 

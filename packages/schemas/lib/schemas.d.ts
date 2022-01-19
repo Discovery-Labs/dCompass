@@ -40,6 +40,13 @@ export declare const schemas: {
                                     $ref: string;
                                 };
                             };
+                            pendingMembers: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    $ref: string;
+                                };
+                            };
                             tokenUris: {
                                 type: string;
                                 items: {
@@ -95,6 +102,13 @@ export declare const schemas: {
                                 };
                             };
                             pathways: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    $ref: string;
+                                };
+                            };
+                            members: {
                                 type: string;
                                 title: string;
                                 items: {
@@ -245,6 +259,13 @@ export declare const schemas: {
                     };
                 };
                 pathways: {
+                    type: string;
+                    title: string;
+                    items: {
+                        $ref: string;
+                    };
+                };
+                members: {
                     type: string;
                     title: string;
                     items: {

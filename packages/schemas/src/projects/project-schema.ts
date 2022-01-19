@@ -51,6 +51,13 @@ export const projectProperties = {
       $ref: "#/definitions/CeramicStreamId",
     },
   },
+  members: {
+    type: "array",
+    title: "members",
+    items: {
+      $ref: "#/definitions/CeramicStreamId",
+    },
+  },
   createdBy: {
     type: "string",
     maxLength: 42,

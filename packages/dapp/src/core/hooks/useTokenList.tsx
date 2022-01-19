@@ -11,7 +11,11 @@ type Token = {
   logoURI: string;
 };
 
-function useTokenList(): { tokens: Token[]; defaultMainnetDAIToken: Token } {
+function useTokenList(): {
+  tokens: Token[];
+  defaultMainnetDAIToken: Token;
+  getRewardCurrency: (rewardCurrency: string) => string;
+} {
   const { chainId } = useWeb3React();
   const [defaultToken, setDefaultToken] = useState<Token>({
     name: "Dai Stablecoin",
@@ -45,9 +49,20 @@ function useTokenList(): { tokens: Token[]; defaultMainnetDAIToken: Token } {
     setDefaultToken((currentDAI) => DAI_DEFAULT_CURRENCY ?? currentDAI);
   }, [chainId]);
 
+  const getRewardCurrency = (rewardCurrency: string) => {
+    const [chainIdStr, tokenAddress] = rewardCurrency.split(":");
+    const currencyChainId = parseInt(chainIdStr, 10);
+    const foundToken = tokens.find(
+      (token) =>
+        token.address === tokenAddress && token.chainId === currencyChainId
+    );
+    return foundToken?.symbol || defaultToken.symbol;
+  };
+
   return {
     defaultMainnetDAIToken: defaultToken,
     tokens,
+    getRewardCurrency,
   };
 }
 

@@ -48,6 +48,8 @@ function PathwaysForm() {
         return {
           ...pathwayOptions,
           difficulty: pathway.difficulty.value,
+          rewardCurrency: pathway.rewardCurrency.value,
+          rewardAmount: parseFloat(pathway.rewardAmount),
           ...prereqs,
           createdBy: account,
           createdAt: new Date().toISOString(),
