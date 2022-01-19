@@ -25,6 +25,14 @@ import {
   AccordionIcon,
   AccordionPanel,
   Progress,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
@@ -38,6 +46,7 @@ import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
 import CardMedia from "../../../components/custom/CardMedia";
+import ProfileForm from "../../../components/custom/profile/ProfileForm";
 import SocialLinks from "../../../components/custom/SocialLinks";
 import BreadcrumbItems from "../../../components/layout/BreadcrumbItems";
 import QuestCard from "../../../components/projects/quests/QuestCard";
@@ -116,6 +125,8 @@ function ProjectPage({
   github,
   gitbook,
 }: any) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const { t } = useTranslation("common");
   const { getTextColor, getColoredText } = useCustomColor();
   const { account, isReviewer } = useContext(Web3Context);
@@ -173,7 +184,19 @@ function ProjectPage({
         </VStack>
         <Spacer />
         <VStack align="flex-end">
-          <Button leftIcon={<MdPersonAddAlt1 />}>Apply</Button>
+          <Button leftIcon={<MdPersonAddAlt1 />} onClick={onOpen}>
+            Apply
+          </Button>
+          <Modal onClose={onClose} isOpen={isOpen} size="4xl" isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Apply to {name}</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <ProfileForm submitButtonLabel="Submit application" />
+              </ModalBody>
+            </ModalContent>
+          </Modal>
           {isOwner && (
             <NextLink
               href={`/projects/${id.split("://")[1]}/edit-project/`}
