@@ -40,6 +40,7 @@ function PathwayFormWrapper() {
       difficulty: values.difficulty.value,
       rewardCurrency: values.rewardCurrency.value,
       rewardAmount: parseFloat(values.rewardAmount),
+      rewardUserCap: parseInt(values.rewardUserCap, 10),
       ...prereqs,
       createdBy: account,
       createdAt: new Date().toISOString(),

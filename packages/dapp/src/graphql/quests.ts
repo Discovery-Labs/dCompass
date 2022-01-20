@@ -35,6 +35,17 @@ export const CREATE_NFT_OWNER_QUEST_MUTATION = gql`
     }
   }
 `;
+export const CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION = gql`
+  mutation CreateGithubContributorQuest($input: CreateQuestInput!) {
+    createGithubContributorQuest(input: $input) {
+      id
+      name
+      description
+      pathwayId
+      githubOrgId
+    }
+  }
+`;
 
 export const CREATE_QUIZ_QUEST_MUTATION = gql`
   mutation CreateQuizQuest($input: CreateQuestInput!) {

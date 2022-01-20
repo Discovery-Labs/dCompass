@@ -110,10 +110,16 @@ function QuestCard({
   };
 
   return (
-    <Card position="relative" h="md" layerStyle="no-border-hover" spacing="6">
+    <Card
+      position="relative"
+      w="lg"
+      h="md"
+      layerStyle="no-border-hover"
+      spacing="6"
+    >
       {!unlocked && <LockedScreen />}
 
-      <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"}>
+      <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"} w="full">
         <Flex w="full" minH="56px">
           <Heading
             noOfLines={2}
@@ -126,7 +132,7 @@ function QuestCard({
           </Heading>
 
           <Spacer />
-          <Flex align="end" direction="column">
+          <Flex align="end" direction="column" w="full">
             <Tag variant="subtle">{quest.completed || "COMPLETED"}</Tag>
             <Tag my="2">
               {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}

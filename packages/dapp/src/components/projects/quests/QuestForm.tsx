@@ -37,6 +37,7 @@ import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
 
 import DiscordMemberForm from "./discord/DiscordMemberForm";
+import GithubContributorForm from "./github/GithubContributorForm";
 import PoapOwnerForm from "./poap/PoapOwnerForm";
 import QuestionsForm from "./quizz/QuestionsForm";
 import SnapshotForm from "./snapshot/SnapshotForm";
@@ -71,6 +72,10 @@ const questTypeOptions = [
     value: "poap-owner",
   },
   {
+    label: "Github contributor",
+    value: "github-contributor",
+  },
+  {
     label: "NFT owner",
     value: "nft-owner",
   },
@@ -91,6 +96,12 @@ const CreateQuestForm: React.FunctionComponent = () => {
     refetchQueries: "all",
   });
   const [createNFTOwnerQuestMutation] = useMutation(
+    CREATE_NFT_OWNER_QUEST_MUTATION,
+    {
+      refetchQueries: "all",
+    }
+  );
+  const [createGithubContributorQuestMutation] = useMutation(
     CREATE_NFT_OWNER_QUEST_MUTATION,
     {
       refetchQueries: "all",
@@ -119,6 +130,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
   const questDetails = {
     "snapshot-voter": <SnapshotForm />,
+    "github-contributor": <GithubContributorForm />,
     "twitter-follower": <TwitterFollowerForm />,
     "poap-owner": <PoapOwnerForm />,
     "token-holder": <TokenHolderForm />,
@@ -160,6 +172,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           image: cids[values.name],
           rewardCurrency: values.rewardCurrency.value,
           rewardAmount: parseFloat(values.rewardAmount),
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
           pathwayId: `ceramic://${router.query.pathwayId}`,
         }
         : {
@@ -167,6 +180,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           rewardCurrency: values.rewardCurrency.value,
           image: cids[values.name],
           rewardAmount: parseFloat(values.rewardAmount),
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
           pathwayId: `ceramic://${router.query.pathwayId}`,
         };
 

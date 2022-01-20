@@ -193,13 +193,17 @@ function ProjectPage({
               <ModalHeader>Apply to {name}</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <ProfileForm submitButtonLabel="Submit application" />
+                <ProfileForm
+                  submitButtonLabel="Submit application"
+                  projectId={streamUrlToId(id)}
+                  projectName={name}
+                />
               </ModalBody>
             </ModalContent>
           </Modal>
           {isOwner && (
             <NextLink
-              href={`/projects/${id.split("://")[1]}/edit-project/`}
+              href={`/projects/${streamUrlToId(id)}/edit-project/`}
               passHref
             >
               <Button variant="outline" leftIcon={<EditIcon />}>

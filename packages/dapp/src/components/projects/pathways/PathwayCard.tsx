@@ -206,7 +206,7 @@ function PathwayCard({
   };
 
   return (
-    <Card h={isContributor ? "xl" : "lg"}>
+    <Card h="lg">
       <Flex w="full" minH="56px">
         <Tooltip label={pathway.title} hasArrow placement="top">
           <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
@@ -318,7 +318,7 @@ function PathwayCard({
         </VStack>
       </Tooltip>
 
-      {isContributor && (
+      {isContributor && status !== "MINTED" && (
         <VStack w="full" align="left">
           <HStack>
             <Text>Token status:</Text>

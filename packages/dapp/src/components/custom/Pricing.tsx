@@ -9,12 +9,12 @@ import {
   List,
   ListItem,
   ListIcon,
-  Button,
   useRadio,
   useRadioGroup,
   Center,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { FaCheckCircle } from "react-icons/fa";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
@@ -51,12 +51,13 @@ function PriceWrapper(props: any) {
   );
 }
 
-export default function ThreeTierPricing({ onPassChange }: any) {
+export default function ThreeTierPricing() {
   const { getBgColor } = useCustomColor();
+  const { setValue } = useFormContext();
   const [selectedPass, setSelectedPass] = useState("gold");
   function selectPlan(plan: string) {
     setSelectedPass(plan);
-    console.log(`Plan selected: ${plan}`);
+    setValue("sponsorTier", selectedPass);
   }
 
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -118,11 +119,6 @@ export default function ThreeTierPricing({ onPassChange }: any) {
                 pathways &amp; quest analytics
               </ListItem>
             </List>
-            <Box w="80%" pt={7}>
-              <Button w="full" variant="outline">
-                Choose this plan
-              </Button>
-            </Box>
           </VStack>
         </PriceWrapper>
 
@@ -175,9 +171,6 @@ export default function ThreeTierPricing({ onPassChange }: any) {
                   pathway &amp; quest creation guidance
                 </ListItem>
               </List>
-              <Box w="80%" pt={7}>
-                <Button w="full">Choose this plan</Button>
-              </Box>
             </VStack>
           </Box>
         </PriceWrapper>
@@ -210,11 +203,6 @@ export default function ThreeTierPricing({ onPassChange }: any) {
                 custom content &amp; guide creation
               </ListItem>
             </List>
-            <Box w="80%" pt={7}>
-              <Button w="full" variant="outline">
-                Choose this plan
-              </Button>
-            </Box>
           </VStack>
         </PriceWrapper>
       </Stack>
@@ -227,11 +215,6 @@ export default function ThreeTierPricing({ onPassChange }: any) {
               {selectedPass}
             </Text>
           </HStack>
-
-          {/* TODO: handle mint */}
-          <Button onClick={() => onPassChange()}>
-            Mint &amp; Create project
-          </Button>
         </VStack>
       </Center>
     </Box>

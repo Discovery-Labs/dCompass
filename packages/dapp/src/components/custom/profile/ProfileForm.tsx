@@ -15,6 +15,16 @@ import {
   HStack,
   VStack,
   Icon,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+  Spinner,
+  Text,
+  Progress,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React, {
@@ -31,13 +41,27 @@ import { Web3Context } from "../../../contexts/Web3Provider";
 import { GITHUB_HOST } from "../../../core/constants";
 import { COUNTRIES } from "../../../core/constants/countries";
 import { emojis } from "../../../core/constants/emojis";
+import CenteredFrame from "../../layout/CenteredFrame";
+import Card from "../Card";
+import IconWithState from "../IconWithState";
+import NotConnectedCard from "../NotConnectedCard";
+
+import AddGitHubAccountScreen from "./AddGithubAccountScreen";
 
 const ProfileForm = ({
   submitButtonLabel = "Save",
+  projectId,
+  projectName,
 }: {
   submitButtonLabel: string;
+  projectId?: string;
+  projectName?: string;
 }) => {
   const { account, self } = useContext(Web3Context);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
   const [imageURL, setImageURL] = useState<string>();
   const [backgroundURL, setBackgroundURL] = useState<string>();
   const image = useRef(null);
@@ -53,10 +77,11 @@ const ProfileForm = ({
   useEffect(() => {
     // fetch from Ceramic
     (async () => {
+      setIsLoadingProfile(true);
       if (account && self) {
         const result = await self.get("basicProfile");
         const webAccounts = await self.get("alsoKnownAs");
-        if (webAccounts.accounts.length > 0) {
+        if (webAccounts?.accounts && webAccounts.accounts.length > 0) {
           const githubAccount = webAccounts.accounts.find(
             (acc: any) => acc.host === GITHUB_HOST
           );
@@ -64,8 +89,11 @@ const ProfileForm = ({
             `${githubAccount?.protocol}://${githubAccount?.host}/${githubAccount?.id}`
           );
         }
-        console.log({ webAccounts });
-        if (!result) return;
+        if (!result) {
+          setIsLoadingProfile(false);
+          return setIsFirstTimeUser(true);
+        }
+
         Object.entries(result).forEach(([key, value]) => {
           if (["image", "background"].includes(key)) {
             const {
@@ -85,6 +113,7 @@ const ProfileForm = ({
             setValue(key, value);
           }
         });
+        setIsLoadingProfile(false);
       }
     })();
   }, [account, self, setValue]);
@@ -156,10 +185,15 @@ const ProfileForm = ({
     }
     await self.client.dataStore.merge("basicProfile", values);
   };
-  return (
-    <Box margin="0 auto" maxWidth={1100} transition="0.5s ease-out">
+  return account ? (
+    <Box maxWidth={1100} transition="0.5s ease-out">
       <Box margin="8">
-        <Box marginY={22}>
+        {isLoadingProfile ? (
+          <Stack>
+            <Progress size="xs" isIndeterminate />
+            <Text>Loading profile configuration</Text>
+          </Stack>
+        ) : (
           <Stack as="form" onSubmit={handleSubmit(onSubmit)}>
             <SimpleGrid columns={2} spacing={10}>
               <FormControl isInvalid={errors.name}>
@@ -198,7 +232,7 @@ const ProfileForm = ({
                     />
                   </Link>
                 ) : (
-                  <NextLink href="/profile/github" passHref>
+                  <>
                     <IconButton
                       cursor="pointer"
                       variant="unstyled"
@@ -206,9 +240,22 @@ const ProfileForm = ({
                       w="8"
                       h="8"
                       as={SiGithub}
+                      onClick={onOpen}
                       _hover={{ color: "accentDark.300" }}
                     />
-                  </NextLink>
+                    <Modal onClose={onClose} isOpen={isOpen} size="4xl">
+                      <ModalOverlay />
+                      <ModalContent>
+                        <ModalHeader>Verify GitHub account</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                          <VStack w="full">
+                            <AddGitHubAccountScreen onCloseModal={onClose} />
+                          </VStack>
+                        </ModalBody>
+                      </ModalContent>
+                    </Modal>
+                  </>
                 )}
               </FormControl>
             </SimpleGrid>
@@ -216,7 +263,11 @@ const ProfileForm = ({
             <SimpleGrid columns={2} spacing={10}>
               <FormControl isInvalid={errors.image}>
                 <FormLabel htmlFor="image">Profile Image</FormLabel>
-                <Image ref={image} src={imageURL} boxSize="5rem" />
+                <Image
+                  ref={image}
+                  src={imageURL}
+                  boxSize={imageURL ? "5rem" : "0rem"}
+                />
                 <Input
                   {...register("image")}
                   borderColor="purple.500"
@@ -230,7 +281,11 @@ const ProfileForm = ({
               </FormControl>
               <FormControl isInvalid={errors.background}>
                 <FormLabel htmlFor="background">Header Background</FormLabel>
-                <Image ref={background} src={backgroundURL} boxSize="5rem" />
+                <Image
+                  ref={background}
+                  src={backgroundURL}
+                  boxSize={imageURL ? "5rem" : "0rem"}
+                />
                 <Input
                   type="file"
                   borderColor="purple.500"
@@ -288,19 +343,39 @@ const ProfileForm = ({
                 </FormErrorMessage>
               </FormControl>
             </SimpleGrid>
-            <FormControl isInvalid={errors.url}>
-              <FormLabel htmlFor="url">Website</FormLabel>
-              <Input
-                placeholder="ens-or-website.eth"
-                borderColor="purple.500"
-                {...register("url", {
-                  maxLength: 240,
-                })}
-              />
-              <FormErrorMessage>
-                {errors.url && errors.url.message}
-              </FormErrorMessage>
-            </FormControl>
+            <SimpleGrid columns={2} spacing={10}>
+              <FormControl isInvalid={errors.url}>
+                <FormLabel htmlFor="url">Website</FormLabel>
+                <Input
+                  placeholder="ens-or-website.eth"
+                  borderColor="purple.500"
+                  {...register("url", {
+                    maxLength: 240,
+                  })}
+                />
+                <FormErrorMessage>
+                  {errors.url && errors.url.message}
+                </FormErrorMessage>
+              </FormControl>
+              {/* TODO: use multi select */}
+              <FormControl isInvalid={errors.affiliations}>
+                <FormLabel htmlFor="affiliations">Affiliations</FormLabel>
+                <Select
+                  placeholder="DAOs or projects you're part of"
+                  borderColor="purple.500"
+                  {...register("affiliations")}
+                >
+                  [
+                  <option value={projectId} key={projectName}>
+                    {projectName}
+                  </option>
+                  ]
+                </Select>
+                <FormErrorMessage>
+                  {errors.affiliations && errors.affiliations.message}
+                </FormErrorMessage>
+              </FormControl>
+            </SimpleGrid>
             <SimpleGrid columns={2} spacing={10}>
               <FormControl isInvalid={errors.residenceCountry}>
                 <FormLabel htmlFor="residenceCountry">Country</FormLabel>
@@ -345,9 +420,15 @@ const ProfileForm = ({
               {submitButtonLabel}
             </Button>
           </Stack>
-        </Box>
+        )}
       </Box>
     </Box>
+  ) : (
+    <CenteredFrame>
+      <Card h="full" w="2xl" border="solid 1px red">
+        <NotConnectedCard />
+      </Card>
+    </CenteredFrame>
   );
 };
 

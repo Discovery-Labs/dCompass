@@ -21,7 +21,7 @@ import Card from "components/custom/Card";
 const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
 const CreateSquads = <SquadsForm />;
-// const Pricing = <ThreeTierPricing />;
+const Pricing = <ThreeTierPricing />;
 
 const steps = [
   {
@@ -29,7 +29,7 @@ const steps = [
     content: CreateProject,
   },
   { label: "Step 2", content: CreateSquads },
-  // { label: "Step 3", content: Pricing },
+  { label: "Step 3", content: Pricing },
 ];
 
 function CreateProjectStepper() {
@@ -37,7 +37,6 @@ function CreateProjectStepper() {
   const router = useRouter();
   const { self, contracts, provider } = useContext(Web3Context);
   const { account } = useWeb3React();
-  const [hasPass, setHasPass] = useState(false);
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -156,14 +155,10 @@ function CreateProjectStepper() {
     return router.push("/");
   }
 
-  if (!hasPass) {
-    return <ThreeTierPricing onPassChange={() => setHasPass(true)} />;
-  }
-
   return account && contracts ? (
     <FormProvider {...methods}>
       <CenteredFrame>
-        <Card h="full" w="2xl">
+        <Card h="full" w={activeStep === 2 ? "fit-content" : "2xl"}>
           <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
             <Steps colorScheme="purple" activeStep={activeStep}>
               {steps.map(({ label, content }) => (
@@ -173,7 +168,7 @@ function CreateProjectStepper() {
               ))}
             </Steps>
             <Flex w="full" justify="center">
-              {activeStep > 0 && activeStep <= 1 && (
+              {activeStep > 0 && activeStep <= 2 && (
                 <Button
                   variant="outline"
                   onClick={() => prevStep()}
@@ -183,7 +178,7 @@ function CreateProjectStepper() {
                   {t("prev")}
                 </Button>
               )}
-              {activeStep < 1 && (
+              {activeStep < 2 && (
                 <Button
                   ml="0.5rem"
                   onClick={() => nextStep()}
@@ -193,7 +188,7 @@ function CreateProjectStepper() {
                   {t("next")}
                 </Button>
               )}
-              {activeStep === 1 && (
+              {activeStep === 2 && (
                 <Button
                   ml="0.5rem"
                   // colorScheme="accentDark"
