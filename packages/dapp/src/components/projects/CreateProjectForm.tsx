@@ -83,10 +83,6 @@ const CreateProjectForm = () => {
           placeholder="Project description"
           {...register("description", {
             required: "This is required",
-            maxLength: {
-              value: 1200,
-              message: "Maximum length should be 1200",
-            },
           })}
           onChange={(e) => {
             const { name } = e.target;

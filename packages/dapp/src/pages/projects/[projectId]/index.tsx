@@ -257,8 +257,9 @@ function ProjectPage({
                 </TabList>
                 {isOwner && (
                   <NextLink
-                    href={`/projects/${id.split("://")[1]
-                      }/pathways/add-pathway/`}
+                    href={`/projects/${
+                      id.split("://")[1]
+                    }/pathways/add-pathway/`}
                     passHref
                   >
                     <Button variant="outline" leftIcon={<AddIcon />}>

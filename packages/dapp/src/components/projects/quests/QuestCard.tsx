@@ -9,17 +9,17 @@ import {
   Text,
   Tag,
   HStack,
-  Tooltip,
   Stack,
   Icon,
   VStack,
   Box,
-  Center,
 } from "@chakra-ui/react";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { GiSwordwoman, GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
+import ReactMarkdown from "react-markdown";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useCustomColor from "../../../core/hooks/useCustomColor";
@@ -56,8 +56,7 @@ function QuestCard({
   const router = useRouter();
   const { getRewardCurrency } = useTokenList();
 
-  const { getTextColor, getColoredText, getBgColor, getAccentColor } =
-    useCustomColor();
+  const { getTextColor, getColoredText, getBgColor } = useCustomColor();
   const { account, provider } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION, {
     refetchQueries: "all",
@@ -109,6 +108,25 @@ function QuestCard({
     );
   };
 
+  const pathwayCardMarkdownTheme = {
+    h1: (props) => {
+      const { children } = props;
+      return (
+        <Heading pb="2" noOfLines={1} as="h4" size="sm" color={getTextColor}>
+          {children}
+        </Heading>
+      );
+    },
+    p: (props) => {
+      const { children } = props;
+      return (
+        <Text w="full" fontSize="sm" isTruncated>
+          {children}
+        </Text>
+      );
+    },
+  };
+
   return (
     <Card
       position="relative"
@@ -139,17 +157,15 @@ function QuestCard({
             </Tag>
           </Flex>
         </Flex>
-        <Tooltip label={quest.description} hasArrow placement="top">
-          <Heading
-            noOfLines={3}
-            as="h4"
-            size="md"
-            color={getColoredText}
-            minH="65px"
-          >
-            {quest.description}
-          </Heading>
-        </Tooltip>
+        <VStack w="full" align="flex-start">
+          <ReactMarkdown
+            className="card-markdown"
+            components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
+            children={quest.description}
+            skipHtml
+          />
+        </VStack>
+
         <VStack w="full" align="left">
           <HStack>
             <Icon as={RiSwordLine} />

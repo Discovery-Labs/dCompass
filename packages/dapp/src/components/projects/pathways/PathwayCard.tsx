@@ -20,12 +20,14 @@ import {
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 // import { ethers } from "ethers";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useRouter } from "next/router";
 import { useContext, useState, useEffect } from "react";
 import { BsBarChartFill } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { GoTasklist } from "react-icons/go";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
+import ReactMarkdown from "react-markdown";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { streamUrlToId } from "../../../core/helpers";
@@ -205,8 +207,27 @@ function PathwayCard({
     return null;
   };
 
+  const pathwayCardMarkdownTheme = {
+    h1: (props) => {
+      const { children } = props;
+      return (
+        <Heading pb="2" noOfLines={1} as="h4" size="sm" color={getTextColor}>
+          {children}
+        </Heading>
+      );
+    },
+    p: (props) => {
+      const { children } = props;
+      return (
+        <Text w="full" fontSize="sm" isTruncated>
+          {children}
+        </Text>
+      );
+    },
+  };
+
   return (
-    <Card h="lg">
+    <Card h="lg" w="md">
       <Flex w="full" minH="56px">
         <Tooltip label={pathway.title} hasArrow placement="top">
           <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
@@ -214,18 +235,14 @@ function PathwayCard({
           </Heading>
         </Tooltip>
       </Flex>
-      <Tooltip label={pathway.description} hasArrow placement="top">
-        <Heading
-          noOfLines={3}
-          as="h4"
-          fontSize="md"
-          color={getColoredText}
-          minH="75px"
-          w="full"
-        >
-          {pathway.description}
-        </Heading>
-      </Tooltip>
+      <VStack w="full" align="flex-start">
+        <ReactMarkdown
+          className="card-markdown"
+          components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
+          children={pathway.description}
+          skipHtml
+        />
+      </VStack>
 
       <VStack w="full" align="left">
         <HStack>

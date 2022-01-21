@@ -3,6 +3,13 @@
   border-radius: 50%;
 }
 
+.card-markdown {
+  max-height: 88px;
+  max-width: 100%;
+  overflow-y: hidden;
+  text-overflow: ellipsis;
+}
+
 .code-editor {
   border: solid 1px #3d374e;
   border-radius: 5px;

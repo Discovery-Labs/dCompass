@@ -47,7 +47,7 @@ const ProjectCard = ({
     h1: (props) => {
       const { children } = props;
       return (
-        <Heading noOfLines={1} as="h4" size="sm" color={getTextColor}>
+        <Heading pb="2" noOfLines={1} as="h4" size="sm" color={getTextColor}>
           {children}
         </Heading>
       );
@@ -76,13 +76,11 @@ const ProjectCard = ({
         ))}
       </Stack>
 
-      {/* <Heading noOfLines={3} as="h4" fontSize="md" color={getTextColor}>
-          {project.description}
-        </Heading> */}
       <VStack w="full" align="flex-start">
         <ReactMarkdown
+          className="card-markdown"
           components={ChakraUIRenderer(projectCardMarkdownTheme)}
-          children={project.description.slice(0, 150)}
+          children={project.description}
           skipHtml
         />
       </VStack>
