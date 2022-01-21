@@ -18,13 +18,14 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
-import { BsGlobe, BsPeople, BsPerson } from "react-icons/bs";
-import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
+import { BsPeople, BsPerson } from "react-icons/bs";
+import ReactMarkdown from "react-markdown";
 
 import { initializeApollo } from "../../../../../lib/apolloClient";
 import Card from "../../../../components/custom/Card";
@@ -254,7 +255,13 @@ function ReviewProjectPage({
           github={github}
           gitbook={gitbook}
         />
-        <Text pt="8">{description}</Text>
+        {/* <Text pt="8">{description}</Text> */}
+        <ReactMarkdown
+          components={ChakraUIRenderer()}
+          children={description}
+          skipHtml
+        />
+        ;
         <Heading as="h3" size="lg" py="4">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
         </Heading>

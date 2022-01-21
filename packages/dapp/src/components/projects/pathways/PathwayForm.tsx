@@ -6,7 +6,6 @@ import {
   Input,
   VStack,
   Divider,
-  Textarea,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -17,12 +16,17 @@ import {
   AlertIcon,
   Tag,
 } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 import useTokenList from "../../../core/hooks/useTokenList";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
+
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+});
 
 export default function PathwayForm() {
   const router = useRouter();
@@ -110,11 +114,21 @@ export default function PathwayForm() {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-        <Textarea
-          placeholder="Pathway description here..."
-          {...register(`description`, {
+        <CodeEditor
+          language="markdown"
+          placeholder="Project description"
+          {...register("description", {
             required: "This is required",
           })}
+          onChange={(e) => {
+            const { name } = e.target;
+            setValue(name, e.target.value);
+          }}
+          style={{
+            fontSize: "16px",
+          }}
+          className="code-editor"
+          padding={15}
         />
         <FormErrorMessage>
           {errors.description && errors.description.message}

@@ -22,6 +22,7 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
@@ -85,8 +86,12 @@ const questTypeOptions = [
   },
 ];
 
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+});
+
 const CreateQuestForm: React.FunctionComponent = () => {
-  const { tokens, defaultMainnetDAIToken } = useTokenList();
+  const { tokens } = useTokenList();
   const { self, provider, account } = useContext(Web3Context);
   const [createSnapshotVoterQuest] = useMutation(
     CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
@@ -228,6 +233,12 @@ const CreateQuestForm: React.FunctionComponent = () => {
       });
       result = data.createQuizQuest;
     }
+    if (questType === "github-contributor") {
+      const { data } = await createGithubContributorQuestMutation({
+        variables: createQuestMutationVariables,
+      });
+      result = data.createQuizQuest;
+    }
     console.log({ result });
 
     return goBack();
@@ -339,15 +350,21 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-        <Textarea
-          placeholder="Quest description"
+        <CodeEditor
+          language="markdown"
+          placeholder="Project description"
           {...register("description", {
             required: "This is required",
-            maxLength: {
-              value: 1200,
-              message: "Maximum length should be 1200",
-            },
           })}
+          onChange={(e) => {
+            const { name } = e.target;
+            setValue(name, e.target.value);
+          }}
+          style={{
+            fontSize: "16px",
+          }}
+          className="code-editor"
+          padding={15}
         />
         <FormErrorMessage>
           {errors.description && errors.description.message}

@@ -2,20 +2,20 @@ import {
   HStack,
   Button,
   Flex,
-  Spacer,
   Text,
   Stack,
   Badge,
-  Tooltip,
   Icon,
   Link,
   Heading,
+  VStack,
 } from "@chakra-ui/react";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import Blockies from "react-blockies";
 import { BsGlobe } from "react-icons/bs";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
+import ReactMarkdown from "react-markdown";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
 import { Project, Tag } from "../../core/types";
@@ -42,6 +42,26 @@ const ProjectCard = ({
     );
   }
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
+
+  const projectCardMarkdownTheme = {
+    h1: (props) => {
+      const { children } = props;
+      return (
+        <Heading pb="2" noOfLines={1} as="h4" size="sm" color={getTextColor}>
+          {children}
+        </Heading>
+      );
+    },
+    p: (props) => {
+      const { children } = props;
+      return (
+        <Text w="full" fontSize="sm" isTruncated>
+          {children}
+        </Text>
+      );
+    },
+  };
+
   return (
     <CardMedia src={imgSrc}>
       <Heading as="h2" size="lg" color={getTextColor}>
@@ -55,13 +75,16 @@ const ProjectCard = ({
           </Badge>
         ))}
       </Stack>
-      <Tooltip label={project.description} hasArrow placement="top">
-        <Heading noOfLines={3} as="h4" fontSize="md" color={getTextColor}>
-          {project.description}
-        </Heading>
-      </Tooltip>
 
-      <Spacer />
+      <VStack w="full" align="flex-start">
+        <ReactMarkdown
+          className="card-markdown"
+          components={ChakraUIRenderer(projectCardMarkdownTheme)}
+          children={project.description}
+          skipHtml
+        />
+      </VStack>
+
       <HStack spacing={7}>
         {project.website && (
           <Link target="_blank" href={project.website}>
