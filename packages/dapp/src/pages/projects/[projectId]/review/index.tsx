@@ -296,13 +296,11 @@ function ReviewProjectPage({
           github={github}
           gitbook={gitbook}
         />
-        {/* <Text pt="8">{description}</Text> */}
         <ReactMarkdown
           components={ChakraUIRenderer(projectMarkdownTheme)}
           children={description}
           skipHtml
         />
-        ;
         <Heading as="h3" size="lg" py="4">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
         </Heading>

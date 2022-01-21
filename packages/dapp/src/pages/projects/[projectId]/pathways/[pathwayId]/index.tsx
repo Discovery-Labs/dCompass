@@ -451,7 +451,7 @@ function PathwayPage({
 
                 <TabPanels>
                   <TabPanel>
-                    <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                    <SimpleGrid columns={[1, 2]} spacing={10}>
                       {data.getAllQuestsByPathwayId
                         .filter((quest: any) => !quest.isPending)
                         .map((quest: any) => (

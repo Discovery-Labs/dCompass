@@ -1,3 +1,4 @@
+import { ViewIcon } from "@chakra-ui/icons";
 import {
   HStack,
   Button,
@@ -29,7 +30,7 @@ const ProjectCard = ({
   isReviewMode?: boolean;
 }) => {
   const { t } = useTranslation("common");
-  const { getTextColor } = useCustomColor();
+  const { getTextColor, getColoredText } = useCustomColor();
 
   const router = useRouter();
   console.log({ project, isReviewMode, id: project.id.split("://")[1] });
@@ -47,7 +48,31 @@ const ProjectCard = ({
     h1: (props) => {
       const { children } = props;
       return (
-        <Heading pb="2" noOfLines={1} as="h4" size="sm" color={getTextColor}>
+        <Heading as="h1" size="xl" color={getColoredText}>
+          {children}
+        </Heading>
+      );
+    },
+    h2: (props) => {
+      const { children } = props;
+      return (
+        <Heading as="h2" size="md" color={getColoredText}>
+          {children}
+        </Heading>
+      );
+    },
+    h3: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h3" size="md" color={getTextColor}>
+          {children}
+        </Heading>
+      );
+    },
+    h4: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h4" size="md" color={getTextColor}>
           {children}
         </Heading>
       );
@@ -55,7 +80,7 @@ const ProjectCard = ({
     p: (props) => {
       const { children } = props;
       return (
-        <Text w="full" fontSize="sm" isTruncated>
+        <Text w="full" fontSize="xl">
           {children}
         </Text>
       );
@@ -63,8 +88,8 @@ const ProjectCard = ({
   };
 
   return (
-    <CardMedia src={imgSrc}>
-      <Heading as="h2" size="lg" color={getTextColor}>
+    <CardMedia src={imgSrc} h="xl">
+      <Heading noOfLines={2} as="h2" size="lg" minH="75px" color={getTextColor}>
         {project.name}
       </Heading>
 
@@ -128,7 +153,7 @@ const ProjectCard = ({
           </HStack>
         )}
       </Flex>
-      <Button w="full" onClick={() => openProject()}>
+      <Button w="full" onClick={() => openProject()} leftIcon={<ViewIcon />}>
         {!isReviewMode ? t("view-project") : t("review-project")}
       </Button>
     </CardMedia>

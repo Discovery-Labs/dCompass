@@ -112,7 +112,31 @@ function QuestCard({
     h1: (props) => {
       const { children } = props;
       return (
-        <Heading pb="2" noOfLines={1} as="h4" size="sm" color={getTextColor}>
+        <Heading py="2" as="h1" size="xl" color={getColoredText}>
+          {children}
+        </Heading>
+      );
+    },
+    h2: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h2" size="lg" color={getColoredText}>
+          {children}
+        </Heading>
+      );
+    },
+    h3: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h3" size="md" color={getTextColor}>
+          {children}
+        </Heading>
+      );
+    },
+    h4: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h4" size="md" color={getTextColor}>
           {children}
         </Heading>
       );
@@ -120,7 +144,7 @@ function QuestCard({
     p: (props) => {
       const { children } = props;
       return (
-        <Text w="full" fontSize="sm" isTruncated>
+        <Text w="full" fontSize="xl">
           {children}
         </Text>
       );
@@ -131,7 +155,7 @@ function QuestCard({
     <Card
       position="relative"
       w="lg"
-      h="md"
+      h="xl"
       layerStyle="no-border-hover"
       spacing="6"
     >
@@ -160,7 +184,7 @@ function QuestCard({
         </Flex>
         <VStack w="full" align="flex-start">
           <ReactMarkdown
-            className="card-markdown"
+            className="card-markdown-quest-card"
             components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
             children={quest.description}
             skipHtml
