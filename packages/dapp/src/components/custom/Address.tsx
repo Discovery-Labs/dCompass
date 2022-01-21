@@ -28,7 +28,7 @@ import { MdCheckCircle, MdContentCopy } from "react-icons/md";
 import { RiExternalLinkFill } from "react-icons/ri";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
-import useResolveEnsName from "../../core/hooks/useResolveEnsName";
+import { useResolveEnsName } from "../../core/hooks/useResolveEnsName";
 
 const blockExplorerLink = (address: string, blockExplorer?: string) =>
   `${blockExplorer || "https://etherscan.io/"}${"address/"}${address}`;
@@ -53,9 +53,8 @@ function Address({
   onChange?: any;
   fontSize?: string;
 }) {
-  const { library } = useWeb3React();
   const account = value || address;
-  const ens = useResolveEnsName(library, address);
+  const { ens } = useResolveEnsName(address);
   const { hasCopied, onCopy } = useClipboard(account);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getColoredText } = useCustomColor();
