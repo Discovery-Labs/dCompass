@@ -30,6 +30,7 @@ import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useTokenList from "../../../core/hooks/useTokenList";
 import {
+  CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION,
   CREATE_NFT_OWNER_QUEST_MUTATION,
   CREATE_QUIZ_QUEST_MUTATION,
   CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
@@ -107,7 +108,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     }
   );
   const [createGithubContributorQuestMutation] = useMutation(
-    CREATE_NFT_OWNER_QUEST_MUTATION,
+    CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION,
     {
       refetchQueries: "all",
     }

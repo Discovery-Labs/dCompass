@@ -142,7 +142,15 @@ function PathwayPage({
   });
 
   const isOwner = createdBy === account;
-  if (loading || projectLoading) return "Loading...";
+  if (loading || projectLoading)
+    return (
+      <Stack pt="30" px="8">
+        <Text textTransform="uppercase">
+          {t("pathway")} {t("loading")}
+        </Text>
+        <Progress size="xs" isIndeterminate />
+      </Stack>
+    );
   if (error || projectError)
     return `Loading error! ${error?.message || projectError?.message}`;
 
@@ -189,7 +197,58 @@ function PathwayPage({
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
-                  components={ChakraUIRenderer()}
+                  components={ChakraUIRenderer({
+                    h1: (props) => {
+                      const { children } = props;
+                      return (
+                        <Heading
+                          py="2"
+                          as="h1"
+                          size="xl"
+                          color={getColoredText}
+                        >
+                          {children}
+                        </Heading>
+                      );
+                    },
+                    h2: (props) => {
+                      const { children } = props;
+                      return (
+                        <Heading
+                          py="2"
+                          as="h2"
+                          size="lg"
+                          color={getColoredText}
+                        >
+                          {children}
+                        </Heading>
+                      );
+                    },
+                    h3: (props) => {
+                      const { children } = props;
+                      return (
+                        <Heading py="2" as="h3" size="md" color={getTextColor}>
+                          {children}
+                        </Heading>
+                      );
+                    },
+                    h4: (props) => {
+                      const { children } = props;
+                      return (
+                        <Heading py="2" as="h4" size="md" color={getTextColor}>
+                          {children}
+                        </Heading>
+                      );
+                    },
+                    p: (props) => {
+                      const { children } = props;
+                      return (
+                        <Text w="full" fontSize="xl">
+                          {children}
+                        </Text>
+                      );
+                    },
+                  })}
                   children={description}
                   skipHtml
                 />

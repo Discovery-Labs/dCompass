@@ -25,6 +25,7 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
+  Progress,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { GetServerSideProps } from "next";
@@ -132,9 +133,59 @@ function ProjectPage({
     }
   );
   const isOwner = createdBy === account;
-  if (loading) return t("loading");
+  if (loading)
+    return (
+      <Stack pt="30" px="8">
+        <Text textTransform="uppercase">
+          {t("project")} {t("loading")}
+        </Text>
+        <Progress size="xs" isIndeterminate />
+      </Stack>
+    );
   if (error) return `Loading error! ${error.message}`;
 
+  const projectMarkdownTheme = {
+    h1: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h1" size="xl" color={getColoredText}>
+          {children}
+        </Heading>
+      );
+    },
+    h2: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h2" size="lg" color={getColoredText}>
+          {children}
+        </Heading>
+      );
+    },
+    h3: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h3" size="md" color={getTextColor}>
+          {children}
+        </Heading>
+      );
+    },
+    h4: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h4" size="md" color={getTextColor}>
+          {children}
+        </Heading>
+      );
+    },
+    p: (props) => {
+      const { children } = props;
+      return (
+        <Text w="full" fontSize="xl">
+          {children}
+        </Text>
+      );
+    },
+  };
   return (
     <Container>
       <BreadcrumbItems
@@ -234,6 +285,7 @@ function ProjectPage({
             <Tab>{t("pathways")}</Tab>
             <Tab>{t("guilds")}</Tab>
             <Tab>{t("bounties")}</Tab>
+            <Tab>{t("events")}</Tab>
           </TabList>
         </HStack>
 
@@ -241,7 +293,7 @@ function ProjectPage({
           <TabPanel px="0">
             <VStack w="full" align="flex-start">
               <ReactMarkdown
-                components={ChakraUIRenderer()}
+                components={ChakraUIRenderer(projectMarkdownTheme)}
                 children={description}
                 skipHtml
               />
@@ -257,9 +309,8 @@ function ProjectPage({
                 </TabList>
                 {isOwner && (
                   <NextLink
-                    href={`/projects/${
-                      id.split("://")[1]
-                    }/pathways/add-pathway/`}
+                    href={`/projects/${id.split("://")[1]
+                      }/pathways/add-pathway/`}
                     passHref
                   >
                     <Button variant="outline" leftIcon={<AddIcon />}>

@@ -2,13 +2,16 @@ import { useQuery } from "@apollo/client";
 import {
   Flex,
   Heading,
+  Progress,
   SimpleGrid,
   Spacer,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from "@chakra-ui/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -30,7 +33,15 @@ function ReviewProjects() {
   console.log({ data });
   const { isReviewer } = useContext(Web3Context);
 
-  if (loading) return "Loading...";
+  if (loading)
+    return (
+      <Stack pt="30" px="8">
+        <Text textTransform="uppercase">
+          {t("project")} {t("loading")}
+        </Text>
+        <Progress size="xs" isIndeterminate />
+      </Stack>
+    );
   if (error) return `Error! ${error.message}`;
   return isReviewer ? (
     <Container>

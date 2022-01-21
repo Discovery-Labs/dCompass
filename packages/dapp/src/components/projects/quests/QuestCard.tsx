@@ -142,6 +142,7 @@ function QuestCard({
           <Heading
             noOfLines={2}
             as="h2"
+            w="full"
             fontSize="2xl"
             color={getTextColor}
             textTransform="uppercase"
@@ -180,7 +181,7 @@ function QuestCard({
           </HStack>
           <HStack>
             <Tag variant="outline" size="lg">
-              Snapshot Voter
+              {quest.questType}
             </Tag>
           </HStack>
           <HStack>

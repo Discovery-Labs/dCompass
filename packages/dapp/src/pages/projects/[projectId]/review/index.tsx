@@ -105,7 +105,7 @@ function ReviewProjectPage({
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
-  const { getColoredText } = useCustomColor();
+  const { getColoredText, getTextColor } = useCustomColor();
 
   useEffect(() => {
     async function init() {
@@ -181,7 +181,48 @@ function ReviewProjectPage({
     }
     return null;
   };
-
+  const projectMarkdownTheme = {
+    h1: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h1" size="xl" color={getColoredText}>
+          {children}
+        </Heading>
+      );
+    },
+    h2: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h2" size="lg" color={getColoredText}>
+          {children}
+        </Heading>
+      );
+    },
+    h3: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h3" size="md" color={getTextColor}>
+          {children}
+        </Heading>
+      );
+    },
+    h4: (props) => {
+      const { children } = props;
+      return (
+        <Heading py="2" as="h4" size="md" color={getTextColor}>
+          {children}
+        </Heading>
+      );
+    },
+    p: (props) => {
+      const { children } = props;
+      return (
+        <Text w="full" fontSize="xl">
+          {children}
+        </Text>
+      );
+    },
+  };
   return isReviewer ? (
     <Container>
       <Flex w="full">
@@ -257,7 +298,7 @@ function ReviewProjectPage({
         />
         {/* <Text pt="8">{description}</Text> */}
         <ReactMarkdown
-          components={ChakraUIRenderer()}
+          components={ChakraUIRenderer(projectMarkdownTheme)}
           children={description}
           skipHtml
         />

@@ -13,13 +13,16 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Progress,
   SimpleGrid,
   Spacer,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
 import { useTranslation } from "next-i18next";
@@ -171,7 +174,15 @@ function Projects() {
     );
   };
 
-  if (loading || loadingTags) return t("loading");
+  if (loading || loadingTags)
+    return (
+      <Stack pt="30" px="8">
+        <Text textTransform="uppercase">
+          {t("projects")} {t("loading")}
+        </Text>
+        <Progress size="xs" isIndeterminate />
+      </Stack>
+    );
   if (error || errorTags)
     return `Error! ${error?.message || errorTags?.message}`;
   return (
