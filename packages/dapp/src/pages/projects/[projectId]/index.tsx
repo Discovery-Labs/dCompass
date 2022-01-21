@@ -18,31 +18,24 @@ import {
   Tabs,
   Text,
   VStack,
-  Link,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionIcon,
-  AccordionPanel,
-  Progress,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
-import { BsGlobe, BsPeople, BsPerson } from "react-icons/bs";
+import { BsPeople, BsPerson } from "react-icons/bs";
 import { MdPersonAddAlt1 } from "react-icons/md";
-import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
+import ReactMarkdown from "react-markdown";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
 import CardMedia from "../../../components/custom/CardMedia";
@@ -173,12 +166,9 @@ function ProjectPage({
               </Badge>
             ))}
           </Stack>
-          <VStack>
-            <Heading as="h1" size="4xl" pl="4" color={getTextColor}>
+          <VStack textAlign="center" w="full">
+            <Heading as="h1" size="3xl" pl="4" color={getTextColor}>
               {name}
-            </Heading>
-            <Heading py="2" as="h2" size="md" color={getTextColor}>
-              {description}
             </Heading>
           </VStack>
         </VStack>
@@ -214,7 +204,7 @@ function ProjectPage({
         </VStack>
       </Flex>
 
-      <Flex w="full" direction="column">
+      <Flex w="full" direction="column" py="4">
         <HStack justifyContent="space-between">
           <Flex align="center" maxW="full">
             {createdBy && <Blockies seed={createdBy} className="blockies" />}
@@ -240,6 +230,7 @@ function ProjectPage({
       <Tabs w="full">
         <HStack justifyContent="space-between">
           <TabList>
+            <Tab>{t("about")}</Tab>
             <Tab>{t("pathways")}</Tab>
             <Tab>{t("guilds")}</Tab>
             <Tab>{t("bounties")}</Tab>
@@ -247,6 +238,15 @@ function ProjectPage({
         </HStack>
 
         <TabPanels>
+          <TabPanel px="0">
+            <VStack w="full" align="flex-start">
+              <ReactMarkdown
+                components={ChakraUIRenderer()}
+                children={description}
+                skipHtml
+              />
+            </VStack>
+          </TabPanel>
           <TabPanel px="0">
             <Tabs w="full" variant="line">
               <HStack justifyContent="space-between">
