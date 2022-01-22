@@ -2,7 +2,6 @@ import { SimpleGrid } from "@chakra-ui/react";
 import NFTCard from "components/custom/dashboard/NFTCard";
 import { Web3Context } from "contexts/Web3Provider";
 import { ethers } from "ethers";
-import { resolveConfig } from "prettier";
 import React, { useContext, useEffect, useState } from "react";
 import ABI from "./TestNFTContractABI";
 
@@ -34,26 +33,6 @@ function UserNFTs() {
         });
         setUserNFTs(filteredNFTIds);
         console.log("filteredNFTIds", filteredNFTIds);
-      }
-    }
-    getUserNFTIds();
-  }, [account, provider]);
-
-  useEffect(() => {
-    async function getUserNFTIds() {
-      if (account && provider) {
-        const words = [
-          "spray",
-          "limit",
-          "elite",
-          "exuberant",
-          "destruction",
-          "present",
-        ];
-
-        const result = words.filter((word) => word.length > 6);
-
-        console.log(result);
       }
     }
     getUserNFTIds();

@@ -1,41 +1,17 @@
 const ABI = [
   {
     inputs: [
-      {
-        internalType: "string",
-        name: "_contractURI",
-        type: "string",
-      },
+      { internalType: "string", name: "_contractURI", type: "string" },
       {
         internalType: "address payable",
         name: "_controlCenter",
         type: "address",
       },
-      {
-        internalType: "address",
-        name: "_trustedForwarder",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_nativeTokenWrapper",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_saleRecipient",
-        type: "address",
-      },
-      {
-        internalType: "uint128",
-        name: "_royaltyBps",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "_feeBps",
-        type: "uint128",
-      },
+      { internalType: "address", name: "_trustedForwarder", type: "address" },
+      { internalType: "address", name: "_nativeTokenWrapper", type: "address" },
+      { internalType: "address", name: "_saleRecipient", type: "address" },
+      { internalType: "uint128", name: "_royaltyBps", type: "uint128" },
+      { internalType: "uint128", name: "_feeBps", type: "uint128" },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -55,12 +31,7 @@ const ABI = [
         name: "operator",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
+      { indexed: false, internalType: "bool", name: "approved", type: "bool" },
     ],
     name: "ApprovalForAll",
     type: "event",
@@ -132,21 +103,13 @@ const ABI = [
       },
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "startTimestamp",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "startTimestamp", type: "uint256" },
           {
             internalType: "uint256",
             name: "maxClaimableSupply",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "supplyClaimed",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "supplyClaimed", type: "uint256" },
           {
             internalType: "uint256",
             name: "quantityLimitPerTransaction",
@@ -157,21 +120,9 @@ const ABI = [
             name: "waitTimeInSecondsBetweenClaims",
             type: "uint256",
           },
-          {
-            internalType: "bytes32",
-            name: "merkleRoot",
-            type: "bytes32",
-          },
-          {
-            internalType: "uint256",
-            name: "pricePerToken",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "currency",
-            type: "address",
-          },
+          { internalType: "bytes32", name: "merkleRoot", type: "bytes32" },
+          { internalType: "uint256", name: "pricePerToken", type: "uint256" },
+          { internalType: "address", name: "currency", type: "address" },
         ],
         indexed: false,
         internalType: "struct ILazyMintERC1155.ClaimCondition[]",
@@ -242,12 +193,7 @@ const ABI = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
+      { indexed: true, internalType: "bytes32", name: "role", type: "bytes32" },
       {
         indexed: true,
         internalType: "bytes32",
@@ -267,12 +213,7 @@ const ABI = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
+      { indexed: true, internalType: "bytes32", name: "role", type: "bytes32" },
       {
         indexed: true,
         internalType: "address",
@@ -292,12 +233,7 @@ const ABI = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
+      { indexed: true, internalType: "bytes32", name: "role", type: "bytes32" },
       {
         indexed: true,
         internalType: "address",
@@ -336,18 +272,8 @@ const ABI = [
         name: "operator",
         type: "address",
       },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
+      { indexed: true, internalType: "address", name: "from", type: "address" },
+      { indexed: true, internalType: "address", name: "to", type: "address" },
       {
         indexed: false,
         internalType: "uint256[]",
@@ -373,24 +299,9 @@ const ABI = [
         name: "operator",
         type: "address",
       },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
+      { indexed: true, internalType: "address", name: "from", type: "address" },
+      { indexed: true, internalType: "address", name: "to", type: "address" },
+      { indexed: false, internalType: "uint256", name: "id", type: "uint256" },
       {
         indexed: false,
         internalType: "uint256",
@@ -417,18 +328,8 @@ const ABI = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: false,
-        internalType: "string",
-        name: "value",
-        type: "string",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
+      { indexed: false, internalType: "string", name: "value", type: "string" },
+      { indexed: true, internalType: "uint256", name: "id", type: "uint256" },
     ],
     name: "URI",
     type: "event",
@@ -436,120 +337,56 @@ const ABI = [
   {
     inputs: [],
     name: "DEFAULT_ADMIN_ROLE",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "MINTER_ROLE",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "NATIVE_TOKEN",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "TRANSFER_ROLE",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "uint256", name: "id", type: "uint256" },
     ],
     name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address[]",
-        name: "accounts",
-        type: "address[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "ids",
-        type: "uint256[]",
-      },
+      { internalType: "address[]", name: "accounts", type: "address[]" },
+      { internalType: "uint256[]", name: "ids", type: "uint256[]" },
     ],
     name: "balanceOfBatch",
-    outputs: [
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
-    ],
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "uint256", name: "id", type: "uint256" },
+      { internalType: "uint256", name: "value", type: "uint256" },
     ],
     name: "burn",
     outputs: [],
@@ -558,21 +395,9 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint256[]",
-        name: "ids",
-        type: "uint256[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "values",
-        type: "uint256[]",
-      },
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "uint256[]", name: "ids", type: "uint256[]" },
+      { internalType: "uint256[]", name: "values", type: "uint256[]" },
     ],
     name: "burnBatch",
     outputs: [],
@@ -581,21 +406,9 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_quantity",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes32[]",
-        name: "_proofs",
-        type: "bytes32[]",
-      },
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "uint256", name: "_quantity", type: "uint256" },
+      { internalType: "bytes32[]", name: "_proofs", type: "bytes32[]" },
     ],
     name: "claim",
     outputs: [],
@@ -603,25 +416,11 @@ const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "claimConditions",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "totalConditionCount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "timstampLimitIndex",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "totalConditionCount", type: "uint256" },
+      { internalType: "uint256", name: "timstampLimitIndex", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -629,74 +428,40 @@ const ABI = [
   {
     inputs: [],
     name: "contractURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "defaultSaleRecipient",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "feeBps",
-    outputs: [
-      {
-        internalType: "uint120",
-        name: "",
-        type: "uint120",
-      },
-    ],
+    outputs: [{ internalType: "uint120", name: "", type: "uint120" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_index",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "uint256", name: "_index", type: "uint256" },
     ],
     name: "getClaimConditionAtIndex",
     outputs: [
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "startTimestamp",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "startTimestamp", type: "uint256" },
           {
             internalType: "uint256",
             name: "maxClaimableSupply",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "supplyClaimed",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "supplyClaimed", type: "uint256" },
           {
             internalType: "uint256",
             name: "quantityLimitPerTransaction",
@@ -707,21 +472,9 @@ const ABI = [
             name: "waitTimeInSecondsBetweenClaims",
             type: "uint256",
           },
-          {
-            internalType: "bytes32",
-            name: "merkleRoot",
-            type: "bytes32",
-          },
-          {
-            internalType: "uint256",
-            name: "pricePerToken",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "currency",
-            type: "address",
-          },
+          { internalType: "bytes32", name: "merkleRoot", type: "bytes32" },
+          { internalType: "uint256", name: "pricePerToken", type: "uint256" },
+          { internalType: "address", name: "currency", type: "address" },
         ],
         internalType: "struct ILazyMintERC1155.ClaimCondition",
         name: "mintCondition",
@@ -732,103 +485,41 @@ const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "getIndexOfActiveCondition",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-    ],
+    inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }],
     name: "getRoleAdmin",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
+      { internalType: "bytes32", name: "role", type: "bytes32" },
+      { internalType: "uint256", name: "index", type: "uint256" },
     ],
     name: "getRoleMember",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-    ],
+    inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }],
     name: "getRoleMemberCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_index",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "_claimer",
-        type: "address",
-      },
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "uint256", name: "_index", type: "uint256" },
+      { internalType: "address", name: "_claimer", type: "address" },
     ],
     name: "getTimestampForNextValidClaim",
     outputs: [
@@ -843,16 +534,8 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
+      { internalType: "bytes32", name: "role", type: "bytes32" },
+      { internalType: "address", name: "account", type: "address" },
     ],
     name: "grantRole",
     outputs: [],
@@ -861,83 +544,35 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
+      { internalType: "bytes32", name: "role", type: "bytes32" },
+      { internalType: "address", name: "account", type: "address" },
     ],
     name: "hasRole",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "address", name: "operator", type: "address" },
     ],
     name: "isApprovedForAll",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "forwarder",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "forwarder", type: "address" }],
     name: "isTrustedForwarder",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "_baseURIForTokens",
-        type: "string",
-      },
+      { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "string", name: "_baseURIForTokens", type: "string" },
     ],
     name: "lazyMint",
     outputs: [],
@@ -945,75 +580,37 @@ const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes[]",
-        name: "data",
-        type: "bytes[]",
-      },
-    ],
+    inputs: [{ internalType: "bytes[]", name: "data", type: "bytes[]" }],
     name: "multicall",
-    outputs: [
-      {
-        internalType: "bytes[]",
-        name: "results",
-        type: "bytes[]",
-      },
-    ],
+    outputs: [{ internalType: "bytes[]", name: "results", type: "bytes[]" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
     name: "nativeTokenWrapper",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "nextTokenIdToMint",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
+      { internalType: "bytes32", name: "role", type: "bytes32" },
+      { internalType: "address", name: "account", type: "address" },
     ],
     name: "renounceRole",
     outputs: [],
@@ -1022,16 +619,8 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
+      { internalType: "bytes32", name: "role", type: "bytes32" },
+      { internalType: "address", name: "account", type: "address" },
     ],
     name: "revokeRole",
     outputs: [],
@@ -1041,72 +630,30 @@ const ABI = [
   {
     inputs: [],
     name: "royaltyBps",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "",
-        type: "uint64",
-      },
-    ],
+    outputs: [{ internalType: "uint64", name: "", type: "uint64" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "salePrice",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256", name: "salePrice", type: "uint256" },
     ],
     name: "royaltyInfo",
     outputs: [
-      {
-        internalType: "address",
-        name: "receiver",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "royaltyAmount",
-        type: "uint256",
-      },
+      { internalType: "address", name: "receiver", type: "address" },
+      { internalType: "uint256", name: "royaltyAmount", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256[]",
-        name: "ids",
-        type: "uint256[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "amounts",
-        type: "uint256[]",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256[]", name: "ids", type: "uint256[]" },
+      { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
+      { internalType: "bytes", name: "data", type: "bytes" },
     ],
     name: "safeBatchTransferFrom",
     outputs: [],
@@ -1115,31 +662,11 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "id", type: "uint256" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "bytes", name: "data", type: "bytes" },
     ],
     name: "safeTransferFrom",
     outputs: [],
@@ -1147,36 +674,16 @@ const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "saleRecipient",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
+      { internalType: "address", name: "operator", type: "address" },
+      { internalType: "bool", name: "approved", type: "bool" },
     ],
     name: "setApprovalForAll",
     outputs: [],
@@ -1185,28 +692,16 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "startTimestamp",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "startTimestamp", type: "uint256" },
           {
             internalType: "uint256",
             name: "maxClaimableSupply",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "supplyClaimed",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "supplyClaimed", type: "uint256" },
           {
             internalType: "uint256",
             name: "quantityLimitPerTransaction",
@@ -1217,21 +712,9 @@ const ABI = [
             name: "waitTimeInSecondsBetweenClaims",
             type: "uint256",
           },
-          {
-            internalType: "bytes32",
-            name: "merkleRoot",
-            type: "bytes32",
-          },
-          {
-            internalType: "uint256",
-            name: "pricePerToken",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "currency",
-            type: "address",
-          },
+          { internalType: "bytes32", name: "merkleRoot", type: "bytes32" },
+          { internalType: "uint256", name: "pricePerToken", type: "uint256" },
+          { internalType: "address", name: "currency", type: "address" },
         ],
         internalType: "struct ILazyMintERC1155.ClaimCondition[]",
         name: "_conditions",
@@ -1244,13 +727,7 @@ const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_uri",
-        type: "string",
-      },
-    ],
+    inputs: [{ internalType: "string", name: "_uri", type: "string" }],
     name: "setContractURI",
     outputs: [],
     stateMutability: "nonpayable",
@@ -1258,11 +735,7 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "_saleRecipient",
-        type: "address",
-      },
+      { internalType: "address", name: "_saleRecipient", type: "address" },
     ],
     name: "setDefaultSaleRecipient",
     outputs: [],
@@ -1270,26 +743,14 @@ const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_feeBps",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "_feeBps", type: "uint256" }],
     name: "setFeeBps",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_newOwner",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "_newOwner", type: "address" }],
     name: "setOwner",
     outputs: [],
     stateMutability: "nonpayable",
@@ -1297,11 +758,7 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "bool",
-        name: "_restrictedTransfer",
-        type: "bool",
-      },
+      { internalType: "bool", name: "_restrictedTransfer", type: "bool" },
     ],
     name: "setRestrictedTransfer",
     outputs: [],
@@ -1309,13 +766,7 @@ const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_royaltyBps",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "_royaltyBps", type: "uint256" }],
     name: "setRoyaltyBps",
     outputs: [],
     stateMutability: "nonpayable",
@@ -1323,16 +774,8 @@ const ABI = [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "_saleRecipient",
-        type: "address",
-      },
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "address", name: "_saleRecipient", type: "address" },
     ],
     name: "setSaleRecipient",
     outputs: [],
@@ -1340,99 +783,45 @@ const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes4",
-        name: "interfaceId",
-        type: "bytes4",
-      },
-    ],
+    inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }],
     name: "supportsInterface",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "tokenURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "_tokenURI",
-        type: "string",
-      },
-    ],
+    outputs: [{ internalType: "string", name: "_tokenURI", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "transfersRestricted",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
       {
         components: [
-          {
-            internalType: "uint256",
-            name: "startTimestamp",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "startTimestamp", type: "uint256" },
           {
             internalType: "uint256",
             name: "maxClaimableSupply",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "supplyClaimed",
-            type: "uint256",
-          },
+          { internalType: "uint256", name: "supplyClaimed", type: "uint256" },
           {
             internalType: "uint256",
             name: "quantityLimitPerTransaction",
@@ -1443,21 +832,9 @@ const ABI = [
             name: "waitTimeInSecondsBetweenClaims",
             type: "uint256",
           },
-          {
-            internalType: "bytes32",
-            name: "merkleRoot",
-            type: "bytes32",
-          },
-          {
-            internalType: "uint256",
-            name: "pricePerToken",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "currency",
-            type: "address",
-          },
+          { internalType: "bytes32", name: "merkleRoot", type: "bytes32" },
+          { internalType: "uint256", name: "pricePerToken", type: "uint256" },
+          { internalType: "address", name: "currency", type: "address" },
         ],
         internalType: "struct ILazyMintERC1155.ClaimCondition[]",
         name: "_conditions",
@@ -1470,21 +847,9 @@ const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "uri",
-    outputs: [
-      {
-        internalType: "string",
-        name: "_tokenURI",
-        type: "string",
-      },
-    ],
+    outputs: [{ internalType: "string", name: "_tokenURI", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
