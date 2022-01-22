@@ -8,7 +8,7 @@ export interface NFTProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
 }
 
-function NFTV2({ contractAddress, tokenId, size = "xs" }: NFTProps) {
+function NFTCard({ contractAddress, tokenId, size = "xs" }: NFTProps) {
   const { loading, error, nft } = useNft(contractAddress, tokenId);
   const openseaLink = `https://testnets.opensea.io/assets/${contractAddress}/${tokenId}/`;
 
@@ -46,4 +46,4 @@ function NFTV2({ contractAddress, tokenId, size = "xs" }: NFTProps) {
   );
 }
 
-export default NFTV2;
+export default NFTCard;

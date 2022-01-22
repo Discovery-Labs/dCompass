@@ -2,18 +2,19 @@ import { SimpleGrid } from "@chakra-ui/react";
 import NFTCard from "components/custom/dashboard/NFTCard";
 import { Web3Context } from "contexts/Web3Provider";
 import { ethers } from "ethers";
+import { resolveConfig } from "prettier";
 import React, { useContext, useEffect, useState } from "react";
 import ABI from "./TestNFTContractABI";
 
 function UserNFTs() {
-  const NFTIds = ["0", "1"];
+  const NFTIds = ["1", "0"];
   const NFT_CONTRACT_ADDRESS = "0xCb9Ce2fa1EBef370CC060aD65294075EDdC7f8Ea";
   const [userNFTs, setUserNFTs] = useState<Array<string>>();
 
   const { account, provider } = useContext(Web3Context);
 
   useEffect(() => {
-    async function exec() {
+    async function getUserNFTIds() {
       if (account && provider) {
         const signer = provider.getSigner();
 
@@ -22,27 +23,46 @@ function UserNFTs() {
           ABI,
           signer
         );
-        const balance = await BadgeNFTContract.balanceOf(account, "0");
-        console.log("balance", balance.toString());
-        if (balance !== undefined) {
-          return balance.toNumber() > 0;
-        }
+
+        const filteredNFTIds: Array<string> = [];
+        NFTIds.forEach((id) => {
+          BadgeNFTContract.balanceOf(account, id).then((bal) => {
+            if (bal !== undefined && bal.toNumber() > 0) {
+              filteredNFTIds.push(id);
+            }
+          });
+        });
+        setUserNFTs(filteredNFTIds);
+        console.log("filteredNFTIds", filteredNFTIds);
       }
-      // const filteredNFTIds = NFTIds.filter(async (id) => {
-      //   const balance = await bundleDropModule?.balanceOf(address, id);
-      //   if (balance !== undefined) {
-      //     return balance.toNumber() > 0;
-      //   }
-      //   return false;
-      // });
-      // setUserNFTs(filteredNFTIds);
     }
-    exec();
+    getUserNFTIds();
+  }, [account, provider]);
+
+  useEffect(() => {
+    async function getUserNFTIds() {
+      if (account && provider) {
+        const words = [
+          "spray",
+          "limit",
+          "elite",
+          "exuberant",
+          "destruction",
+          "present",
+        ];
+
+        const result = words.filter((word) => word.length > 6);
+
+        console.log(result);
+      }
+    }
+    getUserNFTIds();
   }, [account, provider]);
 
   return (
     <SimpleGrid columns={[2, null, 3]} spacing="40px">
       {userNFTs &&
+        userNFTs.length > 0 &&
         userNFTs.map((id) => {
           return (
             <NFTCard
