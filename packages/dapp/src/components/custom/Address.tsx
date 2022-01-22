@@ -90,45 +90,51 @@ function Address({
     );
   }
 
-  let text;
-  if (onChange) {
-    text = (
-      <Editable placeholder={account}>
-        <EditablePreview width="100%" />
-        <Link target="_blank" href={etherscanLink} rel="noopener noreferrer">
-          <EditableInput value={displayAddress} onChange={onChange} />
-        </Link>
-      </Editable>
-    );
-  } else {
-    text = (
-      <Flex alignItems="center" justifyContent="center" flexGrow={1}>
-        <Link
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          border="none"
-          textOverflow={displayAddress.startsWith("0x") ? "ellipsis" : "unset"}
-          href={etherscanLink}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <RiExternalLinkFill />
-          {displayAddress}
-        </Link>
-      </Flex>
-    );
-  }
+  const text = (
+    <Flex alignItems="center" justifyContent="center" flexGrow={1}>
+      <Text _hover={{ color: getColoredText }}>{displayAddress}</Text>
+    </Flex>
+  );
+  // let text;
+  // if (onChange) {
+  //   text = (
+  //     <Editable placeholder={account}>
+  //       <EditablePreview width="100%" />
+  //       <Link target="_blank" href={etherscanLink} rel="noopener noreferrer">
+  //         <EditableInput value={displayAddress} onChange={onChange} />
+  //       </Link>
+  //     </Editable>
+  //   );
+  // } else {
+  //   text = (
+  //     <Flex alignItems="center" justifyContent="center" flexGrow={1}>
+  //       <Link
+  //         display="flex"
+  //         alignItems="center"
+  //         justifyContent="center"
+  //         border="none"
+  //         textOverflow={displayAddress.startsWith("0x") ? "ellipsis" : "unset"}
+  //         href={etherscanLink}
+  //         target="_blank"
+  //         rel="noopener noreferrer"
+  //       >
+  //         <RiExternalLinkFill />
+  //         {displayAddress}
+  //       </Link>
+  //     </Flex>
+  //   );
+  // }
 
   return (
     <HStack
       layerStyle="solid-card"
       py="1"
       px="2"
-      _hover={{ bg: "lighten(0.2)" }}
+      _hover={{ cursor: "pointer", bg: "lighten(0.2)" }}
       fontSize={fontSize ?? 28}
+      onClick={onOpen}
     >
-      <Flex _hover={{ cursor: "pointer" }} onClick={onOpen}>
+      <Flex>
         <Blockies className="blockies" seed={account} />
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -164,6 +170,21 @@ function Address({
                 }
               />
             </HStack>
+            <Link
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              border="none"
+              textOverflow={
+                displayAddress.startsWith("0x") ? "ellipsis" : "unset"
+              }
+              href={etherscanLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Go to etherscan
+              <Icon as={RiExternalLinkFill} pl="2" />
+            </Link>
           </ModalBody>
 
           <ModalFooter>
@@ -175,20 +196,14 @@ function Address({
       </Modal>
 
       {text}
-      <IconButton
+      {/* <IconButton
         size="sm"
         variant="ghost"
         onClick={onCopy}
         aria-label="Copy Address"
         fontSize={fontSize}
-        icon={
-          hasCopied ? (
-            <Icon color="aqua.300" as={MdCheckCircle} />
-          ) : (
-            <MdContentCopy />
-          )
-        }
-      />
+        icon={hasCopied ? <Icon as={MdCheckCircle} /> : <MdContentCopy />}
+      /> */}
     </HStack>
   );
 }
