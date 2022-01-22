@@ -1,16 +1,28 @@
-import { Text } from "@chakra-ui/react";
+import { Text, Heading, Flex, VStack } from "@chakra-ui/react";
+import useCustomColor from "core/hooks/useCustomColor";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import Container from "components/layout/Container";
+import UserNFTs from "components/custom/dashboard/UserNFTs";
+
 function Dashboard() {
   const { t } = useTranslation("common");
-
+  const { getTextColor } = useCustomColor();
   return (
-    <>
-      <Text>Dashboard</Text>
-      <Text>{t("create-project")}</Text>
-      <Text>{t("all-projects")}</Text>
-    </>
+    <Container>
+      <Flex w="full">
+        <Heading as="h1" size="2xl" color={getTextColor}>
+          Dashboard
+        </Heading>
+      </Flex>
+      <VStack w="full" align="start">
+        <Text as="h2" textStyle="h2">
+          Badges
+        </Text>
+        <UserNFTs />
+      </VStack>
+    </Container>
   );
 }
 

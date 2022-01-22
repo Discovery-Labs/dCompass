@@ -76,6 +76,7 @@
     "react-parallax-tilt": "^1.5.73",
     "states-cities-db": "^1.4.1",
     "uint8arrays": "^3.0.0",
+    "use-nft": "^0.10.2",
     "web3.storage": "^3.3.3",
     "web3modal": "^1.9.4"
   },
