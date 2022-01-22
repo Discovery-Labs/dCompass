@@ -3,6 +3,8 @@ import { Flex, Button, Stack } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -17,9 +19,7 @@ import CenteredFrame from "components/layout/CenteredFrame";
 import EditProjectForm from "components/projects/EditProjectForm";
 import SquadsForm from "components/projects/squads/SquadsForm";
 import { Web3Context } from "contexts/Web3Provider";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 
 type Props = {
   projectId: string | null;
@@ -70,9 +70,20 @@ const steps = [
   { label: "Step 2", content: EditSquads },
 ];
 
-function EditProjectStepper(project) {
+type Project = {
+  [x: string]: any;
+  id?: any;
+  isFeatured?: any;
+  createdAt?: any;
+  createdBy?: any;
+  updatedAt?: any;
+  updatedBy?: any;
+  tokenUris?: any;
+};
+
+function EditProjectStepper(project: Project) {
   const { t } = useTranslation("common");
-  const { self, contracts, provider } = useContext(Web3Context);
+  const { self, provider } = useContext(Web3Context);
   const { account } = useWeb3React();
 
   const [editProjectMutation] = useMutation(EDIT_PROJECT_MUTATION, {
@@ -167,62 +178,58 @@ function EditProjectStepper(project) {
     console.log({ allProjects });
   }
 
-  return account && contracts ? (
-    <FormProvider {...methods}>
-      <CenteredFrame>
-        <Card h="full" w="2xl">
-          <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
-            <Steps colorScheme="purple" activeStep={activeStep}>
-              {steps.map(({ label, content }) => (
-                <Step label={label} key={label}>
-                  {content}
-                </Step>
-              ))}
-            </Steps>
-            <Flex w="full" justify="center">
-              {activeStep > 0 && activeStep <= 1 && (
-                <Button
-                  variant="outline"
-                  onClick={() => prevStep()}
-                  px="1.25rem"
-                  fontSize="md"
-                >
-                  {t("prev")}
-                </Button>
-              )}
-              {activeStep < 1 && (
-                <Button
-                  ml="0.5rem"
-                  onClick={() => nextStep()}
-                  px="1.25rem"
-                  fontSize="md"
-                >
-                  {t("next")}
-                </Button>
-              )}
-              {activeStep === 1 && (
-                <Button
-                  ml="0.5rem"
-                  colorScheme="aqua"
-                  isLoading={methods.formState.isSubmitting}
-                  type="submit"
-                  px="1.25rem"
-                  fontSize="md"
-                >
-                  {t("submit")}
-                </Button>
-              )}
-            </Flex>
-          </Stack>
-        </Card>
-      </CenteredFrame>
-    </FormProvider>
-  ) : (
-    <CenteredFrame>
-      <Card h="full" w="2xl" border="solid 1px red">
-        <NotConnectedCard />
-      </Card>
-    </CenteredFrame>
+  return (
+    <NotConnectedWrapper>
+      <FormProvider {...methods}>
+        <CenteredFrame>
+          <Card h="full" w="2xl">
+            <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
+              <Steps colorScheme="purple" activeStep={activeStep}>
+                {steps.map(({ label, content }) => (
+                  <Step label={label} key={label}>
+                    {content}
+                  </Step>
+                ))}
+              </Steps>
+              <Flex w="full" justify="center">
+                {activeStep > 0 && activeStep <= 1 && (
+                  <Button
+                    variant="outline"
+                    onClick={() => prevStep()}
+                    px="1.25rem"
+                    fontSize="md"
+                  >
+                    {t("prev")}
+                  </Button>
+                )}
+                {activeStep < 1 && (
+                  <Button
+                    ml="0.5rem"
+                    onClick={() => nextStep()}
+                    px="1.25rem"
+                    fontSize="md"
+                  >
+                    {t("next")}
+                  </Button>
+                )}
+                {activeStep === 1 && (
+                  <Button
+                    ml="0.5rem"
+                    colorScheme="aqua"
+                    isLoading={methods.formState.isSubmitting}
+                    type="submit"
+                    px="1.25rem"
+                    fontSize="md"
+                  >
+                    {t("submit")}
+                  </Button>
+                )}
+              </Flex>
+            </Stack>
+          </Card>
+        </CenteredFrame>
+      </FormProvider>
+    </NotConnectedWrapper>
   );
 }
 
