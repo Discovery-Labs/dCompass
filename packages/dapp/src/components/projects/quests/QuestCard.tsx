@@ -152,13 +152,7 @@ function QuestCard({
   };
 
   return (
-    <Card
-      position="relative"
-      w="lg"
-      h="xl"
-      layerStyle="no-border-hover"
-      spacing="6"
-    >
+    <Card position="relative" h="xl" layerStyle="no-border-hover" spacing="6">
       {!unlocked && <LockedScreen />}
 
       <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"} w="full">

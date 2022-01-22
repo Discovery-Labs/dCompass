@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Box, VStack, Flex, Heading, Image, Link } from "@chakra-ui/react";
+import { Box, VStack, Flex, Text, Image, Link } from "@chakra-ui/react";
 import { useNft } from "use-nft";
 
 export interface NFTProps {
@@ -35,9 +35,9 @@ function NFTCard({ contractAddress, tokenId, size = "xs" }: NFTProps) {
       <Box p="6">
         <Link href={openseaLink} isExternal>
           <Flex alignItems="center" justifyContent="space-between" pb="2">
-            <Heading as="h3" size="sm" style={{ overflowWrap: "anywhere" }}>
+            <Text as="h3" size="sm" style={{ overflowWrap: "anywhere" }}>
               {nft.name}
-            </Heading>
+            </Text>
             <ExternalLinkIcon ml="2" />
           </Flex>
         </Link>

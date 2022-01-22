@@ -1,8 +1,7 @@
-import { Text, Heading, Flex, VStack } from "@chakra-ui/react";
+import { Flex, VStack, Text } from "@chakra-ui/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import NFTAccessMinter from "components/custom/dashboard/NFTAccessMinter";
 import UserNFTs from "components/custom/dashboard/UserNFTs";
 import MembershipWrapper from "components/custom/MembershipWrapper";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
@@ -37,7 +36,6 @@ export async function getStaticProps({ locale }: any) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
-      // Will be passed to the page component as props
     },
   };
 }

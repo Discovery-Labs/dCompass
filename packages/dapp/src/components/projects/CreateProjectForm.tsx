@@ -41,10 +41,6 @@ const CreateProjectForm = () => {
   } = useFormContext();
   const currentValues = watch();
 
-  function goBack() {
-    router.back();
-  }
-
   if (loading) return <Spinner />;
   if (error)
     return (

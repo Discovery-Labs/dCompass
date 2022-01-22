@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -13,9 +12,12 @@ import {
   ModalOverlay,
   useDisclosure,
   VStack,
+  Text,
 } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
+
+import useCustomColor from "core/hooks/useCustomColor";
 
 type IconWithStateProps = {
   icon: string;
@@ -31,6 +33,7 @@ function IconWithState({
   placeholder,
 }: IconWithStateProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { getPrimaryColor, getTextColor } = useCustomColor();
 
   const {
     register,
@@ -54,8 +57,7 @@ function IconWithState({
     default:
       SiIcon = SiDiscord;
   }
-  const defaulColor = active ? "accentDark.200" : "stone";
-  const color = errors[icon] ? "red.300" : defaulColor;
+
   return (
     <>
       <IconButton
@@ -65,8 +67,8 @@ function IconWithState({
         h="8"
         as={SiIcon}
         onClick={onOpen}
-        color={color}
-        _hover={{ color: "accentDark.300" }}
+        color={getTextColor}
+        _hover={{ color: getPrimaryColor }}
       />
       <Modal onClose={onClose} isOpen={isOpen}>
         <ModalOverlay />

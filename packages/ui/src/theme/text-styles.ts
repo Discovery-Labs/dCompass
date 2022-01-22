@@ -15,11 +15,11 @@ const textStyles = {
     // you can also use responsive styles
     fontSize: [
       `${31.4 * 1}px`,
-      `${31.4 * 1.1}px`,
+      `${31.4 * 1.1}px`,t
       `${31.4 * 1.2}px`,
       `${31.4 * 1.4}px`,
     ],
-    fontWeight: 'normal',
+    fontWeight: 'bold',
     lineHeight: '110%',
     letterSpacing: '-2%',
   },
