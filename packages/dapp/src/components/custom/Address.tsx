@@ -3,9 +3,6 @@ import {
   Flex,
   HStack,
   Button,
-  Editable,
-  EditableInput,
-  EditablePreview,
   Icon,
   IconButton,
   Link,
@@ -24,8 +21,9 @@ import {
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import Blockies from "react-blockies";
-import { MdCheckCircle, MdContentCopy } from "react-icons/md";
-import { RiExternalLinkFill } from "react-icons/ri";
+import { GiTwoCoins } from "react-icons/gi";
+import { MdCheckCircle, MdContentCopy, MdExitToApp } from "react-icons/md";
+import { RiExternalLinkFill, RiHandCoinLine } from "react-icons/ri";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
 import { useResolveEnsName } from "../../core/hooks/useResolveEnsName";
@@ -39,18 +37,18 @@ function Address({
   address,
   logout,
   size = "long",
+  type = "me",
   blockExplorer,
   minimized = false,
-  onChange,
   fontSize,
 }: {
   value: string;
   address: string;
   logout?: any;
   size?: "long" | "short";
+  type?: "me" | "external";
   blockExplorer?: string;
   minimized?: boolean;
-  onChange?: any;
   fontSize?: string;
 }) {
   const account = value || address;
@@ -95,35 +93,6 @@ function Address({
       <Text _hover={{ color: getColoredText }}>{displayAddress}</Text>
     </Flex>
   );
-  // let text;
-  // if (onChange) {
-  //   text = (
-  //     <Editable placeholder={account}>
-  //       <EditablePreview width="100%" />
-  //       <Link target="_blank" href={etherscanLink} rel="noopener noreferrer">
-  //         <EditableInput value={displayAddress} onChange={onChange} />
-  //       </Link>
-  //     </Editable>
-  //   );
-  // } else {
-  //   text = (
-  //     <Flex alignItems="center" justifyContent="center" flexGrow={1}>
-  //       <Link
-  //         display="flex"
-  //         alignItems="center"
-  //         justifyContent="center"
-  //         border="none"
-  //         textOverflow={displayAddress.startsWith("0x") ? "ellipsis" : "unset"}
-  //         href={etherscanLink}
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //       >
-  //         <RiExternalLinkFill />
-  //         {displayAddress}
-  //       </Link>
-  //     </Flex>
-  //   );
-  // }
 
   return (
     <HStack
@@ -143,7 +112,7 @@ function Address({
           <ModalHeader>Account</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            Connected with MetaMask
+            {type === "me" && "Connected with Metamask"}
             <Text textStyle="small" color={getColoredText}>
               You can copy the address or view on explorer
             </Text>
@@ -154,6 +123,9 @@ function Address({
               px="2"
               justify="start"
             >
+              <Flex>
+                <Blockies className="blockies" seed={account} />
+              </Flex>
               {text}
               <IconButton
                 size="sm"
@@ -188,22 +160,34 @@ function Address({
           </ModalBody>
 
           <ModalFooter>
-            <Button w="full" onClick={logout}>
-              Log out
-            </Button>
+            {type === "me" ? (
+              <Button leftIcon={<MdExitToApp />} w="full" onClick={logout}>
+                Log out
+              </Button>
+            ) : (
+              <Button
+                leftIcon={<RiHandCoinLine />}
+                w="full"
+                onClick={() => console.log("tip")}
+              >
+                Send tokens
+              </Button>
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>
-
       {text}
-      {/* <IconButton
+      <IconButton
         size="sm"
         variant="ghost"
-        onClick={onCopy}
+        onClick={(e) => {
+          e.stopPropagation();
+          onCopy();
+        }}
         aria-label="Copy Address"
         fontSize={fontSize}
         icon={hasCopied ? <Icon as={MdCheckCircle} /> : <MdContentCopy />}
-      /> */}
+      />
     </HStack>
   );
 }

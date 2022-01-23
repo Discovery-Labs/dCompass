@@ -58,6 +58,7 @@ function CreateProjectStepper() {
         value: string;
         label: string;
       }[],
+      website: null,
     },
   });
 
@@ -84,6 +85,7 @@ function CreateProjectStepper() {
     const serializedProject = {
       ...values,
       logo: cids.logo,
+      website: `https://${values.website}`,
       createdBy: account,
       tags: values.tags.map((tag) => ({ id: `ceramic://${tag.value}` })),
       squads: values.squads.map((squad) => {

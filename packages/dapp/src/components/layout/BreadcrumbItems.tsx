@@ -6,6 +6,7 @@ import {
   HStack,
   Icon,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import React from "react";
 import { IoMdCompass } from "react-icons/io";
 
@@ -30,12 +31,13 @@ function BreadcrumbItems({
       >
         {breadCrumbs.map(({ href, label, isCurrentPage = false }) => (
           <BreadcrumbItem isCurrentPage={isCurrentPage}>
-            <BreadcrumbLink
-              color={isCurrentPage ? getPrimaryColor : getTextColor}
-              href={href}
-            >
-              {label}
-            </BreadcrumbLink>
+            <NextLink href={href}>
+              <BreadcrumbLink
+                color={isCurrentPage ? getPrimaryColor : getTextColor}
+              >
+                {label}
+              </BreadcrumbLink>
+            </NextLink>
           </BreadcrumbItem>
         ))}
       </Breadcrumb>

@@ -33,7 +33,7 @@ function IconWithState({
   placeholder,
 }: IconWithStateProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { getPrimaryColor, getTextColor } = useCustomColor();
+  const { getPrimaryColor, getTextColor, getAccentColor } = useCustomColor();
 
   const {
     register,
@@ -67,7 +67,7 @@ function IconWithState({
         h="8"
         as={SiIcon}
         onClick={onOpen}
-        color={getTextColor}
+        color={active ? getAccentColor : getTextColor}
         _hover={{ color: getPrimaryColor }}
       />
       <Modal onClose={onClose} isOpen={isOpen}>

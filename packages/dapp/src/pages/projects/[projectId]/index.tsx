@@ -39,6 +39,7 @@ import { MdPersonAddAlt1 } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
+import Address from "../../../components/custom/Address";
 import CardMedia from "../../../components/custom/CardMedia";
 import ProfileForm from "../../../components/custom/profile/ProfileForm";
 import SocialLinks from "../../../components/custom/SocialLinks";
@@ -384,16 +385,20 @@ function ProjectPage({
                     </Heading>
                   </HStack>
                   <VStack align="center" maxW="full">
-                    {squad.members.map((member: string) => (
-                      <HStack w="full">
-                        {member && (
-                          <Blockies seed={member} className="blockies" />
-                        )}
-                        <Text ml="2" fontSize="sm" isTruncated>
-                          {member}
-                        </Text>
-                      </HStack>
-                    ))}
+                    {squad.members.map(
+                      (member: string) =>
+                        member && (
+                          <HStack w="full">
+                            <Address
+                              address={member}
+                              value={member}
+                              type="external"
+                              fontSize="18px"
+                              size="short"
+                            />
+                          </HStack>
+                        )
+                    )}
                   </VStack>
                 </CardMedia>
               ))}

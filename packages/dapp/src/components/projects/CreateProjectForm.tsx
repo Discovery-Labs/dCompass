@@ -13,6 +13,9 @@ import {
   Spinner,
   Textarea,
   Button,
+  InputGroup,
+  InputLeftAddon,
+  Text,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
@@ -102,16 +105,6 @@ const CreateProjectForm = () => {
           className="code-editor"
           padding={15}
         />
-        {/* <Textarea
-          placeholder="Project description"
-          {...register("description", {
-            required: "This is required",
-            maxLength: {
-              value: 1200,
-              message: "Maximum length should be 1200",
-            },
-          })}
-        /> */}
         <FormErrorMessage>
           {errors.description && errors.description.message}
         </FormErrorMessage>
@@ -119,16 +112,22 @@ const CreateProjectForm = () => {
 
       <FormControl isInvalid={errors.website}>
         <FormLabel htmlFor="website">Website</FormLabel>
-        <Input
-          placeholder="Website"
-          {...register("website", {
-            required: "This is required",
-            maxLength: {
-              value: 50,
-              message: "Maximum length should be 50",
-            },
-          })}
-        />
+        <InputGroup>
+          <InputLeftAddon>
+            <Text>https://</Text>
+          </InputLeftAddon>
+          <Input
+            placeholder="Website"
+            {...register("website", {
+              required: "This is required",
+              maxLength: {
+                value: 50,
+                message: "Maximum length should be 50",
+              },
+            })}
+          />
+        </InputGroup>
+
         <FormErrorMessage>
           {errors.website && errors.website.message}
         </FormErrorMessage>
