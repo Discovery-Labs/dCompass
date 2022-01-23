@@ -47,6 +47,7 @@ const LinkItem = ({ href, _target, children, ...props }: any) => {
         p={2}
         color={isActive ? getPrimaryColor : getTextColor}
         _target={_target}
+        _hover={{ color: getPrimaryColor, textDecoration: "none" }}
         {...props}
       >
         {children}
