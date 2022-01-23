@@ -3,6 +3,10 @@ import { colors } from '../theme/colors';
 
 function useThemeColor() {
   const getTextColor = mode(colors.neutralDarkest, colors.neutralLightest);
+  const getTextAlphaColor = mode(
+    colors.neutralDarkerAlpha,
+    colors.neutralLighterAlpha
+  );
   const getInverseTextColor = mode(
     colors.neutralLightest,
     colors.neutralDarkest
@@ -15,6 +19,7 @@ function useThemeColor() {
 
   return {
     getTextColor,
+    getTextAlphaColor,
     getInverseTextColor,
     getBgColor,
     getOverBgColor,
