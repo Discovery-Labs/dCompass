@@ -16,6 +16,7 @@ import SquadDropzone from "./SquadDropzone";
 export default function Squads({
   control,
   register,
+  getValues,
   setValue,
   reset,
   defaultValues,
@@ -77,7 +78,7 @@ export default function Squads({
             <SquadDropzone
               nestIndex={index}
               formLabel="Squad image"
-              {...{ register, setValue, errors }}
+              {...{ register, setValue, getValues, errors }}
             />
 
             <FormControl

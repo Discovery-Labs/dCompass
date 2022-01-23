@@ -12,12 +12,11 @@ import {
   Input,
   Spinner,
   Textarea,
+  Button,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
 import { useFormContext } from "react-hook-form";
 
-import useCustomColor from "../../core/hooks/useCustomColor";
 import { Tag } from "../../core/types";
 import { ALL_TAGS_QUERY } from "../../graphql/tags";
 import IconWithState from "../custom/IconWithState";
@@ -30,11 +29,10 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 });
 const CreateProjectForm = () => {
   const { data, loading, error } = useQuery(ALL_TAGS_QUERY);
-  const { getPrimaryColor } = useCustomColor();
-  const router = useRouter();
   const {
     register,
     setValue,
+    getValues,
     control,
     watch,
     formState: { errors },
@@ -53,7 +51,9 @@ const CreateProjectForm = () => {
   return (
     <>
       <Heading>Create project</Heading>
-      <LogoDropzone {...{ register, setValue, errors, isRequired: true }} />
+      <LogoDropzone
+        {...{ register, setValue, getValues, errors, isRequired: true }}
+      />
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Project name</FormLabel>
