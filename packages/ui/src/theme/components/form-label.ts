@@ -5,6 +5,7 @@ const baseStyle: SystemStyleFunction = (props) => {
   const { getTextColor } = useThemeColor();
   return {
     fontSize: 'md',
+    textTransform: 'uppercase',
     marginEnd: 3,
     mb: 2,
     color: getTextColor(props),

@@ -1,5 +1,5 @@
 import type { SystemStyleFunction } from '@chakra-ui/theme-tools';
-import { darken, lighten } from '@chakra-ui/theme-tools';
+import { darken } from '@chakra-ui/theme-tools';
 import { StepsStyleConfig } from 'chakra-ui-steps';
 import useThemeColor from '../../hooks/useThemeColor';
 
