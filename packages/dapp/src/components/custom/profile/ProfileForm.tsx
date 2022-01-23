@@ -35,10 +35,10 @@ import React, {
   useState,
 } from "react";
 import { useForm } from "react-hook-form";
-import { SiGithub } from "react-icons/si";
+import { SiGithub, SiTwitter } from "react-icons/si";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { GITHUB_HOST } from "../../../core/constants";
+import { GITHUB_HOST, TWITTER_HOST } from "../../../core/constants";
 import { COUNTRIES } from "../../../core/constants/countries";
 import { emojis } from "../../../core/constants/emojis";
 import CenteredFrame from "../../layout/CenteredFrame";
@@ -47,25 +47,31 @@ import IconWithState from "../IconWithState";
 import NotConnectedCard from "../NotConnectedCard";
 
 import AddGitHubAccountScreen from "./AddGithubAccountScreen";
+import AddTwitterAccountScreen from "./AddTwitterAccountScreen";
 
 const ProfileForm = ({
   submitButtonLabel = "Save",
   projectId,
   projectName,
 }: {
-  submitButtonLabel: string;
+  submitButtonLabel?: string;
   projectId?: string;
   projectName?: string;
 }) => {
   const { account, self } = useContext(Web3Context);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isTwitterOpen,
+    onOpen: onTwitterOpen,
+    onClose: onTwitterClose,
+  } = useDisclosure();
 
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
-  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
   const [imageURL, setImageURL] = useState<string>();
   const [backgroundURL, setBackgroundURL] = useState<string>();
   const image = useRef(null);
   const [github, setGithub] = useState<string>();
+  const [twitter, setTwitter] = useState<string>();
   const background = useRef(null);
   const {
     handleSubmit,
@@ -85,13 +91,22 @@ const ProfileForm = ({
           const githubAccount = webAccounts.accounts.find(
             (acc: any) => acc.host === GITHUB_HOST
           );
-          setGithub(
-            `${githubAccount?.protocol}://${githubAccount?.host}/${githubAccount?.id}`
+          if (githubAccount) {
+            setGithub(
+              `${githubAccount?.protocol}://${githubAccount?.host}/${githubAccount?.id}`
+            );
+          }
+          const twitterAccount = webAccounts.accounts.find(
+            (acc: any) => acc.host === TWITTER_HOST
           );
+          if (twitterAccount) {
+            setTwitter(
+              `${twitterAccount?.protocol}://${twitterAccount?.host}/${twitterAccount?.id}`
+            );
+          }
         }
         if (!result) {
-          setIsLoadingProfile(false);
-          return setIsFirstTimeUser(true);
+          return setIsLoadingProfile(false);
         }
 
         Object.entries(result).forEach(([key, value]) => {
@@ -251,6 +266,55 @@ const ProfileForm = ({
                         <ModalBody>
                           <VStack w="full">
                             <AddGitHubAccountScreen onCloseModal={onClose} />
+                          </VStack>
+                        </ModalBody>
+                      </ModalContent>
+                    </Modal>
+                  </>
+                )}
+                {twitter ? (
+                  <Link
+                    marginTop={0}
+                    href={twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <IconButton
+                      cursor="pointer"
+                      variant="unstyled"
+                      aria-label="Social medias and resources"
+                      w="8"
+                      h="8"
+                      as={SiTwitter}
+                      _hover={{ color: "accentDark.300" }}
+                    />
+                  </Link>
+                ) : (
+                  <>
+                    <IconButton
+                      cursor="pointer"
+                      variant="unstyled"
+                      aria-label="Social medias and resources"
+                      w="8"
+                      h="8"
+                      as={SiTwitter}
+                      onClick={onTwitterOpen}
+                      _hover={{ color: "accentDark.300" }}
+                    />
+                    <Modal
+                      onClose={onTwitterClose}
+                      isOpen={isTwitterOpen}
+                      size="4xl"
+                    >
+                      <ModalOverlay />
+                      <ModalContent>
+                        <ModalHeader>Verify Twitter account</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                          <VStack w="full">
+                            <AddTwitterAccountScreen
+                              onCloseModal={onTwitterClose}
+                            />
                           </VStack>
                         </ModalBody>
                       </ModalContent>

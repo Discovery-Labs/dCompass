@@ -1,14 +1,14 @@
 import {
   Box,
-  Link,
   Button,
-  Spinner,
-  Text,
-  Input,
+  Flex,
   FormControl,
   FormLabel,
+  Input,
+  Link,
+  Spinner,
+  Text,
   VStack,
-  Flex,
 } from "@chakra-ui/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import copy from "copy-to-clipboard";
@@ -17,20 +17,32 @@ import { useCallback, useContext, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { findGitHub } from "../../../core/ceramic";
-import { createGitHub } from "../../../core/ceramic/identity-link";
+import {
+  createTwitter,
+  findTwitter,
+} from "../../../core/ceramic/identity-link";
 
-function AddGitHubAccountScreen({
-  onCloseModal,
-}: {
+function createTweetLink(did: string): string {
+  const text = encodeURIComponent(
+    `Verifying my Twitter account for my decentralized identity ${did} on @ceramicnetwork via @mySelfID.`
+  );
+  const url = encodeURIComponent(`${document.location.origin}/${did}`);
+  return `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+}
+
+type Props = {
   onCloseModal?: () => void;
-}) {
+};
+
+function AddTwitterAccountScreen({ onCloseModal }: Props) {
   const { t } = useTranslation("common");
   const { self, identityLink } = useContext(Web3Context);
   const [challengeLoading, setChallengeLoading] = useState<boolean>(false);
   const [challenge, setChallenge] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+
   const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
+  const did = self.id;
   const { nextStep, prevStep, activeStep } = useSteps({
     initialStep: 0,
   });
@@ -43,10 +55,10 @@ function AddGitHubAccountScreen({
     const toastId = toast.loading("Loading challenge...");
     setChallengeLoading(true);
 
-    identityLink.requestGitHub(self.id, username).then(
+    identityLink.requestTwitter(did, username).then(
       (userChallenge: string) => {
         setChallenge(userChallenge);
-        if (copy(self.id)) {
+        if (copy(did)) {
           toast.success("Copied to clipboard!", { id: toastId });
         } else {
           toast.error("Failed to copy to clipboard", { id: toastId });
@@ -58,11 +70,11 @@ function AddGitHubAccountScreen({
         setChallengeLoading(false);
       }
     );
-  }, [challengeLoading, username, self, identityLink]);
+  }, [challengeLoading, self, username, did, identityLink]);
 
   const verify = useCallback(() => {
-    const handleAddGithubAttestation = async (
-      githubUsername: string,
+    const handleAddTwitterAttestation = async (
+      twitterUsername: string,
       challengeCode: string
     ) => {
       let [attestation, accounts] = await Promise.all([
@@ -73,23 +85,32 @@ function AddGitHubAccountScreen({
           if (!jws) {
             throw new Error("Not authorized");
           }
-          return identityLink.confirmGitHub(jws);
+          return identityLink.confirmTwitter(jws);
         })(),
         self.get("alsoKnownAs"),
       ]);
 
       console.log({ attestation, accounts });
 
-      const existing = accounts.accounts
-        ? findGitHub(accounts, githubUsername)
+      const existingTwitter = accounts
+        ? findTwitter(accounts.accounts, twitterUsername)
         : null;
-      if (existing == null) {
+      const existingGithub = accounts
+        ? accounts.accounts.find(
+          (acc: Record<string, any>) => acc.host === "github.com"
+        )
+        : null;
+
+      if (existingTwitter == null) {
         accounts = {
-          accounts: [createGitHub(githubUsername, attestation)],
+          accounts: [
+            createTwitter(twitterUsername, attestation),
+            existingGithub,
+          ],
         };
       } else {
-        existing.attestations = existing.attestations ?? [];
-        existing.attestations.push({ "did-jwt-vc": attestation });
+        existingTwitter.attestations = existingTwitter.attestations ?? [];
+        existingTwitter.attestations.push({ "did-jwt-vc": attestation });
       }
       console.log({ accounts });
       await self.set("alsoKnownAs", accounts);
@@ -108,7 +129,7 @@ function AddGitHubAccountScreen({
     const toastId = toast.loading("Verifying...");
     setVerifyLoading(true);
 
-    handleAddGithubAttestation(username, challenge).then(
+    handleAddTwitterAttestation(username, challenge).then(
       () => {
         toast.success("Attestation added!", { id: toastId });
         setVerifyLoading(false);
@@ -121,16 +142,16 @@ function AddGitHubAccountScreen({
         setVerifyLoading(false);
       }
     );
-  }, [challenge, onCloseModal, self, username, verifyLoading, identityLink]);
+  }, [identityLink, challenge, self, onCloseModal, username, verifyLoading]);
 
   const steps = [
     {
       label: "Step 1",
       content: (
         <FormControl w="fit-content">
-          <FormLabel htmlFor="name">Github username</FormLabel>
+          <FormLabel htmlFor="name">Twitter username</FormLabel>
           <Input
-            placeholder="Your Github username"
+            placeholder="Your Twitter username"
             name="username"
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -163,17 +184,16 @@ function AddGitHubAccountScreen({
       content: (
         <VStack align="left">
           <Box>
-            <Text color="neutral-2">
-              Click this button to open a new window and create a Gist file.
-            </Text>
+            Tweet a verification from{" "}
+            <Text color="twitter.500">@{username}</Text>
           </Box>
           <Box>
             <Link
-              href="https://gist.github.com/"
+              href={createTweetLink(did)}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button>Open</Button>
+              <Button>Tweet verification</Button>
             </Link>
           </Box>
         </VStack>
@@ -181,16 +201,6 @@ function AddGitHubAccountScreen({
     },
     {
       label: "Step 4",
-      content: (
-        <VStack align="left">
-          <Text color="neutral-2">
-            Paste your DID in the Gist and save as public.
-          </Text>
-        </VStack>
-      ),
-    },
-    {
-      label: "Step 5",
       content: (
         <VStack align="left">
           <Box>
@@ -203,6 +213,7 @@ function AddGitHubAccountScreen({
       ),
     },
   ];
+
   return (
     <Box w="full">
       <Toaster />
@@ -219,7 +230,7 @@ function AddGitHubAccountScreen({
       </Steps>
 
       <Flex w="full" justify="center">
-        {activeStep > 0 && activeStep <= 4 && (
+        {activeStep > 0 && activeStep <= 3 && (
           <Button
             variant="outline"
             onClick={() => prevStep()}
@@ -229,7 +240,7 @@ function AddGitHubAccountScreen({
             {t("prev")}
           </Button>
         )}
-        {activeStep < 4 && (
+        {activeStep < 3 && (
           <Button
             ml="0.5rem"
             onClick={() => nextStep()}
@@ -239,7 +250,7 @@ function AddGitHubAccountScreen({
             {t("next")}
           </Button>
         )}
-        {activeStep === 4 && (
+        {activeStep === 3 && (
           <Box>
             {verifyLoading ? (
               <Button disabled leftIcon={<Spinner />}>
@@ -265,5 +276,4 @@ function AddGitHubAccountScreen({
     </Box>
   );
 }
-
-export default AddGitHubAccountScreen;
+export default AddTwitterAccountScreen;
