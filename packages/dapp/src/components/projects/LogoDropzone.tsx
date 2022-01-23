@@ -86,7 +86,7 @@ const LogoDropzone = ({
       );
       // console.log(logoFiles);
     }
-  }, []);
+  }, [getValues]);
 
   useEffect(
     () => () => {

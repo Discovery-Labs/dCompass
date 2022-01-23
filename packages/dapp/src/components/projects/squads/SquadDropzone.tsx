@@ -80,7 +80,7 @@ const SquadDropzone = ({
         )
       );
     }
-  }, []);
+  }, [getValues, nestIndex]);
 
   useEffect(
     () => () => {
