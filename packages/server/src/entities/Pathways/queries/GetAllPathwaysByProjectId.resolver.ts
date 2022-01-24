@@ -22,13 +22,14 @@ export class GetAllPathwaysByProjectIdResolver {
     );
     const projects = allProjects?.projects ?? [];
     console.log(projects);
+    // Comparison between ceramic urls
+    // (eg: ceramic://some_stream_id === ceramic://another_stream_id)
     const foundProject = projects.find(
       (project: Project) => project.id === projectId,
     );
 
-    console.log({ foundProject });
     if (!foundProject) {
-      throw new NotFoundException('Project not found');
+      throw new NotFoundException('Project not found??');
     }
     const pathwayIds = foundProject.pathways
       ? foundProject.pathways.map((id: string) => ({
@@ -42,7 +43,11 @@ export class GetAllPathwaysByProjectIdResolver {
         }))
       : [];
 
-    console.log({ pathwayIds });
+    const indexedPathways = await ceramicClient.dataStore.get(
+      schemaAliases.PATHWAYS_ALIAS,
+    );
+
+    const pathwaysWithAdditionalDetails = indexedPathways?.pathways ?? [];
 
     const [pathwaysWithDetails, pendingPathwaysWithDetails] = await Promise.all(
       [
@@ -51,13 +56,23 @@ export class GetAllPathwaysByProjectIdResolver {
       ],
     );
 
-    console.log({ pathwaysWithDetails, pendingPathwaysWithDetails });
-
     const serializedPathways = Object.values(pathwaysWithDetails).map(
       (stream) => {
+        const serverSidePathwayInfos = pathwaysWithAdditionalDetails.find(
+          (pathway: Pathway) => pathway.id === stream.id.toUrl(),
+        );
         return {
           id: stream.id.toUrl(),
           ...stream.state.content,
+          ...serverSidePathwayInfos,
+          quests: serverSidePathwayInfos.quests.map((questId: string) => ({
+            id: questId,
+          })),
+          pendingQuests: serverSidePathwayInfos.pendingQuests.map(
+            (questId: string) => ({
+              id: questId,
+            }),
+          ),
           isPending: false,
         };
       },
@@ -66,13 +81,25 @@ export class GetAllPathwaysByProjectIdResolver {
     const serializedPendingPathways = Object.values(
       pendingPathwaysWithDetails,
     ).map((stream) => {
+      const serverSidePathwayInfos = pathwaysWithAdditionalDetails.find(
+        (pathway: Pathway) => pathway.id === stream.id.toUrl(),
+      );
       return {
         id: stream.id.toUrl(),
         ...stream.state.content,
+        ...serverSidePathwayInfos,
+        quests: serverSidePathwayInfos.quests.map((questId: string) => ({
+          id: questId,
+        })),
+        pendingQuests: serverSidePathwayInfos.pendingQuests.map(
+          (questId: string) => ({
+            id: questId,
+          }),
+        ),
         isPending: true,
       };
     });
-    console.log({ serializedPathways, serializedPendingPathways });
+
     return [...serializedPathways, ...serializedPendingPathways];
   }
 }

@@ -181,7 +181,7 @@ function PathwayPage({
       />
 
       <VStack align="left" w="full">
-        <Heading as="h1" size="3xl" color={getTextColor}>
+        <Heading as="h1" size="2xl" color={getTextColor} py="4">
           {title}
         </Heading>
         <Tabs w="full">
@@ -475,7 +475,7 @@ function PathwayPage({
             </SimpleGrid> */}
                   </TabPanel>
                   <TabPanel>
-                    <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                    <SimpleGrid columns={[1, 2]} spacing={10}>
                       {data.getAllQuestsByPathwayId
                         .filter((quest: any) => quest.isPending)
                         .map((quest: any) => (
@@ -499,7 +499,7 @@ function PathwayPage({
             </SimpleGrid> */}
                   </TabPanel>
                   <TabPanel>
-                    <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                    <SimpleGrid columns={[1, 2]} spacing={10}>
                       <QuestCard key={QuestData.name} quest={QuestData} />
                     </SimpleGrid>
                   </TabPanel>

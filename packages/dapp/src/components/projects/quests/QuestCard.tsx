@@ -176,7 +176,7 @@ function QuestCard({
             </Tag>
           </Flex>
         </Flex>
-        <VStack w="full" align="flex-start">
+        <VStack w="full" align="flex-start" minH="200px">
           <ReactMarkdown
             className="card-markdown-quest-card"
             components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
@@ -196,8 +196,6 @@ function QuestCard({
             >
               Quest type
             </Text>
-          </HStack>
-          <HStack>
             <Tag variant="outline" size="lg">
               {quest.questType}
             </Tag>
@@ -246,6 +244,7 @@ function QuestCard({
               </Text>
             </Flex>
           </Stack>
+          <Spacer />
         </VStack>
 
         <Flex w="full" justify="space-between" pt="4">

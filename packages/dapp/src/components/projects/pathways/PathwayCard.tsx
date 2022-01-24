@@ -45,6 +45,7 @@ type Pathway = {
   title: string;
   description: string;
   projectId: string;
+  quests: { id: string }[];
   difficulty: string;
   rewardCurrency: string;
   rewardAmount: string;
@@ -60,8 +61,7 @@ function PathwayCard({
   projectContributors: string[];
 }) {
   const { getRewardCurrency } = useTokenList();
-  const { getTextColor, getColoredText, getBgColor, getAccentColor } =
-    useCustomColor();
+  const { getTextColor, getBgColor, getAccentColor } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
@@ -73,6 +73,7 @@ function PathwayCard({
   const { chainId } = useWeb3React();
   const router = useRouter();
   const id = streamUrlToId(pathway.id);
+  console.log("---- QUESTs --", pathway.quests);
 
   useEffect(() => {
     async function init() {
@@ -227,7 +228,7 @@ function PathwayCard({
   };
 
   return (
-    <Card h="lg" w="md">
+    <Card h="xl" w="md">
       <Flex w="full" minH="56px">
         <Tooltip label={pathway.title} hasArrow placement="top">
           <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
@@ -309,7 +310,11 @@ function PathwayCard({
           </Flex>
         </HStack>
       </VStack>
-      <Tooltip label="50% - 4/8 quests completed" hasArrow placement="top">
+      <Tooltip
+        label={`50% - 4/${pathway.quests?.length} quests completed`}
+        hasArrow
+        placement="top"
+      >
         <VStack w="full" align="left">
           <HStack>
             <Icon as={GoTasklist} />
@@ -381,7 +386,7 @@ function PathwayCard({
           fontSize="md"
           onClick={() => openPathway()}
         >
-          8 Quests
+          {pathway.quests.length || 0} Quests
         </Button>
 
         {!pathway.isPending && (

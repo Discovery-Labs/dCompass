@@ -9,12 +9,8 @@ import PathwayFormWrapper from "components/projects/pathways/PathwayFormWrapper"
 function AddPathwayStepper() {
   const methods = useForm({
     defaultValues: {
-      pathways: [
-        {
-          title: "",
-          description: "",
-        },
-      ],
+      title: "",
+      description: "",
     },
   });
 
