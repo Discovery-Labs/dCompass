@@ -24,6 +24,7 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useRouter } from "next/router";
 import { useContext, useState, useEffect } from "react";
 import { BsBarChartFill } from "react-icons/bs";
+import { FiUserCheck } from "react-icons/fi";
 import { GiTwoCoins } from "react-icons/gi";
 import { GoTasklist } from "react-icons/go";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
@@ -49,6 +50,7 @@ type Pathway = {
   difficulty: string;
   rewardCurrency: string;
   rewardAmount: string;
+  rewardUserCap: number;
   isPending: boolean;
   createdBy: string;
 };
@@ -73,7 +75,6 @@ function PathwayCard({
   const { chainId } = useWeb3React();
   const router = useRouter();
   const id = streamUrlToId(pathway.id);
-  console.log("---- QUESTs --", pathway.quests);
 
   useEffect(() => {
     async function init() {
@@ -229,7 +230,7 @@ function PathwayCard({
 
   return (
     <Card h="xl" w="md">
-      <Flex w="full" minH="56px">
+      <Flex w="full" h="160px">
         <Tooltip label={pathway.title} hasArrow placement="top">
           <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
             {pathway.title}
@@ -244,7 +245,23 @@ function PathwayCard({
           skipHtml
         />
       </VStack>
-
+      <VStack w="full" align="left">
+        <HStack>
+          <Icon as={FiUserCheck} />
+          <Text
+            fontWeight="bold"
+            fontSize="xl"
+            color={getTextColor}
+            textTransform="uppercase"
+          >
+            Claimed
+          </Text>
+          <Spacer />
+          <Flex align="end" direction="column">
+            <Tag variant="outline">0/{pathway.rewardUserCap}</Tag>
+          </Flex>
+        </HStack>
+      </VStack>
       <VStack w="full" align="left">
         <HStack>
           <Icon as={GiTwoCoins} />
@@ -256,6 +273,12 @@ function PathwayCard({
           >
             Rewards
           </Text>
+          <Spacer />
+          <Flex align="end" direction="column">
+            <Tag variant="outline">
+              {pathway.rewardAmount} {getRewardCurrency(pathway.rewardCurrency)}
+            </Tag>
+          </Flex>
         </HStack>
 
         <Stack
@@ -288,11 +311,13 @@ function PathwayCard({
             height={useBreakpointValue({ base: "44px", md: "60px" })}
           >
             <Text fontSize="3xl" fontWeight="bold">
-              {pathway.rewardAmount} {getRewardCurrency(pathway.rewardCurrency)}
+              {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
+              {getRewardCurrency(pathway.rewardCurrency)}
             </Text>
           </Flex>
         </Stack>
       </VStack>
+
       <VStack w="full" align="left">
         <HStack>
           <Icon as={BsBarChartFill} />
@@ -311,7 +336,7 @@ function PathwayCard({
         </HStack>
       </VStack>
       <Tooltip
-        label={`50% - 4/${pathway.quests?.length} quests completed`}
+        label={`0% - 0/${pathway.quests?.length || 0} quests completed`}
         hasArrow
         placement="top"
       >
@@ -330,7 +355,7 @@ function PathwayCard({
               w="full"
               size="md"
               rounded="md"
-              value={50}
+              value={0}
               border={`solid 1px ${getAccentColor}`}
               hasStripe
               colorScheme="accentDark"
@@ -386,7 +411,7 @@ function PathwayCard({
           fontSize="md"
           onClick={() => openPathway()}
         >
-          {pathway.quests.length || 0} Quests
+          {pathway.quests?.length || 0} Quests
         </Button>
 
         {!pathway.isPending && (

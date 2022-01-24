@@ -57,6 +57,7 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
       difficulty
       rewardCurrency
       rewardAmount
+      rewardUserCap
       isPending
       projectId
       quests {
@@ -77,6 +78,7 @@ export const GET_PATHWAY_BY_ID_QUERY = gql`
       description
       rewardCurrency
       rewardAmount
+      rewardUserCap
       image
       projectId
       prerequisites

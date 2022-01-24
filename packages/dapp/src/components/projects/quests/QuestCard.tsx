@@ -13,15 +13,18 @@ import {
   Icon,
   VStack,
   Box,
+  Divider,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useRouter } from "next/router";
 import { useContext } from "react";
+import { FiUserCheck } from "react-icons/fi";
 import { GiSwordwoman, GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
+import { streamUrlToId } from "../../../core/helpers";
 import useCustomColor from "../../../core/hooks/useCustomColor";
 import useTokenList from "../../../core/hooks/useTokenList";
 import { APPROVE_QUEST_MUTATION } from "../../../graphql/quests";
@@ -41,6 +44,7 @@ type Quest = {
   website: string;
   network: string;
   rewardAmount: string;
+  rewardUserCap: number;
   rewardCurrency: string;
   // unlocked: boolean;
 };
@@ -64,10 +68,9 @@ function QuestCard({
   const isContributor =
     projectContributors && account && projectContributors.includes(account);
 
-  function openQuest() {
-    console.log("Open Quest");
-    // router.push("/quest/example");
-  }
+  const openQuest = (questId: string) => {
+    return router.push(`${router.asPath}/${streamUrlToId(questId)}`);
+  };
 
   const handleApproveQuest = async () => {
     const signatureInput = {
@@ -176,7 +179,7 @@ function QuestCard({
             </Tag>
           </Flex>
         </Flex>
-        <VStack w="full" align="flex-start" minH="200px">
+        <VStack w="full" align="flex-start" h="160px">
           <ReactMarkdown
             className="card-markdown-quest-card"
             components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
@@ -184,22 +187,43 @@ function QuestCard({
             skipHtml
           />
         </VStack>
+        <Divider />
 
-        <VStack w="full" align="left">
-          <HStack>
-            <Icon as={RiSwordLine} />
-            <Text
-              fontWeight="bold"
-              fontSize="xl"
-              color={getTextColor}
-              textTransform="uppercase"
-            >
-              Quest type
-            </Text>
+        <VStack w="full" align="left" pt="2">
+          <HStack justifyContent="space-between">
+            <HStack>
+              <Icon as={RiSwordLine} />
+              <Text
+                fontWeight="bold"
+                fontSize="xl"
+                color={getTextColor}
+                textTransform="uppercase"
+              >
+                Quest type
+              </Text>
+            </HStack>
             <Tag variant="outline" size="lg">
               {quest.questType}
             </Tag>
           </HStack>
+          <Divider />
+          <HStack justifyContent="space-between">
+            <HStack>
+              <Icon as={FiUserCheck} />
+              <Text
+                fontWeight="bold"
+                fontSize="xl"
+                color={getTextColor}
+                textTransform="uppercase"
+              >
+                Claimed
+              </Text>
+            </HStack>
+            <Tag variant="outline" size="lg">
+              0/{quest.rewardUserCap}
+            </Tag>
+          </HStack>
+          <Divider />
           <HStack>
             <Icon as={GiTwoCoins} />
             <Text
@@ -210,6 +234,9 @@ function QuestCard({
             >
               Rewards
             </Text>
+            <Tag variant="outline">
+              {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
+            </Tag>
           </HStack>
 
           <Stack
@@ -240,7 +267,8 @@ function QuestCard({
               rounded="full"
             >
               <Text fontSize="3xl" fontWeight="bold">
-                {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
+                {parseFloat(quest.rewardAmount) / quest.rewardUserCap}{" "}
+                {getRewardCurrency(quest.rewardCurrency)}
               </Text>
             </Flex>
           </Stack>
@@ -253,7 +281,7 @@ function QuestCard({
               <Button
                 variant="outline"
                 fontSize="md"
-                onClick={() => console.log("Details")}
+                onClick={() => openQuest(quest.id)}
               >
                 Details
               </Button>
@@ -267,7 +295,7 @@ function QuestCard({
               <Button
                 leftIcon={<GiSwordwoman />}
                 fontSize="md"
-                onClick={() => console.log("Start Quest")}
+                onClick={() => openQuest(quest.id)}
               >
                 Start
               </Button>

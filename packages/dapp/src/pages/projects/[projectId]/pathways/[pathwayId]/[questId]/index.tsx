@@ -1,11 +1,9 @@
 import { useQuery } from "@apollo/client";
-import { EditIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import { EditIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
   Heading,
-  SimpleGrid,
-  Spacer,
   Tab,
   TabList,
   TabPanel,
@@ -18,7 +16,6 @@ import {
   Icon,
   Stack,
   Tag,
-  Tooltip,
   Progress,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
@@ -28,56 +25,56 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
-import { BsBarChartFill, BsPeople } from "react-icons/bs";
+import { BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
-import { GoTasklist } from "react-icons/go";
+import { RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 
-import { initializeApollo } from "../../../../../../lib/apolloClient";
-import CardMedia from "../../../../../components/custom/CardMedia";
-import BreadcrumbItems from "../../../../../components/layout/BreadcrumbItems";
-import QuestCard from "../../../../../components/projects/quests/QuestCard";
-import { streamUrlToId } from "../../../../../core/helpers";
-import useCustomColor from "../../../../../core/hooks/useCustomColor";
-import useTokenList from "../../../../../core/hooks/useTokenList";
-import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
+import CardMedia from "../../../../../../components/custom/CardMedia";
+import BreadcrumbItems from "../../../../../../components/layout/BreadcrumbItems";
+import GithubContributorQuestForm from "../../../../../../components/projects/quests/github/GithubContributorQuestForm";
+import QuizForm from "../../../../../../components/projects/quests/quizz/QuizForm";
+import SnapshotVoterForm from "../../../../../../components/projects/quests/snapshot/SnapshotVoterForm";
+import { ceramicCoreFactory } from "../../../../../../core/ceramic";
+import { streamIdToUrl, streamUrlToId } from "../../../../../../core/helpers";
+import useCustomColor from "../../../../../../core/hooks/useCustomColor";
+import useTokenList from "../../../../../../core/hooks/useTokenList";
+import { PROJECT_BY_ID_QUERY } from "../../../../../../graphql/projects";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
-import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
 
 type Props = {
   projectId: string | null;
   pathwayId: string | null;
+  questId: string | null;
   locale: string;
 };
 
 export const getServerSideProps: GetServerSideProps<
   Props,
-  { projectId: string; pathwayId: string; locale: string }
+  { projectId: string; pathwayId: string; questId: string; locale: string }
 > = async (ctx) => {
   const locale = ctx.locale || "en";
+  const questId = ctx.params?.questId ?? null;
   const pathwayId = ctx.params?.pathwayId ?? null;
   const projectId = ctx.params?.projectId ?? null;
-  if (!pathwayId || !projectId) {
+  if (!pathwayId || !projectId || !questId) {
     return {
       redirect: { destination: "/", permanent: true },
     };
   }
-  const client = initializeApollo();
+
+  const core = ceramicCoreFactory();
+  // const client = initializeApollo();
   try {
-    const { data } = await client.query({
-      query: GET_PATHWAY_BY_ID_QUERY,
-      variables: {
-        pathwayId: `ceramic://${pathwayId}`,
-      },
-    });
-    console.log({ data });
+    const questInfos = await core.ceramic.loadStream(questId);
     return {
       props: {
-        id: pathwayId,
-        ...data.getPathwayById,
+        id: questId,
+        ...questInfos.content,
         ...(await serverSideTranslations(locale, ["common"])),
+        projectId,
       },
     };
   } catch (error) {
@@ -87,57 +84,41 @@ export const getServerSideProps: GetServerSideProps<
   }
 };
 
-const QuestData = {
-  logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
-  completed: "completed",
-  project: "alpha",
-  owner: "huxwell.eth",
-  name: "Project Alpha",
-  description:
-    "This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.",
-  website: "https://www.google.com",
-  network: "ethereum",
-  reward: "200 xp",
-};
-
-const allQuests = [QuestData, QuestData, QuestData];
-
-function PathwayPage({
+function QuestPage({
   id,
-  title,
+  name,
   description,
   image,
-  quests = [],
-  difficulty,
   createdBy,
   createdAt,
   rewardAmount,
-  rewardUserCap,
   rewardCurrency,
+  rewardUserCap,
+  type,
+  pathwayId,
   projectId,
+  questions,
+  proposalId,
+  githubOrgId,
 }: any) {
   const { t } = useTranslation("common");
   const { getRewardCurrency } = useTokenList();
 
   const { account } = useContext(Web3Context);
-  const { getTextColor, getColoredText, getBgColor, getAccentColor } =
-    useCustomColor();
+  const { getTextColor, getColoredText } = useCustomColor();
 
-  const { data, loading, error } = useQuery(
-    GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
-    {
-      variables: {
-        pathwayId: id,
-      },
-    }
-  );
+  const { data, loading, error } = useQuery(GET_PATHWAY_BY_ID_QUERY, {
+    variables: {
+      pathwayId,
+    },
+  });
   const {
     data: projectRes,
     loading: projectLoading,
     error: projectError,
   } = useQuery(PROJECT_BY_ID_QUERY, {
     variables: {
-      projectId,
+      projectId: streamIdToUrl(projectId),
     },
   });
 
@@ -146,7 +127,7 @@ function PathwayPage({
     return (
       <Stack pt="30" px="8">
         <Text textTransform="uppercase">
-          {t("pathway")} {t("loading")}
+          {t("quest")} {t("loading")}
         </Text>
         <Progress size="xs" isIndeterminate />
       </Stack>
@@ -171,25 +152,31 @@ function PathwayPage({
             href: `/projects/${streamUrlToId(projectId)}`,
           },
           {
-            label: title,
+            label: data.getPathwayById.title,
             href: `/projects/${streamUrlToId(
               projectId
-            )}/pathways/${streamUrlToId(id)}/`,
+            )}/pathways/${streamUrlToId(pathwayId)}/`,
+          },
+          {
+            label: name,
+            href: `/projects/${streamUrlToId(
+              projectId
+            )}/pathways/${streamUrlToId(pathwayId)}/${streamUrlToId(id)}`,
             isCurrentPage: true,
           },
         ]}
       />
 
       <VStack align="left" w="full">
-        <Heading as="h1" size="2xl" color={getTextColor} py="4">
-          {title}
+        <Heading as="h1" size="2xl" color={getColoredText} py="4">
+          {name} <Icon as={RiSwordLine} color={getColoredText} />
         </Heading>
         <Tabs w="full">
           <HStack justifyContent="space-between">
             <TabList>
               <Tab>Guide</Tab>
               <Tab>Details &amp; rewards</Tab>
-              <Tab>Quests</Tab>
+              <Tab>Play quest</Tab>
             </TabList>
           </HStack>
 
@@ -259,50 +246,19 @@ function PathwayPage({
               <HStack w="full" align="left" justifyContent="space-between">
                 <VStack align="left">
                   <HStack>
-                    <Icon as={BsBarChartFill} />
+                    <Icon as={RiSwordLine} />
                     <Text
                       fontWeight="bold"
                       fontSize="xl"
                       color={getTextColor}
                       textTransform="uppercase"
                     >
-                      Difficulty
+                      Quest type
                     </Text>
-                    <Spacer />
-                    <Flex align="end" direction="column">
-                      <Tag>{difficulty}</Tag>
-                    </Flex>
+                    <Tag variant="outline" size="lg">
+                      {type.label}
+                    </Tag>
                   </HStack>
-                  <Tooltip
-                    label="50% - 4/8 quests completed"
-                    hasArrow
-                    fontWeight="extrabold"
-                    placement="right"
-                  >
-                    <VStack w="full" align="left">
-                      <HStack>
-                        <Icon as={GoTasklist} />
-                        <Text
-                          fontWeight="bold"
-                          fontSize="xl"
-                          color={getTextColor}
-                          textTransform="uppercase"
-                        >
-                          Progress
-                        </Text>
-                        <Progress
-                          w="full"
-                          size="md"
-                          rounded="md"
-                          value={50}
-                          border={`solid 1px ${getAccentColor}`}
-                          hasStripe
-                          colorScheme="accentDark"
-                          bgColor={getBgColor}
-                        />
-                      </HStack>
-                    </VStack>
-                  </Tooltip>
                   <HStack>
                     <HStack>
                       <Icon as={BsPeople} />
@@ -329,9 +285,6 @@ function PathwayPage({
                     >
                       Rewards
                     </Text>
-                    <Tag variant="outline" size="lg">
-                      {rewardAmount} {getRewardCurrency(rewardCurrency)}
-                    </Tag>
                   </HStack>
                 </VStack>
                 <Flex align="center" maxW="full" py="4">
@@ -367,11 +320,6 @@ function PathwayPage({
                   </VStack>
                 </Flex>
               </HStack>
-              {quests && (
-                <Text pt="8" fontSize="xs">
-                  {quests.length} Quest{quests.length > 1 ? "s" : ""}
-                </Text>
-              )}
 
               <HStack w="full" align="left" pt="2">
                 <CardMedia
@@ -448,83 +396,18 @@ function PathwayPage({
               </HStack>
             </TabPanel>
             <TabPanel px="0">
-              <Tabs w="full" variant="line">
-                <HStack justifyContent="space-between">
-                  <TabList>
-                    <Tab>{t("all-quests")}</Tab>
-                    <Tab>{t("pending-quests")}</Tab>
-                    <Tab>{t("completed-quests")}</Tab>
-                  </TabList>
-                  {isOwner && (
-                    <NextLink
-                      href={`/projects/${streamUrlToId(
-                        projectId
-                      )}/pathways/${streamUrlToId(id)}/add-quest`}
-                      passHref
-                    >
-                      <Button leftIcon={<PlusSquareIcon />}>
-                        {t("add-quest")}
-                      </Button>
-                    </NextLink>
-                  )}
-                </HStack>
-
-                <TabPanels>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10}>
-                      {data.getAllQuestsByPathwayId
-                        .filter((quest: any) => !quest.isPending)
-                        .map((quest: any) => (
-                          <QuestCard
-                            key={quest.id}
-                            quest={quest}
-                            projectContributors={
-                              projectRes.getProjectById.squads.flatMap(
-                                (squad: any) => squad.members
-                              ) || []
-                            }
-                          />
-                        ))}
-                    </SimpleGrid>
-                    {/* <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllPathwaysByProjectId
-                .filter((pathway: any) => pathway.isPending)
-                .map((pathway: any) => (
-                  <PathwayCard key={pathway.title} pathway={pathway} />
-                ))}
-            </SimpleGrid> */}
-                  </TabPanel>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10}>
-                      {data.getAllQuestsByPathwayId
-                        .filter((quest: any) => quest.isPending)
-                        .map((quest: any) => (
-                          <QuestCard
-                            key={quest.id}
-                            quest={quest}
-                            projectContributors={
-                              projectRes.getProjectById.squads.flatMap(
-                                (squad: any) => squad.members
-                              ) || []
-                            }
-                          />
-                        ))}
-                    </SimpleGrid>
-                    {/* <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllPathwaysByProjectId
-                .filter((pathway: any) => !pathway.isPending)
-                .map((pathway: any) => (
-                  <PathwayCard key={pathway.title} pathway={pathway} />
-                ))}
-            </SimpleGrid> */}
-                  </TabPanel>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10}>
-                      <QuestCard key={QuestData.name} quest={QuestData} />
-                    </SimpleGrid>
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+              {type?.value === "quiz" && (
+                <QuizForm questions={questions} questId={id} />
+              )}
+              {type?.value === "snapshot-voter" && (
+                <SnapshotVoterForm proposalId={proposalId} questId={id} />
+              )}
+              {type?.value === "github-contributor" && (
+                <GithubContributorQuestForm
+                  githubOrgId={githubOrgId}
+                  questId={id}
+                />
+              )}
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -533,4 +416,4 @@ function PathwayPage({
   );
 }
 
-export default PathwayPage;
+export default QuestPage;

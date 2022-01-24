@@ -61,18 +61,34 @@ export class GetAllPathwaysByProjectIdResolver {
         const serverSidePathwayInfos = pathwaysWithAdditionalDetails.find(
           (pathway: Pathway) => pathway.id === stream.id.toUrl(),
         );
+        if (serverSidePathwayInfos) {
+          const quests =
+            serverSidePathwayInfos.quests &&
+            serverSidePathwayInfos.quests.length > 0
+              ? serverSidePathwayInfos.quests.map((questId: string) => ({
+                  id: questId,
+                }))
+              : [];
+
+          const pendingQuests =
+            serverSidePathwayInfos.pendingQuests &&
+            serverSidePathwayInfos.pendingQuests.length > 0
+              ? serverSidePathwayInfos.pendingQuests.map((questId: string) => ({
+                  id: questId,
+                }))
+              : [];
+          return {
+            id: stream.id.toUrl(),
+            ...stream.state.content,
+            ...serverSidePathwayInfos,
+            quests,
+            pendingQuests,
+            isPending: false,
+          };
+        }
         return {
           id: stream.id.toUrl(),
           ...stream.state.content,
-          ...serverSidePathwayInfos,
-          quests: serverSidePathwayInfos.quests.map((questId: string) => ({
-            id: questId,
-          })),
-          pendingQuests: serverSidePathwayInfos.pendingQuests.map(
-            (questId: string) => ({
-              id: questId,
-            }),
-          ),
           isPending: false,
         };
       },
@@ -84,18 +100,35 @@ export class GetAllPathwaysByProjectIdResolver {
       const serverSidePathwayInfos = pathwaysWithAdditionalDetails.find(
         (pathway: Pathway) => pathway.id === stream.id.toUrl(),
       );
+      if (serverSidePathwayInfos) {
+        const quests =
+          serverSidePathwayInfos.quests &&
+          serverSidePathwayInfos.quests.length > 0
+            ? serverSidePathwayInfos.quests.map((questId: string) => ({
+                id: questId,
+              }))
+            : [];
+
+        const pendingQuests =
+          serverSidePathwayInfos.pendingQuests &&
+          serverSidePathwayInfos.pendingQuests.length > 0
+            ? serverSidePathwayInfos.pendingQuests.map((questId: string) => ({
+                id: questId,
+              }))
+            : [];
+        return {
+          id: stream.id.toUrl(),
+          ...stream.state.content,
+          ...serverSidePathwayInfos,
+          quests,
+          pendingQuests,
+          isPending: true,
+        };
+      }
       return {
         id: stream.id.toUrl(),
         ...stream.state.content,
         ...serverSidePathwayInfos,
-        quests: serverSidePathwayInfos.quests.map((questId: string) => ({
-          id: questId,
-        })),
-        pendingQuests: serverSidePathwayInfos.pendingQuests.map(
-          (questId: string) => ({
-            id: questId,
-          }),
-        ),
         isPending: true,
       };
     });
