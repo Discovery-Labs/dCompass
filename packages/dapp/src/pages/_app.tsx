@@ -21,9 +21,12 @@ import { NftProvider } from "use-nft";
 
 import { useApollo } from "../../lib/apolloClient";
 import defaultSEOConfig from "../../next-seo.config";
+import Web3ReactManager from "../contexts/Web3Manager";
 import { Web3Provider } from "../contexts/Web3Provider";
 import createEmotionCache from "../styles/createEmotionCache";
 import Layout from "components/layout";
+
+import dynamic from "next/dynamic";
 
 interface DcompassAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -37,6 +40,10 @@ const getLibrary = (provider: any): EthersProvider => {
 };
 
 const NETWORK = "rinkeby";
+const Web3ReactProviderDefault = dynamic(
+  () => import("../contexts/Web3ProviderNetwork"),
+  { ssr: false }
+);
 
 const MyApp = ({
   Component,
@@ -55,22 +62,26 @@ const MyApp = ({
     >
       <ApolloProvider client={apolloClient}>
         <Web3ReactProvider getLibrary={getLibrary}>
-          <Web3Provider>
-            <CacheProvider value={emotionCache}>
-              <ChakraProvider theme={theme}>
-                <Head>
-                  <meta
-                    name="viewport"
-                    content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover"
-                  />
-                </Head>
-                <DefaultSeo {...defaultSEOConfig} />
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
-              </ChakraProvider>
-            </CacheProvider>
-          </Web3Provider>
+          <Web3ReactProviderDefault getLibrary={getLibrary}>
+            <Web3Provider>
+              <Web3ReactManager>
+                <CacheProvider value={emotionCache}>
+                  <ChakraProvider theme={theme}>
+                    <Head>
+                      <meta
+                        name="viewport"
+                        content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover"
+                      />
+                    </Head>
+                    <DefaultSeo {...defaultSEOConfig} />
+                    <Layout>
+                      <Component {...pageProps} />
+                    </Layout>
+                  </ChakraProvider>
+                </CacheProvider>
+              </Web3ReactManager>
+            </Web3Provider>
+          </Web3ReactProviderDefault>
         </Web3ReactProvider>
       </ApolloProvider>
     </NftProvider>

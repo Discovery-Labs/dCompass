@@ -22,12 +22,15 @@ import {
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useContext } from "react";
+
 import { Web3Context } from "../../contexts/Web3Provider";
 import useCustomColor from "../../core/hooks/useCustomColor";
 import ConnectButton from "../Buttons/ConnectButton";
-import LogoIcon from "../Icons/LogoIcon";
-import ThemeToggle from "./ThemeToggle";
 import LanguageButton from "../Buttons/LanguageButton";
+import NetworkSwitch from "../custom/NetworkSwitch";
+import LogoIcon from "../Icons/LogoIcon";
+
+import ThemeToggle from "./ThemeToggle";
 
 const LinkItem = ({ href, _target, children, ...props }: any) => {
   const { pathname } = useRouter();
@@ -109,6 +112,7 @@ const Navbar = (props: any) => {
         <HStack alignItems="center">
           <LanguageButton />
           <ThemeToggle />
+          <NetworkSwitch />
           {account && isReviewer && (
             <LinkItem href="/projects/review">
               <Tag size="lg" variant="outline">

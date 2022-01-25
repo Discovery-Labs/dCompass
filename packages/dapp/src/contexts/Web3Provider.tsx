@@ -12,67 +12,70 @@ import React, {
   useReducer,
   useEffect,
   useCallback,
+  useState,
+  useMemo,
 } from "react";
 import Web3Modal from "web3modal";
 
-import {
-  ceramicCoreFactory,
-  CERAMIC_TESTNET,
-  findGitHub,
-} from "../core/ceramic";
-import { createGitHub, IdentityLink } from "../core/ceramic/identity-link";
+import { ceramicCoreFactory, CERAMIC_TESTNET } from "../core/ceramic";
+import { IdentityLink } from "../core/ceramic/identity-link";
+import { NETWORK_URLS } from "../core/connectors";
+import { ALL_SUPPORTED_CHAIN_IDS } from "../core/connectors/chains";
+import { useActiveWeb3React } from "../core/hooks/web3";
 import NETWORKS from "../core/networks";
 
+import { initialState, Web3Context } from "./Web3Context";
 import { State, Web3Reducer } from "./Web3Reducer";
 
-const { NEXT_PUBLIC_INFURA_ID } = process.env;
-const supportedNetworks = Object.keys(ABIS);
+export const supportedNetworks = Object.keys(ABIS);
 
-const rpcs = {
-  1: `https://mainnet.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
-  42: `https://kovan.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`,
-  80001: `https://polygon-mumbai.infura.io/v3/${NEXT_PUBLIC_INFURA_ID}`,
-  100: "https://dai.poa.network", // xDai
-};
 const injected = new InjectedConnector({
   supportedChainIds: supportedNetworks.map((net) => parseInt(net, 10)),
 });
 
-// TODO: create custom ceramic auth for wallet connect?
 const walletconnect = new WalletConnectConnector({
-  rpc: rpcs,
+  rpc: NETWORK_URLS,
   qrcode: true,
 });
-
-const initialState = {
-  loading: false,
-  account: null,
-  provider: null,
-  contracts: null,
-} as State;
 
 const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider, // required
     options: {
-      bridge: "https://polygon.bridge.walletconnect.org",
-      infuraId: NEXT_PUBLIC_INFURA_ID,
-      rpc: rpcs,
+      supportedChainIds: ALL_SUPPORTED_CHAIN_IDS,
+      rpcs: NETWORK_URLS,
+      qrcode: true,
     },
   },
   // authereum: {
   //   package: Authereum,
   // },
 };
-const Web3Context = createContext(initialState);
 
 const Web3Provider = ({ children }: { children: any }) => {
   const [state, dispatch] = useReducer(Web3Reducer, initialState);
-  const { activate, chainId, deactivate } = useWeb3React();
-  const setAccount = (account: null | string) => {
+  const { activate, chainId, library } = useWeb3React();
+  const { active, account } = useActiveWeb3React();
+  const web3Modal = useMemo<Web3Modal>(
+    () =>
+      new Web3Modal({
+        providerOptions,
+        cacheProvider: false,
+      }),
+    []
+  );
+
+  const setAccount = (walletAddress: null | string) => {
     dispatch({
       type: "SET_ACCOUNT",
-      payload: account,
+      payload: walletAddress,
+    });
+  };
+
+  const setENS = (ens: null | string) => {
+    dispatch({
+      type: "SET_ENS",
+      payload: ens,
     });
   };
 
@@ -125,12 +128,14 @@ const Web3Provider = ({ children }: { children: any }) => {
 
   useEffect(() => {
     async function updateState() {
-      if (chainId && state.provider && state.account) {
-        const strChainId = chainId.toString() as keyof typeof NETWORKS;
+      if (chainId && library) {
+        const strChainId = chainId?.toString();
         if (supportedNetworks.includes(strChainId)) {
-          const network = NETWORKS[strChainId];
+          const provider = await web3Modal.connect();
+          const network = NETWORKS[strChainId as keyof typeof NETWORKS];
           const abis = ABIS as Record<string, any>;
-          const signer = state.provider.getSigner();
+          const lib = new ethers.providers.Web3Provider(provider);
+          const signer = lib.getSigner();
           const projectNFTContract = new ethers.Contract(
             abis[strChainId][network.name].contracts.ProjectNFT.address,
             abis[strChainId][network.name].contracts.ProjectNFT.abi,
@@ -142,15 +147,44 @@ const Web3Provider = ({ children }: { children: any }) => {
             signer
           );
           setContracts({ projectNFTContract, pathwayNFTContract });
-          const isValidReviewer = await projectNFTContract.reviewers(
-            state.account
-          );
+          const isValidReviewer = await projectNFTContract.reviewers(account);
           setIsReviewer(isValidReviewer);
         }
       }
     }
     updateState();
-  }, [chainId, state.provider, state.account]);
+  }, [chainId, library, account, web3Modal]);
+
+  useEffect(() => {
+    async function handleActiveAccount() {
+      if (active && account) {
+        setAccount(account);
+
+        const provider = await web3Modal.connect();
+        const mySelf = await SelfID.authenticate({
+          authProvider: new EthereumAuthProvider(provider, account),
+          ceramic: CERAMIC_TESTNET,
+          connectNetwork: CERAMIC_TESTNET,
+          model: publishedModel,
+        });
+        setSelf(mySelf);
+        // Get ens
+        let ens = null;
+        try {
+          ens = await library.lookupAddress(account);
+          setENS(ens);
+        } catch (error) {
+          console.log({ error });
+          setENS(null);
+        }
+      }
+    }
+    handleActiveAccount();
+    return () => {
+      setAccount(null);
+      setENS(null);
+    };
+  }, [account, active, library]);
 
   const logout = async () => {
     setAccount(null);
@@ -160,15 +194,9 @@ const Web3Provider = ({ children }: { children: any }) => {
     setIsReviewer(false);
     setContracts(null);
     localStorage.setItem("defaultWallet", "");
-    deactivate();
   };
 
   const connectWeb3 = useCallback(async () => {
-    const web3Modal = new Web3Modal({
-      providerOptions,
-      // TODO: false for production
-      cacheProvider: true,
-    });
     const provider = await web3Modal.connect();
     const ethersProvider = new ethers.providers.Web3Provider(provider, "any");
     activate(
@@ -176,7 +204,7 @@ const Web3Provider = ({ children }: { children: any }) => {
     );
     setProvider(ethersProvider);
     const signer = ethersProvider.getSigner();
-    const account = await signer.getAddress();
+    const connectedAccount = await signer.getAddress();
     if (chainId) {
       const strChainId = chainId.toString() as keyof typeof NETWORKS;
       if (supportedNetworks.includes(strChainId)) {
@@ -193,12 +221,14 @@ const Web3Provider = ({ children }: { children: any }) => {
           signer
         );
         setContracts({ projectNFTContract, pathwayNFTContract });
-        const isValidReviewer = await projectNFTContract.reviewers(account);
+        const isValidReviewer = await projectNFTContract.reviewers(
+          connectedAccount
+        );
         setIsReviewer(isValidReviewer);
       }
     }
 
-    setAccount(account);
+    setAccount(connectedAccount);
 
     const identityLinkService = new IdentityLink(
       process.env.NEXT_PUBLIC_CERAMIC_VERIFICATION_SERVER_URL ||
@@ -207,7 +237,10 @@ const Web3Provider = ({ children }: { children: any }) => {
     setIdentityLink(identityLinkService);
 
     const mySelf = await SelfID.authenticate({
-      authProvider: new EthereumAuthProvider(ethersProvider.provider, account),
+      authProvider: new EthereumAuthProvider(
+        ethersProvider.provider,
+        connectedAccount
+      ),
       ceramic: CERAMIC_TESTNET,
       connectNetwork: CERAMIC_TESTNET,
       model: publishedModel,
@@ -222,7 +255,7 @@ const Web3Provider = ({ children }: { children: any }) => {
     provider.on("accountsChanged", () => {
       // window.location.reload();
     });
-  }, [chainId, activate]);
+  }, [chainId, activate, web3Modal]);
 
   return (
     <Web3Context.Provider
