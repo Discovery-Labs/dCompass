@@ -71,8 +71,8 @@ function PathwayCard({
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
-  const { account, provider, contracts } = useContext(Web3Context);
-  const { chainId } = useWeb3React();
+  const { account, contracts } = useContext(Web3Context);
+  const { chainId, library } = useWeb3React();
   const router = useRouter();
   const id = streamUrlToId(pathway.id);
 
@@ -105,7 +105,7 @@ function PathwayCard({
         id: pathway.id,
         projectId: pathway.projectId,
       };
-      const signature = await provider.provider.send("personal_sign", [
+      const signature = await library.provider.send("personal_sign", [
         JSON.stringify(signatureInput),
         account,
       ]);
@@ -170,7 +170,7 @@ function PathwayCard({
         id: pathway.id,
         projectId: pathway.projectId,
       };
-      const signature = await provider.provider.send("personal_sign", [
+      const signature = await library.provider.send("personal_sign", [
         JSON.stringify(signatureInput),
         account,
       ]);

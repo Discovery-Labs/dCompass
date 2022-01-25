@@ -15,6 +15,7 @@ import {
   Box,
   Divider,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useRouter } from "next/router";
 import { useContext } from "react";
@@ -61,7 +62,8 @@ function QuestCard({
   const { getRewardCurrency } = useTokenList();
 
   const { getTextColor, getColoredText, getBgColor } = useCustomColor();
-  const { account, provider } = useContext(Web3Context);
+  const { library } = useWeb3React();
+  const { account } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION, {
     refetchQueries: "all",
   });
@@ -77,7 +79,7 @@ function QuestCard({
       id: quest.id,
       pathwayId: quest.pathwayId,
     };
-    const signature = await provider.provider.send("personal_sign", [
+    const signature = await library.provider.send("personal_sign", [
       JSON.stringify(signatureInput),
       account,
     ]);
@@ -202,9 +204,7 @@ function QuestCard({
                 Quest type
               </Text>
             </HStack>
-            <Tag variant="outline" size="lg">
-              {quest.questType}
-            </Tag>
+            <Tag variant="outline">{quest.questType}</Tag>
           </HStack>
           <Divider />
           <HStack justifyContent="space-between">
@@ -219,21 +219,21 @@ function QuestCard({
                 Claimed
               </Text>
             </HStack>
-            <Tag variant="outline" size="lg">
-              0/{quest.rewardUserCap}
-            </Tag>
+            <Tag variant="outline">0/{quest.rewardUserCap}</Tag>
           </HStack>
           <Divider />
-          <HStack>
-            <Icon as={GiTwoCoins} />
-            <Text
-              fontWeight="bold"
-              fontSize="xl"
-              color={getTextColor}
-              textTransform="uppercase"
-            >
-              Rewards
-            </Text>
+          <HStack justifyContent="space-between">
+            <HStack>
+              <Icon as={GiTwoCoins} />
+              <Text
+                fontWeight="bold"
+                fontSize="xl"
+                color={getTextColor}
+                textTransform="uppercase"
+              >
+                Rewards
+              </Text>
+            </HStack>
             <Tag variant="outline">
               {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
             </Tag>

@@ -7,14 +7,7 @@ import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 // import Authereum from "authereum";
 import { ethers } from "ethers";
-import React, {
-  createContext,
-  useReducer,
-  useEffect,
-  useCallback,
-  useState,
-  useMemo,
-} from "react";
+import React, { useReducer, useEffect, useCallback, useMemo } from "react";
 import Web3Modal from "web3modal";
 
 import { ceramicCoreFactory, CERAMIC_TESTNET } from "../core/ceramic";
@@ -25,7 +18,7 @@ import { useActiveWeb3React } from "../core/hooks/web3";
 import NETWORKS from "../core/networks";
 
 import { initialState, Web3Context } from "./Web3Context";
-import { State, Web3Reducer } from "./Web3Reducer";
+import { Web3Reducer } from "./Web3Reducer";
 
 export const supportedNetworks = Object.keys(ABIS);
 
@@ -76,13 +69,6 @@ const Web3Provider = ({ children }: { children: any }) => {
     dispatch({
       type: "SET_ENS",
       payload: ens,
-    });
-  };
-
-  const setProvider = (provider: null | any) => {
-    dispatch({
-      type: "SET_PROVIDER",
-      payload: provider,
     });
   };
 
@@ -184,11 +170,10 @@ const Web3Provider = ({ children }: { children: any }) => {
       setAccount(null);
       setENS(null);
     };
-  }, [account, active, library]);
+  }, [account, active, library, web3Modal]);
 
   const logout = async () => {
     setAccount(null);
-    setProvider(null);
     setSelf(null);
     setCore(null);
     setIsReviewer(false);
@@ -202,7 +187,6 @@ const Web3Provider = ({ children }: { children: any }) => {
     activate(
       ethersProvider.connection.url === "metamask" ? injected : walletconnect
     );
-    setProvider(ethersProvider);
     const signer = ethersProvider.getSigner();
     const connectedAccount = await signer.getAddress();
     if (chainId) {

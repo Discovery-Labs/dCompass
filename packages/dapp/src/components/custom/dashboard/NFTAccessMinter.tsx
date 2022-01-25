@@ -1,14 +1,18 @@
 import { Box, Button, Center, Flex, Text, VStack } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
+import { ethers } from "ethers";
+import { useRouter } from "next/router";
+import React, { useContext, useEffect, useState } from "react";
+
 import NFTCard from "components/custom/dashboard/NFTCard";
 import CenteredFrame from "components/layout/CenteredFrame";
 import { Web3Context } from "contexts/Web3Provider";
-import { useRouter } from "next/router";
-import React, { useContext, useEffect, useState } from "react";
-import { ethers } from "ethers";
+
 import ABI from "./TestNFTContractABI";
 
 function NFTAccessMinter() {
-  const { account, provider } = useContext(Web3Context);
+  const { account } = useContext(Web3Context);
+  const { library } = useWeb3React();
 
   const router = useRouter();
   // const [cantMintText, setCantMintText] = useState("");
@@ -18,31 +22,31 @@ function NFTAccessMinter() {
   const tokenId = "0";
   const NFT_CONTRACT_ADDRESS = "0xCb9Ce2fa1EBef370CC060aD65294075EDdC7f8Ea";
 
-  async function getMinterContract() {
-    if (account && provider) {
-      const signer = provider.getSigner();
-
-      const NFTMinterContract = new ethers.Contract(
-        NFT_CONTRACT_ADDRESS,
-        ABI,
-        signer
-      );
-      setMinterContract(NFTMinterContract);
-    }
-  }
   useEffect(() => {
+    async function getMinterContract() {
+      if (account && library) {
+        const signer = library.getSigner();
+
+        const NFTMinterContract = new ethers.Contract(
+          NFT_CONTRACT_ADDRESS,
+          ABI,
+          signer
+        );
+        setMinterContract(NFTMinterContract);
+      }
+    }
     getMinterContract();
-  }, [account, provider]);
+  }, [account, library]);
 
-  async function getTotalSupply() {
-    if (minterContract !== undefined) {
-      const resTotalSupply = await minterContract.totalSupply(tokenId);
-      const stringTotalSupply = resTotalSupply?.toString() || "?";
-      setTotalSupply(stringTotalSupply);
-      // console.log(`totalSupply`, totalSupply);
-    }
-  }
   useEffect(() => {
+    async function getTotalSupply() {
+      if (minterContract !== undefined) {
+        const resTotalSupply = await minterContract.totalSupply(tokenId);
+        const stringTotalSupply = resTotalSupply?.toString() || "?";
+        setTotalSupply(stringTotalSupply);
+        // console.log(`totalSupply`, totalSupply);
+      }
+    }
     getTotalSupply();
   }, [minterContract]);
 

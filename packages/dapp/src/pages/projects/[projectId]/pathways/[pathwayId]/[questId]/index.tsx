@@ -35,6 +35,9 @@ import BreadcrumbItems from "../../../../../../components/layout/BreadcrumbItems
 import GithubContributorQuestForm from "../../../../../../components/projects/quests/github/GithubContributorQuestForm";
 import QuizForm from "../../../../../../components/projects/quests/quizz/QuizForm";
 import SnapshotVoterForm from "../../../../../../components/projects/quests/snapshot/SnapshotVoterForm";
+import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
+import ClaimTokenOwnerForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
+import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
 import { ceramicCoreFactory } from "../../../../../../core/ceramic";
 import { streamIdToUrl, streamUrlToId } from "../../../../../../core/helpers";
 import useCustomColor from "../../../../../../core/hooks/useCustomColor";
@@ -69,12 +72,21 @@ export const getServerSideProps: GetServerSideProps<
   // const client = initializeApollo();
   try {
     const questInfos = await core.ceramic.loadStream(questId);
+    const questCreatorDID = questInfos.controllers[0];
+    const questCreatorBasicProfile = await core.get(
+      "basicProfile",
+      questCreatorDID
+    );
     return {
       props: {
         id: questId,
         ...questInfos.content,
         ...(await serverSideTranslations(locale, ["common"])),
         projectId,
+        createdBy: {
+          did: questCreatorDID,
+          name: questCreatorBasicProfile?.name,
+        },
       },
     };
   } catch (error) {
@@ -89,7 +101,6 @@ function QuestPage({
   name,
   description,
   image,
-  createdBy,
   createdAt,
   rewardAmount,
   rewardCurrency,
@@ -100,6 +111,12 @@ function QuestPage({
   questions,
   proposalId,
   githubOrgId,
+  createdBy,
+  collectionContractAddress,
+  tokenContractAddress,
+  amount,
+  chainId: tokenChainId,
+  namespace,
 }: any) {
   const { t } = useTranslation("common");
   const { getRewardCurrency } = useTokenList();
@@ -285,12 +302,15 @@ function QuestPage({
                     >
                       Rewards
                     </Text>
+                    <Tag variant="outline" size="lg">
+                      {rewardAmount}
+                    </Tag>
                   </HStack>
                 </VStack>
                 <Flex align="center" maxW="full" py="4">
                   {createdBy && (
                     <Blockies
-                      seed={createdBy}
+                      seed={createdBy.name || createdBy.did}
                       className="blockies"
                       size={7}
                       scale={10}
@@ -299,21 +319,23 @@ function QuestPage({
                   <VStack align="flex-start" mx="2">
                     <Text color={getColoredText} textStyle="small" isTruncated>
                       {t("creation-date")}{" "}
-                      {new Date(createdAt).toLocaleString()}
+                      {new Date(createdAt || Date.now()).toLocaleString()}
                     </Text>
                     <Text fontSize="sm" isTruncated>
-                      {t("by")} {createdBy}
+                      {t("by")} {createdBy.name || createdBy.did}
                     </Text>
                     {isOwner && (
-                      // TODO: edit pathway form
+                      // TODO: edit quest form
                       <NextLink
                         href={`/projects/${streamUrlToId(
                           projectId
-                        )}/pathways/${streamUrlToId(id)}/edit-pathway`}
+                        )}/pathways/${streamUrlToId(pathwayId)}/${streamUrlToId(
+                          id
+                        )}/edit-quest`}
                         passHref
                       >
                         <Button leftIcon={<EditIcon />}>
-                          {t("edit-pathway")}
+                          {t("edit-quest")}
                         </Button>
                       </NextLink>
                     )}
@@ -406,6 +428,23 @@ function QuestPage({
                 <GithubContributorQuestForm
                   githubOrgId={githubOrgId}
                   questId={id}
+                />
+              )}
+              {type?.value === "nft-owner" && (
+                <ClaimNFTOwnerForm
+                  questId={id}
+                  contractAddress={collectionContractAddress}
+                  namespace={namespace || "eip155"}
+                  collectionChainId={tokenChainId}
+                />
+              )}
+              {type?.value === "token-holder" && (
+                <ClaimTokenHolderForm
+                  questId={id}
+                  amount={amount}
+                  contractAddress={tokenContractAddress}
+                  namespace={namespace || "eip155"}
+                  tokenChainId={tokenChainId}
                 />
               )}
             </TabPanel>

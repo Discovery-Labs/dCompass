@@ -99,8 +99,8 @@ function ReviewProjectPage({
 }: any) {
   const { t } = useTranslation("common");
   const { defaultMainnetDAIToken } = useTokenList();
-  const { isReviewer, contracts, provider } = useContext(Web3Context);
-  const { chainId, account } = useWeb3React();
+  const { isReviewer, contracts } = useContext(Web3Context);
+  const { chainId, account, library } = useWeb3React();
   const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
     refetchQueries: "all",
   });
@@ -146,7 +146,7 @@ function ReviewProjectPage({
           tokenUris,
           chainId: chainId.toString(),
         };
-        const signature = await provider.provider.send("personal_sign", [
+        const signature = await library.provider.send("personal_sign", [
           JSON.stringify(mutationInput),
           account,
         ]);

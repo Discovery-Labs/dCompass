@@ -1,21 +1,24 @@
 import { SimpleGrid } from "@chakra-ui/react";
-import NFTCard from "components/custom/dashboard/NFTCard";
-import { Web3Context } from "contexts/Web3Provider";
+import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import React, { useContext, useEffect, useState } from "react";
+
+import NFTCard from "components/custom/dashboard/NFTCard";
+import { Web3Context } from "contexts/Web3Provider";
+
 import ABI from "./TestNFTContractABI";
 
 function UserNFTs() {
-  const NFTIds = ["1", "0"];
   const NFT_CONTRACT_ADDRESS = "0xCb9Ce2fa1EBef370CC060aD65294075EDdC7f8Ea";
   const [userNFTs, setUserNFTs] = useState<Array<string>>();
-
-  const { account, provider } = useContext(Web3Context);
+  const { library } = useWeb3React();
+  const { account } = useContext(Web3Context);
 
   useEffect(() => {
+    const NFTIds = ["1", "0"];
     async function getUserNFTIds() {
-      if (account && provider) {
-        const signer = provider.getSigner();
+      if (account && library) {
+        const signer = library.getSigner();
 
         const BadgeNFTContract = new ethers.Contract(
           NFT_CONTRACT_ADDRESS,
@@ -36,7 +39,7 @@ function UserNFTs() {
       }
     }
     getUserNFTIds();
-  }, [account, provider]);
+  }, [account, library]);
 
   return (
     <SimpleGrid columns={[2, null, 3]} spacing="40px">

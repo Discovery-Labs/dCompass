@@ -35,8 +35,8 @@ const steps = [
 function CreateProjectStepper() {
   const { t } = useTranslation("common");
   const router = useRouter();
-  const { self, provider } = useContext(Web3Context);
-  const { account } = useWeb3React();
+  const { self } = useContext(Web3Context);
+  const { account, library } = useWeb3React();
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -102,7 +102,7 @@ function CreateProjectStepper() {
 
     const newProjectDoc = await self.client.dataModel.createTile(
       "Project",
-      serializedProject,
+      { ...serializedProject, createdAt: new Date().toISOString() },,
       {
         pin: true,
       }
@@ -137,7 +137,7 @@ function CreateProjectStepper() {
         projects: [projectId],
       });
     }
-    const signature = await provider.provider.send("personal_sign", [
+    const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: projectId,
         tokenUris: metadataCids,

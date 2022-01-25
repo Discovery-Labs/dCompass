@@ -15,11 +15,11 @@ import {
 } from "../../../../graphql/projects";
 import Card from "components/custom/Card";
 import NotConnectedCard from "components/custom/NotConnectedCard";
+import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import CenteredFrame from "components/layout/CenteredFrame";
 import EditProjectForm from "components/projects/EditProjectForm";
 import SquadsForm from "components/projects/squads/SquadsForm";
 import { Web3Context } from "contexts/Web3Provider";
-import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 
 type Props = {
   projectId: string | null;
@@ -83,8 +83,8 @@ type Project = {
 
 function EditProjectStepper(project: Project) {
   const { t } = useTranslation("common");
-  const { self, provider } = useContext(Web3Context);
-  const { account } = useWeb3React();
+  const { self } = useContext(Web3Context);
+  const { account, library } = useWeb3React();
 
   const [editProjectMutation] = useMutation(EDIT_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -158,7 +158,7 @@ function EditProjectStepper(project: Project) {
       }),
     };
 
-    const signature = await provider.provider.send("personal_sign", [
+    const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: project.id,
       }),

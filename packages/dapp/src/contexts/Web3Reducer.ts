@@ -3,7 +3,6 @@ export type State = {
   loading: boolean;
   account: null | string;
   ens?: string;
-  provider: null | any;
   self: null | any;
   core: null | any;
   identityLink: null | any;
@@ -23,11 +22,6 @@ export const Web3Reducer = (state: State, action: Record<string, any>) => {
       return {
         ...state,
         ens: action.payload,
-      };
-    case "SET_PROVIDER":
-      return {
-        ...state,
-        provider: action.payload,
       };
     case "SET_SELF":
       return {

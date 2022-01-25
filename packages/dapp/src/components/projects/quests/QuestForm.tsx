@@ -19,9 +19,9 @@ import {
   Stack,
   Tag,
   Text,
-  Textarea,
   VStack,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useContext } from "react";
@@ -43,7 +43,7 @@ import GithubContributorForm from "./github/GithubContributorForm";
 import PoapOwnerForm from "./poap/PoapOwnerForm";
 import QuestionsForm from "./quizz/QuestionsForm";
 import SnapshotForm from "./snapshot/SnapshotForm";
-import NFTOwnerForm from "./token/NFTOwnerForm copy";
+import NFTOwnerForm from "./token/NFTOwnerForm";
 import TokenHolderForm from "./token/TokenHolderForm";
 import TwitterFollowerForm from "./twitter/TwitterFollowerForm";
 
@@ -93,7 +93,8 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 
 const CreateQuestForm: React.FunctionComponent = () => {
   const { tokens } = useTokenList();
-  const { self, provider, account } = useContext(Web3Context);
+  const { library } = useWeb3React();
+  const { self, account } = useContext(Web3Context);
   const [createSnapshotVoterQuest] = useMutation(
     CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
     { refetchQueries: "all" }
@@ -192,13 +193,13 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     const questDoc = await self.client.dataModel.createTile(
       "Quest",
-      finalValues,
+      { ...finalValues, createdAt: new Date().toISOString() },
       {
         pin: true,
       }
     );
 
-    const signature = await provider.provider.send("personal_sign", [
+    const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: questDoc.id.toUrl(),
         pathwayId: `ceramic://${router.query.pathwayId}`,

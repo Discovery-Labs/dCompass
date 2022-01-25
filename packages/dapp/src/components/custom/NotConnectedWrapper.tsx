@@ -9,19 +9,10 @@ import { Web3Context } from "contexts/Web3Provider";
 function MembershipWrapper(props: any) {
   const { children } = props;
 
-  const { self, contracts, provider } = useContext(Web3Context);
+  const { contracts } = useContext(Web3Context);
   const web3React = useWeb3React();
 
-  const {
-    connector,
-    library,
-    chainId,
-    account,
-    activate,
-    deactivate,
-    active,
-    error,
-  } = web3React;
+  const { account } = web3React;
 
   return account && contracts ? (
     <>{children}</>

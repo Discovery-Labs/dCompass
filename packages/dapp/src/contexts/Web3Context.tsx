@@ -5,7 +5,6 @@ import { State } from "./Web3Reducer";
 export const initialState = {
   loading: false,
   account: null,
-  provider: null,
   contracts: null,
 } as State;
 export const Web3Context = createContext(initialState);

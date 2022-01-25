@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { Heading, Button, Flex } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
@@ -15,10 +16,11 @@ const pathwaysDefaultValues = {
 
 function PathwayFormWrapper() {
   const router = useRouter();
+  const { library } = useWeb3React();
   const [addPathwayMutation] = useMutation(CREATE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
-  const { self, account, provider } = useContext(Web3Context);
+  const { self, account } = useContext(Web3Context);
   const {
     reset,
     handleSubmit,
@@ -67,14 +69,14 @@ function PathwayFormWrapper() {
     console.log("submitted", finalValues);
     const pathwayDoc = await self.client.dataModel.createTile(
       "Pathway",
-      finalValues,
+      { ...finalValues, createdAt: new Date().toISOString() },
       {
         pin: true,
       }
     );
     console.log(pathwayDoc);
 
-    const signature = await provider.provider.send("personal_sign", [
+    const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: `ceramic://${router.query.projectId}`,
       }),
