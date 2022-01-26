@@ -239,6 +239,7 @@ function ProjectPage({
                   submitButtonLabel="Submit application"
                   projectId={streamUrlToId(id)}
                   projectName={name}
+                  onCloseForm={onClose}
                 />
               </ModalBody>
             </ModalContent>

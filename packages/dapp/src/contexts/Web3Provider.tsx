@@ -178,6 +178,7 @@ const Web3Provider = ({ children }: { children: any }) => {
     setCore(null);
     setIsReviewer(false);
     setContracts(null);
+    // TODO: better way to handle this ? https://github.com/NoahZinsmeister/web3-react/issues/228
     localStorage.setItem("defaultWallet", "");
   };
 

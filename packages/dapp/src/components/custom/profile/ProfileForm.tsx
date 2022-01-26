@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import {
   Button,
   FormControl,
@@ -25,7 +26,9 @@ import {
   Spinner,
   Text,
   Progress,
+  useToast,
 } from "@chakra-ui/react";
+import { useTranslation } from "next-i18next";
 import NextLink from "next/link";
 import React, {
   useCallback,
@@ -41,6 +44,8 @@ import { Web3Context } from "../../../contexts/Web3Provider";
 import { GITHUB_HOST, TWITTER_HOST } from "../../../core/constants";
 import { COUNTRIES } from "../../../core/constants/countries";
 import { emojis } from "../../../core/constants/emojis";
+import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
+import ControlledSelect from "../../Inputs/ControlledSelect";
 import CenteredFrame from "../../layout/CenteredFrame";
 import Card from "../Card";
 import IconWithState from "../IconWithState";
@@ -53,11 +58,15 @@ const ProfileForm = ({
   submitButtonLabel = "Save",
   projectId,
   projectName,
+  onCloseForm,
 }: {
   submitButtonLabel?: string;
   projectId?: string;
   projectName?: string;
+  onCloseForm?: () => void;
 }) => {
+  const toast = useToast();
+  const { t } = useTranslation();
   const { account, self } = useContext(Web3Context);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -65,7 +74,9 @@ const ProfileForm = ({
     onOpen: onTwitterOpen,
     onClose: onTwitterClose,
   } = useDisclosure();
-
+  const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
+    fetchPolicy: "cache-and-network",
+  });
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [imageURL, setImageURL] = useState<string>();
   const [backgroundURL, setBackgroundURL] = useState<string>();
@@ -76,6 +87,7 @@ const ProfileForm = ({
   const {
     handleSubmit,
     register,
+    control,
     formState: { errors, isSubmitting },
     setValue,
   } = useForm();
@@ -84,8 +96,9 @@ const ProfileForm = ({
     // fetch from Ceramic
     (async () => {
       setIsLoadingProfile(true);
-      if (account && self) {
+      if (account && self && data?.getAllProjects) {
         const result = await self.get("basicProfile");
+        console.log(result);
         const webAccounts = await self.get("alsoKnownAs");
         if (webAccounts?.accounts && webAccounts.accounts.length > 0) {
           const githubAccount = webAccounts.accounts.find(
@@ -124,6 +137,14 @@ const ProfileForm = ({
                 setBackgroundURL(ipfsUrl);
               }
             }
+          } else if (key === "affiliations") {
+            const foundProjects = data.getAllProjects
+              .filter((project) => value.includes(project.id))
+              .map((project) => ({
+                label: project.name,
+                value: project.id,
+              }));
+            setValue(key, foundProjects);
           } else {
             setValue(key, value);
           }
@@ -131,7 +152,7 @@ const ProfileForm = ({
         setIsLoadingProfile(false);
       }
     })();
-  }, [account, self, setValue]);
+  }, [account, self, setValue, data?.getAllProjects]);
 
   const onFileChange = useCallback((event) => {
     const input = event.target;
@@ -198,12 +219,35 @@ const ProfileForm = ({
     if (!backgroundFile) {
       delete values.background;
     }
-    await self.client.dataStore.merge("basicProfile", values);
+    console.log("af", values.affiliations);
+    await self.client.dataStore.merge("basicProfile", {
+      ...values,
+      affiliations: values.affiliations.map(
+        (affiliation: { value: string; label: string }) => affiliation.value
+      ),
+    });
+    if (onCloseForm) {
+      onCloseForm();
+    }
+    return toast({
+      title: projectName ? "Application submitted!" : "Profile saved!",
+      description: projectName
+        ? `Members of ${projectName} will review your application shortly.`
+        : `Changes successfuly saved.`,
+      status: "success",
+      position: "bottom-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
   };
+
+  if (error) return `Error! ${error?.message}`;
+
   return account ? (
     <Box maxWidth={1100} transition="0.5s ease-out">
       <Box margin="8">
-        {isLoadingProfile ? (
+        {isLoadingProfile || loading ? (
           <Stack>
             <Progress size="xs" isIndeterminate />
             <Text>Loading profile configuration</Text>
@@ -363,6 +407,23 @@ const ProfileForm = ({
               </FormControl>
             </SimpleGrid>
 
+            <SimpleGrid columns={1}>
+              <ControlledSelect
+                control={control}
+                name="affiliations"
+                id="affiliations"
+                label="Affiliations"
+                isMulti
+                colorScheme="purple"
+                options={data.getAllProjects.map(
+                  ({ id, name }: { id: string; name: string }) => ({
+                    value: id,
+                    label: name,
+                  })
+                )}
+              />
+            </SimpleGrid>
+
             <FormControl isInvalid={errors.description}>
               <FormLabel htmlFor="description">Description</FormLabel>
               <Textarea
@@ -379,7 +440,20 @@ const ProfileForm = ({
                 {errors.description && errors.description.message}
               </FormErrorMessage>
             </FormControl>
-            <SimpleGrid columns={2} spacing={10}>
+            <SimpleGrid columns={3} spacing={10}>
+              <FormControl isInvalid={errors.url}>
+                <FormLabel htmlFor="url">Website</FormLabel>
+                <Input
+                  placeholder="ens-or-website.eth"
+                  borderColor="purple.500"
+                  {...register("url", {
+                    maxLength: 240,
+                  })}
+                />
+                <FormErrorMessage>
+                  {errors.url && errors.url.message}
+                </FormErrorMessage>
+              </FormControl>
               <FormControl isInvalid={errors.emoji}>
                 <FormLabel htmlFor="emoji">Emoji</FormLabel>
                 <Select borderColor="purple.500" {...register("emoji")}>
@@ -407,39 +481,7 @@ const ProfileForm = ({
                 </FormErrorMessage>
               </FormControl>
             </SimpleGrid>
-            <SimpleGrid columns={2} spacing={10}>
-              <FormControl isInvalid={errors.url}>
-                <FormLabel htmlFor="url">Website</FormLabel>
-                <Input
-                  placeholder="ens-or-website.eth"
-                  borderColor="purple.500"
-                  {...register("url", {
-                    maxLength: 240,
-                  })}
-                />
-                <FormErrorMessage>
-                  {errors.url && errors.url.message}
-                </FormErrorMessage>
-              </FormControl>
-              {/* TODO: use multi select */}
-              <FormControl isInvalid={errors.affiliations}>
-                <FormLabel htmlFor="affiliations">Affiliations</FormLabel>
-                <Select
-                  placeholder="DAOs or projects you're part of"
-                  borderColor="purple.500"
-                  {...register("affiliations")}
-                >
-                  [
-                  <option value={projectId} key={projectName}>
-                    {projectName}
-                  </option>
-                  ]
-                </Select>
-                <FormErrorMessage>
-                  {errors.affiliations && errors.affiliations.message}
-                </FormErrorMessage>
-              </FormControl>
-            </SimpleGrid>
+
             <SimpleGrid columns={2} spacing={10}>
               <FormControl isInvalid={errors.residenceCountry}>
                 <FormLabel htmlFor="residenceCountry">Country</FormLabel>
