@@ -33,6 +33,7 @@ import ReactMarkdown from "react-markdown";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { streamUrlToId } from "../../../core/helpers";
 import useCustomColor from "../../../core/hooks/useCustomColor";
+import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
 import {
   APPROVE_PATHWAY_MUTATION,
@@ -63,6 +64,7 @@ function PathwayCard({
   projectContributors: string[];
 }) {
   const { getRewardCurrency } = useTokenList();
+  const pathwayCardMarkdownTheme = useCardMarkdownTheme();
   const { getTextColor, getBgColor, getAccentColor } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
@@ -207,25 +209,6 @@ function PathwayCard({
       }
     }
     return null;
-  };
-
-  const pathwayCardMarkdownTheme = {
-    h1: (props) => {
-      const { children } = props;
-      return (
-        <Heading pb="2" noOfLines={1} as="h4" size="sm" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    p: (props) => {
-      const { children } = props;
-      return (
-        <Text w="full" fontSize="sm" isTruncated>
-          {children}
-        </Text>
-      );
-    },
   };
 
   return (

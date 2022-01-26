@@ -27,6 +27,7 @@ import ReactMarkdown from "react-markdown";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { streamUrlToId } from "../../../core/helpers";
 import useCustomColor from "../../../core/hooks/useCustomColor";
+import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
 import { APPROVE_QUEST_MUTATION } from "../../../graphql/quests";
 import Card from "components/custom/Card";
@@ -59,6 +60,7 @@ function QuestCard({
   projectContributors: string[];
 }) {
   const router = useRouter();
+  const questCardMarkdownTheme = useCardMarkdownTheme();
   const { getRewardCurrency } = useTokenList();
 
   const { getTextColor, getColoredText, getBgColor } = useCustomColor();
@@ -113,49 +115,6 @@ function QuestCard({
     );
   };
 
-  const pathwayCardMarkdownTheme = {
-    h1: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h1" size="xl" color={getColoredText}>
-          {children}
-        </Heading>
-      );
-    },
-    h2: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h2" size="lg" color={getColoredText}>
-          {children}
-        </Heading>
-      );
-    },
-    h3: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h3" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    h4: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h4" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    p: (props) => {
-      const { children } = props;
-      return (
-        <Text w="full" fontSize="xl">
-          {children}
-        </Text>
-      );
-    },
-  };
-
   return (
     <Card position="relative" h="xl" layerStyle="no-border-hover" spacing="6">
       {!unlocked && <LockedScreen />}
@@ -184,7 +143,7 @@ function QuestCard({
         <VStack w="full" align="flex-start" h="160px">
           <ReactMarkdown
             className="card-markdown-quest-card"
-            components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
+            components={ChakraUIRenderer(questCardMarkdownTheme)}
             children={quest.description}
             skipHtml
           />

@@ -46,6 +46,7 @@ import SocialLinks from "../../../components/custom/SocialLinks";
 import BreadcrumbItems from "../../../components/layout/BreadcrumbItems";
 import QuestCard from "../../../components/projects/quests/QuestCard";
 import { streamUrlToId } from "../../../core/helpers";
+import { usePageMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import { Tag } from "../../../core/types";
 import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
@@ -121,6 +122,7 @@ function ProjectPage({
   gitbook,
 }: any) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const projectMarkdownTheme = usePageMarkdownTheme();
 
   const { t } = useTranslation("common");
   const { getTextColor, getColoredText } = useCustomColor();
@@ -145,48 +147,6 @@ function ProjectPage({
     );
   if (error) return `Loading error! ${error.message}`;
 
-  const projectMarkdownTheme = {
-    h1: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h1" size="xl" color={getColoredText}>
-          {children}
-        </Heading>
-      );
-    },
-    h2: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h2" size="lg" color={getColoredText}>
-          {children}
-        </Heading>
-      );
-    },
-    h3: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h3" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    h4: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h4" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    p: (props) => {
-      const { children } = props;
-      return (
-        <Text w="full" fontSize="xl">
-          {children}
-        </Text>
-      );
-    },
-  };
   return (
     <Container>
       <BreadcrumbItems

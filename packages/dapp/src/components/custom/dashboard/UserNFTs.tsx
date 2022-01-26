@@ -28,7 +28,7 @@ function UserNFTs() {
 
         const filteredNFTIds: Array<string> = [];
         NFTIds.forEach((id) => {
-          BadgeNFTContract.balanceOf(account, id).then((bal) => {
+          BadgeNFTContract.balanceOf(account, id).then((bal: any) => {
             if (bal !== undefined && bal.toNumber() > 0) {
               filteredNFTIds.push(id);
             }

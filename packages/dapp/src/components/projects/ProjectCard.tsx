@@ -10,6 +10,8 @@ import {
   Link,
   Heading,
   VStack,
+  HeadingProps,
+  TextProps,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useTranslation } from "next-i18next";
@@ -19,6 +21,7 @@ import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 import ReactMarkdown from "react-markdown";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
+import { useCardMarkdownTheme } from "../../core/hooks/useMarkdownTheme";
 import { Project, Tag } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
 
@@ -30,10 +33,10 @@ const ProjectCard = ({
   isReviewMode?: boolean;
 }) => {
   const { t } = useTranslation("common");
-  const { getTextColor, getColoredText } = useCustomColor();
+  const { getTextColor } = useCustomColor();
+  const projectCardMarkdownTheme = useCardMarkdownTheme();
 
   const router = useRouter();
-  console.log({ project, isReviewMode, id: project.id.split("://")[1] });
 
   function openProject() {
     router.push(
@@ -43,49 +46,6 @@ const ProjectCard = ({
     );
   }
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
-
-  const projectCardMarkdownTheme = {
-    h1: (props) => {
-      const { children } = props;
-      return (
-        <Heading as="h1" size="xl" color={getColoredText}>
-          {children}
-        </Heading>
-      );
-    },
-    h2: (props) => {
-      const { children } = props;
-      return (
-        <Heading as="h2" size="md" color={getColoredText}>
-          {children}
-        </Heading>
-      );
-    },
-    h3: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h3" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    h4: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h4" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    p: (props) => {
-      const { children } = props;
-      return (
-        <Text w="full" fontSize="xl">
-          {children}
-        </Text>
-      );
-    },
-  };
 
   return (
     <CardMedia src={imgSrc} h="xl">

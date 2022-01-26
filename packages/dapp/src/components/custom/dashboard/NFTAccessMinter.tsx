@@ -67,7 +67,7 @@ function NFTAccessMinter() {
             `🌊 Successfully Minted! Check it out on OpenSea: https://testnets.opensea.io/assets/${minterContract.address}/${tokenId}`
           );
         })
-        .catch((err) => {
+        .catch((err: any) => {
           console.error("failed to claim", err);
         })
         .finally(() => {

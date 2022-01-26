@@ -13,9 +13,7 @@ import {
   Box,
   Select,
   SimpleGrid,
-  HStack,
   VStack,
-  Icon,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -23,7 +21,6 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-  Spinner,
   Text,
   Progress,
   useToast,
@@ -44,11 +41,11 @@ import { Web3Context } from "../../../contexts/Web3Provider";
 import { GITHUB_HOST, TWITTER_HOST } from "../../../core/constants";
 import { COUNTRIES } from "../../../core/constants/countries";
 import { emojis } from "../../../core/constants/emojis";
+import { Project } from "../../../core/types";
 import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
 import ControlledSelect from "../../Inputs/ControlledSelect";
 import CenteredFrame from "../../layout/CenteredFrame";
 import Card from "../Card";
-import IconWithState from "../IconWithState";
 import NotConnectedCard from "../NotConnectedCard";
 
 import AddGitHubAccountScreen from "./AddGithubAccountScreen";
@@ -138,9 +135,10 @@ const ProfileForm = ({
               }
             }
           } else if (key === "affiliations") {
+            const affiliations = value as string[];
             const foundProjects = data.getAllProjects
-              .filter((project) => value.includes(project.id))
-              .map((project) => ({
+              .filter((project: Project) => affiliations.includes(project.id))
+              .map((project: Project) => ({
                 label: project.name,
                 value: project.id,
               }));

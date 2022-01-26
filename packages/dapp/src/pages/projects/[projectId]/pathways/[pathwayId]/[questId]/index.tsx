@@ -41,6 +41,7 @@ import ClaimTokenHolderForm from "../../../../../../components/projects/quests/t
 import { ceramicCoreFactory } from "../../../../../../core/ceramic";
 import { streamIdToUrl, streamUrlToId } from "../../../../../../core/helpers";
 import useCustomColor from "../../../../../../core/hooks/useCustomColor";
+import { usePageMarkdownTheme } from "../../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../../core/hooks/useTokenList";
 import { PROJECT_BY_ID_QUERY } from "../../../../../../graphql/projects";
 import Container from "components/layout/Container";
@@ -120,6 +121,7 @@ function QuestPage({
 }: any) {
   const { t } = useTranslation("common");
   const { getRewardCurrency } = useTokenList();
+  const questMarkdownTheme = usePageMarkdownTheme();
 
   const { account } = useContext(Web3Context);
   const { getTextColor, getColoredText } = useCustomColor();
@@ -201,58 +203,7 @@ function QuestPage({
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
-                  components={ChakraUIRenderer({
-                    h1: (props) => {
-                      const { children } = props;
-                      return (
-                        <Heading
-                          py="2"
-                          as="h1"
-                          size="xl"
-                          color={getColoredText}
-                        >
-                          {children}
-                        </Heading>
-                      );
-                    },
-                    h2: (props) => {
-                      const { children } = props;
-                      return (
-                        <Heading
-                          py="2"
-                          as="h2"
-                          size="lg"
-                          color={getColoredText}
-                        >
-                          {children}
-                        </Heading>
-                      );
-                    },
-                    h3: (props) => {
-                      const { children } = props;
-                      return (
-                        <Heading py="2" as="h3" size="md" color={getTextColor}>
-                          {children}
-                        </Heading>
-                      );
-                    },
-                    h4: (props) => {
-                      const { children } = props;
-                      return (
-                        <Heading py="2" as="h4" size="md" color={getTextColor}>
-                          {children}
-                        </Heading>
-                      );
-                    },
-                    p: (props) => {
-                      const { children } = props;
-                      return (
-                        <Text w="full" fontSize="xl">
-                          {children}
-                        </Text>
-                      );
-                    },
-                  })}
+                  components={ChakraUIRenderer(questMarkdownTheme)}
                   children={description}
                   skipHtml
                 />
