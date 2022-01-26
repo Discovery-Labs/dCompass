@@ -1,5 +1,5 @@
 import { Button, Text, VStack } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { namespaces } from "../../../../core/constants";
 import NETWORKS from "../../../../core/networks";

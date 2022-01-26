@@ -44,7 +44,6 @@ import CardMedia from "../../../components/custom/CardMedia";
 import ProfileForm from "../../../components/custom/profile/ProfileForm";
 import SocialLinks from "../../../components/custom/SocialLinks";
 import BreadcrumbItems from "../../../components/layout/BreadcrumbItems";
-import QuestCard from "../../../components/projects/quests/QuestCard";
 import { streamUrlToId } from "../../../core/helpers";
 import { usePageMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import { Tag } from "../../../core/types";
@@ -91,19 +90,6 @@ export const getServerSideProps: GetServerSideProps<
       redirect: { destination: "/404", permanent: true },
     };
   }
-};
-
-const QuestData = {
-  logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
-  completed: "completed",
-  project: "alpha",
-  owner: "huxwell.eth",
-  name: "Project Alpha",
-  description:
-    "This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.",
-  website: "https://www.google.com",
-  network: "ethereum",
-  reward: "200 xp",
 };
 
 function ProjectPage({
@@ -256,9 +242,10 @@ function ProjectPage({
             <VStack w="full" align="flex-start">
               <ReactMarkdown
                 components={ChakraUIRenderer(projectMarkdownTheme)}
-                children={description}
                 skipHtml
-              />
+              >
+                {description}
+              </ReactMarkdown>
             </VStack>
           </TabPanel>
           <TabPanel px="0">
@@ -271,8 +258,9 @@ function ProjectPage({
                 </TabList>
                 {isOwner && (
                   <NextLink
-                    href={`/projects/${id.split("://")[1]
-                      }/pathways/add-pathway/`}
+                    href={`/projects/${
+                      id.split("://")[1]
+                    }/pathways/add-pathway/`}
                     passHref
                   >
                     <Button variant="outline" leftIcon={<AddIcon />}>
@@ -316,9 +304,7 @@ function ProjectPage({
                   </TabPanel>
                 )}
                 <TabPanel>
-                  <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-                    <QuestCard key={QuestData.name} quest={QuestData} />
-                  </SimpleGrid>
+                  <SimpleGrid columns={[1, 2, 2, 3]} spacing={10} />
                 </TabPanel>
               </TabPanels>
             </Tabs>
@@ -327,6 +313,7 @@ function ProjectPage({
             <SimpleGrid columns={3} spacing={4}>
               {squads.map((squad: any) => (
                 <CardMedia
+                  key={squad.id}
                   h="fit-content"
                   src={`https://ipfs.io/ipfs/${squad.image}`}
                 >
@@ -367,9 +354,7 @@ function ProjectPage({
           </TabPanel>
 
           <TabPanel>
-            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              <QuestCard key={QuestData.name} quest={QuestData} />
-            </SimpleGrid>
+            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10} />
           </TabPanel>
         </TabPanels>
       </Tabs>

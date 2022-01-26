@@ -25,15 +25,7 @@ import {
   Progress,
   useToast,
 } from "@chakra-ui/react";
-import { useTranslation } from "next-i18next";
-import NextLink from "next/link";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { SiGithub, SiTwitter } from "react-icons/si";
 
@@ -53,7 +45,6 @@ import AddTwitterAccountScreen from "./AddTwitterAccountScreen";
 
 const ProfileForm = ({
   submitButtonLabel = "Save",
-  projectId,
   projectName,
   onCloseForm,
 }: {
@@ -63,8 +54,8 @@ const ProfileForm = ({
   onCloseForm?: () => void;
 }) => {
   const toast = useToast();
-  const { t } = useTranslation();
   const { account, self } = useContext(Web3Context);
+  const accentDarkColor = "accentDark.300";
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isTwitterOpen,
@@ -95,7 +86,6 @@ const ProfileForm = ({
       setIsLoadingProfile(true);
       if (account && self && data?.getAllProjects) {
         const result = await self.get("basicProfile");
-        console.log(result);
         const webAccounts = await self.get("alsoKnownAs");
         if (webAccounts?.accounts && webAccounts.accounts.length > 0) {
           const githubAccount = webAccounts.accounts.find(
@@ -172,7 +162,6 @@ const ProfileForm = ({
   }, []);
 
   const onSubmit = async (values: Record<string, any>) => {
-    console.log(values);
     const formData = new FormData();
     formData.append("type", "image/*");
     const [imageFile] = values.image;
@@ -194,7 +183,6 @@ const ProfileForm = ({
         });
 
       ["image", "background"].forEach((key) => {
-        console.log(cids[key]);
         if (cids[key]) {
           values[key] = {
             original: {
@@ -217,7 +205,6 @@ const ProfileForm = ({
     if (!backgroundFile) {
       delete values.background;
     }
-    console.log("af", values.affiliations);
     await self.client.dataStore.merge("basicProfile", {
       ...values,
       affiliations: values.affiliations.map(
@@ -240,7 +227,7 @@ const ProfileForm = ({
     });
   };
 
-  if (error) return `Error! ${error?.message}`;
+  if (error) return <Box>{error.message}</Box>;
 
   return account ? (
     <Box maxWidth={1100} transition="0.5s ease-out">
@@ -285,7 +272,7 @@ const ProfileForm = ({
                       w="8"
                       h="8"
                       as={SiGithub}
-                      _hover={{ color: "accentDark.300" }}
+                      _hover={{ color: accentDarkColor }}
                     />
                   </Link>
                 ) : (
@@ -298,7 +285,7 @@ const ProfileForm = ({
                       h="8"
                       as={SiGithub}
                       onClick={onOpen}
-                      _hover={{ color: "accentDark.300" }}
+                      _hover={{ color: accentDarkColor }}
                     />
                     <Modal onClose={onClose} isOpen={isOpen} size="4xl">
                       <ModalOverlay />
@@ -328,7 +315,7 @@ const ProfileForm = ({
                       w="8"
                       h="8"
                       as={SiTwitter}
-                      _hover={{ color: "accentDark.300" }}
+                      _hover={{ color: accentDarkColor }}
                     />
                   </Link>
                 ) : (
@@ -341,7 +328,7 @@ const ProfileForm = ({
                       h="8"
                       as={SiTwitter}
                       onClick={onTwitterOpen}
-                      _hover={{ color: "accentDark.300" }}
+                      _hover={{ color: accentDarkColor }}
                     />
                     <Modal
                       onClose={onTwitterClose}

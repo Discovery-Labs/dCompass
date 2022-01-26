@@ -39,7 +39,7 @@ const PathwayImageDropzone = ({
     [setValue]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
     onDrop,
   });

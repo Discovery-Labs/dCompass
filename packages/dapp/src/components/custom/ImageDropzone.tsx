@@ -24,8 +24,8 @@ const ImageDropzone = ({
   const [files, setFiles] = useState([]);
   const fieldOptions = isRequired
     ? {
-      required: "This is required",
-    }
+        required: "This is required",
+      }
     : {};
 
   const onDrop = useCallback(

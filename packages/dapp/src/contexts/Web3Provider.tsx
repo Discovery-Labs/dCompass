@@ -217,7 +217,7 @@ const Web3Provider = ({ children }: { children: any }) => {
 
     const identityLinkService = new IdentityLink(
       process.env.NEXT_PUBLIC_CERAMIC_VERIFICATION_SERVER_URL ||
-      "https://verifications-clay.3boxlabs.com"
+        "https://verifications-clay.3boxlabs.com"
     );
     setIdentityLink(identityLinkService);
 

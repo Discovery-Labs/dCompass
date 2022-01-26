@@ -12,7 +12,6 @@ import {
   VStack,
   Stack,
   Badge,
-  Link,
   Icon,
   SimpleGrid,
   Image,
@@ -37,6 +36,7 @@ import Container from "../../../../components/layout/Container";
 import { Web3Context } from "../../../../contexts/Web3Provider";
 import { splitCIDS } from "../../../../core/helpers";
 import useCustomColor from "../../../../core/hooks/useCustomColor";
+import { usePageMarkdownTheme } from "../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../core/hooks/useTokenList";
 import { Tag as TagType } from "../../../../core/types";
 import {
@@ -105,7 +105,8 @@ function ReviewProjectPage({
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
-  const { getColoredText, getTextColor } = useCustomColor();
+  const { getColoredText } = useCustomColor();
+  const projectMarkdownTheme = usePageMarkdownTheme();
 
   useEffect(() => {
     async function init() {
@@ -180,48 +181,6 @@ function ReviewProjectPage({
       console.log({ receipt, isMinted });
     }
     return null;
-  };
-  const projectMarkdownTheme = {
-    h1: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h1" size="xl" color={getColoredText}>
-          {children}
-        </Heading>
-      );
-    },
-    h2: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h2" size="lg" color={getColoredText}>
-          {children}
-        </Heading>
-      );
-    },
-    h3: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h3" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    h4: (props) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h4" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    p: (props) => {
-      const { children } = props;
-      return (
-        <Text w="full" fontSize="xl">
-          {children}
-        </Text>
-      );
-    },
   };
   return isReviewer ? (
     <Container>
@@ -298,15 +257,17 @@ function ReviewProjectPage({
         />
         <ReactMarkdown
           components={ChakraUIRenderer(projectMarkdownTheme)}
-          children={description}
           skipHtml
-        />
+        >
+          {description}
+        </ReactMarkdown>
         <Heading as="h3" size="lg" py="4">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
         </Heading>
         <SimpleGrid columns={3} spacing={4}>
           {squads.map((squad: any) => (
             <CardMedia
+              key={squad.id}
               h="fit-content"
               src={`https://ipfs.io/ipfs/${squad.image}`}
             >
@@ -322,7 +283,7 @@ function ReviewProjectPage({
               </HStack>
               <VStack align="center" maxW="full">
                 {squad.members.map((member: string) => (
-                  <HStack w="full">
+                  <HStack w="full" key={member}>
                     {member && <Blockies seed={member} className="blockies" />}
                     <Text ml="2" fontSize="sm" isTruncated>
                       {member}

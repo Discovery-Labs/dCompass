@@ -1,6 +1,7 @@
-import { ConnectorUpdate } from "@web3-react/types";
 import { AbstractConnector } from "@web3-react/abstract-connector";
+import { ConnectorUpdate } from "@web3-react/types";
 import invariant from "tiny-invariant";
+
 interface NetworkConnectorArguments {
   urls: { [chainId: number]: string };
   defaultChainId?: number;
@@ -32,14 +33,21 @@ interface BatchItem {
 
 export class MiniRpcProvider implements AsyncSendable {
   public readonly isMetaMask: false = false;
+
   public readonly chainId: number;
+
   public readonly url: string;
+
   public readonly host: string;
+
   public readonly path: string;
+
   public readonly batchWaitTimeMs: number;
 
   private nextId = 1;
+
   private batchTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
   private batch: BatchItem[] = [];
 
   constructor(chainId: number, url: string, batchWaitTimeMs?: number) {
@@ -54,7 +62,7 @@ export class MiniRpcProvider implements AsyncSendable {
 
   public readonly clearBatch = async () => {
     console.debug("Clearing batch", this.batch);
-    const batch = this.batch;
+    const { batch } = this;
     this.batch = [];
     this.batchTimeoutId = null;
     let response: Response;
@@ -170,6 +178,7 @@ export class MiniRpcProvider implements AsyncSendable {
 
 export class NetworkConnector extends AbstractConnector {
   private readonly providers: { [chainId: number]: MiniRpcProvider };
+
   private currentChainId: number;
 
   constructor({ urls, defaultChainId }: NetworkConnectorArguments) {
@@ -217,7 +226,5 @@ export class NetworkConnector extends AbstractConnector {
     return null;
   }
 
-  public deactivate() {
-    return;
-  }
+  public deactivate() {}
 }

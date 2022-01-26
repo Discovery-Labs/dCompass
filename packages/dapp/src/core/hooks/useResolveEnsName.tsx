@@ -1,8 +1,6 @@
 import { providers, utils } from "ethers";
 import { useState, useEffect } from "react";
 
-import NETWORKS from "../networks";
-
 /**
  * @internal
  *

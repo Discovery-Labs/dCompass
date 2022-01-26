@@ -1,5 +1,4 @@
 import { Flex, VStack, Text } from "@chakra-ui/react";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import UserNFTs from "components/custom/dashboard/UserNFTs";
@@ -9,7 +8,6 @@ import Container from "components/layout/Container";
 import useCustomColor from "core/hooks/useCustomColor";
 
 function Dashboard() {
-  const { t } = useTranslation("common");
   const { getTextColor } = useCustomColor();
   return (
     <NotConnectedWrapper>

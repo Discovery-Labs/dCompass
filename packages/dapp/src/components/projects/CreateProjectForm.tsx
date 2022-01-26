@@ -11,8 +11,6 @@ import {
   Heading,
   Input,
   Spinner,
-  Textarea,
-  Button,
   InputGroup,
   InputLeftAddon,
   Text,

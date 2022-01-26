@@ -30,7 +30,7 @@ function BreadcrumbItems({
         separator={<ChevronRightIcon color="purple.200" />}
       >
         {breadCrumbs.map(({ href, label, isCurrentPage = false }) => (
-          <BreadcrumbItem isCurrentPage={isCurrentPage}>
+          <BreadcrumbItem key={href + label} isCurrentPage={isCurrentPage}>
             <NextLink href={href}>
               <BreadcrumbLink
                 color={isCurrentPage ? getPrimaryColor : getTextColor}

@@ -12,11 +12,9 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Spinner,
   Text,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { supportedNetworks } from "../../contexts/Web3Provider";
 import { switchToNetwork } from "../../core/connectors";

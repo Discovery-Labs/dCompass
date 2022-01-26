@@ -24,17 +24,17 @@ function PathwayFormWrapper() {
   const {
     reset,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useFormContext();
 
   async function onSubmit(values: Record<string, any>) {
     const { prerequisites, ...pathwayOptions } = values;
     const prereqs = prerequisites
       ? {
-        prerequisites: prerequisites.map(
-          (prereq: { value: string; label: string }) => prereq.value
-        ),
-      }
+          prerequisites: prerequisites.map(
+            (prereq: { value: string; label: string }) => prereq.value
+          ),
+        }
       : {};
 
     const serlializedValues = {
@@ -91,6 +91,7 @@ function PathwayFormWrapper() {
         },
       },
     });
+    console.log({ addedPathway });
     return router.push(`/projects/${router.query.projectId}/`);
   }
 

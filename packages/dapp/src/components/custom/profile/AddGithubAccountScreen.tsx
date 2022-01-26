@@ -65,6 +65,7 @@ function AddGitHubAccountScreen({
       githubUsername: string,
       challengeCode: string
     ) => {
+      // eslint-disable-next-line prefer-const
       let [attestation, accounts] = await Promise.all([
         (async () => {
           const jws = await self.client.ceramic.did?.createJWS({
@@ -78,8 +79,6 @@ function AddGitHubAccountScreen({
         self.get("alsoKnownAs"),
       ]);
 
-      console.log({ attestation, accounts });
-
       const existing = accounts.accounts
         ? findGitHub(accounts, githubUsername)
         : null;
@@ -91,7 +90,6 @@ function AddGitHubAccountScreen({
         existing.attestations = existing.attestations ?? [];
         existing.attestations.push({ "did-jwt-vc": attestation });
       }
-      console.log({ accounts });
       await self.set("alsoKnownAs", accounts);
       return accounts;
     };

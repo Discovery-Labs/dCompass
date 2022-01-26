@@ -168,28 +168,28 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const finalValues =
       questType === "quiz"
         ? {
-          ...values,
-          questions: values.questions.map(
-            ({ question, options, answer }: QuestionFormItemType) => ({
-              question,
-              choices: options.map((option) => option.value),
-              answer,
-            })
-          ),
-          image: cids[values.name],
-          rewardCurrency: values.rewardCurrency.value,
-          rewardAmount: parseFloat(values.rewardAmount),
-          rewardUserCap: parseInt(values.rewardUserCap, 10),
-          pathwayId: `ceramic://${router.query.pathwayId}`,
-        }
+            ...values,
+            questions: values.questions.map(
+              ({ question, options, answer }: QuestionFormItemType) => ({
+                question,
+                choices: options.map((option) => option.value),
+                answer,
+              })
+            ),
+            image: cids[values.name],
+            rewardCurrency: values.rewardCurrency.value,
+            rewardAmount: parseFloat(values.rewardAmount),
+            rewardUserCap: parseInt(values.rewardUserCap, 10),
+            pathwayId: `ceramic://${router.query.pathwayId}`,
+          }
         : {
-          ...values,
-          rewardCurrency: values.rewardCurrency.value,
-          image: cids[values.name],
-          rewardAmount: parseFloat(values.rewardAmount),
-          rewardUserCap: parseInt(values.rewardUserCap, 10),
-          pathwayId: `ceramic://${router.query.pathwayId}`,
-        };
+            ...values,
+            rewardCurrency: values.rewardCurrency.value,
+            image: cids[values.name],
+            rewardAmount: parseFloat(values.rewardAmount),
+            rewardUserCap: parseInt(values.rewardUserCap, 10),
+            pathwayId: `ceramic://${router.query.pathwayId}`,
+          };
 
     const questDoc = await self.client.dataModel.createTile(
       "Quest",

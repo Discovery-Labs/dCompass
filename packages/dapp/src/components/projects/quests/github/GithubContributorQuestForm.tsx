@@ -1,5 +1,5 @@
 import { Button, Text, VStack } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 function GithubContributorQuestForm({ githubOrgId, questId }: any) {
   const [isLoading, setIsLoading] = useState(false);

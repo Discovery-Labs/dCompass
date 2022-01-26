@@ -1,4 +1,5 @@
 import { Web3Provider } from "@ethersproject/providers";
+
 import { SupportedChainId } from "./chains";
 
 const NETWORK_POLLING_INTERVALS: { [chainId: number]: number } = {

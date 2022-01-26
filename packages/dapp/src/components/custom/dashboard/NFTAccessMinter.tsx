@@ -2,7 +2,7 @@ import { Box, Button, Center, Flex, Text, VStack } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import NFTCard from "components/custom/dashboard/NFTCard";
 import CenteredFrame from "components/layout/CenteredFrame";

@@ -21,14 +21,13 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useEffect, useState } from "react";
 
 import Container from "../../components/layout/Container";
 import QuestCard from "../../components/projects/quests/QuestCard";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 export type TagItem = {
   name: string;

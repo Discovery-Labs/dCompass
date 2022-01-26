@@ -102,7 +102,7 @@ function CreateProjectStepper() {
 
     const newProjectDoc = await self.client.dataModel.createTile(
       "Project",
-      { ...serializedProject, createdAt: new Date().toISOString() },,
+      { ...serializedProject, createdAt: new Date().toISOString() },
       {
         pin: true,
       }

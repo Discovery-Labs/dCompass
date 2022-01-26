@@ -144,9 +144,10 @@ function QuestCard({
           <ReactMarkdown
             className="card-markdown-quest-card"
             components={ChakraUIRenderer(questCardMarkdownTheme)}
-            children={quest.description}
             skipHtml
-          />
+          >
+            {quest.description}
+          </ReactMarkdown>
         </VStack>
         <Divider />
 

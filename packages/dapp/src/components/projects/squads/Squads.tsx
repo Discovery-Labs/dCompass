@@ -8,7 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 // import { useRouter } from "next/router";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 
 import MembersFieldArray from "./MembersFieldArray";
 import SquadDropzone from "./SquadDropzone";

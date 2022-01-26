@@ -10,8 +10,6 @@ import {
   Link,
   Heading,
   VStack,
-  HeadingProps,
-  TextProps,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useTranslation } from "next-i18next";
@@ -22,7 +20,7 @@ import ReactMarkdown from "react-markdown";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
 import { useCardMarkdownTheme } from "../../core/hooks/useMarkdownTheme";
-import { Project, Tag } from "../../core/types";
+import { Project } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
 
 const ProjectCard = ({
@@ -65,9 +63,10 @@ const ProjectCard = ({
         <ReactMarkdown
           className="card-markdown"
           components={ChakraUIRenderer(projectCardMarkdownTheme)}
-          children={project.description}
           skipHtml
-        />
+        >
+          {project.description}
+        </ReactMarkdown>
       </VStack>
 
       <HStack spacing={7}>

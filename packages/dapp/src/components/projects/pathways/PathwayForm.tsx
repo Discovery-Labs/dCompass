@@ -29,7 +29,7 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 });
 
 export default function PathwayForm() {
-  const router = useRouter();
+  // const router = useRouter();
   const { tokens } = useTokenList();
   const {
     control,

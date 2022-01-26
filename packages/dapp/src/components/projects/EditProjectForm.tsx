@@ -13,7 +13,6 @@ import {
   AlertTitle,
   Spinner,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { useFormContext } from "react-hook-form";
 
 import { Tag } from "../../core/types";
@@ -24,7 +23,6 @@ import ControlledSelect from "../Inputs/ControlledSelect";
 import LogoDropzone from "./LogoDropzone";
 
 const EditProjectForm: React.FunctionComponent = () => {
-  const router = useRouter();
   const {
     register,
     setValue,
@@ -36,9 +34,6 @@ const EditProjectForm: React.FunctionComponent = () => {
 
   const currentValues = watch();
 
-  function goBack() {
-    router.back();
-  }
   if (loading) return <Spinner />;
   if (error)
     return (

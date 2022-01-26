@@ -12,7 +12,6 @@ import {
   ModalOverlay,
   useDisclosure,
   VStack,
-  Text,
 } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";

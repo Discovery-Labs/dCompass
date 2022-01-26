@@ -36,7 +36,6 @@ import GithubContributorQuestForm from "../../../../../../components/projects/qu
 import QuizForm from "../../../../../../components/projects/quests/quizz/QuizForm";
 import SnapshotVoterForm from "../../../../../../components/projects/quests/snapshot/SnapshotVoterForm";
 import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
-import ClaimTokenOwnerForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
 import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
 import { ceramicCoreFactory } from "../../../../../../core/ceramic";
 import { streamIdToUrl, streamUrlToId } from "../../../../../../core/helpers";
@@ -204,9 +203,10 @@ function QuestPage({
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
                   components={ChakraUIRenderer(questMarkdownTheme)}
-                  children={description}
                   skipHtml
-                />
+                >
+                  {description}
+                </ReactMarkdown>
               </VStack>
             </TabPanel>
 

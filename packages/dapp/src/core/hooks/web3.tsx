@@ -67,16 +67,22 @@ export function useInactiveListener(suppress = false) {
     if (ethereum && ethereum.on && !error && !suppress) {
       const handleChainChanged = () => {
         // eat errors
-        activate(injected, undefined, true).catch((error) => {
-          console.error("Failed to activate after chain changed", error);
+        activate(injected, undefined, true).catch((activationError) => {
+          console.error(
+            "Failed to activate after chain changed",
+            activationError
+          );
         });
       };
 
       const handleAccountsChanged = (accounts: string[]) => {
         if (accounts.length > 0) {
           // eat errors
-          activate(injected, undefined, true).catch((error) => {
-            console.error("Failed to activate after accounts changed", error);
+          activate(injected, undefined, true).catch((accountsChangedError) => {
+            console.error(
+              "Failed to activate after accounts changed",
+              accountsChangedError
+            );
           });
         }
       };

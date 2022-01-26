@@ -13,7 +13,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 
 import OptionsFieldArray from "./OptionsFieldArray";
 
-export default function Questions({ control, register, setValue }: any) {
+export default function Questions({ control, register }: any) {
   // const router = useRouter();
 
   const {

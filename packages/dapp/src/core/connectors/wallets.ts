@@ -1,8 +1,10 @@
 import { AbstractConnector } from "@web3-react/abstract-connector";
-import { injected, portis, walletconnect, walletlink } from ".";
+
 import INJECTED_ICON_URL from "../../../public/arrow-right.svg";
 import COINBASE_ICON_URL from "../../../public/coinbaseWalletIcon.svg";
 import WALLETCONNECT_ICON_URL from "../../../public/walletConnectIcon.svg";
+
+import { injected, portis, walletconnect, walletlink } from ".";
 
 export interface WalletInfo {
   connector?: AbstractConnector;

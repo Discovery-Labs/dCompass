@@ -1,6 +1,6 @@
 import DEFAULT_TOKEN_LIST from "@uniswap/default-token-list";
 import { useWeb3React } from "@web3-react/core";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 type Token = {
   chainId: number;

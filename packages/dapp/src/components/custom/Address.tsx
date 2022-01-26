@@ -19,9 +19,7 @@ import {
   useDisclosure,
   useClipboard,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
 import Blockies from "react-blockies";
-import { GiTwoCoins } from "react-icons/gi";
 import { MdCheckCircle, MdContentCopy, MdExitToApp } from "react-icons/md";
 import { RiExternalLinkFill, RiHandCoinLine } from "react-icons/ri";
 

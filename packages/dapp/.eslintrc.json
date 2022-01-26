@@ -1,7 +1,26 @@
 {
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "plugins": ["@typescript-eslint"],
   "extends": [
+    "next/core-web-vitals",
+    "prettier",
     "sznm/react",
     "plugin:react/jsx-runtime",
-    "plugin:@next/next/recommended"
-  ]
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": 2,
+    "@typescript-eslint/no-explicit-any": 1,
+    "@typescript-eslint/explicit-module-boundary-types": 0
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  }
 }

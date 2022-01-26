@@ -137,15 +137,14 @@ function PathwayCard({
         );
 
       // get return values or events
-      const receipt = await voteForApprovalTx.wait(2);
+      const receipt = await voteForApprovalTx.wait(1);
+      console.log({ receipt });
       const statusInt = await contracts.pathwayNFTContract.status(id);
       const statusString = await contracts.pathwayNFTContract.statusStrings(
         statusInt
       );
       console.log({ statusString });
       setStatus(statusString);
-
-      // console.log({ receipt, statusString });
     }
     return null;
   };
@@ -202,7 +201,8 @@ function PathwayCard({
       );
 
       // get return values or events
-      // const receipt = await createTokenTx.wait(2);
+      const receipt = await createTokenTx.wait(1);
+      console.log({ receipt });
       const isMinted = await contracts.pathwayNFTContract.pathwayMinted(id);
       if (isMinted) {
         setStatus("MINTED");
@@ -224,9 +224,10 @@ function PathwayCard({
         <ReactMarkdown
           className="card-markdown"
           components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
-          children={pathway.description}
           skipHtml
-        />
+        >
+          {pathway.description}
+        </ReactMarkdown>
       </VStack>
       <VStack w="full" align="left">
         <HStack>

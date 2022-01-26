@@ -1,10 +1,12 @@
-import { BigNumber, utils } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { PortisConnector } from "@web3-react/portis-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { WalletLinkConnector } from "@web3-react/walletlink-connector";
+import { BigNumber, utils } from "ethers";
+
 import UNISWAP_LOGO_URL from "../../../public/uniswap-logo.svg";
+
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from "./chains";
 import getLibrary from "./getLibrary";
 import { NetworkConnector } from "./NetworkConnector";

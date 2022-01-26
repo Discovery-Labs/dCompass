@@ -14,7 +14,6 @@ import {
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
 import Card from "components/custom/Card";
-import NotConnectedCard from "components/custom/NotConnectedCard";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import CenteredFrame from "components/layout/CenteredFrame";
 import EditProjectForm from "components/projects/EditProjectForm";
