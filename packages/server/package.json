@@ -1,6 +1,6 @@
 {
   "name": "@discovery-dao/server",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Server for services such as Ceramic and Web3 & NFT Storage",
   "author": "Super Shadowy Coders",
   "private": true,
