@@ -9,7 +9,7 @@ import UNISWAP_LOGO_URL from "../../../public/uniswap-logo.svg";
 
 import { ALL_SUPPORTED_CHAIN_IDS, SupportedChainId } from "./chains";
 import getLibrary from "./getLibrary";
-import { NetworkConnector } from "./NetworkConnector";
+import NetworkConnector from "./NetworkConnector";
 
 interface SwitchNetworkArguments {
   library: Web3Provider | undefined;
