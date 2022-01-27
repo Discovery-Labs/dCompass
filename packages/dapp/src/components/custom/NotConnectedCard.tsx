@@ -17,6 +17,7 @@ function NotConnectedCard() {
     <VStack align="left" w="100%" spacing="0.5rem">
       <Heading fontSize="1.5rem">{t("wallet-not-connected")}</Heading>
       <Text pb="2rem">{t("wallet-not-connected-desc")}</Text>
+
       <Box justifyContent="center">
         <Button
           onClick={handleConnect}

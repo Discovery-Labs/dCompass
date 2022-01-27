@@ -42,7 +42,7 @@ function UserNFTs() {
   }, [account, library]);
 
   return (
-    <SimpleGrid columns={[2, null, 3]} spacing="40px">
+    <SimpleGrid w="full" columns={[1, 2, 3]} spacing="40px">
       {userNFTs &&
         userNFTs.length > 0 &&
         userNFTs.map((id) => {

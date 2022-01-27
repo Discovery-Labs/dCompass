@@ -6,7 +6,7 @@ function CardMedia({ children, src, imageHeight = "120px", ...others }: any) {
   const { getOverBgColor } = useCustomColor();
   return (
     <VStack
-      layerStyle="no-border-card"
+      layerStyle="no-border-hover3"
       bg={getOverBgColor}
       h="lg"
       spacing="4"

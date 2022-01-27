@@ -47,7 +47,6 @@ const LinkItem = ({ href, _target, children, ...props }: any) => {
   return (
     <NextLink href={href} passHref>
       <Link
-        p={2}
         color={isActive ? getPrimaryColor : getTextColor}
         _target={_target}
         _hover={{ color: getPrimaryColor, textDecoration: "none" }}
@@ -64,7 +63,8 @@ const LinkItems = () => {
     <>
       <LinkItem href="/">Projects</LinkItem>
       <LinkItem href="/quests">Quests</LinkItem>
-      <LinkItem href="/dashboard">Dashboard</LinkItem>
+      <LinkItem href="/badges">Badges</LinkItem>
+      {/* <LinkItem href="/dashboard">Dashboard</LinkItem> */}
     </>
   );
 };
@@ -72,7 +72,10 @@ const LinkItems = () => {
 const Navbar = (props: any) => {
   const { account, isReviewer } = useContext(Web3Context);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { getOverBgColor } = useCustomColor();
+  const { getOverBgColor, getPrimaryColor } = useCustomColor();
+
+  const moreLink =
+    "https://discoverydao.notion.site/discoverydao/Discovery-DAO-33c1ab96a7e04865bb0b8a29d66ee0e6";
 
   return (
     <Box
@@ -105,7 +108,16 @@ const Navbar = (props: any) => {
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             <LinkItem href="/">Projects</LinkItem>
             <LinkItem href="/quests">Quests</LinkItem>
-            <LinkItem href="/dashboard">Dashboard</LinkItem>
+            <LinkItem href="/badges">Badges</LinkItem>
+            <Link
+              href={moreLink}
+              target="_blank"
+              _hover={{ color: getPrimaryColor, textDecoration: "none" }}
+              {...props}
+            >
+              More
+            </Link>
+            {/* <LinkItem href="/dashboard">Dashboard</LinkItem> */}
           </HStack>
         </HStack>
         <Spacer />

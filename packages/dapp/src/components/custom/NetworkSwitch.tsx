@@ -52,7 +52,7 @@ function NetworkSwitch() {
     [library]
   );
   return chainId && account ? (
-    <HStack minW="230px">
+    <HStack minW="180px">
       <Menu>
         <MenuButton
           disabled={!implements3085}

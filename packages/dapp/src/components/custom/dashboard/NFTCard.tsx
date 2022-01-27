@@ -18,6 +18,7 @@ function NFTCard({ contractAddress, tokenId, size = "xs" }: NFTProps) {
 
   return (
     <VStack
+      layerStyle="no-border-hover2"
       justify="space-between"
       maxW={size}
       borderRadius="lg"
@@ -25,7 +26,6 @@ function NFTCard({ contractAddress, tokenId, size = "xs" }: NFTProps) {
       overflow="hidden"
     >
       <Image
-        h="sm"
         w="full"
         objectFit="cover"
         src={nft.image}
