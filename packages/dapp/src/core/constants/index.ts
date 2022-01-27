@@ -9,3 +9,4 @@ export const namespaces = {
   tezos: "Tezos",
   near: "Near",
 };
+export const REQUIRED_FIELD_LABEL = "This is required";

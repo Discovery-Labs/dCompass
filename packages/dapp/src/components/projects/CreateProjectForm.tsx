@@ -19,6 +19,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
+import { REQUIRED_FIELD_LABEL } from "../../core/constants";
 import { Tag } from "../../core/types";
 import { ALL_TAGS_QUERY } from "../../graphql/tags";
 import IconWithState from "../custom/IconWithState";
@@ -71,7 +72,7 @@ const CreateProjectForm = () => {
         <Input
           placeholder="Project name"
           {...register("name", {
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
             maxLength: {
               value: 150,
               message: "Maximum length should be 150",
@@ -90,7 +91,7 @@ const CreateProjectForm = () => {
           language="markdown"
           placeholder="Project description"
           {...register("description", {
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
           })}
           onChange={(e) => {
             const { name } = e.target;
@@ -117,7 +118,7 @@ const CreateProjectForm = () => {
           <Input
             placeholder="Website"
             {...register("website", {
-              required: "This is required",
+              required: REQUIRED_FIELD_LABEL,
               maxLength: {
                 value: 50,
                 message: "Maximum length should be 50",
@@ -138,7 +139,7 @@ const CreateProjectForm = () => {
         label="Tags"
         isMulti
         rules={{
-          required: "This is required",
+          required: REQUIRED_FIELD_LABEL,
         }}
         options={data.getAllTags.map(({ id, color, label }: Tag) => ({
           value: id,
@@ -152,7 +153,7 @@ const CreateProjectForm = () => {
         <Input
           placeholder="Whitepaper"
           {...register("whitepaper", {
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
             maxLength: {
               value: 150,
               message: "Maximum length should be 150",

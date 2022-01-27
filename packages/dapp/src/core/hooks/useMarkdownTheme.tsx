@@ -1,5 +1,4 @@
 import { Heading, HeadingProps, Text, TextProps } from "@chakra-ui/react";
-import React from "react";
 
 import useCustomColor from "./useCustomColor";
 
@@ -50,8 +49,10 @@ export const useCardMarkdownTheme = () => {
 };
 
 export const usePageMarkdownTheme = () => {
-  const { getColoredText, getTextColor } = useCustomColor();
+  const { getColoredText } = useCustomColor();
+  const cardMdTheme = useCardMarkdownTheme();
   return {
+    ...cardMdTheme,
     h1: (props: HeadingProps) => {
       const { children } = props;
       return (
@@ -66,30 +67,6 @@ export const usePageMarkdownTheme = () => {
         <Heading py="2" as="h2" size="lg" color={getColoredText}>
           {children}
         </Heading>
-      );
-    },
-    h3: (props: HeadingProps) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h3" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    h4: (props: HeadingProps) => {
-      const { children } = props;
-      return (
-        <Heading py="2" as="h4" size="md" color={getTextColor}>
-          {children}
-        </Heading>
-      );
-    },
-    p: (props: TextProps) => {
-      const { children } = props;
-      return (
-        <Text w="full" fontSize="xl">
-          {children}
-        </Text>
       );
     },
   };

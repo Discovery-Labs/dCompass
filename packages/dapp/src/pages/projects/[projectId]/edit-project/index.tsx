@@ -71,13 +71,13 @@ const steps = [
 
 type Project = {
   [x: string]: any;
-  id?: any;
-  isFeatured?: any;
-  createdAt?: any;
-  createdBy?: any;
-  updatedAt?: any;
-  updatedBy?: any;
-  tokenUris?: any;
+  id?: string;
+  isFeatured?: boolean;
+  createdAt?: string;
+  createdBy?: string;
+  updatedAt?: string;
+  updatedBy?: string;
+  tokenUris?: string[];
 };
 
 function EditProjectStepper(project: Project) {
@@ -94,6 +94,7 @@ function EditProjectStepper(project: Project) {
   });
 
   const {
+    id,
     isFeatured,
     createdAt,
     createdBy,
@@ -109,7 +110,7 @@ function EditProjectStepper(project: Project) {
         ...squad,
         members: squad.members.map((member: string) => ({ value: member })),
       })),
-    },
+    } as Record<string, any>,
   });
 
   async function onSubmit() {
@@ -126,7 +127,7 @@ function EditProjectStepper(project: Project) {
       }
     });
 
-    const currentProjectDoc = await self.client.ceramic.loadStream(project.id);
+    const currentProjectDoc = await self.client.ceramic.loadStream(id);
 
     let serializedProject = {
       ...values,
@@ -145,7 +146,7 @@ function EditProjectStepper(project: Project) {
     serializedProject = {
       ...serializedProject,
       logo: cids.logo ?? serializedProject.logo,
-      squads: values.squads.map((squad) => {
+      squads: values.squads.map((squad: any) => {
         const members = squad.members.map(
           (member: Record<string, any>) => member.value ?? member
         ) as string[];
@@ -159,7 +160,7 @@ function EditProjectStepper(project: Project) {
 
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
-        id: project.id,
+        id,
       }),
       account,
     ]);
@@ -168,7 +169,7 @@ function EditProjectStepper(project: Project) {
     const allProjects = await editProjectMutation({
       variables: {
         input: {
-          id: project.id,
+          id,
           ...serializedProject,
           editorSignature: signature.result,
         },

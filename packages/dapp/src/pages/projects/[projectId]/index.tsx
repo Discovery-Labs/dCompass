@@ -46,7 +46,7 @@ import SocialLinks from "../../../components/custom/SocialLinks";
 import BreadcrumbItems from "../../../components/layout/BreadcrumbItems";
 import { streamUrlToId } from "../../../core/helpers";
 import { usePageMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
-import { Tag } from "../../../core/types";
+import { Pathway, Tag } from "../../../core/types";
 import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
 import Container from "components/layout/Container";
@@ -133,6 +133,17 @@ function ProjectPage({
     );
   if (error) return `Loading error! ${error.message}`;
 
+  const renderPathways = (pathways: Pathway[]) => {
+    return pathways.map((pathway) => (
+      <PathwayCard
+        key={pathway.title}
+        pathway={pathway}
+        projectContributors={squads.flatMap(
+          ({ members }: { members: string[] }) => members
+        )}
+      />
+    ));
+  };
   return (
     <Container>
       <BreadcrumbItems
@@ -258,9 +269,9 @@ function ProjectPage({
                 </TabList>
                 {isOwner && (
                   <NextLink
-                    href={`/projects/${
-                      id.split("://")[1]
-                    }/pathways/add-pathway/`}
+                    href={`/projects/${streamUrlToId(
+                      id
+                    )}/pathways/add-pathway/`}
                     passHref
                   >
                     <Button variant="outline" leftIcon={<AddIcon />}>
@@ -273,33 +284,21 @@ function ProjectPage({
               <TabPanels>
                 <TabPanel>
                   <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-                    {data.getAllPathwaysByProjectId
-                      .filter((pathway: any) => !pathway.isPending)
-                      .map((pathway: any) => (
-                        <PathwayCard
-                          key={pathway.title}
-                          pathway={pathway}
-                          projectContributors={squads.flatMap(
-                            (squad: any) => squad.members
-                          )}
-                        />
-                      ))}
+                    {renderPathways(
+                      data.getAllPathwaysByProjectId.filter(
+                        (pathway: Pathway) => !pathway.isPending
+                      )
+                    )}
                   </SimpleGrid>
                 </TabPanel>
                 {isReviewer && (
                   <TabPanel>
                     <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-                      {data.getAllPathwaysByProjectId
-                        .filter((pathway: any) => pathway.isPending)
-                        .map((pathway: any) => (
-                          <PathwayCard
-                            key={pathway.title}
-                            pathway={pathway}
-                            projectContributors={squads.flatMap(
-                              (squad: any) => squad.members
-                            )}
-                          />
-                        ))}
+                      {renderPathways(
+                        data.getAllPathwaysByProjectId.filter(
+                          (pathway: Pathway) => pathway.isPending
+                        )
+                      )}
                     </SimpleGrid>
                   </TabPanel>
                 )}

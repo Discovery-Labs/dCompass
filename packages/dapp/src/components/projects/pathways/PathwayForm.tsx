@@ -17,9 +17,9 @@ import {
   Tag,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
 import { useFormContext } from "react-hook-form";
 
+import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
@@ -99,7 +99,7 @@ export default function PathwayForm() {
           <Input
             placeholder="Pathway title here..."
             {...register(`title`, {
-              required: "This is required",
+              required: REQUIRED_FIELD_LABEL,
               maxLength: {
                 value: 150,
                 message: "Maximum length should be 150",
@@ -118,7 +118,7 @@ export default function PathwayForm() {
           language="markdown"
           placeholder="Project description"
           {...register("description", {
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
           })}
           onChange={(e) => {
             const { name } = e.target;
@@ -149,7 +149,7 @@ export default function PathwayForm() {
             <NumberInputField
               placeholder=""
               {...register(`rewardAmount`, {
-                required: "This is required",
+                required: REQUIRED_FIELD_LABEL,
               })}
             />
             <NumberInputStepper>
@@ -167,7 +167,7 @@ export default function PathwayForm() {
           name="rewardCurrency"
           label="Reward currency"
           rules={{
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
           }}
           options={erc20Options}
           placeholder="WETH, DAI,..."
@@ -182,7 +182,7 @@ export default function PathwayForm() {
               roundedBottom="none"
               placeholder=""
               {...register(`rewardUserCap`, {
-                required: "This is required",
+                required: REQUIRED_FIELD_LABEL,
               })}
             />
             <NumberInputStepper>
@@ -214,7 +214,7 @@ export default function PathwayForm() {
         name="difficulty"
         label="Difficulty"
         rules={{
-          required: "This is required",
+          required: REQUIRED_FIELD_LABEL,
         }}
         options={difficultyOptions}
       />

@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+/* eslint-disable sonarjs/cognitive-complexity */
 import { useQuery } from "@apollo/client";
 import { EditIcon } from "@chakra-ui/icons";
 import {
@@ -369,6 +371,7 @@ function QuestPage({
               </HStack>
             </TabPanel>
             <TabPanel px="0">
+              {/* TODO: Make a wrapper component */}
               {type?.value === "quiz" && (
                 <QuizForm questions={questions} questId={id} />
               )}

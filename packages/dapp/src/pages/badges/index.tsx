@@ -18,8 +18,8 @@ import { MdCheckCircle, MdContentCopy } from "react-icons/md";
 
 import { Web3Context } from "../../contexts/Web3Provider";
 import Card from "components/custom/Card";
-import UserNFTs from "components/custom/nft/UserNFTs";
 import MembershipWrapper from "components/custom/MembershipWrapper";
+import UserNFTs from "components/custom/nft/UserNFTs";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import Container from "components/layout/Container";
 import useCustomColor from "core/hooks/useCustomColor";

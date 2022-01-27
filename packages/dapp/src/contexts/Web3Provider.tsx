@@ -7,7 +7,7 @@ import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 // import Authereum from "authereum";
 import { ethers } from "ethers";
-import React, { useReducer, useEffect, useCallback, useMemo } from "react";
+import { useReducer, useEffect, useCallback, useMemo } from "react";
 import Web3Modal from "web3modal";
 
 import { ceramicCoreFactory, CERAMIC_TESTNET } from "../core/ceramic";

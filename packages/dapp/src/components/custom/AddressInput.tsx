@@ -1,5 +1,5 @@
 import { Alert, Input, Text, VStack } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import { useWatch } from "react-hook-form";
 

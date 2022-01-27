@@ -77,6 +77,7 @@ function AddTwitterAccountScreen({ onCloseModal }: Props) {
       twitterUsername: string,
       challengeCode: string
     ) => {
+      // eslint-disable-next-line prefer-const
       let [attestation, accounts] = await Promise.all([
         (async () => {
           const jws = await self.client.ceramic.did?.createJWS({

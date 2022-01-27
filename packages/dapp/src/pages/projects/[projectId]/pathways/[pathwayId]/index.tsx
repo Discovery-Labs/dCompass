@@ -141,6 +141,20 @@ function PathwayPage({
   if (error || projectError)
     return `Loading error! ${error?.message || projectError?.message}`;
 
+  const renderQuests = (questsToRender: Record<string, unknown>[]) => {
+    return questsToRender.map((quest: any) => (
+      <QuestCard
+        key={quest.id}
+        quest={quest}
+        projectContributors={
+          projectRes.getProjectById.squads.flatMap(
+            ({ members }: { members: string[] }) => members
+          ) || []
+        }
+      />
+    ));
+  };
+
   return (
     <Container>
       <BreadcrumbItems
@@ -409,36 +423,20 @@ function PathwayPage({
                 <TabPanels>
                   <TabPanel>
                     <SimpleGrid columns={[1, 2]} spacing={10}>
-                      {data.getAllQuestsByPathwayId
-                        .filter((quest: any) => !quest.isPending)
-                        .map((quest: any) => (
-                          <QuestCard
-                            key={quest.id}
-                            quest={quest}
-                            projectContributors={
-                              projectRes.getProjectById.squads.flatMap(
-                                (squad: any) => squad.members
-                              ) || []
-                            }
-                          />
-                        ))}
+                      {renderQuests(
+                        data.getAllQuestsByPathwayId.filter(
+                          (quest: any) => !quest.isPending
+                        )
+                      )}
                     </SimpleGrid>
                   </TabPanel>
                   <TabPanel>
                     <SimpleGrid columns={[1, 2]} spacing={10}>
-                      {data.getAllQuestsByPathwayId
-                        .filter((quest: any) => quest.isPending)
-                        .map((quest: any) => (
-                          <QuestCard
-                            key={quest.id}
-                            quest={quest}
-                            projectContributors={
-                              projectRes.getProjectById.squads.flatMap(
-                                (squad: any) => squad.members
-                              ) || []
-                            }
-                          />
-                        ))}
+                      {renderQuests(
+                        data.getAllQuestsByPathwayId.filter(
+                          (quest: any) => quest.isPending
+                        )
+                      )}
                     </SimpleGrid>
                   </TabPanel>
                   <TabPanel>

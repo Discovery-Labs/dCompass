@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import { useMutation } from "@apollo/client";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
@@ -135,7 +136,7 @@ function ReviewProjectPage({
           id
         );
       // get return values or events
-      const receipt = await voteForApprovalTx.wait(2);
+      await voteForApprovalTx.wait(1);
       const statusInt = await contracts.projectNFTContract.status(id);
       const statusString = await contracts.projectNFTContract.statusStrings(
         statusInt
@@ -160,8 +161,9 @@ function ReviewProjectPage({
           },
         });
       }
-      console.log({ receipt, statusString });
+      return statusString;
     }
+    return null;
   };
   const handleCreateToken = async () => {
     if (chainId && account) {

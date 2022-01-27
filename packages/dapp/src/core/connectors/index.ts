@@ -23,7 +23,7 @@ export const switchToNetwork = async ({
   chainId,
 }: SwitchNetworkArguments): Promise<null | void> => {
   if (!library?.provider?.request) {
-    return;
+    return null;
   }
   const formattedChainId = utils.hexStripZeros(
     BigNumber.from(chainId).toHexString()
@@ -66,7 +66,8 @@ export const network = new NetworkConnector({
 
 let networkLibrary: Web3Provider | undefined;
 export function getNetworkLibrary(): Web3Provider {
-  return (networkLibrary = networkLibrary ?? getLibrary(network.provider));
+  networkLibrary = networkLibrary ?? getLibrary(network.provider);
+  return networkLibrary;
 }
 
 export const injected = new InjectedConnector({

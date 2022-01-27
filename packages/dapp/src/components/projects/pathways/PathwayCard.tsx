@@ -35,26 +35,12 @@ import { streamUrlToId } from "../../../core/helpers";
 import useCustomColor from "../../../core/hooks/useCustomColor";
 import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
+import { Pathway } from "../../../core/types";
 import {
   APPROVE_PATHWAY_MUTATION,
   VERIFY_PATHWAY_MUTATION,
 } from "../../../graphql/pathways";
 import Card from "components/custom/Card";
-
-type Pathway = {
-  id: string;
-  image: string;
-  title: string;
-  description: string;
-  projectId: string;
-  quests: { id: string }[];
-  difficulty: string;
-  rewardCurrency: string;
-  rewardAmount: string;
-  rewardUserCap: number;
-  isPending: boolean;
-  createdBy: string;
-};
 
 function PathwayCard({
   pathway,

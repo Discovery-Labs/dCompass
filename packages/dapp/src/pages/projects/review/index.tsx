@@ -23,6 +23,7 @@ import CenteredFrame from "../../../components/layout/CenteredFrame";
 import Container from "../../../components/layout/Container";
 import ProjectCard from "../../../components/projects/ProjectCard";
 import { Web3Context } from "../../../contexts/Web3Provider";
+import { Project } from "../../../core/types";
 import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
 
 function ReviewProjects() {
@@ -32,7 +33,10 @@ function ReviewProjects() {
   });
   console.log({ data });
   const { isReviewer } = useContext(Web3Context);
-
+  const renderProjects = (projects: Project[]) =>
+    projects.map((project: Project) => (
+      <ProjectCard isReviewMode key={project.name} project={project} />
+    ));
   if (loading)
     return (
       <Stack pt="30" px="8">
@@ -59,31 +63,20 @@ function ReviewProjects() {
         <TabPanels>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllProjects
-                .filter(
+              {renderProjects(
+                data.getAllProjects.filter(
                   ({ isFeatured }: { isFeatured: boolean }) => !isFeatured
                 )
-                .map((project: any) => (
-                  // TODO: use GraphQL codegen to get the types out of the box
-                  <ProjectCard
-                    isReviewMode
-                    key={project.name}
-                    project={project}
-                  />
-                ))}
+              )}
             </SimpleGrid>
           </TabPanel>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 3]} spacing={10}>
-              {data.getAllProjects
-                .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-                .map((project: any) => (
-                  <ProjectCard
-                    isReviewMode
-                    key={project.name}
-                    project={project}
-                  />
-                ))}
+              {renderProjects(
+                data.getAllProjects.filter(
+                  ({ isFeatured }: { isFeatured: boolean }) => isFeatured
+                )
+              )}
             </SimpleGrid>
           </TabPanel>
         </TabPanels>

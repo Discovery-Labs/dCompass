@@ -28,6 +28,7 @@ import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
+import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
 import {
   CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION,
@@ -274,7 +275,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             <NumberInputField
               placeholder=""
               {...register(`rewardAmount`, {
-                required: "This is required",
+                required: REQUIRED_FIELD_LABEL,
               })}
             />
             <NumberInputStepper>
@@ -292,7 +293,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           name="rewardCurrency"
           label="Reward currency"
           rules={{
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
           }}
           options={erc20Options}
           placeholder="WETH, DAI,..."
@@ -307,7 +308,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
               roundedBottom="none"
               placeholder=""
               {...register(`rewardUserCap`, {
-                required: "This is required",
+                required: REQUIRED_FIELD_LABEL,
               })}
             />
             <NumberInputStepper>
@@ -338,7 +339,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         <Input
           placeholder="Quest name"
           {...register("name", {
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
             maxLength: {
               value: 150,
               message: "Maximum length should be 150",
@@ -356,7 +357,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           language="markdown"
           placeholder="Project description"
           {...register("description", {
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
           })}
           onChange={(e) => {
             const { name } = e.target;
@@ -379,7 +380,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         id="type"
         label="Type"
         rules={{
-          required: "This is required",
+          required: REQUIRED_FIELD_LABEL,
         }}
         options={questTypeOptions}
       />

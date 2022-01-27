@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Web3Provider } from "@ethersproject/providers";
 import {
   useSafeAppConnection,
@@ -29,11 +30,7 @@ export function useEagerConnect() {
   useEffect(() => {
     if (triedToConnectToSafe && !active) {
       injected.isAuthorized().then((isAuthorized) => {
-        if (isAuthorized) {
-          activate(injected, undefined, true).catch(() => {
-            setTried(true);
-          });
-        } else if (isMobile && window.ethereum) {
+        if (isAuthorized || (isMobile && window.ethereum)) {
           activate(injected, undefined, true).catch(() => {
             setTried(true);
           });

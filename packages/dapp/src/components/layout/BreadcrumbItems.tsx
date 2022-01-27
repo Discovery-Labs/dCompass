@@ -7,7 +7,6 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import React from "react";
 import { IoMdCompass } from "react-icons/io";
 
 import useCustomColor from "../../core/hooks/useCustomColor";

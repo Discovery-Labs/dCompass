@@ -26,3 +26,18 @@ export type Project = {
   }[];
   tags: Tag[];
 };
+
+export type Pathway = {
+  id: string;
+  image: string;
+  title: string;
+  description: string;
+  projectId: string;
+  quests: { id: string }[];
+  difficulty: string;
+  rewardCurrency: string;
+  rewardAmount: string;
+  rewardUserCap: number;
+  isPending: boolean;
+  createdBy: string;
+};

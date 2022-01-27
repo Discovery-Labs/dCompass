@@ -1,3 +1,6 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable complexity */
+/* eslint-disable sonarjs/cognitive-complexity */
 import { useQuery } from "@apollo/client";
 import {
   Button,
@@ -139,6 +142,8 @@ const ProfileForm = ({
         });
         setIsLoadingProfile(false);
       }
+      setIsLoadingProfile(false);
+      return null;
     })();
   }, [account, self, setValue, data?.getAllProjects]);
 
