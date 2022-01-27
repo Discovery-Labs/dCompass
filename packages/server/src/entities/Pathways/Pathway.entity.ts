@@ -1,4 +1,10 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
+import {
+  ObjectType,
+  Field,
+  registerEnumType,
+  Float,
+  Int,
+} from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
 import { ExpandedServerSignature } from '../../core/utils/security/ExpandedServerSignature';
 import { Quest } from '../Quests/Quest.entity';
@@ -45,6 +51,15 @@ export class Pathway extends BaseEntity {
 
   @Field()
   description: string;
+
+  @Field()
+  rewardCurrency: string;
+
+  @Field(() => Float)
+  rewardAmount: number;
+
+  @Field(() => Int)
+  rewardUserCap: number;
 
   @Field(() => [String])
   prerequisites?: string[];

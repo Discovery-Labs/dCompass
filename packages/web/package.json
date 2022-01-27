@@ -1,9 +1,10 @@
 {
   "name": "@discovery-dao/web",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> TODO: description",
   "author": "Discovery DAO",
   "homepage": "",
+  "private": true,
   "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "next",

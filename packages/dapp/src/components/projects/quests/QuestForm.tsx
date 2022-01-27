@@ -1,5 +1,7 @@
 import { useMutation } from "@apollo/client";
 import {
+  Alert,
+  AlertIcon,
   Button,
   Divider,
   Flex,
@@ -7,16 +9,30 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
+  HStack,
   Input,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
   Stack,
-  Textarea,
+  Tag,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
+import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
+import useTokenList from "../../../core/hooks/useTokenList";
 import {
+  CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION,
+  CREATE_NFT_OWNER_QUEST_MUTATION,
   CREATE_QUIZ_QUEST_MUTATION,
   CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
 } from "../../../graphql/quests";
@@ -24,10 +40,11 @@ import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
 
 import DiscordMemberForm from "./discord/DiscordMemberForm";
+import GithubContributorForm from "./github/GithubContributorForm";
 import PoapOwnerForm from "./poap/PoapOwnerForm";
 import QuestionsForm from "./quizz/QuestionsForm";
 import SnapshotForm from "./snapshot/SnapshotForm";
-import NFTOwnerForm from "./token/NFTOwnerForm copy";
+import NFTOwnerForm from "./token/NFTOwnerForm";
 import TokenHolderForm from "./token/TokenHolderForm";
 import TwitterFollowerForm from "./twitter/TwitterFollowerForm";
 
@@ -58,6 +75,10 @@ const questTypeOptions = [
     value: "poap-owner",
   },
   {
+    label: "Github contributor",
+    value: "github-contributor",
+  },
+  {
     label: "NFT owner",
     value: "nft-owner",
   },
@@ -67,8 +88,14 @@ const questTypeOptions = [
   },
 ];
 
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+});
+
 const CreateQuestForm: React.FunctionComponent = () => {
-  const { self, provider, account } = useContext(Web3Context);
+  const { tokens } = useTokenList();
+  const { library } = useWeb3React();
+  const { self, account } = useContext(Web3Context);
   const [createSnapshotVoterQuest] = useMutation(
     CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
     { refetchQueries: "all" }
@@ -76,6 +103,18 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
     refetchQueries: "all",
   });
+  const [createNFTOwnerQuestMutation] = useMutation(
+    CREATE_NFT_OWNER_QUEST_MUTATION,
+    {
+      refetchQueries: "all",
+    }
+  );
+  const [createGithubContributorQuestMutation] = useMutation(
+    CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION,
+    {
+      refetchQueries: "all",
+    }
+  );
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
@@ -94,8 +133,12 @@ const CreateQuestForm: React.FunctionComponent = () => {
   } = useFormContext();
 
   const currentValues = watch();
+
+  const { rewardAmount, rewardCurrency, rewardUserCap } = currentValues;
+
   const questDetails = {
     "snapshot-voter": <SnapshotForm />,
+    "github-contributor": <GithubContributorForm />,
     "twitter-follower": <TwitterFollowerForm />,
     "poap-owner": <PoapOwnerForm />,
     "token-holder": <TokenHolderForm />,
@@ -126,32 +169,38 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const finalValues =
       questType === "quiz"
         ? {
-          ...values,
-          questions: values.questions.map(
-            ({ question, options, answer }: QuestionFormItemType) => ({
-              question,
-              choices: options.map((option) => option.value),
-              answer,
-            })
-          ),
-          image: cids[values.name],
-          pathwayId: `ceramic://${router.query.pathwayId}`,
-        }
+            ...values,
+            questions: values.questions.map(
+              ({ question, options, answer }: QuestionFormItemType) => ({
+                question,
+                choices: options.map((option) => option.value),
+                answer,
+              })
+            ),
+            image: cids[values.name],
+            rewardCurrency: values.rewardCurrency.value,
+            rewardAmount: parseFloat(values.rewardAmount),
+            rewardUserCap: parseInt(values.rewardUserCap, 10),
+            pathwayId: `ceramic://${router.query.pathwayId}`,
+          }
         : {
-          ...values,
-          image: cids[values.name],
-          pathwayId: `ceramic://${router.query.pathwayId}`,
-        };
+            ...values,
+            rewardCurrency: values.rewardCurrency.value,
+            image: cids[values.name],
+            rewardAmount: parseFloat(values.rewardAmount),
+            rewardUserCap: parseInt(values.rewardUserCap, 10),
+            pathwayId: `ceramic://${router.query.pathwayId}`,
+          };
 
     const questDoc = await self.client.dataModel.createTile(
       "Quest",
-      finalValues,
+      { ...finalValues, createdAt: new Date().toISOString() },
       {
         pin: true,
       }
     );
 
-    const signature = await provider.provider.send("personal_sign", [
+    const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: questDoc.id.toUrl(),
         pathwayId: `ceramic://${router.query.pathwayId}`,
@@ -159,27 +208,37 @@ const CreateQuestForm: React.FunctionComponent = () => {
       account,
     ]);
 
+    const createQuestMutationVariables = {
+      input: {
+        id: questDoc.id.toUrl(),
+        questCreatorSignature: signature.result,
+      },
+    };
+
     let result;
     if (questType === "snapshot-voter") {
       const { data } = await createSnapshotVoterQuest({
-        variables: {
-          input: {
-            id: questDoc.id.toUrl(),
-            questCreatorSignature: signature.result,
-          },
-        },
+        variables: createQuestMutationVariables,
       });
       result = data.createSnapshotVoterQuest;
     }
 
     if (questType === "quiz") {
       const { data } = await createQuizQuestMutation({
-        variables: {
-          input: {
-            id: questDoc.id.toUrl(),
-            questCreatorSignature: signature.result,
-          },
-        },
+        variables: createQuestMutationVariables,
+      });
+      result = data.createQuizQuest;
+    }
+
+    if (questType === "nft-owner") {
+      const { data } = await createNFTOwnerQuestMutation({
+        variables: createQuestMutationVariables,
+      });
+      result = data.createQuizQuest;
+    }
+    if (questType === "github-contributor") {
+      const { data } = await createGithubContributorQuestMutation({
+        variables: createQuestMutationVariables,
       });
       result = data.createQuizQuest;
     }
@@ -188,26 +247,99 @@ const CreateQuestForm: React.FunctionComponent = () => {
     return goBack();
   }
 
+  const rewardPerUser = parseFloat(rewardAmount) / parseInt(rewardUserCap, 10);
+  const erc20Options = tokens.map((token) => ({
+    label: `${token.symbol} - ${token.name}`,
+    value: `${token.chainId}:${token.address}`,
+  }));
+
   return (
     <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
       <Heading>Create quest</Heading>
+
       <ImageDropzone
         {...{
           register,
           setValue,
           errors,
           fieldName: "image",
-          label: "Quest NFT Image",
+          label: "Quest NFT Image reward",
           isRequired: true,
         }}
       />
+
+      <HStack w="full" alignItems="center">
+        <FormControl isInvalid={errors.rewardAmount}>
+          <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
+          <NumberInput step={10_000} defaultValue={10_000}>
+            <NumberInputField
+              placeholder=""
+              {...register(`rewardAmount`, {
+                required: REQUIRED_FIELD_LABEL,
+              })}
+            />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          <FormErrorMessage>
+            {errors.rewardAmount && errors.rewardAmount.message}
+          </FormErrorMessage>
+        </FormControl>
+
+        <ControlledSelect
+          control={control}
+          name="rewardCurrency"
+          label="Reward currency"
+          rules={{
+            required: REQUIRED_FIELD_LABEL,
+          }}
+          options={erc20Options}
+          placeholder="WETH, DAI,..."
+        />
+      </HStack>
+
+      <VStack alignItems="center" w="full">
+        <FormControl isInvalid={errors.rewardUserCap}>
+          <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
+          <NumberInput step={1_000} defaultValue={1_000}>
+            <NumberInputField
+              roundedBottom="none"
+              placeholder=""
+              {...register(`rewardUserCap`, {
+                required: REQUIRED_FIELD_LABEL,
+              })}
+            />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          {rewardCurrency && (
+            <Alert roundedBottom="lg" w="full" status="info">
+              <AlertIcon />
+              <Text fontSize="md">
+                A user that claims the pathway rewards will receive{" "}
+              </Text>
+              <Tag>
+                {rewardPerUser}{" "}
+                {rewardCurrency?.label && rewardCurrency.label.split(" - ")[0]}
+              </Tag>
+            </Alert>
+          )}
+          <FormErrorMessage>
+            {errors.rewardUserCap && errors.rewardUserCap.message}
+          </FormErrorMessage>
+        </FormControl>
+      </VStack>
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Quest name</FormLabel>
         <Input
           placeholder="Quest name"
           {...register("name", {
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
             maxLength: {
               value: 150,
               message: "Maximum length should be 150",
@@ -221,15 +353,21 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-        <Textarea
-          placeholder="Quest description"
+        <CodeEditor
+          language="markdown"
+          placeholder="Project description"
           {...register("description", {
-            required: "This is required",
-            maxLength: {
-              value: 1200,
-              message: "Maximum length should be 1200",
-            },
+            required: REQUIRED_FIELD_LABEL,
           })}
+          onChange={(e) => {
+            const { name } = e.target;
+            setValue(name, e.target.value);
+          }}
+          style={{
+            fontSize: "16px",
+          }}
+          className="code-editor"
+          padding={15}
         />
         <FormErrorMessage>
           {errors.description && errors.description.message}
@@ -242,7 +380,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         id="type"
         label="Type"
         rules={{
-          required: "This is required",
+          required: REQUIRED_FIELD_LABEL,
         }}
         options={questTypeOptions}
       />

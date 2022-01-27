@@ -24,6 +24,29 @@ export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
   }
 `;
 
+export const CREATE_NFT_OWNER_QUEST_MUTATION = gql`
+  mutation CreateNFTOwnerQuest($input: CreateQuestInput!) {
+    createNFTOwnerQuest(input: $input) {
+      id
+      name
+      description
+      pathwayId
+      collectionContractAddress
+    }
+  }
+`;
+export const CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION = gql`
+  mutation CreateGithubContributorQuest($input: CreateQuestInput!) {
+    createGithubContributorQuest(input: $input) {
+      id
+      name
+      description
+      pathwayId
+      githubOrgId
+    }
+  }
+`;
+
 export const CREATE_QUIZ_QUEST_MUTATION = gql`
   mutation CreateQuizQuest($input: CreateQuestInput!) {
     createQuizQuest(input: $input) {
@@ -62,7 +85,28 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
       pathwayId
       questType
       image
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
       isPending
+    }
+  }
+`;
+
+export const GET_QUEST_BY_ID_QUERY = gql`
+  query GetQuestById($questId: String!) {
+    getQuestById(questId: $questId) {
+      id
+      name
+      createdBy
+      createdAt
+      difficulty
+      description
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
+      image
+      pathwayId
     }
   }
 `;

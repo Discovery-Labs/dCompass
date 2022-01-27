@@ -3,9 +3,6 @@ import {
   Flex,
   HStack,
   Button,
-  Editable,
-  EditableInput,
-  EditablePreview,
   Icon,
   IconButton,
   Link,
@@ -22,13 +19,12 @@ import {
   useDisclosure,
   useClipboard,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
 import Blockies from "react-blockies";
-import { MdCheckCircle, MdContentCopy } from "react-icons/md";
-import { RiExternalLinkFill } from "react-icons/ri";
+import { MdCheckCircle, MdContentCopy, MdExitToApp } from "react-icons/md";
+import { RiExternalLinkFill, RiHandCoinLine } from "react-icons/ri";
 
-import useCustomColor from "../../core/hooks/useCustomColor";
-import useResolveEnsName from "../../core/hooks/useResolveEnsName";
+import useCustomColor from "core/hooks/useCustomColor";
+import { useResolveEnsName } from "core/hooks/useResolveEnsName";
 
 const blockExplorerLink = (address: string, blockExplorer?: string) =>
   `${blockExplorer || "https://etherscan.io/"}${"address/"}${address}`;
@@ -39,23 +35,22 @@ function Address({
   address,
   logout,
   size = "long",
+  type = "me",
   blockExplorer,
   minimized = false,
-  onChange,
   fontSize,
 }: {
   value: string;
   address: string;
   logout?: any;
   size?: "long" | "short";
+  type?: "me" | "external";
   blockExplorer?: string;
   minimized?: boolean;
-  onChange?: any;
   fontSize?: string;
 }) {
-  const { library } = useWeb3React();
   const account = value || address;
-  const ens = useResolveEnsName(library, address);
+  const { ens } = useResolveEnsName(address);
   const { hasCopied, onCopy } = useClipboard(account);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getColoredText } = useCustomColor();
@@ -91,45 +86,22 @@ function Address({
     );
   }
 
-  let text;
-  if (onChange) {
-    text = (
-      <Editable placeholder={account}>
-        <EditablePreview width="100%" />
-        <Link target="_blank" href={etherscanLink} rel="noopener noreferrer">
-          <EditableInput value={displayAddress} onChange={onChange} />
-        </Link>
-      </Editable>
-    );
-  } else {
-    text = (
-      <Flex alignItems="center" justifyContent="center" flexGrow={1}>
-        <Link
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          border="none"
-          textOverflow={displayAddress.startsWith("0x") ? "ellipsis" : "unset"}
-          href={etherscanLink}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <RiExternalLinkFill />
-          {displayAddress}
-        </Link>
-      </Flex>
-    );
-  }
+  const text = (
+    <Flex alignItems="center" justifyContent="center" flexGrow={1}>
+      <Text _hover={{ color: getColoredText }}>{displayAddress}</Text>
+    </Flex>
+  );
 
   return (
     <HStack
       layerStyle="solid-card"
       py="1"
       px="2"
-      _hover={{ bg: "lighten(0.2)" }}
+      _hover={{ cursor: "pointer", bg: "lighten(0.2)" }}
       fontSize={fontSize ?? 28}
+      onClick={onOpen}
     >
-      <Flex _hover={{ cursor: "pointer" }} onClick={onOpen}>
+      <Flex>
         <Blockies className="blockies" seed={account} />
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -138,9 +110,9 @@ function Address({
           <ModalHeader>Account</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            Connected with MetaMask
+            {type === "me" && "Connected with Metamask"}
             <Text textStyle="small" color={getColoredText}>
-              You can copy the address or view on explorer
+              You can copy the address or view it on explorer
             </Text>
             <HStack
               my="8"
@@ -149,6 +121,9 @@ function Address({
               px="2"
               justify="start"
             >
+              <Flex>
+                <Blockies className="blockies" seed={account} />
+              </Flex>
               {text}
               <IconButton
                 size="sm"
@@ -165,30 +140,51 @@ function Address({
                 }
               />
             </HStack>
+            <Link
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              border="none"
+              textOverflow={
+                displayAddress.startsWith("0x") ? "ellipsis" : "unset"
+              }
+              href={etherscanLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Go to etherscan
+              <Icon as={RiExternalLinkFill} pl="2" />
+            </Link>
           </ModalBody>
 
           <ModalFooter>
-            <Button w="full" onClick={logout}>
-              Log out
-            </Button>
+            {type === "me" ? (
+              <Button leftIcon={<MdExitToApp />} w="full" onClick={logout}>
+                Log out
+              </Button>
+            ) : (
+              <Button
+                leftIcon={<RiHandCoinLine />}
+                w="full"
+                onClick={() => console.log("tip")}
+              >
+                Send tokens
+              </Button>
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>
-
       {text}
       <IconButton
         size="sm"
         variant="ghost"
-        onClick={onCopy}
+        onClick={(e) => {
+          e.stopPropagation();
+          onCopy();
+        }}
         aria-label="Copy Address"
         fontSize={fontSize}
-        icon={
-          hasCopied ? (
-            <Icon color="aqua.300" as={MdCheckCircle} />
-          ) : (
-            <MdContentCopy />
-          )
-        }
+        icon={hasCopied ? <Icon as={MdCheckCircle} /> : <MdContentCopy />}
       />
     </HStack>
   );

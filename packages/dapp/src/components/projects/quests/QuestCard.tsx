@@ -1,4 +1,5 @@
 import { useMutation } from "@apollo/client";
+import { LockIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Button,
@@ -8,24 +9,28 @@ import {
   Text,
   Tag,
   HStack,
-  Tooltip,
   Stack,
   Icon,
   VStack,
   Box,
-  Center,
+  Divider,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useRouter } from "next/router";
 import { useContext } from "react";
+import { FiUserCheck } from "react-icons/fi";
 import { GiSwordwoman, GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
+import ReactMarkdown from "react-markdown";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
+import { streamUrlToId } from "../../../core/helpers";
 import useCustomColor from "../../../core/hooks/useCustomColor";
+import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
+import useTokenList from "../../../core/hooks/useTokenList";
 import { APPROVE_QUEST_MUTATION } from "../../../graphql/quests";
 import Card from "components/custom/Card";
-
-import { LockIcon } from "@chakra-ui/icons";
 
 type Quest = {
   id: string;
@@ -40,10 +45,12 @@ type Quest = {
   isPending: string;
   website: string;
   network: string;
-  reward: string;
+  rewardAmount: string;
+  rewardUserCap: number;
+  rewardCurrency: string;
   // unlocked: boolean;
 };
-const unlocked = false;
+const unlocked = true;
 
 function QuestCard({
   quest,
@@ -53,26 +60,28 @@ function QuestCard({
   projectContributors: string[];
 }) {
   const router = useRouter();
-  const { getTextColor, getColoredText, getBgColor, getAccentColor } =
-    useCustomColor();
-  const { account, provider } = useContext(Web3Context);
+  const questCardMarkdownTheme = useCardMarkdownTheme();
+  const { getRewardCurrency } = useTokenList();
+
+  const { getTextColor, getColoredText, getBgColor } = useCustomColor();
+  const { library } = useWeb3React();
+  const { account } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION, {
     refetchQueries: "all",
   });
   const isContributor =
     projectContributors && account && projectContributors.includes(account);
 
-  function openQuest() {
-    console.log("Open Quest");
-    // router.push("/quest/example");
-  }
+  const openQuest = (questId: string) => {
+    return router.push(`${router.asPath}/${streamUrlToId(questId)}`);
+  };
 
   const handleApproveQuest = async () => {
     const signatureInput = {
       id: quest.id,
       pathwayId: quest.pathwayId,
     };
-    const signature = await provider.provider.send("personal_sign", [
+    const signature = await library.provider.send("personal_sign", [
       JSON.stringify(signatureInput),
       account,
     ]);
@@ -107,14 +116,15 @@ function QuestCard({
   };
 
   return (
-    <Card position="relative" h="lg" layerStyle="no-border-hover" spacing="6">
+    <Card position="relative" h="xl" layerStyle="no-border-hover3" spacing="6">
       {!unlocked && <LockedScreen />}
 
-      <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"}>
+      <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"} w="full">
         <Flex w="full" minH="56px">
           <Heading
             noOfLines={2}
             as="h2"
+            w="full"
             fontSize="2xl"
             color={getTextColor}
             textTransform="uppercase"
@@ -123,51 +133,70 @@ function QuestCard({
           </Heading>
 
           <Spacer />
-          <Flex align="end" direction="column">
+          <Flex align="end" direction="column" w="full">
             <Tag variant="subtle">{quest.completed || "COMPLETED"}</Tag>
             <Tag my="2">
-              <Text fontSize="sm">{quest.reward || "200xp"}</Text>
+              {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
             </Tag>
           </Flex>
         </Flex>
-        <Tooltip label={quest.description} hasArrow placement="top">
-          <Heading
-            noOfLines={3}
-            as="h4"
-            size="md"
-            color={getColoredText}
-            minH="65px"
+        <VStack w="full" align="flex-start" h="160px">
+          <ReactMarkdown
+            className="card-markdown-quest-card"
+            components={ChakraUIRenderer(questCardMarkdownTheme)}
+            skipHtml
           >
             {quest.description}
-          </Heading>
-        </Tooltip>
-        <VStack w="full" align="left">
-          <HStack>
-            <Icon as={RiSwordLine} />
-            <Text
-              fontWeight="bold"
-              fontSize="xl"
-              color={getTextColor}
-              textTransform="uppercase"
-            >
-              Quest type
-            </Text>
+          </ReactMarkdown>
+        </VStack>
+        <Divider />
+
+        <VStack w="full" align="left" pt="2">
+          <HStack justifyContent="space-between">
+            <HStack>
+              <Icon as={RiSwordLine} />
+              <Text
+                fontWeight="bold"
+                fontSize="xl"
+                color={getTextColor}
+                textTransform="uppercase"
+              >
+                Quest type
+              </Text>
+            </HStack>
+            <Tag variant="outline">{quest.questType}</Tag>
           </HStack>
-          <HStack>
-            <Tag variant="outline" size="lg">
-              Snapshot Voter
+          <Divider />
+          <HStack justifyContent="space-between">
+            <HStack>
+              <Icon as={FiUserCheck} />
+              <Text
+                fontWeight="bold"
+                fontSize="xl"
+                color={getTextColor}
+                textTransform="uppercase"
+              >
+                Claimed
+              </Text>
+            </HStack>
+            <Tag variant="outline">0/{quest.rewardUserCap}</Tag>
+          </HStack>
+          <Divider />
+          <HStack justifyContent="space-between">
+            <HStack>
+              <Icon as={GiTwoCoins} />
+              <Text
+                fontWeight="bold"
+                fontSize="xl"
+                color={getTextColor}
+                textTransform="uppercase"
+              >
+                Rewards
+              </Text>
+            </HStack>
+            <Tag variant="outline">
+              {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
             </Tag>
-          </HStack>
-          <HStack>
-            <Icon as={GiTwoCoins} />
-            <Text
-              fontWeight="bold"
-              fontSize="xl"
-              color={getTextColor}
-              textTransform="uppercase"
-            >
-              Rewards
-            </Text>
           </HStack>
 
           <Stack
@@ -198,19 +227,21 @@ function QuestCard({
               rounded="full"
             >
               <Text fontSize="3xl" fontWeight="bold">
-                0.1 ETH
+                {parseFloat(quest.rewardAmount) / quest.rewardUserCap}{" "}
+                {getRewardCurrency(quest.rewardCurrency)}
               </Text>
             </Flex>
           </Stack>
+          <Spacer />
         </VStack>
 
-        <Flex w="full" justify="space-between">
+        <Flex w="full" justify="space-between" pt="4">
           {quest.isPending && isContributor && (
             <>
               <Button
                 variant="outline"
                 fontSize="md"
-                onClick={() => console.log("Details")}
+                onClick={() => openQuest(quest.id)}
               >
                 Details
               </Button>
@@ -224,7 +255,7 @@ function QuestCard({
               <Button
                 leftIcon={<GiSwordwoman />}
                 fontSize="md"
-                onClick={() => console.log("Start Quest")}
+                onClick={() => openQuest(quest.id)}
               >
                 Start
               </Button>

@@ -1,4 +1,4 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, Float, Int } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
 // import { QuestNFT } from './dto/QuestNFT';
 // import { Pathway } from '../Pathways/Pathway.entity';
@@ -17,6 +17,15 @@ export abstract class Quest extends BaseEntity {
 
   @Field()
   questType: string;
+
+  @Field()
+  rewardCurrency: string;
+
+  @Field(() => Float)
+  rewardAmount: number;
+
+  @Field(() => Int)
+  rewardUserCap: number;
 
   @Field()
   pathwayId: CeramicStreamId;

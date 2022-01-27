@@ -11,11 +11,15 @@ import {
   Heading,
   Input,
   Spinner,
-  Textarea,
+  InputGroup,
+  InputLeftAddon,
+  Text,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
+import { REQUIRED_FIELD_LABEL } from "../../core/constants";
 import { Tag } from "../../core/types";
 import { ALL_TAGS_QUERY } from "../../graphql/tags";
 import IconWithState from "../custom/IconWithState";
@@ -23,22 +27,29 @@ import ControlledSelect from "../Inputs/ControlledSelect";
 
 import LogoDropzone from "./LogoDropzone";
 
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+});
 const CreateProjectForm = () => {
+  const [code, setCode] = useState<string>();
   const { data, loading, error } = useQuery(ALL_TAGS_QUERY);
-
-  const router = useRouter();
   const {
     register,
     setValue,
+    getValues,
     control,
     watch,
     formState: { errors },
   } = useFormContext();
   const currentValues = watch();
 
-  function goBack() {
-    router.back();
-  }
+  useEffect(() => {
+    const descriptionValues = getValues("description");
+
+    if (descriptionValues) {
+      setCode(descriptionValues);
+    }
+  }, [getValues]);
 
   if (loading) return <Spinner />;
   if (error)
@@ -52,14 +63,16 @@ const CreateProjectForm = () => {
   return (
     <>
       <Heading>Create project</Heading>
-      <LogoDropzone {...{ register, setValue, errors, isRequired: true }} />
+      <LogoDropzone
+        {...{ register, setValue, getValues, errors, isRequired: true }}
+      />
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Project name</FormLabel>
         <Input
           placeholder="Project name"
           {...register("name", {
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
             maxLength: {
               value: 150,
               message: "Maximum length should be 150",
@@ -73,15 +86,23 @@ const CreateProjectForm = () => {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-        <Textarea
+        <CodeEditor
+          value={code}
+          language="markdown"
           placeholder="Project description"
           {...register("description", {
-            required: "This is required",
-            maxLength: {
-              value: 1200,
-              message: "Maximum length should be 1200",
-            },
+            required: REQUIRED_FIELD_LABEL,
           })}
+          onChange={(e) => {
+            const { name } = e.target;
+            setCode(e.target.value);
+            setValue(name, e.target.value);
+          }}
+          style={{
+            fontSize: "16px",
+          }}
+          className="code-editor"
+          padding={15}
         />
         <FormErrorMessage>
           {errors.description && errors.description.message}
@@ -90,16 +111,22 @@ const CreateProjectForm = () => {
 
       <FormControl isInvalid={errors.website}>
         <FormLabel htmlFor="website">Website</FormLabel>
-        <Input
-          placeholder="Website"
-          {...register("website", {
-            required: "This is required",
-            maxLength: {
-              value: 50,
-              message: "Maximum length should be 50",
-            },
-          })}
-        />
+        <InputGroup>
+          <InputLeftAddon>
+            <Text>https://</Text>
+          </InputLeftAddon>
+          <Input
+            placeholder="Website"
+            {...register("website", {
+              required: REQUIRED_FIELD_LABEL,
+              maxLength: {
+                value: 50,
+                message: "Maximum length should be 50",
+              },
+            })}
+          />
+        </InputGroup>
+
         <FormErrorMessage>
           {errors.website && errors.website.message}
         </FormErrorMessage>
@@ -112,7 +139,7 @@ const CreateProjectForm = () => {
         label="Tags"
         isMulti
         rules={{
-          required: "This is required",
+          required: REQUIRED_FIELD_LABEL,
         }}
         options={data.getAllTags.map(({ id, color, label }: Tag) => ({
           value: id,
@@ -126,7 +153,7 @@ const CreateProjectForm = () => {
         <Input
           placeholder="Whitepaper"
           {...register("whitepaper", {
-            required: "This is required",
+            required: REQUIRED_FIELD_LABEL,
             maxLength: {
               value: 150,
               message: "Maximum length should be 150",

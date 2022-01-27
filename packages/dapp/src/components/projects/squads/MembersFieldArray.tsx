@@ -3,13 +3,15 @@ import {
   Center,
   Divider,
   FormLabel,
+  Heading,
   HStack,
   IconButton,
-  Input,
   VStack,
 } from "@chakra-ui/react";
 import { useFieldArray } from "react-hook-form";
 import { FiX } from "react-icons/fi";
+
+import AddressInput from "../../custom/AddressInput";
 
 const MembersFieldArray = ({ nestIndex, control, register }: any) => {
   const { fields, remove, append } = useFieldArray({
@@ -33,28 +35,32 @@ const MembersFieldArray = ({ nestIndex, control, register }: any) => {
       </HStack>
       {fields.map((item, k) => {
         return (
-          <HStack w="full" key={item.id}>
-            <Input
-              {...register(`squads[${nestIndex}].members[${k}].value`, {
-                required: true,
-              })}
-            />
-            <IconButton
-              _hover={{ cursor: "pointer" }}
-              variant="unstyled"
-              color="secondary.300"
-              size="xs"
-              aria-label="remove"
-              as={FiX}
-              onClick={() => remove(k)}
-            />
-          </HStack>
+          <VStack align="start" w="full" key={item.id}>
+            <Heading size="sm" as="h4">
+              Member {k + 1}
+            </Heading>
+            <HStack w="full">
+              <AddressInput
+                register={register}
+                control={control}
+                name={`squads[${nestIndex}].members[${k}].value`}
+              />
+              <IconButton
+                _hover={{ cursor: "pointer" }}
+                variant="unstyled"
+                color="secondary.300"
+                size="xs"
+                aria-label="remove"
+                as={FiX}
+                onClick={() => remove(k)}
+              />
+            </HStack>
+            <Center w="full" height="50px">
+              <Divider />
+            </Center>
+          </VStack>
         );
       })}
-
-      <Center w="full" height="50px">
-        <Divider />
-      </Center>
     </VStack>
   );
 };

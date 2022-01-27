@@ -20,6 +20,13 @@ export const AppProjectsSchema = {
               $ref: "#/definitions/CeramicStreamId",
             },
           },
+          pendingMembers: {
+            type: "array",
+            title: "pending members",
+            items: {
+              $ref: "#/definitions/CeramicStreamId",
+            },
+          },
           tokenUris: {
             type: "array",
             items: {

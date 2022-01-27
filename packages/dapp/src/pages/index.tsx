@@ -13,13 +13,16 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Progress,
   SimpleGrid,
   Spacer,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
 import { useTranslation } from "next-i18next";
@@ -29,11 +32,11 @@ import { useContext, useEffect, useState } from "react";
 
 import Container from "../components/layout/Container";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Project, ProjectCard } from "../components/projects/ProjectCard";
+import ProjectCard from "../components/projects/ProjectCard";
 import { Web3Context } from "../contexts/Web3Provider";
 import { projectTagsOptions } from "../core/constants/project-tags";
 import useCustomColor from "../core/hooks/useCustomColor";
-import { Tag } from "../core/types";
+import { Project, Tag } from "../core/types";
 import { ALL_PROJECTS_QUERY } from "../graphql/projects";
 import { ALL_TAGS_QUERY } from "../graphql/tags";
 
@@ -171,7 +174,15 @@ function Projects() {
     );
   };
 
-  if (loading || loadingTags) return t("loading");
+  if (loading || loadingTags)
+    return (
+      <Stack pt="30" px="8">
+        <Text textTransform="uppercase">
+          {t("projects")} {t("loading")}
+        </Text>
+        <Progress size="xs" isIndeterminate />
+      </Stack>
+    );
   if (error || errorTags)
     return `Error! ${error?.message || errorTags?.message}`;
   return (

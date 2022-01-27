@@ -39,6 +39,15 @@ export const PathwaySchema = {
     isFeatured: {
       type: "boolean",
     },
+    rewardAmount: {
+      type: "number",
+    },
+    rewardUserCap: {
+      type: "number",
+    },
+    rewardCurrency: {
+      type: "string",
+    },
     prerequisites: {
       type: "array",
       items: {

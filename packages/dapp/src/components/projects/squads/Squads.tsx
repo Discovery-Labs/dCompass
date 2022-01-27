@@ -8,7 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 // import { useRouter } from "next/router";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 
 import MembersFieldArray from "./MembersFieldArray";
 import SquadDropzone from "./SquadDropzone";
@@ -16,6 +16,7 @@ import SquadDropzone from "./SquadDropzone";
 export default function Squads({
   control,
   register,
+  getValues,
   setValue,
   reset,
   defaultValues,
@@ -77,13 +78,16 @@ export default function Squads({
             <SquadDropzone
               nestIndex={index}
               formLabel="Squad image"
-              {...{ register, setValue, errors }}
+              {...{ register, setValue, getValues, errors }}
             />
 
             <FormControl
               isInvalid={errors.squads && errors.squads[index].members}
             >
-              <MembersFieldArray nestIndex={index} {...{ control, register }} />
+              <MembersFieldArray
+                nestIndex={index}
+                {...{ control, register, setValue }}
+              />
               <FormErrorMessage>
                 {errors.squads &&
                   errors.squads[index].members &&

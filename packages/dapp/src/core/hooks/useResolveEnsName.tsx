@@ -1,5 +1,4 @@
-import { Web3Provider } from "@ethersproject/providers";
-import { utils } from "ethers";
+import { providers, utils } from "ethers";
 import { useState, useEffect } from "react";
 
 /**
@@ -9,20 +8,22 @@ import { useState, useEffect } from "react";
  * @param address
  * @returns
  */
-const lookupAddress = async (
-  provider: Web3Provider,
-  address: string
-): Promise<string> => {
+export const lookupAddress = async (address: string): Promise<string> => {
   if (utils.isAddress(address)) {
     try {
+      const infuraPovider = new providers.InfuraProvider(
+        1,
+        process.env.NEXT_PUBLIC_INFURA_ID
+      );
       // Accuracy of reverse resolution is not enforced.
       // We then manually ensure that the reported ens name resolves to address
-      const reportedName = await provider.lookupAddress(address);
+      const reportedName = await infuraPovider.lookupAddress(address);
+
       if (!reportedName) {
         return "";
       }
 
-      const resolvedAddress = await provider.resolveName(reportedName);
+      const resolvedAddress = await infuraPovider.resolveName(reportedName);
       if (!resolvedAddress) {
         return "";
       }
@@ -51,10 +52,12 @@ const lookupAddress = async (
  * @param address
  * @returns
  */
-const useResolveEnsName = (
-  mainnetProvider: Web3Provider | undefined,
+export const useResolveEnsName = (
   address: string
-): string => {
+): {
+  ens: string;
+  lookupAddress: (address: string) => Promise<string>;
+} => {
   const [ensName, setEnsName] = useState(address);
 
   useEffect(() => {
@@ -63,8 +66,8 @@ const useResolveEnsName = (
 
     if (cache && cache?.name && cache?.timestamp > Date.now()) {
       setEnsName(cache?.name);
-    } else if (mainnetProvider) {
-      lookupAddress(mainnetProvider, address).then((name) => {
+    } else {
+      lookupAddress(address).then((name) => {
         if (name) {
           setEnsName(name);
           window.localStorage.setItem(
@@ -77,9 +80,7 @@ const useResolveEnsName = (
         }
       });
     }
-  }, [address, mainnetProvider]);
+  }, [address]);
 
-  return ensName;
+  return { ens: ensName, lookupAddress };
 };
-
-export default useResolveEnsName;

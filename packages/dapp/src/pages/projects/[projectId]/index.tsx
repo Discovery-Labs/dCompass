@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { EditIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Badge,
   Button,
@@ -18,30 +18,35 @@ import {
   Tabs,
   Text,
   VStack,
-  Link,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionIcon,
-  AccordionPanel,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
   Progress,
 } from "@chakra-ui/react";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
-import { BsGlobe, BsPeople, BsPerson } from "react-icons/bs";
-import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
+import { BsPeople, BsPerson } from "react-icons/bs";
+import { MdPersonAddAlt1 } from "react-icons/md";
+import ReactMarkdown from "react-markdown";
 
 import { initializeApollo } from "../../../../lib/apolloClient";
+import Address from "../../../components/custom/Address";
 import CardMedia from "../../../components/custom/CardMedia";
+import ProfileForm from "../../../components/custom/profile/ProfileForm";
 import SocialLinks from "../../../components/custom/SocialLinks";
 import BreadcrumbItems from "../../../components/layout/BreadcrumbItems";
-import QuestCard from "../../../components/projects/quests/QuestCard";
 import { streamUrlToId } from "../../../core/helpers";
-import { Tag } from "../../../core/types";
+import { usePageMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
+import { Pathway, Tag } from "../../../core/types";
 import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
 import Container from "components/layout/Container";
@@ -87,19 +92,6 @@ export const getServerSideProps: GetServerSideProps<
   }
 };
 
-const QuestData = {
-  logo: "https://siasky.net/AAB-yQ5MuGLqpb5fT9w0gd54RbDfRS9sZDb2aMx9NeJ8QA",
-  completed: "completed",
-  project: "alpha",
-  owner: "huxwell.eth",
-  name: "Project Alpha",
-  description:
-    "This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.This is an awesome project.",
-  website: "https://www.google.com",
-  network: "ethereum",
-  reward: "200 xp",
-};
-
 function ProjectPage({
   id,
   name,
@@ -115,6 +107,9 @@ function ProjectPage({
   github,
   gitbook,
 }: any) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const projectMarkdownTheme = usePageMarkdownTheme();
+
   const { t } = useTranslation("common");
   const { getTextColor, getColoredText } = useCustomColor();
   const { account, isReviewer } = useContext(Web3Context);
@@ -127,9 +122,28 @@ function ProjectPage({
     }
   );
   const isOwner = createdBy === account;
-  if (loading) return t("loading");
+  if (loading)
+    return (
+      <Stack pt="30" px="8">
+        <Text textTransform="uppercase">
+          {t("project")} {t("loading")}
+        </Text>
+        <Progress size="xs" isIndeterminate />
+      </Stack>
+    );
   if (error) return `Loading error! ${error.message}`;
 
+  const renderPathways = (pathways: Pathway[]) => {
+    return pathways.map((pathway) => (
+      <PathwayCard
+        key={pathway.title}
+        pathway={pathway}
+        projectContributors={squads.flatMap(
+          ({ members }: { members: string[] }) => members
+        )}
+      />
+    ));
+  };
   return (
     <Container>
       <BreadcrumbItems
@@ -161,27 +175,46 @@ function ProjectPage({
               </Badge>
             ))}
           </Stack>
-          <VStack>
-            <Heading as="h1" size="4xl" pl="4" color={getTextColor}>
+          <VStack textAlign="center" w="full">
+            <Heading as="h1" size="3xl" pl="4" color={getTextColor}>
               {name}
-            </Heading>
-            <Heading py="2" as="h2" size="md" color={getTextColor}>
-              {description}
             </Heading>
           </VStack>
         </VStack>
         <Spacer />
-        {isOwner && (
-          <NextLink
-            href={`/projects/${id.split("://")[1]}/edit-project/`}
-            passHref
-          >
-            <Button leftIcon={<EditIcon />}>Edit Project</Button>
-          </NextLink>
-        )}
+        <VStack align="flex-end">
+          <Button leftIcon={<MdPersonAddAlt1 />} onClick={onOpen}>
+            Apply
+          </Button>
+          <Modal onClose={onClose} isOpen={isOpen} size="4xl" isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Apply to {name}</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <ProfileForm
+                  submitButtonLabel="Submit application"
+                  projectId={streamUrlToId(id)}
+                  projectName={name}
+                  onCloseForm={onClose}
+                />
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+          {isOwner && (
+            <NextLink
+              href={`/projects/${streamUrlToId(id)}/edit-project/`}
+              passHref
+            >
+              <Button variant="outline" leftIcon={<EditIcon />}>
+                Edit Project
+              </Button>
+            </NextLink>
+          )}
+        </VStack>
       </Flex>
 
-      <Flex w="full" direction="column">
+      <Flex w="full" direction="column" py="4">
         <HStack justifyContent="space-between">
           <Flex align="center" maxW="full">
             {createdBy && <Blockies seed={createdBy} className="blockies" />}
@@ -202,113 +235,125 @@ function ProjectPage({
             gitbook={gitbook}
           />
         </HStack>
-
-        <Accordion allowToggle py="4">
-          <AccordionItem>
-            <AccordionButton>
-              <Heading as="h3" size="lg" color={getColoredText}>
-                {squads.length} Squad{squads.length > 1 ? "s" : ""}
-              </Heading>
-              <AccordionIcon ml="4" fontSize="2xl" />
-            </AccordionButton>
-            <AccordionPanel>
-              <SimpleGrid columns={3} spacing={4}>
-                {squads.map((squad: any) => (
-                  <CardMedia
-                    h="fit-content"
-                    src={`https://ipfs.io/ipfs/${squad.image}`}
-                  >
-                    <Heading as="h3" size="lg" color={getTextColor}>
-                      {squad.name}
-                    </Heading>
-                    <HStack>
-                      <Icon
-                        as={squad.members.length > 1 ? BsPeople : BsPerson}
-                      />
-                      <Heading
-                        as="h4"
-                        size="md"
-                        textTransform="uppercase"
-                        color={getTextColor}
-                      >
-                        {squad.members.length} {t("member")}
-                        {squad.members.length > 1 ? "s" : ""}
-                      </Heading>
-                    </HStack>
-                    <VStack align="center" maxW="full">
-                      {squad.members.map((member: string) => (
-                        <HStack w="full">
-                          {member && (
-                            <Blockies seed={member} className="blockies" />
-                          )}
-                          <Text ml="2" fontSize="sm" isTruncated>
-                            {member}
-                          </Text>
-                        </HStack>
-                      ))}
-                    </VStack>
-                  </CardMedia>
-                ))}
-              </SimpleGrid>
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
       </Flex>
 
       <Tabs w="full">
         <HStack justifyContent="space-between">
           <TabList>
-            <Tab>{t("all-pathways")}</Tab>
-            {isReviewer && <Tab>{t("pending-pathways")}</Tab>}
-            <Tab>{t("my-pathways")}</Tab>
+            <Tab>{t("about")}</Tab>
+            <Tab>{t("pathways")}</Tab>
+            <Tab>{t("guilds")}</Tab>
+            <Tab>{t("bounties")}</Tab>
+            <Tab>{t("events")}</Tab>
           </TabList>
-          {isOwner && (
-            <NextLink
-              href={`/projects/${id.split("://")[1]}/pathways/add-pathway/`}
-              passHref
-            >
-              <Button leftIcon={<EditIcon />}>{t("add-pathway")}</Button>
-            </NextLink>
-          )}
         </HStack>
 
         <TabPanels>
-          <TabPanel>
-            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllPathwaysByProjectId
-                .filter((pathway: any) => !pathway.isPending)
-                .map((pathway: any) => (
-                  <PathwayCard
-                    key={pathway.title}
-                    pathway={pathway}
-                    projectContributors={squads.flatMap(
-                      (squad: any) => squad.members
+          <TabPanel px="0">
+            <VStack w="full" align="flex-start">
+              <ReactMarkdown
+                components={ChakraUIRenderer(projectMarkdownTheme)}
+                skipHtml
+              >
+                {description}
+              </ReactMarkdown>
+            </VStack>
+          </TabPanel>
+          <TabPanel px="0">
+            <Tabs w="full" variant="line">
+              <HStack justifyContent="space-between">
+                <TabList>
+                  <Tab>{t("all-pathways")}</Tab>
+                  {isReviewer && <Tab>{t("pending-pathways")}</Tab>}
+                  <Tab>{t("my-pathways")}</Tab>
+                </TabList>
+                {isOwner && (
+                  <NextLink
+                    href={`/projects/${streamUrlToId(
+                      id
+                    )}/pathways/add-pathway/`}
+                    passHref
+                  >
+                    <Button variant="outline" leftIcon={<AddIcon />}>
+                      {t("add-pathway")}
+                    </Button>
+                  </NextLink>
+                )}
+              </HStack>
+
+              <TabPanels>
+                <TabPanel>
+                  <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                    {renderPathways(
+                      data.getAllPathwaysByProjectId.filter(
+                        (pathway: Pathway) => !pathway.isPending
+                      )
                     )}
-                  />
-                ))}
+                  </SimpleGrid>
+                </TabPanel>
+                {isReviewer && (
+                  <TabPanel>
+                    <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                      {renderPathways(
+                        data.getAllPathwaysByProjectId.filter(
+                          (pathway: Pathway) => pathway.isPending
+                        )
+                      )}
+                    </SimpleGrid>
+                  </TabPanel>
+                )}
+                <TabPanel>
+                  <SimpleGrid columns={[1, 2, 2, 3]} spacing={10} />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </TabPanel>
+          <TabPanel px="0">
+            <SimpleGrid columns={3} spacing={4}>
+              {squads.map((squad: any) => (
+                <CardMedia
+                  key={squad.id}
+                  h="fit-content"
+                  src={`https://ipfs.io/ipfs/${squad.image}`}
+                >
+                  <Heading as="h3" size="lg" color={getTextColor}>
+                    {squad.name}
+                  </Heading>
+                  <HStack>
+                    <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
+                    <Heading
+                      as="h4"
+                      size="md"
+                      textTransform="uppercase"
+                      color={getTextColor}
+                    >
+                      {squad.members.length} {t("member")}
+                      {squad.members.length > 1 ? "s" : ""}
+                    </Heading>
+                  </HStack>
+                  <VStack align="center" maxW="full">
+                    {squad.members.map(
+                      (member: string) =>
+                        member && (
+                          <HStack w="full">
+                            <Address
+                              address={member}
+                              value={member}
+                              type="external"
+                              fontSize="18px"
+                              size="short"
+                            />
+                          </HStack>
+                        )
+                    )}
+                  </VStack>
+                </CardMedia>
+              ))}
             </SimpleGrid>
           </TabPanel>
-          {isReviewer && (
-            <TabPanel>
-              <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-                {data.getAllPathwaysByProjectId
-                  .filter((pathway: any) => pathway.isPending)
-                  .map((pathway: any) => (
-                    <PathwayCard
-                      key={pathway.title}
-                      pathway={pathway}
-                      projectContributors={squads.flatMap(
-                        (squad: any) => squad.members
-                      )}
-                    />
-                  ))}
-              </SimpleGrid>
-            </TabPanel>
-          )}
+
           <TabPanel>
-            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              <QuestCard key={QuestData.name} quest={QuestData} />
-            </SimpleGrid>
+            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10} />
           </TabPanel>
         </TabPanels>
       </Tabs>

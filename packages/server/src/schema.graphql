@@ -81,6 +81,27 @@ type ExpandedServerSignature {
   v: Int!
 }
 
+type GithubContributorQuest {
+  completedBy: [String!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+  description: String!
+  githubOrgId: String!
+  id: String!
+  image: String!
+  isPending: Boolean
+  name: String!
+  pathwayId: String!
+  questType: String!
+  rewardAmount: Float!
+  rewardCurrency: String!
+  rewardUserCap: Int!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+}
+
 type Mutation {
   """Approve a new Pathway in dCompass"""
   approvePathway(input: ApprovePathwayInput!): Pathway
@@ -90,6 +111,12 @@ type Mutation {
 
   """Approve a new Quest in dCompass"""
   approveQuest(input: ApproveQuestInput!): Quest
+
+  """Create a new Github Contributor Quest in dCompass"""
+  createGithubContributorQuest(input: CreateQuestInput!): GithubContributorQuest
+
+  """Create a new NFT Owner Quest in dCompass"""
+  createNFTOwnerQuest(input: CreateQuestInput!): NFTOwnerQuest
 
   """Create a new Pathway in dCompass"""
   createPathway(input: CreatePathwayInput!): Pathway
@@ -116,6 +143,29 @@ type Mutation {
   verifyPathway(input: VerifyPathwayInput!): Pathway
 }
 
+type NFTOwnerQuest {
+  chainId: Int!
+  collectionContractAddress: String!
+  completedBy: [String!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+  description: String!
+  id: String!
+  image: String!
+  isPending: Boolean
+  name: String!
+  namespace: String!
+  pathwayId: String!
+  questType: String!
+  rewardAmount: Float!
+  rewardCurrency: String!
+  rewardUserCap: Int!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+}
+
 type Pathway {
   """Identifies the date and time when the object was created."""
   createdAt: String!
@@ -129,6 +179,9 @@ type Pathway {
   prerequisites: [String!]
   projectId: String!
   quests: [Quest!]
+  rewardAmount: Float!
+  rewardCurrency: String!
+  rewardUserCap: Int!
   title: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -160,9 +213,11 @@ type Project {
   id: String!
   isFeatured: Boolean!
   logo: String
+  members: [String!]
   name: String!
   pathways: [Pathway!]
   peerProjects: [String!]
+  pendingMembers: [String!]
   repos: [String!]
   squads: [Squad!]!
   tags: [Tag!]
@@ -214,6 +269,9 @@ type Quest {
   name: String!
   pathwayId: String!
   questType: String!
+  rewardAmount: Float!
+  rewardCurrency: String!
+  rewardUserCap: Int!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -232,6 +290,9 @@ type QuizQuest {
   pathwayId: String!
   questType: String!
   questions: [QuizQuestion!]!
+  rewardAmount: Float!
+  rewardCurrency: String!
+  rewardUserCap: Int!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -256,6 +317,9 @@ type SnapshotVoterQuest {
   pathwayId: String!
   proposalId: String!
   questType: String!
+  rewardAmount: Float!
+  rewardCurrency: String!
+  rewardUserCap: Int!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!

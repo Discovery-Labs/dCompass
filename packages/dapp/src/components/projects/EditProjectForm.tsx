@@ -1,34 +1,48 @@
+import { useQuery } from "@apollo/client";
 import {
-  Center,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Heading,
   Input,
-  Image,
   Textarea,
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Spinner,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useCallback, useState, useEffect } from "react";
-import { useDropzone } from "react-dropzone";
 import { useFormContext } from "react-hook-form";
 
+import { Tag } from "../../core/types";
+import { ALL_TAGS_QUERY } from "../../graphql/tags";
 import IconWithState from "../custom/IconWithState";
+import ControlledSelect from "../Inputs/ControlledSelect";
 
 import LogoDropzone from "./LogoDropzone";
 
 const EditProjectForm: React.FunctionComponent = () => {
-  const router = useRouter();
   const {
     register,
     setValue,
+    watch,
+    control,
     formState: { errors },
   } = useFormContext();
+  const { data, loading, error } = useQuery(ALL_TAGS_QUERY);
 
-  function goBack() {
-    router.back();
-  }
+  const currentValues = watch();
+
+  if (loading) return <Spinner />;
+  if (error)
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle mr={2}>Network error</AlertTitle>
+        <AlertDescription>{error.message}</AlertDescription>
+      </Alert>
+    );
   return (
     <>
       <Heading>Edit project</Heading>
@@ -98,11 +112,47 @@ const EditProjectForm: React.FunctionComponent = () => {
         </FormErrorMessage>
       </FormControl>
 
+      <ControlledSelect
+        control={control}
+        name="tags"
+        id="tags"
+        label="Tags"
+        isMulti
+        rules={{
+          required: "This is required",
+        }}
+        options={data.getAllTags.map(({ id, color, label }: Tag) => ({
+          value: id,
+          colorScheme: color,
+          label,
+        }))}
+      />
+
       <Flex p="4" w="full" justify="space-around">
-        <IconWithState icon="discord" active />
-        <IconWithState icon="gitbook" />
-        <IconWithState icon="github" />
-        <IconWithState icon="twitter" />
+        <IconWithState
+          icon="twitter"
+          label="Twitter"
+          active={!!currentValues.twitter}
+          placeholder="Twitter account url"
+        />
+        <IconWithState
+          icon="discord"
+          active={!!currentValues.discord}
+          label="Discord"
+          placeholder="Discord server invite url"
+        />
+        <IconWithState
+          icon="gitbook"
+          active={!!currentValues.gitbook}
+          label="Gitbook"
+          placeholder="Gitbook repository url"
+        />
+        <IconWithState
+          icon="github"
+          active={!!currentValues.github}
+          label="Github"
+          placeholder="Github organization url"
+        />
       </Flex>
     </>
   );

@@ -50,6 +50,12 @@ export class Project extends BaseEntity {
   contracts: string[];
 
   @Field(() => [String])
+  members?: string[];
+
+  @Field(() => [String])
+  pendingMembers?: string[];
+
+  @Field(() => [String])
   tokenUris: string[];
 
   @Field(() => Boolean, { defaultValue: false })

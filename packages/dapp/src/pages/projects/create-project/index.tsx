@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-import NotConnectedCard from "../../../components/custom/NotConnectedCard";
+import ThreeTierPricing from "../../../components/custom/Pricing";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
@@ -16,10 +16,12 @@ import { Web3Context } from "../../../contexts/Web3Provider";
 import { schemaAliases } from "../../../core/ceramic";
 import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 import Card from "components/custom/Card";
+import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 
 const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
 const CreateSquads = <SquadsForm />;
+const Pricing = <ThreeTierPricing />;
 
 const steps = [
   {
@@ -27,13 +29,14 @@ const steps = [
     content: CreateProject,
   },
   { label: "Step 2", content: CreateSquads },
+  { label: "Step 3", content: Pricing },
 ];
 
 function CreateProjectStepper() {
   const { t } = useTranslation("common");
   const router = useRouter();
-  const { self, contracts, provider } = useContext(Web3Context);
-  const { account } = useWeb3React();
+  const { self } = useContext(Web3Context);
+  const { account, library } = useWeb3React();
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -55,6 +58,7 @@ function CreateProjectStepper() {
         value: string;
         label: string;
       }[],
+      website: null,
     },
   });
 
@@ -81,6 +85,7 @@ function CreateProjectStepper() {
     const serializedProject = {
       ...values,
       logo: cids.logo,
+      website: `https://${values.website}`,
       createdBy: account,
       tags: values.tags.map((tag) => ({ id: `ceramic://${tag.value}` })),
       squads: values.squads.map((squad) => {
@@ -97,7 +102,7 @@ function CreateProjectStepper() {
 
     const newProjectDoc = await self.client.dataModel.createTile(
       "Project",
-      serializedProject,
+      { ...serializedProject, createdAt: new Date().toISOString() },
       {
         pin: true,
       }
@@ -132,7 +137,7 @@ function CreateProjectStepper() {
         projects: [projectId],
       });
     }
-    const signature = await provider.provider.send("personal_sign", [
+    const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: projectId,
         tokenUris: metadataCids,
@@ -152,62 +157,58 @@ function CreateProjectStepper() {
     return router.push("/");
   }
 
-  return account && contracts ? (
-    <FormProvider {...methods}>
-      <CenteredFrame>
-        <Card h="full" w="2xl">
-          <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
-            <Steps colorScheme="purple" activeStep={activeStep}>
-              {steps.map(({ label, content }) => (
-                <Step label={label} key={label}>
-                  {content}
-                </Step>
-              ))}
-            </Steps>
-            <Flex w="full" justify="center">
-              {activeStep > 0 && activeStep <= 1 && (
-                <Button
-                  variant="outline"
-                  onClick={() => prevStep()}
-                  px="1.25rem"
-                  fontSize="md"
-                >
-                  {t("prev")}
-                </Button>
-              )}
-              {activeStep < 1 && (
-                <Button
-                  ml="0.5rem"
-                  onClick={() => nextStep()}
-                  px="1.25rem"
-                  fontSize="md"
-                >
-                  {t("next")}
-                </Button>
-              )}
-              {activeStep === 1 && (
-                <Button
-                  ml="0.5rem"
-                  // colorScheme="accentDark"
-                  isLoading={methods.formState.isSubmitting}
-                  type="submit"
-                  px="1.25rem"
-                  fontSize="md"
-                >
-                  {t("submit")}
-                </Button>
-              )}
-            </Flex>
-          </Stack>
-        </Card>
-      </CenteredFrame>
-    </FormProvider>
-  ) : (
-    <CenteredFrame>
-      <Card h="full" w="2xl" border="solid 1px red">
-        <NotConnectedCard />
-      </Card>
-    </CenteredFrame>
+  return (
+    <NotConnectedWrapper>
+      <FormProvider {...methods}>
+        <CenteredFrame>
+          <Card h="full" w={activeStep === 2 ? "fit-content" : "2xl"}>
+            <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
+              <Steps colorScheme="purple" activeStep={activeStep}>
+                {steps.map(({ label, content }) => (
+                  <Step label={label} key={label}>
+                    {content}
+                  </Step>
+                ))}
+              </Steps>
+              <Flex w="full" justify="center">
+                {activeStep > 0 && activeStep <= 2 && (
+                  <Button
+                    variant="outline"
+                    onClick={() => prevStep()}
+                    px="1.25rem"
+                    fontSize="md"
+                  >
+                    {t("prev")}
+                  </Button>
+                )}
+                {activeStep < 2 && (
+                  <Button
+                    ml="0.5rem"
+                    onClick={() => nextStep()}
+                    px="1.25rem"
+                    fontSize="md"
+                  >
+                    {t("next")}
+                  </Button>
+                )}
+                {activeStep === 2 && (
+                  <Button
+                    ml="0.5rem"
+                    // colorScheme="accentDark"
+                    isLoading={methods.formState.isSubmitting}
+                    type="submit"
+                    px="1.25rem"
+                    fontSize="md"
+                  >
+                    {t("submit")}
+                  </Button>
+                )}
+              </Flex>
+            </Stack>
+          </Card>
+        </CenteredFrame>
+      </FormProvider>
+    </NotConnectedWrapper>
   );
 }
 

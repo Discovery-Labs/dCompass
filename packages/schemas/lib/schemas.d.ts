@@ -40,6 +40,13 @@ export declare const schemas: {
                                     $ref: string;
                                 };
                             };
+                            pendingMembers: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    $ref: string;
+                                };
+                            };
                             tokenUris: {
                                 type: string;
                                 items: {
@@ -95,6 +102,13 @@ export declare const schemas: {
                                 };
                             };
                             pathways: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    $ref: string;
+                                };
+                            };
+                            members: {
                                 type: string;
                                 title: string;
                                 items: {
@@ -245,6 +259,13 @@ export declare const schemas: {
                     };
                 };
                 pathways: {
+                    type: string;
+                    title: string;
+                    items: {
+                        $ref: string;
+                    };
+                };
+                members: {
                     type: string;
                     title: string;
                     items: {
@@ -433,6 +454,15 @@ export declare const schemas: {
                 isFeatured: {
                     type: string;
                 };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
                 prerequisites: {
                     type: string;
                     items: {
@@ -539,6 +569,15 @@ export declare const schemas: {
                     type: string;
                     maxLength: number;
                 };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
                 nfts: {
                     type: string;
                     minItems: number;
@@ -577,6 +616,614 @@ export declare const schemas: {
                     type: string;
                     pattern: string;
                     maxLength: number;
+                };
+            };
+        };
+        SnaphotVoterQuest: {
+            $schema: string;
+            title: string;
+            description: string;
+            type: string;
+            properties: {
+                proposalId: {
+                    type: string;
+                    maxLength: number;
+                };
+                name: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
+                description: {
+                    type: string;
+                };
+                pathwayId: {
+                    $ref: string;
+                };
+                completedBy: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                createdAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                updatedAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                questType: {
+                    type: string;
+                    maxLength: number;
+                };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
+                nfts: {
+                    type: string;
+                    minItems: number;
+                    items: {
+                        type: string;
+                        properties: {
+                            claimedBy: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            rarity: {
+                                type: string;
+                                enum: string[];
+                            };
+                            name: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            url: {
+                                $ref: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+        NFTOwnerQuest: {
+            $schema: string;
+            title: string;
+            description: string;
+            type: string;
+            properties: {
+                collectionContractAddress: {
+                    type: string;
+                    maxLength: number;
+                };
+                namespace: {
+                    type: string;
+                    maxLength: number;
+                };
+                chainId: {
+                    type: string;
+                };
+                name: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
+                description: {
+                    type: string;
+                };
+                pathwayId: {
+                    $ref: string;
+                };
+                completedBy: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                createdAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                updatedAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                questType: {
+                    type: string;
+                    maxLength: number;
+                };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
+                nfts: {
+                    type: string;
+                    minItems: number;
+                    items: {
+                        type: string;
+                        properties: {
+                            claimedBy: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            rarity: {
+                                type: string;
+                                enum: string[];
+                            };
+                            name: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            url: {
+                                $ref: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+        PoapOwnerQuest: {
+            $schema: string;
+            title: string;
+            description: string;
+            type: string;
+            properties: {
+                poapTokenId: {
+                    type: string;
+                    maxLength: number;
+                };
+                name: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
+                description: {
+                    type: string;
+                };
+                pathwayId: {
+                    $ref: string;
+                };
+                completedBy: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                createdAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                updatedAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                questType: {
+                    type: string;
+                    maxLength: number;
+                };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
+                nfts: {
+                    type: string;
+                    minItems: number;
+                    items: {
+                        type: string;
+                        properties: {
+                            claimedBy: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            rarity: {
+                                type: string;
+                                enum: string[];
+                            };
+                            name: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            url: {
+                                $ref: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+        DiscordMemberQuest: {
+            $schema: string;
+            title: string;
+            description: string;
+            type: string;
+            properties: {
+                discordGuildId: {
+                    type: string;
+                    items: {
+                        type: string;
+                        maxLength: number;
+                    };
+                };
+                name: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
+                description: {
+                    type: string;
+                };
+                pathwayId: {
+                    $ref: string;
+                };
+                completedBy: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                createdAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                updatedAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                questType: {
+                    type: string;
+                    maxLength: number;
+                };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
+                nfts: {
+                    type: string;
+                    minItems: number;
+                    items: {
+                        type: string;
+                        properties: {
+                            claimedBy: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            rarity: {
+                                type: string;
+                                enum: string[];
+                            };
+                            name: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            url: {
+                                $ref: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+        QuizQuest: {
+            $schema: string;
+            title: string;
+            description: string;
+            type: string;
+            properties: {
+                questions: {
+                    type: string;
+                    title: string;
+                    minItems: number;
+                    items: {
+                        type: string;
+                        title: string;
+                        properties: {
+                            question: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            answer: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            choices: {
+                                type: string;
+                                title: string;
+                                minItems: number;
+                                maxItems: number;
+                                items: {
+                                    type: string;
+                                    maxLength: number;
+                                };
+                            };
+                        };
+                    };
+                };
+                name: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
+                description: {
+                    type: string;
+                };
+                pathwayId: {
+                    $ref: string;
+                };
+                completedBy: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                createdAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                updatedAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                questType: {
+                    type: string;
+                    maxLength: number;
+                };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
+                nfts: {
+                    type: string;
+                    minItems: number;
+                    items: {
+                        type: string;
+                        properties: {
+                            claimedBy: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            rarity: {
+                                type: string;
+                                enum: string[];
+                            };
+                            name: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            url: {
+                                $ref: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+        TokenHolderQuest: {
+            $schema: string;
+            title: string;
+            description: string;
+            type: string;
+            properties: {
+                amount: {
+                    type: string;
+                };
+                tokenContractAddress: {
+                    type: string;
+                    maxLength: number;
+                };
+                namespace: {
+                    type: string;
+                    maxLength: number;
+                };
+                chainId: {
+                    type: string;
+                };
+                name: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
+                description: {
+                    type: string;
+                };
+                pathwayId: {
+                    $ref: string;
+                };
+                completedBy: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                createdAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                updatedAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                questType: {
+                    type: string;
+                    maxLength: number;
+                };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
+                nfts: {
+                    type: string;
+                    minItems: number;
+                    items: {
+                        type: string;
+                        properties: {
+                            claimedBy: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            rarity: {
+                                type: string;
+                                enum: string[];
+                            };
+                            name: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            url: {
+                                $ref: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+        TwitterFollowerVoterQuest: {
+            $schema: string;
+            title: string;
+            description: string;
+            type: string;
+            properties: {
+                twitterHandles: {
+                    type: string;
+                    items: {
+                        type: string;
+                        maxLength: number;
+                    };
+                };
+                name: {
+                    type: string;
+                    title: string;
+                    maxLength: number;
+                };
+                description: {
+                    type: string;
+                };
+                pathwayId: {
+                    $ref: string;
+                };
+                completedBy: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                createdAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                updatedAt: {
+                    type: string;
+                    format: string;
+                    maxLength: number;
+                };
+                questType: {
+                    type: string;
+                    maxLength: number;
+                };
+                rewardAmount: {
+                    type: string;
+                };
+                rewardUserCap: {
+                    type: string;
+                };
+                rewardCurrency: {
+                    type: string;
+                };
+                nfts: {
+                    type: string;
+                    minItems: number;
+                    items: {
+                        type: string;
+                        properties: {
+                            claimedBy: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            rarity: {
+                                type: string;
+                                enum: string[];
+                            };
+                            name: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            url: {
+                                $ref: string;
+                            };
+                        };
+                    };
                 };
             };
         };

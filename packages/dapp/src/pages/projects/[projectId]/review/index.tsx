@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import { useMutation } from "@apollo/client";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
@@ -12,35 +13,37 @@ import {
   VStack,
   Stack,
   Badge,
-  Link,
   Icon,
   SimpleGrid,
   Image,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
-import { BsGlobe, BsPeople, BsPerson } from "react-icons/bs";
-import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
+import { BsPeople, BsPerson } from "react-icons/bs";
+import ReactMarkdown from "react-markdown";
 
 import { initializeApollo } from "../../../../../lib/apolloClient";
 import Card from "../../../../components/custom/Card";
 import CardMedia from "../../../../components/custom/CardMedia";
 import NotReviewerCard from "../../../../components/custom/NotReviewerCard";
+import SocialLinks from "../../../../components/custom/SocialLinks";
 import CenteredFrame from "../../../../components/layout/CenteredFrame";
 import Container from "../../../../components/layout/Container";
 import { Web3Context } from "../../../../contexts/Web3Provider";
 import { splitCIDS } from "../../../../core/helpers";
 import useCustomColor from "../../../../core/hooks/useCustomColor";
+import { usePageMarkdownTheme } from "../../../../core/hooks/useMarkdownTheme";
+import useTokenList from "../../../../core/hooks/useTokenList";
 import { Tag as TagType } from "../../../../core/types";
 import {
   APPROVE_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 type Props = {
   projectId: string | null;
@@ -50,7 +53,6 @@ export const getServerSideProps: GetServerSideProps<
   Props,
   { projectId: string }
 > = async (ctx) => {
-  console.log({ pId: ctx.params?.projectId });
   const id = ctx.params?.projectId ?? null;
   if (id === null) {
     return {
@@ -65,8 +67,13 @@ export const getServerSideProps: GetServerSideProps<
         projectId: `ceramic://${id}`,
       },
     });
+
     return {
-      props: { id, ...data.getProjectById },
+      props: {
+        id,
+        ...data.getProjectById,
+        ...(await serverSideTranslations(ctx.locale || "en", ["common"])),
+      },
     };
   } catch (error) {
     return {
@@ -92,13 +99,15 @@ function ReviewProjectPage({
   gitbook,
 }: any) {
   const { t } = useTranslation("common");
-  const { isReviewer, contracts, provider } = useContext(Web3Context);
-  const { chainId, account } = useWeb3React();
+  const { defaultMainnetDAIToken } = useTokenList();
+  const { isReviewer, contracts } = useContext(Web3Context);
+  const { chainId, account, library } = useWeb3React();
   const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
   const { getColoredText } = useCustomColor();
+  const projectMarkdownTheme = usePageMarkdownTheme();
 
   useEffect(() => {
     async function init() {
@@ -122,11 +131,12 @@ function ReviewProjectPage({
       const voteForApprovalTx =
         await contracts.projectNFTContract.voteForApproval(
           contributors,
+          [defaultMainnetDAIToken.address],
           10,
           id
         );
       // get return values or events
-      const receipt = await voteForApprovalTx.wait(2);
+      await voteForApprovalTx.wait(1);
       const statusInt = await contracts.projectNFTContract.status(id);
       const statusString = await contracts.projectNFTContract.statusStrings(
         statusInt
@@ -138,7 +148,7 @@ function ReviewProjectPage({
           tokenUris,
           chainId: chainId.toString(),
         };
-        const signature = await provider.provider.send("personal_sign", [
+        const signature = await library.provider.send("personal_sign", [
           JSON.stringify(mutationInput),
           account,
         ]);
@@ -151,7 +161,7 @@ function ReviewProjectPage({
           },
         });
       }
-      console.log({ receipt, statusString });
+      return statusString;
     }
     return null;
   };
@@ -174,7 +184,6 @@ function ReviewProjectPage({
     }
     return null;
   };
-
   return isReviewer ? (
     <Container>
       <Flex w="full">
@@ -241,40 +250,26 @@ function ReviewProjectPage({
             </Badge>
           ))}
         </Stack>
-        <HStack pt="8" spacing={8}>
-          {website && (
-            <Link target="_blank" href={website}>
-              <Icon boxSize={8} as={BsGlobe} />
-            </Link>
-          )}
-          {twitter && (
-            <Link target="_blank" href={twitter}>
-              <Icon boxSize={8} as={SiTwitter} />
-            </Link>
-          )}
-          {discord && (
-            <Link target="_blank" href={discord}>
-              <Icon boxSize={8} as={SiDiscord} />
-            </Link>
-          )}
-          {github && (
-            <Link target="_blank" href={github}>
-              <Icon boxSize={8} as={SiGithub} />
-            </Link>
-          )}
-          {gitbook && (
-            <Link target="_blank" href={gitbook}>
-              <Icon boxSize={8} as={SiGitbook} />
-            </Link>
-          )}
-        </HStack>
-        <Text pt="8">{description}</Text>
+        <SocialLinks
+          website={website}
+          discord={discord}
+          twitter={twitter}
+          github={github}
+          gitbook={gitbook}
+        />
+        <ReactMarkdown
+          components={ChakraUIRenderer(projectMarkdownTheme)}
+          skipHtml
+        >
+          {description}
+        </ReactMarkdown>
         <Heading as="h3" size="lg" py="4">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
         </Heading>
         <SimpleGrid columns={3} spacing={4}>
           {squads.map((squad: any) => (
             <CardMedia
+              key={squad.id}
               h="fit-content"
               src={`https://ipfs.io/ipfs/${squad.image}`}
             >
@@ -290,7 +285,7 @@ function ReviewProjectPage({
               </HStack>
               <VStack align="center" maxW="full">
                 {squad.members.map((member: string) => (
-                  <HStack w="full">
+                  <HStack w="full" key={member}>
                     {member && <Blockies seed={member} className="blockies" />}
                     <Text ml="2" fontSize="sm" isTruncated>
                       {member}
@@ -310,15 +305,6 @@ function ReviewProjectPage({
       </Card>
     </CenteredFrame>
   );
-}
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-      // Will be passed to the page component as props
-    },
-  };
 }
 
 export default ReviewProjectPage;

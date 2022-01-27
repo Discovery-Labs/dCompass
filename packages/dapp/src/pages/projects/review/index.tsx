@@ -2,26 +2,29 @@ import { useQuery } from "@apollo/client";
 import {
   Flex,
   Heading,
+  Progress,
   SimpleGrid,
   Spacer,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from "@chakra-ui/react";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useContext } from "react";
 
 import Card from "../../../components/custom/Card";
 import NotReviewerCard from "../../../components/custom/NotReviewerCard";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
 import Container from "../../../components/layout/Container";
-import { ProjectCard } from "../../../components/projects/ProjectCard";
+import ProjectCard from "../../../components/projects/ProjectCard";
 import { Web3Context } from "../../../contexts/Web3Provider";
+import { Project } from "../../../core/types";
 import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 function ReviewProjects() {
   const { t } = useTranslation("common");
@@ -30,8 +33,19 @@ function ReviewProjects() {
   });
   console.log({ data });
   const { isReviewer } = useContext(Web3Context);
-
-  if (loading) return "Loading...";
+  const renderProjects = (projects: Project[]) =>
+    projects.map((project: Project) => (
+      <ProjectCard isReviewMode key={project.name} project={project} />
+    ));
+  if (loading)
+    return (
+      <Stack pt="30" px="8">
+        <Text textTransform="uppercase">
+          {t("project")} {t("loading")}
+        </Text>
+        <Progress size="xs" isIndeterminate />
+      </Stack>
+    );
   if (error) return `Error! ${error.message}`;
   return isReviewer ? (
     <Container>
@@ -49,31 +63,20 @@ function ReviewProjects() {
         <TabPanels>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
-              {data.getAllProjects
-                .filter(
+              {renderProjects(
+                data.getAllProjects.filter(
                   ({ isFeatured }: { isFeatured: boolean }) => !isFeatured
                 )
-                .map((project: any) => (
-                  // TODO: use GraphQL codegen to get the types out of the box
-                  <ProjectCard
-                    isReviewMode
-                    key={project.name}
-                    project={project}
-                  />
-                ))}
+              )}
             </SimpleGrid>
           </TabPanel>
           <TabPanel>
             <SimpleGrid columns={[1, 2, 3]} spacing={10}>
-              {data.getAllProjects
-                .filter(({ isFeatured }: { isFeatured: boolean }) => isFeatured)
-                .map((project: any) => (
-                  <ProjectCard
-                    isReviewMode
-                    key={project.name}
-                    project={project}
-                  />
-                ))}
+              {renderProjects(
+                data.getAllProjects.filter(
+                  ({ isFeatured }: { isFeatured: boolean }) => isFeatured
+                )
+              )}
             </SimpleGrid>
           </TabPanel>
         </TabPanels>

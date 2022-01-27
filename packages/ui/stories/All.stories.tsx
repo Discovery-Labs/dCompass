@@ -381,6 +381,30 @@ export const All = () => {
           <FormHelperText>We'll never share your email.</FormHelperText>
         </FormControl>
 
+        <FormControl id="email" isInvalid>
+          <FormLabel>Email address</FormLabel>
+          <Input type="email" />
+          <FormHelperText>We'll never share your email.</FormHelperText>
+        </FormControl>
+
+        <HStack justify="space-between">
+          <Box layerStyle="solid-card">
+            <FormControl id="email" isRequired>
+              <FormLabel>Email address</FormLabel>
+              <Input type="email" />
+              <FormHelperText>We'll never share your email.</FormHelperText>
+            </FormControl>
+          </Box>
+
+          <Box layerStyle="outline-card">
+            <FormControl id="email" isRequired>
+              <FormLabel>Email address</FormLabel>
+              <Input type="email" />
+              <FormHelperText>We'll never share your email.</FormHelperText>
+            </FormControl>
+          </Box>
+        </HStack>
+
         <FormControl id="email" isRequired>
           <FormLabel as="legend">Favorite Naruto Character</FormLabel>
           <RadioGroup defaultValue="Itachi">

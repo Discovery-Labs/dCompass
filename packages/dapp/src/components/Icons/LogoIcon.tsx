@@ -1,5 +1,4 @@
-import React from "react";
-import { Box, Flex, Link, useColorMode } from "@chakra-ui/react";
+import { Box, useColorMode } from "@chakra-ui/react";
 
 function LogoIcon({ size = "25px" }: { size?: string }) {
   const { colorMode } = useColorMode();

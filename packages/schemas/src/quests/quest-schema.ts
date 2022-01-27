@@ -31,6 +31,15 @@ export const questBaseProperties = {
     type: "string",
     maxLength: 150,
   },
+  rewardAmount: {
+    type: "number",
+  },
+  rewardUserCap: {
+    type: "number",
+  },
+  rewardCurrency: {
+    type: "string",
+  },
   nfts: {
     type: "array",
     minItems: 1,

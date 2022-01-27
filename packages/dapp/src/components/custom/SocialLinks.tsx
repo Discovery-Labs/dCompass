@@ -1,5 +1,4 @@
-import { HStack, Link, Icon, Flex, VStack } from "@chakra-ui/react";
-import React from "react";
+import { HStack, Link, Icon } from "@chakra-ui/react";
 import { BsGlobe } from "react-icons/bs";
 import { SiTwitter, SiDiscord, SiGithub, SiGitbook } from "react-icons/si";
 

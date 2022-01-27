@@ -1,4 +1,4 @@
-import { StepsStyleConfig as Steps } from 'chakra-ui-steps';
+import Steps from './steps';
 import Accordion from './accordion';
 import Alert from './alert';
 import Badge from './badge';

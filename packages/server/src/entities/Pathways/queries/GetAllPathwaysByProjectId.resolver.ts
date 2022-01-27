@@ -22,13 +22,14 @@ export class GetAllPathwaysByProjectIdResolver {
     );
     const projects = allProjects?.projects ?? [];
     console.log(projects);
+    // Comparison between ceramic urls
+    // (eg: ceramic://some_stream_id === ceramic://another_stream_id)
     const foundProject = projects.find(
       (project: Project) => project.id === projectId,
     );
 
-    console.log({ foundProject });
     if (!foundProject) {
-      throw new NotFoundException('Project not found');
+      throw new NotFoundException('Project not found??');
     }
     const pathwayIds = foundProject.pathways
       ? foundProject.pathways.map((id: string) => ({
@@ -42,7 +43,11 @@ export class GetAllPathwaysByProjectIdResolver {
         }))
       : [];
 
-    console.log({ pathwayIds });
+    const indexedPathways = await ceramicClient.dataStore.get(
+      schemaAliases.PATHWAYS_ALIAS,
+    );
+
+    const pathwaysWithAdditionalDetails = indexedPathways?.pathways ?? [];
 
     const [pathwaysWithDetails, pendingPathwaysWithDetails] = await Promise.all(
       [
@@ -51,10 +56,36 @@ export class GetAllPathwaysByProjectIdResolver {
       ],
     );
 
-    console.log({ pathwaysWithDetails, pendingPathwaysWithDetails });
-
     const serializedPathways = Object.values(pathwaysWithDetails).map(
       (stream) => {
+        const serverSidePathwayInfos = pathwaysWithAdditionalDetails.find(
+          (pathway: Pathway) => pathway.id === stream.id.toUrl(),
+        );
+        if (serverSidePathwayInfos) {
+          const quests =
+            serverSidePathwayInfos.quests &&
+            serverSidePathwayInfos.quests.length > 0
+              ? serverSidePathwayInfos.quests.map((questId: string) => ({
+                  id: questId,
+                }))
+              : [];
+
+          const pendingQuests =
+            serverSidePathwayInfos.pendingQuests &&
+            serverSidePathwayInfos.pendingQuests.length > 0
+              ? serverSidePathwayInfos.pendingQuests.map((questId: string) => ({
+                  id: questId,
+                }))
+              : [];
+          return {
+            id: stream.id.toUrl(),
+            ...stream.state.content,
+            ...serverSidePathwayInfos,
+            quests,
+            pendingQuests,
+            isPending: false,
+          };
+        }
         return {
           id: stream.id.toUrl(),
           ...stream.state.content,
@@ -66,13 +97,42 @@ export class GetAllPathwaysByProjectIdResolver {
     const serializedPendingPathways = Object.values(
       pendingPathwaysWithDetails,
     ).map((stream) => {
+      const serverSidePathwayInfos = pathwaysWithAdditionalDetails.find(
+        (pathway: Pathway) => pathway.id === stream.id.toUrl(),
+      );
+      if (serverSidePathwayInfos) {
+        const quests =
+          serverSidePathwayInfos.quests &&
+          serverSidePathwayInfos.quests.length > 0
+            ? serverSidePathwayInfos.quests.map((questId: string) => ({
+                id: questId,
+              }))
+            : [];
+
+        const pendingQuests =
+          serverSidePathwayInfos.pendingQuests &&
+          serverSidePathwayInfos.pendingQuests.length > 0
+            ? serverSidePathwayInfos.pendingQuests.map((questId: string) => ({
+                id: questId,
+              }))
+            : [];
+        return {
+          id: stream.id.toUrl(),
+          ...stream.state.content,
+          ...serverSidePathwayInfos,
+          quests,
+          pendingQuests,
+          isPending: true,
+        };
+      }
       return {
         id: stream.id.toUrl(),
         ...stream.state.content,
+        ...serverSidePathwayInfos,
         isPending: true,
       };
     });
-    console.log({ serializedPathways, serializedPendingPathways });
+
     return [...serializedPathways, ...serializedPendingPathways];
   }
 }

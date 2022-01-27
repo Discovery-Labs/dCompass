@@ -20,32 +20,27 @@ import {
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 // import { ethers } from "ethers";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useRouter } from "next/router";
 import { useContext, useState, useEffect } from "react";
 import { BsBarChartFill } from "react-icons/bs";
+import { FiUserCheck } from "react-icons/fi";
 import { GiTwoCoins } from "react-icons/gi";
 import { GoTasklist } from "react-icons/go";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
+import ReactMarkdown from "react-markdown";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { streamUrlToId } from "../../../core/helpers";
 import useCustomColor from "../../../core/hooks/useCustomColor";
+import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
+import useTokenList from "../../../core/hooks/useTokenList";
+import { Pathway } from "../../../core/types";
 import {
   APPROVE_PATHWAY_MUTATION,
   VERIFY_PATHWAY_MUTATION,
 } from "../../../graphql/pathways";
 import Card from "components/custom/Card";
-
-type Pathway = {
-  id: string;
-  image: string;
-  title: string;
-  description: string;
-  projectId: string;
-  difficulty: string;
-  isPending: boolean;
-  createdBy: string;
-};
 
 function PathwayCard({
   pathway,
@@ -54,8 +49,9 @@ function PathwayCard({
   pathway: Pathway;
   projectContributors: string[];
 }) {
-  const { getTextColor, getColoredText, getBgColor, getAccentColor } =
-    useCustomColor();
+  const { getRewardCurrency } = useTokenList();
+  const pathwayCardMarkdownTheme = useCardMarkdownTheme();
+  const { getTextColor, getBgColor, getAccentColor } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
@@ -63,8 +59,8 @@ function PathwayCard({
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
-  const { account, provider, contracts } = useContext(Web3Context);
-  const { chainId } = useWeb3React();
+  const { account, contracts } = useContext(Web3Context);
+  const { chainId, library } = useWeb3React();
   const router = useRouter();
   const id = streamUrlToId(pathway.id);
 
@@ -97,7 +93,7 @@ function PathwayCard({
         id: pathway.id,
         projectId: pathway.projectId,
       };
-      const signature = await provider.provider.send("personal_sign", [
+      const signature = await library.provider.send("personal_sign", [
         JSON.stringify(signatureInput),
         account,
       ]);
@@ -127,15 +123,14 @@ function PathwayCard({
         );
 
       // get return values or events
-      const receipt = await voteForApprovalTx.wait(2);
+      const receipt = await voteForApprovalTx.wait(1);
+      console.log({ receipt });
       const statusInt = await contracts.pathwayNFTContract.status(id);
       const statusString = await contracts.pathwayNFTContract.statusStrings(
         statusInt
       );
       console.log({ statusString });
       setStatus(statusString);
-
-      // console.log({ receipt, statusString });
     }
     return null;
   };
@@ -162,7 +157,7 @@ function PathwayCard({
         id: pathway.id,
         projectId: pathway.projectId,
       };
-      const signature = await provider.provider.send("personal_sign", [
+      const signature = await library.provider.send("personal_sign", [
         JSON.stringify(signatureInput),
         account,
       ]);
@@ -192,7 +187,8 @@ function PathwayCard({
       );
 
       // get return values or events
-      // const receipt = await createTokenTx.wait(2);
+      const receipt = await createTokenTx.wait(1);
+      console.log({ receipt });
       const isMinted = await contracts.pathwayNFTContract.pathwayMinted(id);
       if (isMinted) {
         setStatus("MINTED");
@@ -202,24 +198,40 @@ function PathwayCard({
   };
 
   return (
-    <Card h={isContributor ? "xl" : "lg"}>
-      <Flex w="full" minH="56px">
-        <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
-          {pathway.title}
-        </Heading>
+    <Card h="xl" w="md">
+      <Flex w="full" h="160px">
+        <Tooltip label={pathway.title} hasArrow placement="top">
+          <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
+            {pathway.title}
+          </Heading>
+        </Tooltip>
       </Flex>
-      <Tooltip label={pathway.description} hasArrow placement="top">
-        <Heading
-          noOfLines={3}
-          as="h4"
-          fontSize="md"
-          color={getColoredText}
-          minH="65px"
+      <VStack w="full" align="flex-start">
+        <ReactMarkdown
+          className="card-markdown"
+          components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
+          skipHtml
         >
           {pathway.description}
-        </Heading>
-      </Tooltip>
-
+        </ReactMarkdown>
+      </VStack>
+      <VStack w="full" align="left">
+        <HStack>
+          <Icon as={FiUserCheck} />
+          <Text
+            fontWeight="bold"
+            fontSize="xl"
+            color={getTextColor}
+            textTransform="uppercase"
+          >
+            Claimed
+          </Text>
+          <Spacer />
+          <Flex align="end" direction="column">
+            <Tag variant="outline">0/{pathway.rewardUserCap}</Tag>
+          </Flex>
+        </HStack>
+      </VStack>
       <VStack w="full" align="left">
         <HStack>
           <Icon as={GiTwoCoins} />
@@ -231,6 +243,12 @@ function PathwayCard({
           >
             Rewards
           </Text>
+          <Spacer />
+          <Flex align="end" direction="column">
+            <Tag variant="outline">
+              {pathway.rewardAmount} {getRewardCurrency(pathway.rewardCurrency)}
+            </Tag>
+          </Flex>
         </HStack>
 
         <Stack
@@ -263,11 +281,13 @@ function PathwayCard({
             height={useBreakpointValue({ base: "44px", md: "60px" })}
           >
             <Text fontSize="3xl" fontWeight="bold">
-              0.1 ETH
+              {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
+              {getRewardCurrency(pathway.rewardCurrency)}
             </Text>
           </Flex>
         </Stack>
       </VStack>
+
       <VStack w="full" align="left">
         <HStack>
           <Icon as={BsBarChartFill} />
@@ -285,7 +305,11 @@ function PathwayCard({
           </Flex>
         </HStack>
       </VStack>
-      <Tooltip label="50% - 4/8 quests completed" hasArrow placement="top">
+      <Tooltip
+        label={`0% - 0/${pathway.quests?.length || 0} quests completed`}
+        hasArrow
+        placement="top"
+      >
         <VStack w="full" align="left">
           <HStack>
             <Icon as={GoTasklist} />
@@ -301,7 +325,7 @@ function PathwayCard({
               w="full"
               size="md"
               rounded="md"
-              value={50}
+              value={0}
               border={`solid 1px ${getAccentColor}`}
               hasStripe
               colorScheme="accentDark"
@@ -311,7 +335,7 @@ function PathwayCard({
         </VStack>
       </Tooltip>
 
-      {isContributor && (
+      {isContributor && status !== "MINTED" && (
         <VStack w="full" align="left">
           <HStack>
             <Text>Token status:</Text>
@@ -357,7 +381,7 @@ function PathwayCard({
           fontSize="md"
           onClick={() => openPathway()}
         >
-          8 Quests
+          {pathway.quests?.length || 0} Quests
         </Button>
 
         {!pathway.isPending && (

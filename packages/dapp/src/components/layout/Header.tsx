@@ -22,12 +22,15 @@ import {
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useContext } from "react";
+
 import { Web3Context } from "../../contexts/Web3Provider";
 import useCustomColor from "../../core/hooks/useCustomColor";
 import ConnectButton from "../Buttons/ConnectButton";
-import LogoIcon from "../Icons/LogoIcon";
-import ThemeToggle from "./ThemeToggle";
 import LanguageButton from "../Buttons/LanguageButton";
+import NetworkSwitch from "../custom/NetworkSwitch";
+import LogoIcon from "../Icons/LogoIcon";
+
+import ThemeToggle from "./ThemeToggle";
 
 const LinkItem = ({ href, _target, children, ...props }: any) => {
   const { pathname } = useRouter();
@@ -44,9 +47,9 @@ const LinkItem = ({ href, _target, children, ...props }: any) => {
   return (
     <NextLink href={href} passHref>
       <Link
-        p={2}
         color={isActive ? getPrimaryColor : getTextColor}
         _target={_target}
+        _hover={{ color: getPrimaryColor, textDecoration: "none" }}
         {...props}
       >
         {children}
@@ -60,7 +63,8 @@ const LinkItems = () => {
     <>
       <LinkItem href="/">Projects</LinkItem>
       <LinkItem href="/quests">Quests</LinkItem>
-      <LinkItem href="/dashboard">Dashboard</LinkItem>
+      <LinkItem href="/badges">Badges</LinkItem>
+      {/* <LinkItem href="/dashboard">Dashboard</LinkItem> */}
     </>
   );
 };
@@ -68,7 +72,10 @@ const LinkItems = () => {
 const Navbar = (props: any) => {
   const { account, isReviewer } = useContext(Web3Context);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { getOverBgColor } = useCustomColor();
+  const { getOverBgColor, getPrimaryColor } = useCustomColor();
+
+  const moreLink =
+    "https://discoverydao.notion.site/discoverydao/Discovery-DAO-33c1ab96a7e04865bb0b8a29d66ee0e6";
 
   return (
     <Box
@@ -101,13 +108,23 @@ const Navbar = (props: any) => {
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             <LinkItem href="/">Projects</LinkItem>
             <LinkItem href="/quests">Quests</LinkItem>
-            <LinkItem href="/dashboard">Dashboard</LinkItem>
+            <LinkItem href="/badges">Badges</LinkItem>
+            <Link
+              href={moreLink}
+              target="_blank"
+              _hover={{ color: getPrimaryColor, textDecoration: "none" }}
+              {...props}
+            >
+              More
+            </Link>
+            {/* <LinkItem href="/dashboard">Dashboard</LinkItem> */}
           </HStack>
         </HStack>
         <Spacer />
         <HStack alignItems="center">
           <LanguageButton />
           <ThemeToggle />
+          <NetworkSwitch />
           {account && isReviewer && (
             <LinkItem href="/projects/review">
               <Tag size="lg" variant="outline">

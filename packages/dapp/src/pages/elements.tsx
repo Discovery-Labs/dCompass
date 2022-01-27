@@ -64,8 +64,8 @@ const Elements = () => {
           <Button variant="outline">Hello</Button>
           <Button variant="ghost">Hello</Button>
           <Input />
-          <Select placeholder="Select option"></Select>
-          <Textarea placeholder="Select option"></Textarea>
+          <Select placeholder="Select option" />
+          <Textarea placeholder="Select option" />
 
           <Switch />
           {/* set to subtle default variant="subtle" colorScheme="cyan" */}
@@ -151,7 +151,7 @@ const Elements = () => {
           <FormControl id="email">
             <FormLabel>Email address</FormLabel>
             <Input type="email" />
-            <FormHelperText>We'll never share your email.</FormHelperText>
+            <FormHelperText>We&apos;ll never share your email.</FormHelperText>
           </FormControl>
 
           <FormControl id="email" isRequired>

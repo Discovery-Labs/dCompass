@@ -38,7 +38,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         "0x3E31155a1c17c9F85e74828447aec412090a4622",
         "0x4678854dB7421fF1B3C5ACAe6c5C11e73f4F5702",
         "0xDAFf97a69408Cdb4AeFE331eA029a55e189ef60b",
-      ]
+      ],
     ],
     log: true,
   });
@@ -55,36 +55,31 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         "0x3E31155a1c17c9F85e74828447aec412090a4622",
         "0x4678854dB7421fF1B3C5ACAe6c5C11e73f4F5702",
         "0xDAFf97a69408Cdb4AeFE331eA029a55e189ef60b",
-      ]
+      ],
     ],
     log: true,
   });
 
   const pathway = await deploy("PathwayNFT", {
     from: DEPLOYER_PRIVATE_KEY,
-    args: [
-      vrf.address,
-      project.address,
-      verify.address
-    ],
-    log: true, 
-  })
+    args: [vrf.address, project.address, verify.address],
+    log: true,
+  });
 
   const appDiamond = await deploy("AppDiamond", {
     from: DEPLOYER_PRIVATE_KEY,
-    args: [
-      project.address,
-      verify.address,
-      SERVER_ADDRESS
-    ],
-    log: true, 
-  })
+    args: [project.address, verify.address, SERVER_ADDRESS],
+    log: true,
+  });
 
-  
-  await deployments.execute("ProjectNFT", {from : DEPLOYER_PRIVATE_KEY}, "setAppDiamond", appDiamond.address);
+  await deployments.execute(
+    "ProjectNFT",
+    { from: DEPLOYER_PRIVATE_KEY },
+    "setAppDiamond",
+    appDiamond.address
+  );
   /*const executeCheck = await deployments.read("ProjectNFT", "appDiamond")
   console.log(executeCheck)*/
-  
 
   /*
     // Getting a previously deployed contract
@@ -122,4 +117,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   });
   */
 };
-module.exports.tags = ["ProjectNFT", "RandomNumberConsumer", "Verify", "PathwayNFT", "AppDiamond"];
+module.exports.tags = [
+  "ProjectNFT",
+  "RandomNumberConsumer",
+  "Verify",
+  "PathwayNFT",
+  "AppDiamond",
+];

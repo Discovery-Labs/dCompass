@@ -55,8 +55,14 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
       description
       image
       difficulty
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
       isPending
       projectId
+      quests {
+        id
+      }
     }
   }
 `;
@@ -70,6 +76,9 @@ export const GET_PATHWAY_BY_ID_QUERY = gql`
       createdAt
       difficulty
       description
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
       image
       projectId
       prerequisites

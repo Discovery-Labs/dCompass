@@ -16,14 +16,15 @@ import { useDropzone } from "react-dropzone";
 const LogoDropzone = ({
   register,
   setValue,
+  getValues,
   errors,
   isRequired = false,
 }: any) => {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState<Array<any>>([]);
   const logoOptions = isRequired
     ? {
-      required: "This is required",
-    }
+        required: "This is required",
+      }
     : {};
 
   const onDrop = useCallback(
@@ -44,7 +45,7 @@ const LogoDropzone = ({
     [setValue]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
     onDrop,
   });
@@ -68,6 +69,24 @@ const LogoDropzone = ({
       </Flex>
     </Flex>
   ));
+
+  useEffect(() => {
+    const logoValues = getValues("logo");
+
+    if (logoValues) {
+      const logoFiles = [];
+      logoFiles.push(logoValues[0]);
+      setFiles(
+        // eslint-disable-next-line sonarjs/no-identical-functions
+        logoFiles.map((file: File) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+      // console.log(logoFiles);
+    }
+  }, [getValues]);
 
   useEffect(
     () => () => {

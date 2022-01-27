@@ -13,10 +13,10 @@ const baseStyle: SystemStyleFunction = (props) => {
     color: 'inherit',
     _hover: {
       color: mode(colors.primary[500], colors.primary[500])(props),
-      textDecoration: 'none',
+      textDecoration: 'underline',
     },
     _focus: {
-      boxShadow: 'none',
+      boxShadow: 'underline',
     },
   };
 };

@@ -10,6 +10,9 @@ interface ExtendedColors {
   borderDark: string;
   borderLight: string;
 
+  neutralDarkerAlpha: string;
+  neutralLighterAlpha: string;
+
   // Functional
   success: string;
   error: string;
@@ -65,9 +68,11 @@ const extendedColors: DeepPartial<
   neutralLighter: '#EFEDF5',
   neutralLight: '#AFA2D6',
 
+  neutralDarkerAlpha: '#1a2227b3',
+  neutralLighterAlpha: '#f0f0f0b3',
+
   borderDark: '#30363d',
   borderLight: '#c7d2da',
-  
 
   // Functional
   success: '#9AF1A8',

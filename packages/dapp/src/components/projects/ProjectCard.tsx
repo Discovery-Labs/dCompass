@@ -1,50 +1,29 @@
+import { ViewIcon } from "@chakra-ui/icons";
 import {
   HStack,
   Button,
   Flex,
-  Spacer,
   Text,
   Stack,
   Badge,
-  Tooltip,
   Icon,
   Link,
   Heading,
+  VStack,
 } from "@chakra-ui/react";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import Blockies from "react-blockies";
 import { BsGlobe } from "react-icons/bs";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
+import ReactMarkdown from "react-markdown";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
-import { Tag } from "../../core/types";
+import { useCardMarkdownTheme } from "../../core/hooks/useMarkdownTheme";
+import { Project } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
 
-export type Project = {
-  id: string;
-  logo: string;
-  name: string;
-  avatar: string;
-  createdBy: string;
-  description: string;
-  isFeatured: boolean;
-  website: string;
-  discord: string;
-  twitter: string;
-  github: string;
-  gitbook: string;
-  whitepaper: string;
-  createdAt: string;
-  squads: {
-    name: string;
-    image: string;
-    members: string[];
-  }[];
-  tags: Tag[];
-};
-
-export const ProjectCard = ({
+const ProjectCard = ({
   project,
   isReviewMode = false,
 }: {
@@ -53,9 +32,9 @@ export const ProjectCard = ({
 }) => {
   const { t } = useTranslation("common");
   const { getTextColor } = useCustomColor();
+  const projectCardMarkdownTheme = useCardMarkdownTheme();
 
   const router = useRouter();
-  console.log({ project, isReviewMode, id: project.id.split("://")[1] });
 
   function openProject() {
     router.push(
@@ -65,9 +44,10 @@ export const ProjectCard = ({
     );
   }
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
+
   return (
-    <CardMedia src={imgSrc}>
-      <Heading as="h2" size="lg" color={getTextColor}>
+    <CardMedia src={imgSrc} h="xl">
+      <Heading noOfLines={2} as="h2" size="lg" minH="75px" color={getTextColor}>
         {project.name}
       </Heading>
 
@@ -78,13 +58,17 @@ export const ProjectCard = ({
           </Badge>
         ))}
       </Stack>
-      <Tooltip label={project.description} hasArrow placement="top">
-        <Heading noOfLines={3} as="h4" fontSize="md" color={getTextColor}>
-          {project.description}
-        </Heading>
-      </Tooltip>
 
-      <Spacer />
+      <VStack w="full" align="flex-start">
+        <ReactMarkdown
+          className="card-markdown"
+          components={ChakraUIRenderer(projectCardMarkdownTheme)}
+          skipHtml
+        >
+          {project.description}
+        </ReactMarkdown>
+      </VStack>
+
       <HStack spacing={7}>
         {project.website && (
           <Link target="_blank" href={project.website}>
@@ -128,9 +112,11 @@ export const ProjectCard = ({
           </HStack>
         )}
       </Flex>
-      <Button w="full" onClick={() => openProject()}>
+      <Button w="full" onClick={() => openProject()} leftIcon={<ViewIcon />}>
         {!isReviewMode ? t("view-project") : t("review-project")}
       </Button>
     </CardMedia>
   );
 };
+
+export default ProjectCard;

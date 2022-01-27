@@ -1,28 +1,31 @@
-import { formAnatomy as parts } from "@chakra-ui/anatomy";
+import { formAnatomy as parts } from '@chakra-ui/anatomy';
 import type {
   PartsStyleFunction,
   SystemStyleFunction,
-} from "@chakra-ui/theme-tools";
-import { mode } from "@chakra-ui/theme-tools";
+} from '@chakra-ui/theme-tools';
+import { mode } from '@chakra-ui/theme-tools';
+import useThemeColor from '../../hooks/useThemeColor';
 
 const baseStyleRequiredIndicator: SystemStyleFunction = (props) => {
   return {
     marginStart: 1,
-    color: mode("pink.500", "pink.300")(props),
+    color: mode('pink.500', 'pink.300')(props),
   };
 };
 
 const baseStyleHelperText: SystemStyleFunction = (props) => {
+  const { getTextAlphaColor } = useThemeColor();
+
   return {
     mt: 2,
-    color: mode("gray.500", "whiteAlpha.600")(props),
-    lineHeight: "normal",
-    fontSize: "sm",
+    color: getTextAlphaColor(props),
+    lineHeight: 'normal',
+    fontSize: 'sm',
   };
 };
 
 const baseStyle: PartsStyleFunction<typeof parts> = (props) => ({
-  container: { width: "100%", position: "relative" },
+  container: { width: '100%', position: 'relative' },
   requiredIndicator: baseStyleRequiredIndicator(props),
   helperText: baseStyleHelperText(props),
 });

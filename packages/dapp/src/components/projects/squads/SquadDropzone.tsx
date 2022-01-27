@@ -16,11 +16,12 @@ import { useDropzone } from "react-dropzone";
 const SquadDropzone = ({
   nestIndex,
   register,
+  getValues,
   setValue,
   errors,
   formLabel,
 }: any) => {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState<Array<any>>([]);
 
   const onDrop = useCallback(
     (acceptedFiles, rejectedFiles, e) => {
@@ -39,7 +40,7 @@ const SquadDropzone = ({
     [setValue]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
     onDrop,
   });
@@ -63,6 +64,23 @@ const SquadDropzone = ({
       </Flex>
     </Flex>
   ));
+
+  useEffect(() => {
+    const squadsImage = getValues(`squads[${nestIndex}].image`);
+
+    if (squadsImage) {
+      const logoFiles = [];
+      logoFiles.push(squadsImage[0]);
+      setFiles(
+        // eslint-disable-next-line sonarjs/no-identical-functions
+        logoFiles.map((file: File) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    }
+  }, [getValues, nestIndex]);
 
   useEffect(
     () => () => {

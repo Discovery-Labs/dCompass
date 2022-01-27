@@ -1,6 +1,6 @@
 {
   "name": "@discovery-dao/schemas",
-  "version": "0.0.0",
+  "version": "0.0.3",
   "description": "JSON Schema definitions for Decentralized Profiles",
   "main": "lib/schemas.js",
   "author": "Discovery DAO",
@@ -28,7 +28,7 @@
   "bugs": {
     "url": "https://github.com/Discovery-Labs/Discovery/issues"
   },
-  "gitHead": "2ba1993f2d70de68f42a5f745bb1f7af774fdec0",
+  "gitHead": "6c6d5c19181be9340a3d5de8fa8deb902538efd9",
   "devDependencies": {
     "@datamodels/identity-accounts-crypto": "^0.1.2",
     "@datamodels/identity-accounts-web": "^0.1.2",

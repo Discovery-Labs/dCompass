@@ -6,6 +6,7 @@ import type {
 } from '@chakra-ui/theme-tools';
 import { getColor, mode } from '@chakra-ui/theme-tools';
 import { borderRadius, colorScheme } from '../default-props';
+import useThemeColor from '../../hooks/useThemeColor';
 
 const baseStyle: PartsStyleObject<typeof parts> = {
   field: {
@@ -77,13 +78,15 @@ function getDefaults(props: Record<string, any>) {
 }
 
 const variantOutline: PartsStyleFunction<typeof parts> = (props) => {
+  const { getBorderColor } = useThemeColor();
+
   const { colorScheme: c, theme } = props;
   const { focusBorderColor: fc, errorBorderColor: ec } = getDefaults(props);
 
   return {
     field: {
       border: '1px solid',
-      borderColor: 'inherit',
+      borderColor: getBorderColor(props),
       borderRadius: borderRadius,
       bg: 'inherit',
       _hover: {
