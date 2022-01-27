@@ -1,6 +1,6 @@
 {
   "name": "@discovery-dao/schemas",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "JSON Schema definitions for Decentralized Profiles",
   "main": "lib/schemas.js",
   "author": "Discovery DAO",
