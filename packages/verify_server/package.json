@@ -1,8 +1,9 @@
 {
-  "name": "@discovery-dao/server",
+  "name": "@discovery-dao/verify-server",
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "Discovery DAO",
+  "private": true,
   "homepage": "",
   "license": "GPL-3.0-or-later",
   "main": "lib/server.js",

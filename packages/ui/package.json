@@ -11,7 +11,7 @@
   "engines": {
     "node": ">=10"
   },
-  "private": true,
+  "private": false,
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",

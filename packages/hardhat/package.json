@@ -4,7 +4,7 @@
   "description": "> TODO: description",
   "author": "Discovery DAO",
   "homepage": "",
-  "private": "true",
+  "private": false,
   "license": "GPL-3.0-or-later",
   "main": "lib/contracts.js",
   "directories": {
