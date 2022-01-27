@@ -30,10 +30,12 @@
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.7",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@uniswap/default-token-list": "^3.0.0",
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.4.7",
-    "hardhat": "^2.6.4"
+    "hardhat": "^2.6.4",
+    "hardhat-gas-reporter": "^1.0.7"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2",
