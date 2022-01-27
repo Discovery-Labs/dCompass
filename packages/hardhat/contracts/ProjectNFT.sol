@@ -151,7 +151,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         return newItems;    
     }
 
-    function addProjectWallet(string memory _projectId) external payable{
+    function addProjectWallet(string memory _projectId, address _multiSig) external payable{
         require (projectWallets[_projectId] == address(0), "already project wallet");
         require (msg.value >= stakeAmount, "not enough staked");
         projectWallets[_projectId] = _msgSender();
