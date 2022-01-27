@@ -98,5 +98,6 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "gitHead": "6508d69ab709b11866bf581d9f9ce517933d558a"
 }

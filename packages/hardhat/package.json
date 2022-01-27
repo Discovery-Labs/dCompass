@@ -39,5 +39,6 @@
     "@openzeppelin/contracts": "^4.3.2",
     "dotenv": "^10.0.0",
     "hardhat-deploy": "^0.9.8"
-  }
+  },
+  "gitHead": "6508d69ab709b11866bf581d9f9ce517933d558a"
 }

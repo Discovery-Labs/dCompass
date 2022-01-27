@@ -12,8 +12,8 @@ const webAccounts = require("@datamodels/identity-accounts-web");
 const { schemas } = require("./lib/schemas");
 
 const { writeFile } = promises;
-// The key must be provided as an environment variable
 const createModels = async () => {
+  // The key must be provided as an environment variable
   const key = fromString(process.env.DID_KEY || "", "base16");
   // Create and authenticate the DID
   const did = new DID({
