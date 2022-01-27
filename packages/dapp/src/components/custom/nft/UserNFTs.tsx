@@ -3,7 +3,7 @@ import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import { useContext, useEffect, useState } from "react";
 
-import NFTCard from "components/custom/dashboard/NFTCard";
+import NFTCard from "components/custom/nft/NFTCard";
 import { Web3Context } from "contexts/Web3Provider";
 
 import ABI from "./TestNFTContractABI";

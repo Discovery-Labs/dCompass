@@ -2,7 +2,7 @@ import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import { useContext, useEffect, useState } from "react";
 
-import ABI from "components/custom/dashboard/TestNFTContractABI";
+import ABI from "components/custom/nft/TestNFTContractABI";
 import { Web3Context } from "contexts/Web3Provider";
 
 function useWalletMembershipAccess() {

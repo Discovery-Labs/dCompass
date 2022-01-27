@@ -1,37 +1,30 @@
 import {
-  Flex,
-  VStack,
-  Text,
   Box,
-  SimpleGrid,
-  Center,
   HStack,
-  Stack,
+  Icon,
+  IconButton,
+  Link,
   SkeletonCircle,
   SkeletonText,
+  Stack,
+  Text,
   useClipboard,
-  IconButton,
-  Icon,
-  Link,
+  VStack,
 } from "@chakra-ui/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import Card from "components/custom/Card";
-import UserNFTs from "components/custom/dashboard/UserNFTs";
-import MembershipWrapper from "components/custom/MembershipWrapper";
-import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
-import CenteredFrame from "components/layout/CenteredFrame";
-import Container from "components/layout/Container";
-import useCustomColor from "core/hooks/useCustomColor";
-import Blockies from "react-blockies";
-
 import { useContext } from "react";
-
-import { MdCheckCircle, MdContentCopy, MdExitToApp } from "react-icons/md";
-import { RiExternalLinkFill, RiHandCoinLine } from "react-icons/ri";
+import Blockies from "react-blockies";
+import { MdCheckCircle, MdContentCopy } from "react-icons/md";
 
 import { Web3Context } from "../../contexts/Web3Provider";
+import Card from "components/custom/Card";
+import UserNFTs from "components/custom/nft/UserNFTs";
+import MembershipWrapper from "components/custom/MembershipWrapper";
+import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
+import Container from "components/layout/Container";
+import useCustomColor from "core/hooks/useCustomColor";
 import { useResolveEnsName } from "core/hooks/useResolveEnsName";
+
 function Badges() {
   const { account } = useContext(Web3Context);
   const address = account || "";

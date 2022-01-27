@@ -1,4 +1,4 @@
-import NFTAccessMinter from "components/custom/dashboard/NFTAccessMinter";
+import NFTAccessMinter from "components/custom/nft/NFTAccessMinter";
 import useNFTAccess from "core/hooks/useNFTAccess";
 
 function MembershipWrapper(props: any) {

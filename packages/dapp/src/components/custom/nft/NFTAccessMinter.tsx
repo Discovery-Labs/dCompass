@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 
-import NFTCard from "components/custom/dashboard/NFTCard";
+import NFTCard from "components/custom/nft/NFTCard";
 import CenteredFrame from "components/layout/CenteredFrame";
 import { Web3Context } from "contexts/Web3Provider";
 
