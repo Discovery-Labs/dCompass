@@ -41,7 +41,6 @@ async function bootstrap() {
 
   const ceramicClient = await ceramicDataModelFactory();
 
-  // app.use(helmet());
   // app.use(cookieParser(sessionOptions.secret));
   // app.use(sessionMiddleware);
   /* Cookie & Session cleaner */

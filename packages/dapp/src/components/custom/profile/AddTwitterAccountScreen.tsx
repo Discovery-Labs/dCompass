@@ -98,8 +98,8 @@ function AddTwitterAccountScreen({ onCloseModal }: Props) {
         : null;
       const existingGithub = accounts
         ? accounts.accounts.find(
-            (acc: Record<string, any>) => acc.host === "github.com"
-          )
+          (acc: Record<string, any>) => acc.host === "github.com"
+        )
         : null;
 
       if (existingTwitter == null) {

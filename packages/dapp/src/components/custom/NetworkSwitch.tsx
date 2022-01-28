@@ -115,7 +115,7 @@ function NetworkSwitch() {
         >
           <AlertIcon boxSize="40px" mr={0} />
           <AlertTitle mt={4} mb={1} fontSize="lg">
-            Unsupported Network
+            Unsupported Network!
           </AlertTitle>
           <AlertDescription maxWidth="sm">
             Please switch to a supported network

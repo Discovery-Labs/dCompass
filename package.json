@@ -13,7 +13,8 @@
     "start": "lerna run start --parallel",
     "chain": "yarn workspace @discovery-dao/hardhat chain",
     "deploy": "yarn workspace @discovery-dao/hardhat deploy",
-    "dev": "yarn workspace @discovery-dao/dapp dev"
+    "dev": "yarn workspace @discovery-dao/dapp dev",
+    "api:dev": "yarn workspace @discovery-dao/server start:dev"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.2.2",
