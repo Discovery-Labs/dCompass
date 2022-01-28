@@ -40,7 +40,7 @@ const config: Config = {
       10,
     ),
     tracing: false,
-    port: process.env.PORT!,
+    port: parseInt(process.env.PORT!, 10) || 5000,
     logLevel: process.env.LOG_LEVEL!,
     protocol: function () {
       return `http${process.env.NODE_ENV! === 'development' ? '' : 's'}`;
