@@ -47,18 +47,7 @@ const config: Config = {
     },
     corsOptions: {
       credentials: true,
-      origin: function (origin, callback) {
-        const validPatternRegexes = [
-          /^(.*).discovery.app(\/(.*)|)$/,
-          /^(www.|)discovery.app(\/(.*)|)$/,
-          /^http:\/\/localhost:[0-9]{4}$/,
-        ];
-        if (validPatternRegexes.some((rx) => rx.test(origin)) || !origin) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
+      origin: '*',
     },
     // rateLimits: {
     //   register: 1,

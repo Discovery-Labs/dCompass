@@ -18,7 +18,7 @@ export interface Config {
     protocol: any;
     corsOptions: {
       credentials: boolean;
-      origin: (origin: any, callback: any) => void;
+      origin: ((origin: any, callback: any) => void) | string;
     };
     rateLimits?: {
       register: number;
