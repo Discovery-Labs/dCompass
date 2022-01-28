@@ -17,7 +17,9 @@
     "push-release": "git push --follow-tags origin main",
     "prepare": "husky install"
   },
-  "cacheDirectories": [".next/cache"],
+  "cacheDirectories": [
+    ".next/cache"
+  ],
   "dependencies": {
     "@apollo/client": "^3.4.17",
     "@ceramicnetwork/http-client": "^1.4.3",
@@ -27,7 +29,7 @@
     "@chakra-ui/react": "^1.6.10",
     "@chakra-ui/theme-tools": "^1.2.2",
     "@datamodels/identity-accounts-web": "^0.1.2",
-    "@discovery-dao/hardhat": "^0.0.3",
+    "@discovery-dao/hardhat": "^0.0.4",
     "@discovery-dao/schemas": "^0.0.3",
     "@discovery-dao/ui": "^0.0.4",
     "@emotion/cache": "^11.4.0",
