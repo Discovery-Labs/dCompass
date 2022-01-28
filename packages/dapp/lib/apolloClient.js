@@ -1,8 +1,10 @@
-import { useMemo } from "react";
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 // import { concatPagination } from '@apollo/client/utilities'
 import merge from "deepmerge";
 import isEqual from "lodash/isEqual";
+import { useMemo } from "react";
 
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
@@ -63,6 +65,7 @@ export function initializeApollo(initialState = null) {
 
 export function addApolloState(client, pageProps) {
   if (pageProps?.props) {
+    // eslint-disable-next-line no-param-reassign
     pageProps.props[APOLLO_STATE_PROP_NAME] = client.cache.extract();
   }
 
@@ -71,6 +74,5 @@ export function addApolloState(client, pageProps) {
 
 export function useApollo(pageProps) {
   const state = pageProps[APOLLO_STATE_PROP_NAME];
-  const store = useMemo(() => initializeApollo(state), [state]);
-  return store;
+  return useMemo(() => initializeApollo(state), [state]);
 }
