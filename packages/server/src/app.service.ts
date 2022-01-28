@@ -8,9 +8,7 @@ const NETWORKS = {
     color: '#666666',
     chainId: 31337,
     blockExplorer: '',
-    rpcUrl: `http://${
-      global.window ? window.location.hostname : 'localhost'
-    }:8545`,
+    rpcUrl: `http://localhost:8545`,
   },
   '1': {
     name: 'mainnet',
@@ -115,18 +113,14 @@ const NETWORKS = {
   //   color: "#f01a37",
   //   chainId: 31337,
   //   blockExplorer: "",
-  //   rpcUrl: `http://${
-  //     global.window ? window.location.hostname : "localhost"
-  //   }:9545`,
+  //   rpcUrl: `http://localhost:9545`,
   // },
   '420': {
     name: 'localOptimism',
     color: '#f01a37',
     chainId: 420,
     blockExplorer: '',
-    rpcUrl: `http://${
-      global.window ? window.location.hostname : 'localhost'
-    }:8545`,
+    rpcUrl: `http://localhost:8545`,
     gasPrice: 0,
   },
   '69': {
