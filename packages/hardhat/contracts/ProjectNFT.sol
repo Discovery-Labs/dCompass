@@ -17,18 +17,22 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     Counters.Counter private _tokenIds;
     Counters.Counter private _multiSigRequest;
     
-    uint public stakeAmount = 0.001 ether;
+    //uint public stakeAmount = 0.001 ether;
     mapping (address => bool) public reviewers;
     uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )
     uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation
     address payable appWallet;//sign in a script and also withdraw slashed stakes
     address payable appDiamond;//address of the app level diamond
+    address payable sponsorSFTAddr;//address of ERC-1155 that controls sponsor staking
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
     
     mapping (string => address[]) internal contributors;
-    mapping (string => address[]) internal approvedERC20Addrs;
+    //mapping (string => address[]) internal approvedERC20Addrs;
     mapping (string => address) public projectWallets;
-    mapping (string => uint) internal stakePerProject;
+    mapping (string => uint) public stakePerProject;
+    mapping (string => uint) public refundPerProject;
+    mapping (string => uint) public sponsorLevel;
+    mapping (string => uint) sponsorLevels;
     mapping (uint => string) public statusStrings;
     mapping (string => ProjectStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes;
@@ -57,6 +61,9 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         statusStrings[1] = "PENDING";
         statusStrings[2] = "DENIED";
         statusStrings[3] = "APPROVED";
+        sponsorLevels["SILVER"] = 1;
+        sponsorLevels["GOLD"] = 2;
+        sponsorLevels["DIAMOND"] = 3;
     } 
 
     modifier onlyReviewer(){
@@ -68,10 +75,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         emit ReceiveCalled(msg.sender, msg.value);
     }
     
-    function voteForApproval(address[] memory _contributors,  address[] memory approvedAddrs, uint _threshold, string memory _projectId) public onlyReviewer{
+    function voteForApproval(address[] memory _contributors, uint _threshold, string memory _projectId) public onlyReviewer{
         require(status[_projectId] != ProjectStatus.DENIED && status[_projectId] != ProjectStatus.APPROVED, "finalized project");
         require(!reviewerVotes[_projectId][_msgSender()], "already voted for this project");
-        //require (projectWallets[_projectId] != address(0), "no project wallet");
+        require (projectWallets[_projectId] != address(0), "no project wallet");
         votes[_projectId]++;
         reviewerVotes[_projectId][_msgSender()] = true;
         if(status[_projectId] == ProjectStatus.NONEXISTENT){
@@ -80,10 +87,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             //rarities[_projectId] = _rarities;
             contributors[_projectId] = _contributors;
             projectThresholds[_projectId] = _threshold;
-            approvedERC20Addrs[_projectId] = approvedAddrs;
+            //approvedERC20Addrs[_projectId] = approvedAddrs;
             if(multiSigThreshold*numReviewers/100 == 0){
                 status[_projectId] = ProjectStatus.APPROVED;
-                (bool success,) = payable(projectWallets[_projectId]).call{value : stakePerProject[_projectId]}("");
+                (bool success,) = appWallet.call{value : stakePerProject[_projectId]}("");
                 require(success, "transfer failed");
                 emit ProjectApproved(_projectId);
                 //approveMint(_projectId);
@@ -99,7 +106,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             }
             if(votes[_projectId] >= minVotes){
                 status[_projectId] = ProjectStatus.APPROVED;
-                (bool success,) = payable(projectWallets[_projectId]).call{value : stakePerProject[_projectId]}("");
+                (bool success,) = appWallet.call{value : stakePerProject[_projectId]}("");
                 require(success, "transfer failed");
                 emit ProjectApproved(_projectId);
                 //approveMint(_projectId);
@@ -118,7 +125,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         }
         if(votesReject[_projectId] >= minVotes){
             status[_projectId] = ProjectStatus.DENIED;
-            (bool success,) = appWallet.call{value : stakePerProject[_projectId]}("");
+            (bool success,) = payable(projectWallets[_projectId]).call{value : stakePerProject[_projectId]}("");
             require(success, "transfer failed");
         }
     }
@@ -140,26 +147,105 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         
         _mint(contributors[_projectId][i], newItemId);
         _setTokenURI(newItemId, _tokenURI);
-
-        //set the approval within app Diamond contract
-        (bool success, ) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("setApproved(string)")), _projectId));
-        require(success, "diamond approval failed");
         
         emit NFTProjectMinted(contributors[_projectId][i], _tokenURI, _projectId);
         }
+        //set the approval within app Diamond contract
+        (bool success, ) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("setApproved(string)")), _projectId));
+        require(success, "diamond approval failed");
+
+        //mint SFT here
+        (success,) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("mint(uint256,address,string)")), sponsorLevel[_projectId], projectWallets[_projectId], _projectId));
+        require(success, "sponsor mint failed");
+
         projectMinted[_projectId] = true;
         return newItems;    
     }
 
-    function addProjectWallet(string memory _projectId) external payable{
+    function addProjectWallet(string memory _projectId, address _projectWallet, string memory level) external payable{
         require (projectWallets[_projectId] == address(0), "already project wallet");
+        uint pendingSponsorLevel = sponsorLevels[level];
+        require (pendingSponsorLevel > 0, "invalid sponsor stake");
+        (bool success, bytes memory data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("stakeAmounts(uint256)")), pendingSponsorLevel));
+        require(success);
+        uint stakeAmount = abi.decode(data, (uint256)); 
         require (msg.value >= stakeAmount, "not enough staked");
-        projectWallets[_projectId] = _msgSender();
+        (success, data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("isAddrOwner(address)")), _projectWallet));
+        require(success);
+        bool isActive = abi.decode(data, (bool));
+        require(!isActive, "address already linked with active project");
+        projectWallets[_projectId] = _projectWallet;
         stakePerProject[_projectId] = stakeAmount;
+        sponsorLevel[_projectId] = pendingSponsorLevel;
         if(msg.value > stakeAmount){
-            (bool success, ) = payable(_msgSender()).call{value : msg.value - stakeAmount}("");
+            (success, ) = payable(_msgSender()).call{value : msg.value - stakeAmount}("");
             require(success, "failed refund");
         }
+    }
+
+    function changeProjectWallet(string memory _projectId, address newAddr) external {
+        require(_msgSender() == sponsorSFTAddr, "ProjectNFT: wrong caller");
+        require (projectWallets[_projectId] != address(0), "no project wallet");
+        projectWallets[_projectId] = newAddr;
+    }
+
+    function projectRefund(string memory _projectId) external payable{
+        require(status[_projectId] == ProjectStatus.PENDING || status[_projectId] == ProjectStatus.APPROVED, "incorrect status");
+        require(_msgSender() == appWallet, "wrong sender");//multiSig Wallet of app
+        refundPerProject[_projectId] += msg.value;
+    }
+
+    function updateSponsorLevel(string memory _projectId, string memory newLevel) external payable {
+        require(status[_projectId] == ProjectStatus.PENDING || status[_projectId] == ProjectStatus.APPROVED, "incorrect status");
+        require(_msgSender() == projectWallets[_projectId], "wrong sender");
+        uint newSponsorLevel = sponsorLevels[newLevel];
+        require (newSponsorLevel > 0, "invalid level");
+        (bool success, bytes memory data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("stakeAmounts(uint256)")), newSponsorLevel));
+        require(success);
+        uint stakeAmount = abi.decode(data, (uint256));
+        uint pastAmount = stakePerProject[_projectId];
+        uint currLevel = sponsorLevel[_projectId];
+        if(currLevel == newSponsorLevel){
+            if(status[_projectId] == ProjectStatus.PENDING){
+                if(stakeAmount < pastAmount){
+                    (success, ) = payable(_msgSender()).call{value : pastAmount - stakeAmount}("");
+                    require(success, "failed refund");
+                    stakePerProject[_projectId] = stakeAmount;
+                }
+            }
+            else{
+                (success, ) = payable(_msgSender()).call{value : refundPerProject[_projectId]}("");
+                require(success, "failed refund");
+                stakePerProject[_projectId] = stakeAmount;
+                delete refundPerProject[_projectId];
+                }
+            return;
+        }
+        if (stakeAmount <= pastAmount){
+            if(status[_projectId] == ProjectStatus.PENDING){
+                (success, ) = payable(_msgSender()).call{value : pastAmount - stakeAmount}("");
+                require(success, "failed refund");
+                
+            }
+            else{
+                (success, ) = payable(_msgSender()).call{value : refundPerProject[_projectId]}("");
+                require(success, "failed refund");
+                delete refundPerProject[_projectId];
+            }
+        }
+        else{
+            require(msg.value >= stakeAmount - pastAmount, "insufficent funds for new level");
+            if(msg.value > stakeAmount - pastAmount){
+            (success, ) = payable(_msgSender()).call{value : msg.value + pastAmount - stakeAmount}("");
+            require(success, "failed refund");
+            }
+        }
+        if(projectMinted[_projectId]){
+            (success, data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("updateLevel(uint256,address,string,uint256)")), currLevel, projectWallets[_projectId], _projectId, newSponsorLevel));
+            require(success);
+        }
+        stakePerProject[_projectId] = stakeAmount;
+        sponsorLevel[_projectId] = newSponsorLevel;
     }
 
     function addReviewer(address _reviewer) public onlyReviewer {
@@ -170,10 +256,6 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
 
     function setStatusString(uint index, string memory newName) external onlyReviewer{
         statusStrings[index] = newName;
-    }
-
-    function setStake(uint newStake) external onlyReviewer{
-        stakeAmount = newStake;
     }
 
     function addProjectContributor(string memory _projectId, address newContributor) external{
@@ -242,12 +324,22 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         return contributors[_projectId];
     }
 
-    function getApprovedAddrs(string memory _projectId) external view returns(address[] memory){
-        return approvedERC20Addrs[_projectId];
-    }
-
     function setAppDiamond(address payable _appDiamond) external onlyReviewer{
         require(_appDiamond != address(0));
         appDiamond = _appDiamond;
     }
+
+    function getAppDiamond() external view returns(address){
+        return appDiamond;
+    }
+
+    function setSFTAddr(address payable _SFTAddr) external onlyReviewer{
+        require(_SFTAddr != address(0));
+        sponsorSFTAddr = _SFTAddr;
+    }
+
+    function getSFTAddr() external view returns(address){
+        return sponsorSFTAddr;
+    }
+
 }

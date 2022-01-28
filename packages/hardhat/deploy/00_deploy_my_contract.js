@@ -1,13 +1,14 @@
 // deploy/00_deploy_your_contract.js
 
 const { ethers } = require("ethers");
+const buildList = require("@uniswap/default-token-list");
 
 // const { ethers } = require("hardhat");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const { DEPLOYER_PRIVATE_KEY, DEV_ADDRESS, SERVER_ADDRESS } = process.env;
+  const { DEPLOYER_PRIVATE_KEY, DEV_ADDRESS, SERVER_ADDRESS, CHAIN_IDS} = process.env;
 
   const project = await deploy("ProjectNFT", {
     from: DEPLOYER_PRIVATE_KEY,
@@ -66,9 +67,19 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
+  const sponsorSFT = await deploy("SponsorPassSFT",{
+    from: DEPLOYER_PRIVATE_KEY,
+    args: [
+      [`0xde0b6b3a7640000`, `0x29a2241af62c0000`, `0x4563918244f40000`],
+      project.address
+    ],
+    log: true,
+  }
+  )
+
   const appDiamond = await deploy("AppDiamond", {
     from: DEPLOYER_PRIVATE_KEY,
-    args: [project.address, verify.address, SERVER_ADDRESS],
+    args: [project.address, verify.address, sponsorSFT.address, SERVER_ADDRESS],
     log: true,
   });
 
@@ -78,45 +89,37 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     "setAppDiamond",
     appDiamond.address
   );
-  /*const executeCheck = await deployments.read("ProjectNFT", "appDiamond")
-  console.log(executeCheck)*/
+  await deployments.execute(
+    "ProjectNFT",
+    { from: DEPLOYER_PRIVATE_KEY },
+    "setSFTAddr",
+    sponsorSFT.address
+  );
 
-  /*
-    // Getting a previously deployed contract
-    const YourContract = await ethers.getContract("YourContract", deployer);
-    await YourContract.setPurpose("Hello");
-  
-    To take ownership of yourContract using the ownable library uncomment next line and add the 
-    address you want to be the owner. 
-    // yourContract.transferOwnership(YOUR_ADDRESS_HERE);
-
-    //const yourContract = await ethers.getContractAt('YourContract', "0xaAC799eC2d00C013f1F11c37E654e59B0429DF6A") //<-- if you want to instantiate a version of a contract at a specific address!
-  */
-
-  /*
-  //If you want to send value to an address from the deployer
-  const deployerWallet = ethers.provider.getSigner()
-  await deployerWallet.sendTransaction({
-    to: "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-    value: ethers.utils.parseEther("0.001")
+  //const chainIds = [1,4,42,137,80001];
+  const chainIdString = CHAIN_IDS.split(" ");
+  let chainIds = Array();
+  chainIdString.map(value =>{chainIds.push(Number(value))})
+  const chainAddrObj = {}
+  chainIds.forEach(value => {chainAddrObj[value] = []})
+  const tokens = buildList.tokens;
+  tokens.map((value, index) => {
+    if (chainIds.includes(value.chainId)){
+        chainAddrObj[value.chainId].push(value.address)
+    }
   })
-  */
 
-  /*
-  //If you want to send some ETH to a contract on deploy (make your constructor payable!)
-  const yourContract = await deploy("YourContract", [], {
-  value: ethers.utils.parseEther("0.05")
-  });
-  */
-
-  /*
-  //If you want to link a library into your contract:
-  // reference: https://github.com/austintgriffith/scaffold-eth/blob/using-libraries-example/packages/hardhat/scripts/deploy.js#L19
-  const yourContract = await deploy("YourContract", [], {}, {
-   LibraryName: **LibraryAddress**
-  });
-  */
+  for (let i=0; i< chainIds.length; i++){
+    await deployments.execute(
+      "AppDiamond",
+      { from: DEPLOYER_PRIVATE_KEY },
+      "addERC20PerChain",
+      chainIds[i],
+      chainAddrObj[chainIds[i]]
+    );
+  }
 };
+
 module.exports.tags = [
   "ProjectNFT",
   "RandomNumberConsumer",
