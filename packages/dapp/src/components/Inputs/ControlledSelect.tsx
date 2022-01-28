@@ -19,8 +19,6 @@ const ControlledSelect = ({
     rules,
   });
 
-  console.log({ value });
-
   return (
     <FormControl id={id} isInvalid={invalid}>
       <FormLabel>{label}</FormLabel>
