@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/cognitive-complexity */
 import { useMutation } from "@apollo/client";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {

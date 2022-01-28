@@ -77,7 +77,6 @@ const LogoDropzone = ({
       const logoFiles = [];
       logoFiles.push(logoValues[0]);
       setFiles(
-        // eslint-disable-next-line sonarjs/no-identical-functions
         logoFiles.map((file: File) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),

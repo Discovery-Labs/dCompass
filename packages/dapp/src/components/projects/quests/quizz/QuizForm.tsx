@@ -16,7 +16,11 @@ function QuizForm({ questions, questId }: any) {
   return (
     <VStack>
       {questions.map((question: any) => (
-        <RadioButtons quiz={question} setQuestionAnswer={setQuestionAnswer} />
+        <RadioButtons
+          key={question.question}
+          quiz={question}
+          setQuestionAnswer={setQuestionAnswer}
+        />
       ))}
       <Button
         isLoading={isLoading}
