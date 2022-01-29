@@ -4,15 +4,15 @@ import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import "@fontsource/lexend/latin.css";
 import "@fontsource/roboto-mono";
+import "@fontsource/poppins";
 import { DefaultSeo } from "next-seo";
 import { AppProps } from "next/app";
 import Head from "next/head";
 
 import defaultSEOConfig from "../../next-seo.config";
 import createEmotionCache from "styles/createEmotionCache";
-import customTheme from "styles/customTheme";
+import theme from "styles/customTheme";
 import "styles/globals.css";
-import Layout from "components/layout";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -27,7 +27,7 @@ const DcompassApp = ({
 }: DcompassAppProps) => {
   return (
     <CacheProvider value={emotionCache}>
-      <ChakraProvider theme={customTheme}>
+      <ChakraProvider theme={theme}>
         <Head>
           <meta
             name="viewport"
@@ -35,9 +35,7 @@ const DcompassApp = ({
           />
         </Head>
         <DefaultSeo {...defaultSEOConfig} />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <Component {...pageProps} />
       </ChakraProvider>
     </CacheProvider>
   );
