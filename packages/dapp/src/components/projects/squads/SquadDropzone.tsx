@@ -72,7 +72,6 @@ const SquadDropzone = ({
       const logoFiles = [];
       logoFiles.push(squadsImage[0]);
       setFiles(
-        // eslint-disable-next-line sonarjs/no-identical-functions
         logoFiles.map((file: File) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),

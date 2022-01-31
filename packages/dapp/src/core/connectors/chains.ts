@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 export enum SupportedChainId {
   MAINNET = 1,
 

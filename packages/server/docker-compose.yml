@@ -25,8 +25,8 @@ services:
     environment:
       NODE_ENV: development
       LOG_LEVEL: info
-      API_HOST: ${API_HOST}
-      API_PORT: ${API_PORT}
+      HOST: ${HOST}
+      PORT: ${PORT}
       API_KEY: ${API_KEY}
       REACT_APP_URL: ${REACT_APP_URL}
       REDIS_HOST: redis
