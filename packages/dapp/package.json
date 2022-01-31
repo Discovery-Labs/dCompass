@@ -42,7 +42,7 @@
     "@fontsource/poppins": "^4.5.0",
     "@fontsource/space-mono": "^4.5.0",
     "@glazed/datamodel": "^0.2.0",
-    "@glazed/did-datastore": "^0.2.0",
+    "@glazed/did-datastore": "^0.2.3",
     "@gnosis.pm/safe-apps-web3-react": "^0.6.8",
     "@self.id/core": "^0.1.0",
     "@self.id/web": "^0.1.0",
