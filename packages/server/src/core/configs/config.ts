@@ -34,31 +34,20 @@ const config: Config = {
   api: {
     apiKey: process.env.API_KEY!,
     environment: process.env.NODE_ENV!,
-    hostname: `${process.env.API_HOST}:${process.env.API_PORT}`,
+    hostname: `${process.env.HOST}:${process.env.PORT}`,
     confirmationTokenExpiration: parseInt(
       process.env.CONFIRMATION_TOKEN_EXPIRATION || '120',
       10,
     ),
     tracing: false,
-    port: process.env.API_PORT!,
+    port: parseInt(process.env.PORT!, 10) || 5000,
     logLevel: process.env.LOG_LEVEL!,
     protocol: function () {
       return `http${process.env.NODE_ENV! === 'development' ? '' : 's'}`;
     },
     corsOptions: {
       credentials: true,
-      origin: function (origin, callback) {
-        const validPatternRegexes = [
-          /^(.*).discovery.app(\/(.*)|)$/,
-          /^(www.|)discovery.app(\/(.*)|)$/,
-          /^http:\/\/localhost:[0-9]{4}$/,
-        ];
-        if (validPatternRegexes.some((rx) => rx.test(origin)) || !origin) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
+      origin: '*',
     },
     // rateLimits: {
     //   register: 1,

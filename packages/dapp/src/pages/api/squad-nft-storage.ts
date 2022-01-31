@@ -36,6 +36,7 @@ const nftStorage = new NFTStorage({ token: getNFTStorageToken() });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const form = await parseForm(req);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { logo, ...squadFiles } = form.files;
   const properties = JSON.parse(form.fields.metadata);
   const storeCids = properties.squads.flatMap((squad: any) => {

@@ -13,12 +13,12 @@ export interface Config {
     environment: string;
     hostname: string;
     confirmationTokenExpiration: number;
-    port: string;
+    port: number;
     logLevel: string;
     protocol: any;
     corsOptions: {
       credentials: boolean;
-      origin: (origin: any, callback: any) => void;
+      origin: ((origin: any, callback: any) => void) | string;
     };
     rateLimits?: {
       register: number;

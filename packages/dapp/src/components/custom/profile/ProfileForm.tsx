@@ -1,6 +1,4 @@
 /* eslint-disable no-param-reassign */
-/* eslint-disable complexity */
-/* eslint-disable sonarjs/cognitive-complexity */
 import { useQuery } from "@apollo/client";
 import {
   Button,

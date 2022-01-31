@@ -95,12 +95,12 @@ function EditProjectStepper(project: Project) {
 
   const {
     id,
-    isFeatured,
-    createdAt,
-    createdBy,
-    updatedAt,
-    updatedBy,
-    tokenUris,
+    // isFeatured,
+    // createdAt,
+    // createdBy,
+    // updatedAt,
+    // updatedBy,
+    // tokenUris,
     ...initialValues
   } = project;
   const methods = useForm({

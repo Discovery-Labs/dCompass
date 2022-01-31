@@ -1,5 +1,3 @@
-/* eslint-disable complexity */
-/* eslint-disable sonarjs/cognitive-complexity */
 import { useQuery } from "@apollo/client";
 import { EditIcon } from "@chakra-ui/icons";
 import {

@@ -58,5 +58,7 @@ export default class NetworkConnector extends AbstractConnector {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public deactivate() {}
+  public deactivate() {
+    return null;
+  }
 }

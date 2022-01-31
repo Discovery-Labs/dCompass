@@ -43,6 +43,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     type: "image/*",
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { image, description, title, ...pathwayProperties } = pathway;
   const nftStorageRes = await nftStorage.store({
     name: title,
