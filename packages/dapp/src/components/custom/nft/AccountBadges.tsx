@@ -1,18 +1,20 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
-import { useContext, useEffect, useState } from "react";
-
-import { Web3Context } from "contexts/Web3Provider";
+import { useEffect, useState } from "react";
 
 import BadgeItem from "./BadgeItem";
 import ABI from "./TestNFTContractABI";
 
-function AccountBadges() {
+type Props = {
+  account: string;
+};
+
+function AccountBadges({ account }: Props) {
   const NFT_CONTRACT_ADDRESS = "0xCb9Ce2fa1EBef370CC060aD65294075EDdC7f8Ea";
   const [userNFTs, setUserNFTs] = useState<Array<string>>();
   const { library } = useWeb3React();
-  const { account } = useContext(Web3Context);
+  // const { account } = useContext(Web3Context);
 
   useEffect(() => {
     const NFTIds = ["1", "0"];

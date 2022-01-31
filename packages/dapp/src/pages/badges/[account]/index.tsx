@@ -1,8 +1,16 @@
-import { HStack, Icon, IconButton, Text, useClipboard } from "@chakra-ui/react";
+import {
+  HStack,
+  Icon,
+  IconButton,
+  Text,
+  useClipboard,
+  Flex,
+  Heading,
+} from "@chakra-ui/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import Blockies from "react-blockies";
-import { MdCheckCircle, MdContentCopy } from "react-icons/md";
+import { MdCheckCircle, MdContentCopy, MdRefresh } from "react-icons/md";
 
 import AccountBadges from "components/custom/nft/AccountBadges";
 import Container from "components/layout/Container";
@@ -48,16 +56,14 @@ function BadgePage() {
           variant="ghost"
           onClick={onCopy}
           aria-label="Copy Address"
-          icon={
-            hasCopied ? (
-              <Icon color="aqua.300" as={MdCheckCircle} />
-            ) : (
-              <MdContentCopy />
-            )
-          }
+          icon={hasCopied ? <Icon as={MdCheckCircle} /> : <MdContentCopy />}
         />
       </HStack>
-      <AccountBadges />
+      <Flex>
+        <Heading>Badges</Heading>
+      </Flex>
+      {/* Bug: Need click onCopy Button to load AccountBadges after adding account={address} */}
+      <AccountBadges account={address} />
     </Container>
   );
 }

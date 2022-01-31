@@ -41,14 +41,14 @@ function Badges() {
     );
   }
 
-  let displayAddress = account.slice(0, 6);
+  let displayAddress = address.slice(0, 6);
 
   const ensSplit = ens && ens.split(".");
   const validEnsCheck = ensSplit && ensSplit[ensSplit.length - 1] === "eth";
   if (validEnsCheck) {
     displayAddress = ens;
   } else {
-    displayAddress += `...${account.slice(-4)}`;
+    displayAddress += `...${address.slice(-4)}`;
   }
 
   return (
@@ -64,7 +64,7 @@ function Badges() {
             <Card w={["full", null, "400px"]} h="unset">
               <VStack w="full" align="center" spacing="2">
                 <Blockies
-                  seed={account}
+                  seed={address}
                   className="blockies"
                   size={16}
                   scale={6}
