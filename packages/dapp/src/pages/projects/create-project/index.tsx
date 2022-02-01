@@ -163,7 +163,12 @@ function CreateProjectStepper() {
         <CenteredFrame>
           <Card h="full" w={activeStep === 2 ? "fit-content" : "2xl"}>
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
-              <Steps colorScheme="purple" activeStep={activeStep}>
+              <Steps
+                w="full"
+                orientation="horizontal"
+                colorScheme="purple"
+                activeStep={activeStep}
+              >
                 {steps.map(({ label, content }) => (
                   <Step label={label} key={label}>
                     {content}
