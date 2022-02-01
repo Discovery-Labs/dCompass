@@ -75,11 +75,10 @@ export default function ThreeTierPricing() {
     <Box py={12}>
       <VStack spacing={2} textAlign="center">
         <Heading as="h1" fontSize="4xl">
-          Alpha Sponsor Pass
+          Project Sponsor Pass
         </Heading>
         <Text fontSize="lg" color="purple.500">
-          Start with a 3 month trial (period of the alpha) and support the
-          dCompass project.
+          Support dCompass and get your project displayed on the platform.
         </Text>
       </VStack>
       <Stack
@@ -195,12 +194,12 @@ export default function ThreeTierPricing() {
                 everything from Gold tier
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />
-                custom quest development
+                <ListIcon as={FaCheckCircle} color="accentDark.500" />1 custom
+                quest development
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />
-                custom content &amp; guide creation
+                <ListIcon as={FaCheckCircle} color="accentDark.500" />1 custom
+                pathway guide creation
               </ListItem>
             </List>
           </VStack>
