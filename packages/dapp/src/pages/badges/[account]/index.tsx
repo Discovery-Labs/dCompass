@@ -10,7 +10,7 @@ import {
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import Blockies from "react-blockies";
-import { MdCheckCircle, MdContentCopy, MdRefresh } from "react-icons/md";
+import { MdCheckCircle, MdContentCopy } from "react-icons/md";
 
 import AccountBadges from "components/custom/nft/AccountBadges";
 import Container from "components/layout/Container";
