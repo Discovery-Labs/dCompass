@@ -30,7 +30,7 @@
     "@fontsource/lexend": "^4.5.1",
     "@fontsource/roboto-mono": "^4.5.0",
     "@walletconnect/web3-provider": "^1.6.5",
-    "framer-motion": "^4.1.17",
+    "framer-motion": "^5",
     "fuse.js": "^6.4.6",
     "next": "^11.1.2",
     "next-pwa": "^5.3.1",

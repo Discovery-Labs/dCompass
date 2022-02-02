@@ -66,7 +66,7 @@
     "deepmerge": "^4.2.2",
     "dids": "^2.4.0",
     "ethers": "^5.5.1",
-    "framer-motion": "^4.1.17",
+    "framer-motion": "^5",
     "fuse.js": "^6.4.6",
     "graphql": "^16.0.1",
     "key-did-provider-ed25519": "^1.1.0",

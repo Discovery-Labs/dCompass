@@ -83,7 +83,7 @@
     "@emotion/styled": "^11",
     "@fontsource/inter": "^4.5.1",
     "chakra-ui-steps": "^1.6.1",
-    "framer-motion": "^4.1.17",
+    "framer-motion": "^5",
     "react-icons": "^4.3.1",
     "storybook-addon-performance": "^0.16.1"
   },
