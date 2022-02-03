@@ -5,6 +5,7 @@
   "description": "A gamified and community driven Web3 learning platform.",
   "author": "Discovery DAO",
   "scripts": {
+    "install": "yarn install --ignore-engines",
     "dev": "next dev",
     "build": "next build --no-lint",
     "postbuild": "next-sitemap --config next-sitemap.config.js",

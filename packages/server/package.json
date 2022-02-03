@@ -31,7 +31,7 @@
     "@discovery-dao/schemas": "^0.0.5",
     "@glazed/datamodel": "^0.2.0",
     "@glazed/did-datastore": "^0.2.3",
-    "@nestjs/axios": "^0.0.1",
+    "@nestjs/axios": "^0.0.5",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^1.0.1",
     "@nestjs/core": "^8.0.0",
@@ -43,7 +43,6 @@
     "@stablelib/random": "^1.0.1",
     "apollo-server-express": "^2",
     "bcrypt": "^5.0.1",
-    "class-transformer": "^0.5.1",
     "class-validator": "^0.13.1",
     "connect-redis": "^6.0.0",
     "cookie-parser": "^1.4.5",
@@ -67,6 +66,7 @@
     "uuid-validate": "^0.0.3"
   },
   "devDependencies": {
+    "@ethersproject/hardware-wallets": "^5.5.0",
     "@nestjs/cli": "^8.2.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
@@ -82,6 +82,8 @@
     "@types/uuid-validate": "^0.0.1",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
+    "ajv": "^6.12.6",
+    "class-transformer": "^0.4.0",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
