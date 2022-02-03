@@ -8,7 +8,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "next -p 3001",
-    "build": "next build",
+    "build": "next build --no-lint",
     "export": "next export",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "start": "next start -p $PORT",
