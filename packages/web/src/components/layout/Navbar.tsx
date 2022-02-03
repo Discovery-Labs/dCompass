@@ -35,7 +35,7 @@ export default function Navbar() {
           <Stack direction="row" spacing={3}>
             <DiscordButton />
             <TwitterButton />
-            {/* <ThemeToggle /> */}
+            <ThemeToggle />
             <Box pl="8">
               <Box
                 layerStyle="gradient-border"
