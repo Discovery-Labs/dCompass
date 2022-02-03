@@ -4757,13 +4757,12 @@
     lodash "4.17.21"
     path-to-regexp "3.2.0"
 
-"@nestjs/terminus@^7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/terminus/-/terminus-7.2.0.tgz#73b08aa329b8f36a0c3a1bc26f730b1cb14b9a8d"
-  integrity sha512-aQuqpT9MkI/HUUXzFgMyN7HnKishNGCd/QOQ4s8vjz8WOfjkZrrX0yoJGVhHmLca5IXa6HnhsHC1PiVTdXlw8g==
+"@nestjs/terminus@^8.0.4":
+  version "8.0.4"
+  resolved "https://registry.yarnpkg.com/@nestjs/terminus/-/terminus-8.0.4.tgz#6b4f74a904c7ded8d6a335e2900ddcd497e5efee"
+  integrity sha512-KjeY7VLt0Az6pA2wO67nkL1QbE68yBb+FLZ7+aa+C/g/IKoDR668nqSuFzJarBrnFBTGEwDD09BwsgqkmymrbQ==
   dependencies:
-    check-disk-space "2.1.0"
-    deprecate "^1.1.1"
+    check-disk-space "3.1.0"
 
 "@nestjs/testing@^8.0.0":
   version "8.2.6"
@@ -7001,9 +7000,9 @@
     pretty-format "^26.6.2"
 
 "@testing-library/jest-dom@^5.11.2":
-  version "5.16.1"
-  resolved "https://registry.yarnpkg.com/@testing-library/jest-dom/-/jest-dom-5.16.1.tgz#3db7df5ae97596264a7da9696fe14695ba02e51f"
-  integrity sha512-ajUJdfDIuTCadB79ukO+0l8O+QwN0LiSxDaYUTI4LndbbUsGi6rWU1SCexXzBA2NSjlVB9/vbkasQIL3tmPBjw==
+  version "5.16.2"
+  resolved "https://registry.yarnpkg.com/@testing-library/jest-dom/-/jest-dom-5.16.2.tgz#f329b36b44aa6149cd6ced9adf567f8b6aa1c959"
+  integrity sha512-6ewxs1MXWwsBFZXIk4nKKskWANelkdUehchEOokHsN8X7c2eKXGw+77aRV63UU8f/DTSVUPLaGxdrj4lN7D/ug==
   dependencies:
     "@babel/runtime" "^7.9.2"
     "@types/testing-library__jest-dom" "^5.9.1"
@@ -8897,12 +8896,12 @@ abstract-leveldown@~6.2.1:
     xtend "~4.0.0"
 
 accepts@^1.3.5, accepts@~1.3.5, accepts@~1.3.7:
-  version "1.3.7"
-  resolved "https://registry.yarnpkg.com/accepts/-/accepts-1.3.7.tgz#531bc726517a3b2b41f850021c6cc15eaab507cd"
-  integrity sha512-Il80Qs2WjYlJIBNzNkK6KYqlVMTbZLXgHx2oT0pU/fjRHyEp+PEfEPY0R3WCwAGVOtauxh1hOxNgIf5bv7dQpA==
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/accepts/-/accepts-1.3.8.tgz#0bf0be125b67014adcb0b0921e62db7bffe16b2e"
+  integrity sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==
   dependencies:
-    mime-types "~2.1.24"
-    negotiator "0.6.2"
+    mime-types "~2.1.34"
+    negotiator "0.6.3"
 
 acorn-globals@^4.3.2:
   version "4.3.4"
@@ -11753,10 +11752,10 @@ charenc@0.0.2, "charenc@>= 0.0.1":
   resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
   integrity sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=
 
-check-disk-space@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/check-disk-space/-/check-disk-space-2.1.0.tgz#2e77fe62f30d9676dc37a524ea2008f40c780295"
-  integrity sha512-f0nx9oJF/AVF8nhSYlF1EBvMNnO+CXyLwKhPvN1943iOMI9TWhQigLZm80jAf0wzQhwKkzA8XXjyvuVUeGGcVQ==
+check-disk-space@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/check-disk-space/-/check-disk-space-3.1.0.tgz#3a90e0b27533e06ddcfafd93b749f2514fc12d90"
+  integrity sha512-4L3WVw4uPaBJocwnxTCWTTHc8mNu080pjCVBhZeWFdnaQBAremLHpJ1H90G+uEA0rJcW43fghYMsLBXID9X4Zg==
 
 check-error@^1.0.2:
   version "1.0.2"
@@ -13597,11 +13596,6 @@ depd@^2.0.0, depd@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/depd/-/depd-2.0.0.tgz#b696163cc757560d09cf22cc8fad1571b79e76df"
   integrity sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==
-
-deprecate@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/deprecate/-/deprecate-1.1.1.tgz#4632e981fc815eeaf00be945a40359c0f8bf9913"
-  integrity sha512-ZGDXefq1xknT292LnorMY5s8UVU08/WKdzDZCUT6t9JzsiMSP4uzUhgpqugffNVcT5WC6wMBiSQ+LFjlv3v7iQ==
 
 deprecated-decorator@^0.1.6:
   version "0.1.6"
@@ -22458,7 +22452,7 @@ mime-db@1.51.0, "mime-db@>= 1.43.0 < 2":
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.51.0.tgz#d9ff62451859b18342d960850dc3cfb77e63fb0c"
   integrity sha512-5y8A56jg7XVQx2mbv1lu49NR4dokRnhZYTtL+KGfaa27uq4pSTXkwQkFJl4pkRMyNFz/EtYDSkiiEHx3F7UN6g==
 
-mime-types@^2.1.12, mime-types@^2.1.16, mime-types@^2.1.27, mime-types@~2.1.19, mime-types@~2.1.24:
+mime-types@^2.1.12, mime-types@^2.1.16, mime-types@^2.1.27, mime-types@~2.1.19, mime-types@~2.1.24, mime-types@~2.1.34:
   version "2.1.34"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.34.tgz#5a712f9ec1503511a945803640fafe09d3793c24"
   integrity sha512-6cP692WwGIs9XXdOO4++N+7qjqv0rqxxVvJ3VHPh/Sc9mVZcQP+ZGhkKiTvWMQRr2tbHkJP/Yn7Y0npb3ZBs4A==
@@ -23069,12 +23063,7 @@ near-api-js@^0.42.0:
     text-encoding-utf-8 "^1.0.2"
     tweetnacl "^1.0.1"
 
-negotiator@0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
-  integrity sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
-
-negotiator@^0.6.2:
+negotiator@0.6.3, negotiator@^0.6.2:
   version "0.6.3"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.3.tgz#58e323a72fedc0d6f9cd4d31fe49f51479590ccd"
   integrity sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==
