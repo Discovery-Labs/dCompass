@@ -16,11 +16,14 @@ import Footer from "components/layout/Footer";
 import Section from "components/layout/Section";
 import FAQ from "components/Sections/FAQ";
 import Hero from "components/Sections/Hero";
+import Members from "components/Sections/Members";
 import useCustomColor from "hooks/useCustomColor";
+import useThemeImage from "hooks/useThemeImage";
 import React from "react";
 
 const Home = () => {
   const { getPrimaryColor, getColoredText } = useCustomColor();
+  const { getBgDots } = useThemeImage();
 
   const APP_URL = "https://dcompass-staging.herokuapp.com/";
 
@@ -29,7 +32,7 @@ const Home = () => {
       <Hero />
 
       <Section>
-        <VStack mt="16" spacing="4" align="left">
+        <VStack my="8" spacing="4" align="left">
           <Heading pb="8" w="max-content" layerStyle="gradient-text">
             Watch the video
           </Heading>
@@ -44,7 +47,7 @@ const Home = () => {
       </Section>
 
       <Section>
-        <VStack mt="16" spacing="4" align="left">
+        <VStack my="8" spacing="4" align="left">
           <Heading pb="8" w="max-content" layerStyle="gradient-text">
             How it Works
           </Heading>
@@ -104,8 +107,8 @@ const Home = () => {
         </VStack>
       </Section>
 
-      <Section bgImage="url(/images/dots.png)" bgSize="contain">
-        <VStack mt="16" spacing="4" align="left">
+      <Section bgImage={getBgDots} bgSize="cover">
+        <VStack my="8" spacing="4" align="left">
           <Heading pb="8" w="max-content" layerStyle="gradient-text">
             Discover the future of the web
           </Heading>
@@ -174,9 +177,9 @@ const Home = () => {
         </VStack>
       </Section>
 
-      <Section>
-        <VStack mt="16" spacing="4" align="left">
-          <Heading pb="8" w="max-content" layerStyle="gradient-text">
+      <Section bg={getPrimaryColor}>
+        <VStack my="8" spacing="4" align="left">
+          <Heading pb="8" w="max-content">
             Our mission
           </Heading>
           <Text>
@@ -214,11 +217,10 @@ const Home = () => {
             the finals in the HackFS Hackathon. Our next step is to build the
             best platform to onboard people and achieve our mission.
           </Text>
-          <Text>
-            We believe there are 3 main problems that need to be solved:
-          </Text>
         </VStack>
       </Section>
+
+      <Members />
 
       <FAQ />
 

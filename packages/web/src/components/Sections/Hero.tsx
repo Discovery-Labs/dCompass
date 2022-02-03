@@ -2,13 +2,14 @@ import { Box, Button, Flex, Heading, HStack, VStack } from "@chakra-ui/react";
 import Navbar from "components/layout/Navbar";
 import Section from "components/layout/Section";
 import React from "react";
+import useThemeImage from "hooks/useThemeImage";
 
 function Hero() {
   const APP_URL = "https://dcompass-staging.herokuapp.com/";
   const DISCORD_URL = "https://discord.gg/MkfqU2bPhT";
-
+  const { getBgHero } = useThemeImage();
   return (
-    <Section bgImage="url(/images/hero-bg.png)" bgSize="cover">
+    <Section bgImage={getBgHero} bgSize="cover">
       <Navbar />
       <HStack py={["8", "16", "32"]}>
         {/* <SimpleGrid
@@ -21,7 +22,7 @@ function Hero() {
         <VStack align="left" w="full">
           <Flex>
             <Box flex="1">
-              <Heading pt="10" fontSize="6xl" maxW={500}>
+              <Heading pt="10" fontSize="5xl" maxW={500}>
                 A gamified and community driven
                 <Box layerStyle="gradient-text">Web3 learning platform.</Box>
               </Heading>
