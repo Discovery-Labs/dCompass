@@ -25,6 +25,7 @@ const Home = () => {
   const { getPrimaryColor, getColoredText } = useCustomColor();
   const { getBgDots } = useThemeImage();
 
+
   const APP_URL = "https://dcompass-staging.herokuapp.com/";
 
   return (

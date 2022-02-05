@@ -1,20 +1,38 @@
 import {
-  Flex,
+  Box,
+  chakra,
+  Container,
+  Stack,
+  Text,
+  useColorModeValue,
+  VisuallyHidden,
   HStack,
   Link,
-  Text,
-  Box,
-  useColorModeValue,
 } from "@chakra-ui/react";
+import { FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { ReactNode } from "react";
+
+import TwitterButton from "components/Buttons/TwitterButton";
+import DiscordButton from "components/Buttons/DiscordButton";
+
 import { Icon } from "@chakra-ui/icon";
 import { FaGithub } from "react-icons/fa";
 
 import GitcoinIcon from "../Icons/GitcoinIcon";
 import LogoDarkIcon from "../Icons/LogoDarkIcon";
 
-const Footer = () => {
+function Footer() {
+
   return (
-    <Box as="footer" width="full" alignContent="center" pt="8" pb="12">
+    <Container
+      as={Stack}
+      maxW={"6xl"}
+      py={4}
+      direction={{ base: "column", md: "row" }}
+      spacing={4}
+      justify={{ base: "center", md: "space-between" }}
+      align={{ base: "center", md: "center" }}
+    >
       <HStack alignItems="center" justifyContent="space-between" width="full">
         <Link
           href="https://www.notion.so/gitcoin/GitcoinDAO-be541eac15354fdc94655965aa7fbc39"
@@ -30,7 +48,10 @@ const Footer = () => {
             <Text ml="4">Gitcoin DAO</Text>
           </HStack>
         </Link>
-
+      </HStack>
+      <Stack direction={"row"} spacing={6}>
+        <DiscordButton />
+        <TwitterButton />
         <Link href="https://github.com/discovery-labs/dCompass" isExternal>
           <Icon
             as={FaGithub}
@@ -42,9 +63,9 @@ const Footer = () => {
             }}
           />
         </Link>
-      </HStack>
-    </Box>
+      </Stack>
+    </Container>
   );
-};
+}
 
 export default Footer;

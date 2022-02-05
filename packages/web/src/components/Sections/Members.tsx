@@ -9,10 +9,29 @@ import {
 } from "@chakra-ui/react";
 import Section from "components/layout/Section";
 import React from "react";
+import useSWR from "swr";
+
+const fetcher = (args: RequestInfo) => fetch(args).then((res) => res.json());
 
 function Hero() {
-  const APP_URL = "https://dcompass-staging.herokuapp.com/";
-  const DISCORD_URL = "https://discord.gg/MkfqU2bPhT";
+  const { data, error } = useSWR("/api/members", fetcher);
+  if (error)
+    return (
+      <Section>
+        <VStack my="8" spacing="4" align="left">
+          <Text>Failed to load</Text>
+        </VStack>
+      </Section>
+    );
+  if (!data)
+    return (
+      <Section>
+        <VStack my="8" spacing="4" align="left">
+          <Text>Loading...</Text>
+        </VStack>
+      </Section>
+    );
+  // console.log("data", data);
 
   return (
     <Section>
@@ -21,58 +40,21 @@ function Hero() {
           Who
         </Heading>
         <SimpleGrid columns={4} spacing={10}>
-          <VStack>
-            <Link
-              href="https://dcompass.discovery-dao.xyz/"
-              target="_blank"
-              textAlign="center"
-            >
-              <Avatar
-                size="2xl"
-                src="https://images.unsplash.com/photo-1627534414302-778011a206fd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=747&q=80"
-              />
-              <Text pt="8">Sashi Moto</Text>
-            </Link>
-          </VStack>
-          <VStack>
-            <Link
-              href="https://dcompass.discovery-dao.xyz/"
-              target="_blank"
-              textAlign="center"
-            >
-              <Avatar
-                size="2xl"
-                src="https://images.unsplash.com/photo-1627534414302-778011a206fd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=747&q=80"
-              />
-              <Text pt="8">Toshi Nakato</Text>
-            </Link>
-          </VStack>
-          <VStack>
-            <Link
-              href="https://dcompass.discovery-dao.xyz/"
-              target="_blank"
-              textAlign="center"
-            >
-              <Avatar
-                size="2xl"
-                src="https://images.unsplash.com/photo-1627534414302-778011a206fd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=747&q=80"
-              />
-              <Text pt="8">Sato Kyoto</Text>
-            </Link>
-          </VStack>
-          <VStack>
-            <Link
-              href="https://dcompass.discovery-dao.xyz/"
-              target="_blank"
-              textAlign="center"
-            >
-              <Avatar
-                size="2xl"
-                src="https://images.unsplash.com/photo-1627534414302-778011a206fd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=747&q=80"
-              />
-              <Text pt="8">Shitoma Kato</Text>
-            </Link>
-          </VStack>
+          {data.members.map((member: any) => (
+            <VStack key={member.name}>
+              <Link
+                href="https://dcompass.discovery-dao.xyz/"
+                target="_blank"
+                textAlign="center"
+              >
+                <Avatar
+                  size="2xl"
+                  src="https://images.unsplash.com/photo-1627534414302-778011a206fd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=747&q=80"
+                />
+                <Text pt="8">Sashi Moto</Text>
+              </Link>
+            </VStack>
+          ))}
         </SimpleGrid>
         <VStack pt="8">
           <Text>

@@ -3,8 +3,8 @@ import { Box, Flex, HStack, Stack, Heading, Button } from "@chakra-ui/react";
 import ThemeToggle from "./ThemeToggle";
 import NextLink from "next/link";
 import LogoDarkIcon from "../Icons/LogoDarkIcon";
-import TwitterButton from "../Buttons/TwitterButton";
-import DiscordButton from "../Buttons/DiscordButton";
+import TwitterButton from "components/Buttons/TwitterButton";
+import DiscordButton from "components/Buttons/DiscordButton";
 
 import useCustomColor from "hooks/useCustomColor";
 
