@@ -32,8 +32,8 @@ const Home = () => {
       <Hero />
 
       <Section>
-        <VStack my="8" spacing="4" align="left">
-          <Heading pb="8" w="max-content" layerStyle="gradient-text">
+        <VStack my={["0", "8"]} spacing="4" align="left">
+          <Heading pb="8" inlineSize="fit-content" layerStyle="gradient-text">
             Watch the video
           </Heading>
           <AspectRatio ratio={16 / 9}>
@@ -48,12 +48,12 @@ const Home = () => {
 
       <Section>
         <VStack w="full" my="8" spacing="4" align="left">
-          <Heading pb="8" w="max-content" layerStyle="gradient-text">
+          <Heading pb="8" inlineSize="fit-content" layerStyle="gradient-text">
             How it Works
           </Heading>
           <Image
             alignSelf="center"
-            maxW="800px"
+            maxW={["250px", "350px", "800px"]}
             alt="icon"
             src="./images/product.png"
           />
@@ -115,7 +115,7 @@ const Home = () => {
 
       <Section bgImage={getBgDots} bgSize="cover">
         <VStack my="8" spacing="4" align="left">
-          <Heading pb="8" w="max-content" layerStyle="gradient-text">
+          <Heading pb="8" inlineSize="fit-content" layerStyle="gradient-text">
             Discover the future of the web
           </Heading>
           <SimpleGrid
@@ -125,9 +125,13 @@ const Home = () => {
             }}
             spacing={8}
           >
-            <VStack layerStyle="solid-hover2" opacity={0.8}>
+            <VStack
+              textAlign={["center", "center", "start"]}
+              layerStyle="solid-hover2"
+              opacity={0.8}
+            >
               <Image
-                boxSize="150px"
+                boxSize={["100px", "150px", "150px"]}
                 alt="icon"
                 src="./images/icon-features04.png"
               />
@@ -138,9 +142,13 @@ const Home = () => {
                 Earn XPs and increase your ranking!
               </Text>
             </VStack>
-            <VStack layerStyle="solid-hover2" opacity={0.8}>
+            <VStack
+              textAlign={["center", "center", "start"]}
+              layerStyle="solid-hover2"
+              opacity={0.8}
+            >
               <Image
-                boxSize="150px"
+                boxSize={["100px", "150px", "150px"]}
                 alt="icon"
                 src="./images/icon-features03.png"
               />
@@ -151,9 +159,13 @@ const Home = () => {
                 Mint Quest & Badge NFTs with a random rarity
               </Text>
             </VStack>
-            <VStack layerStyle="solid-hover2" opacity={0.8}>
+            <VStack
+              textAlign={["center", "center", "start"]}
+              layerStyle="solid-hover2"
+              opacity={0.8}
+            >
               <Image
-                boxSize="150px"
+                boxSize={["100px", "150px", "150px"]}
                 alt="icon"
                 src="./images/icon-features02.png"
               />
@@ -165,9 +177,13 @@ const Home = () => {
                 profile.
               </Text>
             </VStack>
-            <VStack layerStyle="solid-hover2" opacity={0.8}>
+            <VStack
+              textAlign={["center", "center", "start"]}
+              layerStyle="solid-hover2"
+              opacity={0.8}
+            >
               <Image
-                boxSize="150px"
+                boxSize={["100px", "150px", "150px"]}
                 alt="icon"
                 src="./images/icon-features01.png"
               />
@@ -185,10 +201,10 @@ const Home = () => {
 
       <Section bg={getOverBgColor}>
         <VStack my="8" spacing="4" align="left">
-          <Heading pb="8" w="max-content">
+          <Heading pb="8" inlineSize="fit-content">
             Our mission
           </Heading>
-          <Text>
+          <Text fontSize={["lg", "xl", "2xl"]} color={getColoredText}>
             dCompass’ primary mission will be to onboard, guide and educate
             users about the Gitcoin ecosystem, sustainable open source software
             & trustworthy Web3 protocols and tools, decentralization &
@@ -197,24 +213,26 @@ const Home = () => {
           <Text>
             We believe there are 3 main problems that need to be solved:
           </Text>
-          <UnorderedList>
-            <ListItem>
-              Aggregating ever-growing but scattered information
-            </ListItem>
-            <ListItem>
-              Retaining users and community members/contributors
-            </ListItem>
-            <ListItem>
-              DAO project management, contributor management, and intuitive
-              onboarding
-            </ListItem>
-          </UnorderedList>
+          <Box>
+            <UnorderedList>
+              <ListItem>
+                Aggregating ever-growing but scattered information
+              </ListItem>
+              <ListItem>
+                Retaining users and community members/contributors
+              </ListItem>
+              <ListItem>
+                DAO project management, contributor management, and intuitive
+                onboarding
+              </ListItem>
+            </UnorderedList>
+          </Box>
         </VStack>
       </Section>
 
       <Section>
         <VStack mt="16" spacing="4" align="left">
-          <Heading pb="8" w="max-content" layerStyle="gradient-text">
+          <Heading pb="8" inlineSize="fit-content" layerStyle="gradient-text">
             Our story
           </Heading>
           <Text>

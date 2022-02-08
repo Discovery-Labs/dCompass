@@ -39,7 +39,7 @@ function Hero() {
         <Heading pb="8" w="max-content" layerStyle="gradient-text">
           Who
         </Heading>
-        <SimpleGrid columns={4} spacing={10}>
+        <SimpleGrid columns={[2, 3, 4]} spacing={8}>
           {data.members.map((member: any) => (
             <VStack key={member.name}>
               {/* <Link
@@ -53,7 +53,7 @@ function Hero() {
             </VStack>
           ))}
         </SimpleGrid>
-        <VStack pt="8">
+        <VStack pt="8" spacing={8}>
           <Text>
             Are you a builder who wants to work on the future of web3 learning
           </Text>

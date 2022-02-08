@@ -32,30 +32,37 @@ export default function Navbar() {
           </Flex>
         </HStack>
         <Flex alignItems={"center"}>
-          <Stack direction="row" spacing={3}>
+          <Stack
+            display={{
+              base: "none",
+              md: "block",
+            }}
+            direction="row"
+            spacing={3}
+          >
             <DiscordButton />
             <TwitterButton />
             <ThemeToggle />
-            <Box pl="8">
-              <Box
-                layerStyle="gradient-border"
-                _hover={{
-                  transform: "scale(1.05)",
-                }}
-                transition="all 0.3"
-                transitionTimingFunction={"spring(1 100 10 10)"}
-              >
-                <Button
-                  _hover={{ bgColor: getBgColor }}
-                  bgColor={getBgColor}
-                  variant="ghost"
-                  onClick={() => window.open(APP_URL)}
-                >
-                  Enter App
-                </Button>
-              </Box>
-            </Box>
           </Stack>
+          <Box pl="8">
+            <Box
+              layerStyle="gradient-border"
+              _hover={{
+                transform: "scale(1.05)",
+              }}
+              transition="all 0.3"
+              transitionTimingFunction={"spring(1 100 10 10)"}
+            >
+              <Button
+                _hover={{ bgColor: getBgColor }}
+                bgColor={getBgColor}
+                variant="ghost"
+                onClick={() => window.open(APP_URL)}
+              >
+                Enter App
+              </Button>
+            </Box>
+          </Box>
         </Flex>
       </Flex>
     </Box>

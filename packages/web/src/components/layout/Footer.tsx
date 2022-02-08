@@ -22,7 +22,6 @@ import GitcoinIcon from "../Icons/GitcoinIcon";
 import LogoDarkIcon from "../Icons/LogoDarkIcon";
 
 function Footer() {
-
   return (
     <Container
       as={Stack}
@@ -33,22 +32,19 @@ function Footer() {
       justify={{ base: "center", md: "space-between" }}
       align={{ base: "center", md: "center" }}
     >
-      <HStack alignItems="center" justifyContent="space-between" width="full">
-        <Link
-          href="https://www.notion.so/gitcoin/GitcoinDAO-be541eac15354fdc94655965aa7fbc39"
-          isExternal
-        >
-          <HStack>
-            <Text>Built with 💜 by </Text>
-            <Box mr="4">
-              <LogoDarkIcon />
-            </Box>
-            <Text ml="4">Discovery DAO &amp; </Text>
-            <GitcoinIcon />
-            <Text ml="4">Gitcoin DAO</Text>
-          </HStack>
-        </Link>
+      {/* <Link
+        w="full"
+        href="https://www.notion.so/gitcoin/GitcoinDAO-be541eac15354fdc94655965aa7fbc39"
+        isExternal
+      > */}
+      <HStack w="full">
+        <Text textAlign={{ base: "center", md: "start" }}>
+          Built with 💜 by {/* <LogoDarkIcon /> */}
+          Discovery DAO &amp; {/* <GitcoinIcon /> */}
+          Gitcoin DAO
+        </Text>
       </HStack>
+      {/* </Link> */}
       <Stack direction={"row"} spacing={6}>
         <DiscordButton />
         <TwitterButton />
