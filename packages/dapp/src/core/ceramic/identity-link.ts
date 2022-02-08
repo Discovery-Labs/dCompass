@@ -1,10 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-underscore-dangle */
-import type { AlsoKnownAsAccount } from "@ceramicstudio/idx-constants";
 import type { DagJWS } from "dids";
 
 import { GITHUB_HOST, TWITTER_HOST } from "../constants";
 
+type Attestation = {
+  "did-jwt"?: string;
+  "did-jwt-vc"?: string;
+};
+
+type AlsoKnownAsAccount = {
+  protocol: string;
+  id: string;
+  host?: string;
+  claim?: string;
+  attestations?: Array<Attestation>;
+};
 export function createGitHub(
   username: string,
   attestation: string

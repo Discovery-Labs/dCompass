@@ -1,14 +1,7 @@
-import { CeramicClient } from "@ceramicnetwork/http-client";
 import { AlsoKnownAs, Account } from "@datamodels/identity-accounts-web";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
-import { DataModel } from "@glazed/datamodel";
-import { DIDDataStore } from "@glazed/did-datastore";
+
 import { Core } from "@self.id/core";
-import { randomBytes } from "@stablelib/random";
-import { DID } from "dids";
-import { Ed25519Provider } from "key-did-provider-ed25519";
-import { getResolver } from "key-did-resolver";
-import { fromString, toString } from "uint8arrays";
 
 import { GITHUB_HOST } from "../constants";
 
@@ -35,30 +28,6 @@ export const ceramicCoreFactory = () => {
     ceramic: CERAMIC_TESTNET_NODE_URL,
     model: publishedModel,
   });
-};
-
-// DATA MODEL CLIENT
-export const ceramicDataModelFactory = async () => {
-  if (!process.env.DID_KEY) {
-    console.warn("DID_KEY not found in .env, generating a new seed..");
-    const newSeed = toString(randomBytes(32), "base16");
-    console.log(`Seed generated. Save this in your .env as DID_KEY=${newSeed}`);
-    process.env.DID_KEY = newSeed;
-  }
-  const key = fromString(process.env.DID_KEY, "base16");
-  // Create and authenticate the DID
-  const did = new DID({
-    provider: new Ed25519Provider(key),
-    resolver: getResolver(),
-  });
-  await did.authenticate();
-
-  // Connect to the testnet local Ceramic node
-  const ceramic = new CeramicClient(CERAMIC_TESTNET_NODE_URL);
-  ceramic.did = did;
-  const model = new DataModel({ ceramic, model: publishedModel });
-  const dataStore = new DIDDataStore({ ceramic, model });
-  return { dataStore, model, ceramic, did };
 };
 
 export function findGitHub(
