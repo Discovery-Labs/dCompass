@@ -22,9 +22,8 @@ import useThemeImage from "hooks/useThemeImage";
 import React from "react";
 
 const Home = () => {
-  const { getPrimaryColor, getColoredText } = useCustomColor();
+  const { getOverBgColor, getColoredText } = useCustomColor();
   const { getBgDots } = useThemeImage();
-
 
   const APP_URL = "https://dcompass-staging.herokuapp.com/";
 
@@ -48,10 +47,16 @@ const Home = () => {
       </Section>
 
       <Section>
-        <VStack my="8" spacing="4" align="left">
+        <VStack w="full" my="8" spacing="4" align="left">
           <Heading pb="8" w="max-content" layerStyle="gradient-text">
             How it Works
           </Heading>
+          <Image
+            alignSelf="center"
+            maxW="800px"
+            alt="icon"
+            src="./images/product.png"
+          />
           <SimpleGrid
             columns={{
               sm: 1,
@@ -71,7 +76,7 @@ const Home = () => {
                   text="1"
                 />
               </Box>
-              <Text>Browse a currated list of Web3 projects</Text>
+              <Text>Browse a curated list of Web3 projects</Text>
             </VStack>
             <VStack layerStyle="outline-hover2">
               <Box pb="4">
@@ -178,7 +183,7 @@ const Home = () => {
         </VStack>
       </Section>
 
-      <Section bg={getPrimaryColor}>
+      <Section bg={getOverBgColor}>
         <VStack my="8" spacing="4" align="left">
           <Heading pb="8" w="max-content">
             Our mission
