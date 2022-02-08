@@ -11,7 +11,7 @@ function Hero() {
   return (
     <Section bgImage={getBgHero} bgSize="cover">
       <Navbar />
-      <HStack py={["8", "16", "32"]}>
+      <HStack py={["0", "8", "32"]}>
         {/* <SimpleGrid
             columns={{
               base: 1,
@@ -22,11 +22,20 @@ function Hero() {
         <VStack align="left" w="full">
           <Flex>
             <Box flex="1">
-              <Heading pt="10" fontSize="5xl" maxW={500}>
+              <Heading
+                textAlign={["center", "start"]}
+                pt="10"
+                fontSize={["4xl", "5xl"]}
+                maxW={500}
+              >
                 A gamified and community driven
                 <Box layerStyle="gradient-text">Web3 learning platform.</Box>
               </Heading>
-              <HStack py="12" justifyContent="start" spacing="8">
+              <HStack
+                py={["4", "12"]}
+                justifyContent={["center", "start"]}
+                spacing="8"
+              >
                 <Button
                   p="5"
                   aria-label="Launch App"
