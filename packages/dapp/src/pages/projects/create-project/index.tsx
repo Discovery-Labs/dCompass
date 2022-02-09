@@ -46,7 +46,9 @@ function CreateProjectStepper() {
   });
   const methods = useForm({
     defaultValues: {
+      name: null,
       logo: null,
+      description: null,
       squads: [
         {
           name: "Genesis",
@@ -59,6 +61,10 @@ function CreateProjectStepper() {
         label: string;
       }[],
       website: null,
+      discord: null,
+      gitbook: null,
+      github: null,
+      twitter: null,
     },
   });
 
@@ -157,6 +163,39 @@ function CreateProjectStepper() {
     return router.push("/");
   }
 
+  const nextStepWithValidation = async () => {
+    const { trigger } = methods;
+
+    let isValid = false;
+
+    switch (activeStep) {
+      case 0:
+        isValid = await trigger([
+          "name",
+          "logo",
+          "description",
+          "website",
+          "tags",
+          "discord",
+          "gitbook",
+          "github",
+          "twitter",
+        ]);
+        break;
+      case 1:
+        isValid = await trigger([
+          `squads[${0}].name`,
+          `squads[${0}].members[${0}]`,
+          `squads[${0}].image`,
+        ]);
+        break;
+    }
+
+    if (isValid) {
+      nextStep();
+    }
+  };
+
   return (
     <NotConnectedWrapper>
       <FormProvider {...methods}>
@@ -189,7 +228,7 @@ function CreateProjectStepper() {
                 {activeStep < 2 && (
                   <Button
                     ml="0.5rem"
-                    onClick={() => nextStep()}
+                    onClick={() => nextStepWithValidation()}
                     px="1.25rem"
                     fontSize="md"
                   >

@@ -188,6 +188,7 @@ function ReviewProjectPage({
       <Flex w="full">
         <HStack>
           <Image
+            alt="reviewer logo"
             rounded="full"
             src={`https://ipfs.io/ipfs/${logo}`}
             objectFit="cover"

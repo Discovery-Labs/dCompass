@@ -54,6 +54,7 @@ const ImageDropzone = ({
   const thumbs = files.map((file: any) => (
     <Flex key={file.name}>
       <Image
+        alt="file preview"
         borderRadius="2"
         objectFit="cover"
         boxSize="150px"

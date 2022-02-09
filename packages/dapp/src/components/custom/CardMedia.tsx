@@ -16,6 +16,7 @@ function CardMedia({ children, src, imageHeight = "120px", ...others }: any) {
       <Box w="full" position="relative">
         <Box position="static">
           <Image
+            alt="media image"
             height={imageHeight}
             width="full"
             position="absolute"
@@ -26,6 +27,7 @@ function CardMedia({ children, src, imageHeight = "120px", ...others }: any) {
         </Box>
         <Box position="relative">
           <Image
+            alt="media image"
             height={imageHeight}
             borderRadius="8"
             w="full"
