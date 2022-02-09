@@ -58,7 +58,7 @@ const LogoDropzone = ({
         boxSize="150px"
         src={file.preview}
       />
-      <Flex pl="4" d="column" v="full" alignSelf="center">
+      <Flex pl="4" d="column" w="full" alignSelf="center">
         <IconButton
           colorScheme="secondary"
           onClick={() => setFiles([])}

@@ -88,14 +88,7 @@ const Navbar = (props: any) => {
       zIndex={1}
       {...props}
     >
-      <Container
-        display="flex"
-        p="2"
-        maxW="7xl"
-        wrap="wrap"
-        align="center"
-        justify="space-between"
-      >
+      <Container display="flex" p="2" maxW="7xl">
         <HStack spacing={4} alignItems="center">
           <Box px="2">
             <NextLink href="/">
