@@ -75,7 +75,7 @@
     "next-pwa": "^5.4.0",
     "next-remove-imports": "^1.0.6",
     "next-seo": "^4.28.1",
-    "nft.storage": "^3.4.0",
+    "nft.storage": "^6.0.0",
     "react": "^17.0.2",
     "react-blockies": "^1.4.1",
     "react-device-detect": "^2.1.2",
@@ -90,7 +90,7 @@
     "tiny-invariant": "^1.2.0",
     "uint8arrays": "^3.0.0",
     "use-nft": "^0.10.2",
-    "web3.storage": "^3.3.3",
+    "web3.storage": "^3.5.4",
     "web3modal": "^1.9.4"
   },
   "devDependencies": {
