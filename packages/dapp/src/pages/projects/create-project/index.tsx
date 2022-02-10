@@ -184,9 +184,9 @@ function CreateProjectStepper() {
         break;
       case 1:
         isValid = await trigger([
-          `squads[${0}].name`,
-          `squads[${0}].members[${0}]`,
-          `squads[${0}].image`,
+          `squads.${0}.name`,
+          `squads.${0}.members.${0}`,
+          `squads.${0}.image`,
         ]);
         break;
     }
