@@ -6,8 +6,15 @@ import {
   Flex,
   Heading,
   HStack,
-  Icon,
   Image,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  Progress,
   SimpleGrid,
   Spacer,
   Stack,
@@ -17,31 +24,25 @@ import {
   TabPanels,
   Tabs,
   Text,
-  VStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   useDisclosure,
-  Progress,
-  Link,
+  VStack,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import Container from "components/layout/Container";
+import PathwayCard from "components/projects/pathways/PathwayCard";
+import { Web3Context } from "contexts/Web3Provider";
+import useCustomColor from "core/hooks/useCustomColor";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useContext } from "react";
 import Blockies from "react-blockies";
-import { BsPeople, BsPerson } from "react-icons/bs";
 import { MdPersonAddAlt1 } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
-
 import { initializeApollo } from "../../../../lib/apolloClient";
-import Address from "../../../components/custom/Address";
 import CardMedia from "../../../components/custom/CardMedia";
+import MembersAddress from "../../../components/custom/MembersAddress";
 import ProfileForm from "../../../components/custom/profile/ProfileForm";
 import SocialLinks from "../../../components/custom/SocialLinks";
 import BreadcrumbItems from "../../../components/layout/BreadcrumbItems";
@@ -50,10 +51,6 @@ import { usePageMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import { Pathway, Tag } from "../../../core/types";
 import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
-import Container from "components/layout/Container";
-import PathwayCard from "components/projects/pathways/PathwayCard";
-import { Web3Context } from "contexts/Web3Provider";
-import useCustomColor from "core/hooks/useCustomColor";
 
 type Props = {
   projectId: string | null;
@@ -254,6 +251,7 @@ function ProjectPage({
         </HStack>
 
         <TabPanels>
+          {/* About */}
           <TabPanel px="0">
             <VStack w="full" align="flex-start">
               <ReactMarkdown
@@ -264,6 +262,8 @@ function ProjectPage({
               </ReactMarkdown>
             </VStack>
           </TabPanel>
+
+          {/* Pathways */}
           <TabPanel px="0">
             <Tabs w="full" variant="line">
               <HStack justifyContent="space-between">
@@ -313,6 +313,8 @@ function ProjectPage({
               </TabPanels>
             </Tabs>
           </TabPanel>
+
+          {/* Guilds */}
           <TabPanel px="0">
             <SimpleGrid columns={3} spacing={4}>
               {squads.map((squad: any) => (
@@ -324,39 +326,13 @@ function ProjectPage({
                   <Heading as="h3" size="lg" color={getTextColor}>
                     {squad.name}
                   </Heading>
-                  <HStack>
-                    <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
-                    <Heading
-                      as="h4"
-                      size="md"
-                      textTransform="uppercase"
-                      color={getTextColor}
-                    >
-                      {squad.members.length} {t("member")}
-                      {squad.members.length > 1 ? "s" : ""}
-                    </Heading>
-                  </HStack>
-                  <VStack align="center" maxW="full">
-                    {squad.members.map(
-                      (member: string) =>
-                        member && (
-                          <HStack w="full">
-                            <Address
-                              address={member}
-                              value={member}
-                              type="external"
-                              fontSize="18px"
-                              size="short"
-                            />
-                          </HStack>
-                        )
-                    )}
-                  </VStack>
+                  <MembersAddress squad={squad} />
                 </CardMedia>
               ))}
             </SimpleGrid>
           </TabPanel>
 
+          {/* Bounties */}
           <TabPanel>
             <SimpleGrid columns={[1, 2, 2, 3]} spacing={10} />
           </TabPanel>
