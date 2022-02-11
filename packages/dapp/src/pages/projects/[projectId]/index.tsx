@@ -26,6 +26,7 @@ import {
   ModalOverlay,
   useDisclosure,
   Progress,
+  Link,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { GetServerSideProps } from "next";
@@ -159,9 +160,10 @@ function ProjectPage({
           },
         ]}
       />
-      <Flex w="full">
-        <VStack w="full">
+      <Flex w="full" pt="8">
+        <VStack w="full" align="start" spacing="8">
           <Image
+            alt="logo image"
             rounded="full"
             src={`https://ipfs.io/ipfs/${logo}`}
             objectFit="cover"
@@ -175,7 +177,7 @@ function ProjectPage({
               </Badge>
             ))}
           </Stack>
-          <VStack textAlign="center" w="full">
+          <VStack w="full" align="start">
             <Heading as="h1" size="3xl" pl="4" color={getTextColor}>
               {name}
             </Heading>
@@ -223,7 +225,10 @@ function ProjectPage({
                 {t("creation-date")} {new Date(createdAt).toLocaleString()}
               </Text>
               <Text fontSize="sm" isTruncated>
-                {t("by")} {createdBy}
+                {t("by")}{" "}
+                <NextLink href={`/badges/${createdBy}/`} passHref>
+                  <Link>{createdBy}</Link>
+                </NextLink>
               </Text>
             </VStack>
           </Flex>
