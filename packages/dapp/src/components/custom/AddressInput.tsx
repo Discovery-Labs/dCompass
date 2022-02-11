@@ -1,24 +1,37 @@
 import { Alert, Input, Text, VStack } from "@chakra-ui/react";
+import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import { useWatch } from "react-hook-form";
 
-import { lookupAddress } from "../../core/hooks/useResolveEnsName";
+import { lookupAddress, lookupEns } from "../../core/hooks/useResolveEnsName";
 
-const AddressInput = ({ name, control, register }: any) => {
+const AddressInput = ({ name, control, register, setValue }: any) => {
   const [ens, setEns] = useState<string>();
   const value = useWatch({
     control,
     name,
   });
   useEffect(() => {
-    async function getEns() {
-      const reportedEns = await lookupAddress(value);
-      return setEns(reportedEns);
+    async function getEnsOrAddress() {
+      const isAddress = ethers.utils.isAddress(value);
+      if (isAddress) {
+        const reportedEns = await lookupAddress(value);
+        return setEns(reportedEns);
+      }
+      try {
+        const reportedAddress = await lookupEns(value);
+        if (reportedAddress) {
+          setEns(value);
+          return setValue(name, reportedAddress);
+        }
+      } catch (error) {
+        return setEns("");
+      }
     }
 
-    getEns();
-  }, [value]);
+    getEnsOrAddress();
+  }, [value, name, setValue]);
 
   return (
     <VStack w="full">

@@ -13,7 +13,7 @@ import { FiX } from "react-icons/fi";
 
 import AddressInput from "../../custom/AddressInput";
 
-const MembersFieldArray = ({ nestIndex, control, register }: any) => {
+const MembersFieldArray = ({ nestIndex, control, register, setValue }: any) => {
   const { fields, remove, append } = useFieldArray({
     control,
     name: `squads[${nestIndex}].members`,
@@ -44,6 +44,7 @@ const MembersFieldArray = ({ nestIndex, control, register }: any) => {
                 register={register}
                 control={control}
                 name={`squads[${nestIndex}].members[${k}].value`}
+                setValue={setValue}
               />
               <IconButton
                 _hover={{ cursor: "pointer" }}
