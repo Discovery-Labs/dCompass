@@ -43,7 +43,7 @@ import {
   APPROVE_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
-// import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 
 type Props = {
   projectId: string | null;
@@ -106,15 +106,14 @@ function ReviewProjectPage({
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
-  // const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
+  const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
   const { getColoredText } = useCustomColor();
   const projectMarkdownTheme = usePageMarkdownTheme();
 
   useEffect(() => {
     async function init() {
       if (contracts) {
-        // setProjectNFTContract(contracts.projectNFTContract);
-        // console.log("projectNFTContract", contracts.projectNFTContract);
+        setProjectNFTContract(contracts.projectNFTContract);
       }
     }
     init();
@@ -122,17 +121,15 @@ function ReviewProjectPage({
 
   useEffect(() => {
     async function init() {
-      if (contracts && id) {
-        const statusInt = await contracts.projectNFTContract.status(id);
-        const isMinted = await contracts.projectNFTContract.projectMinted(id);
-        const statusString = await contracts.projectNFTContract.statusStrings(
-          statusInt
-        );
+      if (projectNFTContract && id) {
+        const statusInt = await projectNFTContract.status(id);
+        const isMinted = await projectNFTContract.projectMinted(id);
+        const statusString = await projectNFTContract.statusStrings(statusInt);
         setStatus(isMinted ? "MINTED" : statusString);
       }
     }
     init();
-  }, [contracts, id]);
+  }, [projectNFTContract, id]);
 
   const handleApproveProject = async () => {
     if (chainId && account) {
