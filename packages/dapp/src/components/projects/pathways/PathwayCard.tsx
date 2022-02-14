@@ -41,6 +41,7 @@ import {
   VERIFY_PATHWAY_MUTATION,
 } from "../../../graphql/pathways";
 import Card from "components/custom/Card";
+// import { PathwayNFT } from "@discovery-dao/hardhat/typechain-types/PathwayNFT";
 
 function PathwayCard({
   pathway,
