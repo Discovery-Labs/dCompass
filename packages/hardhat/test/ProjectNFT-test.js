@@ -21,12 +21,21 @@ describe("ProjectNFT", function() {
     VerifyFactory = await ethers.getContractFactory("Verify");
     verify = await VerifyFactory.deploy(`${process.env.SERVER_ADDRESS}`,[`${owner.address}`, `${addr1.address}`, `${addr2.address}`, `${addr3.address}`, `${addr4.address}`]);
     await verify.deployed();
+    RandomNumberConsumerFactory = await ethers.getContractFactory("RandomNumberConsumer");
+    rng = await RandomNumberConsumerFactory.deploy([`${owner.address}`, `${addr1.address}`, `${addr2.address}`, `${addr3.address}`, `${addr4.address}`]);
+    await rng.deployed();
+    PathwayFactory = await ethers.getContractFactory("PathwayNFT");
+    pathwayNFT = await PathwayFactory.deploy(`${rng.address}`, `${projectNFT.address}`, `${verify.address}`);
+    await pathwayNFT.deployed();
     SponsorSFTFactory = await ethers.getContractFactory("SponsorPassSFT");
     sponsorSFT = await SponsorSFTFactory.deploy([`0xde0b6b3a7640000`, `0x29a2241af62c0000`, `0x4563918244f40000`], `${projectNFT.address}`);
     await sponsorSFT.deployed();
     AppDiamondFactory = await ethers.getContractFactory("AppDiamond");
-    appDiamond = await AppDiamondFactory.deploy(`${projectNFT.address}`, `${verify.address}`, `${sponsorSFT.address}`,`${process.env.SERVER_ADDRESS}`);
+    appDiamond = await AppDiamondFactory.deploy(`${projectNFT.address}`, `${pathwayNFT.address}`, `${verify.address}`, `${sponsorSFT.address}`,`${process.env.SERVER_ADDRESS}`);
     await appDiamond.deployed();
+    const DiamondCutFacet = await ethers.getContractFactory('DiamondCutFacet')
+    const diamondCutFacet = await DiamondCutFacet.deploy()
+    await diamondCutFacet.deployed()
 })
 
   describe("Testing deployment and voting", function() {

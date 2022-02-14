@@ -196,7 +196,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     ) public returns (uint256[] memory) {
         require(!pathwayMinted[_pathwayId], "already minted");
         //require(vrfContract.blockNumberResults(_pathwayId) > 0, "no request yet");
-        bool mintAllowed = verifyContract.metaDataVerify(
+        bool allowed = verifyContract.metaDataVerify(
             _msgSender(),
             _pathwayId,
             _projectId,
@@ -204,10 +204,10 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             s[0],
             v[0]
         );
-        require(mintAllowed, "sender is not approved project minter");
+        require(allowed, "sender is not approved project minter");
         if (status[_pathwayId] == PathwayStatus.PENDING) {
             require(votesNeeded <= votes[_pathwayId], "not enough votes");
-            bool thresholdCheck = verifyContract.thresholdVerify(
+            allowed = verifyContract.thresholdVerify(
                 _msgSender(),
                 _pathwayId,
                 votesNeeded,
@@ -215,13 +215,24 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
                 s[1],
                 v[1]
             );
-            require(thresholdCheck, "incorrect votes needed sent");
+            require(allowed, "incorrect votes needed sent");
             status[_pathwayId] = PathwayStatus.APPROVED;
         }
         require(
             status[_pathwayId] == PathwayStatus.APPROVED,
             "can only mint for pathways in approved status"
         );
+
+        //TODO : this can later be made a require instead of if statement?
+        bytes memory data;
+
+        (allowed, data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("projectDiamondAddrs(string)")), _projectId));
+        require(allowed);
+        address projectDiamond = abi.decode(data, (address));
+        if(projectDiamond != address(0)){
+            (allowed, data) = projectDiamond.call(abi.encodeWithSelector(bytes4(keccak256("addPathwayId(string)")), _pathwayId));
+            require(allowed);
+        }
 
         //batch minting
         uint256[] memory newItems = new uint256[](

@@ -56,8 +56,11 @@ describe("PathwayNFT", function() {
     sponsorSFT = await SponsorSFTFactory.deploy([`0xde0b6b3a7640000`, `0x29a2241af62c0000`, `0x4563918244f40000`], `${projectNFT.address}`);
     await sponsorSFT.deployed();
     AppDiamondFactory = await ethers.getContractFactory("AppDiamond");
-    appDiamond = await AppDiamondFactory.deploy(`${projectNFT.address}`, `${verify.address}`, `${sponsorSFT.address}`,`${process.env.SERVER_ADDRESS}`);
+    appDiamond = await AppDiamondFactory.deploy(`${projectNFT.address}`, `${pathwayNFT.address}`,`${verify.address}`, `${sponsorSFT.address}`,`${process.env.SERVER_ADDRESS}`);
     await appDiamond.deployed();
+    const DiamondCutFacet = await ethers.getContractFactory('DiamondCutFacet')
+    const diamondCutFacet = await DiamondCutFacet.deploy()
+    await diamondCutFacet.deployed()
     
     //await rng.addContractToWhiteList(`${pathwayNFT.address}`);
     await projectNFT.connect(addr2).setAppDiamond(appDiamond.address);
