@@ -43,7 +43,7 @@ import {
   APPROVE_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
-// import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 
 type Props = {
   projectId: string | null;
@@ -106,18 +106,21 @@ function ReviewProjectPage({
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
-  // const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
+  const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
   const { getColoredText } = useCustomColor();
   const projectMarkdownTheme = usePageMarkdownTheme();
 
   useEffect(() => {
     async function init() {
       if (contracts) {
-        // setProjectNFTContract(contracts.projectNFTContract);
+        setProjectNFTContract(contracts.projectNFTContract);
+      }
+      if (projectNFTContract) {
+        console.log(projectNFTContract);
       }
     }
     init();
-  }, [contracts]);
+  }, [contracts, projectNFTContract]);
 
   useEffect(() => {
     async function init() {

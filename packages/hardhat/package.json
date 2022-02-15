@@ -1,6 +1,6 @@
 {
   "name": "@discovery-dao/hardhat",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "dCompass Contract ABIs",
   "author": "Discovery DAO",
   "homepage": "",
@@ -8,11 +8,13 @@
   "license": "GPL-3.0-or-later",
   "main": "abis.json",
   "directories": {
-    "contracts": "contracts"
+    "contracts": "contracts",
+    "typechain-types": "typechain-types"
   },
   "files": [
     "contracts",
-    "abis.json"
+    "abis.json",
+    "typechain-types"
   ],
   "publishConfig": {
     "access": "public"
