@@ -43,7 +43,7 @@ import {
   APPROVE_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
-import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+// import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 
 type Props = {
   projectId: string | null;
