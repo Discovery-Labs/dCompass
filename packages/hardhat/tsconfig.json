@@ -7,7 +7,8 @@
     "importHelpers": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "declaration": true
+    "declaration": true,
+    "skipLibCheck": true
   },
   "include": ["./typechain-types"],
   "exclude": ["node_modules"]
