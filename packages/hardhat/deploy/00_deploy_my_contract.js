@@ -98,6 +98,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     "setSFTAddr",
     sponsorSFT.address
   );
+  await deployments.execute(
+    "PathwayNFT",
+    { from: DEPLOYER_PRIVATE_KEY },
+    "setAppDiamond",
+    appDiamond.address
+  );
 
   //const chainIds = [1,4,42,137,80001];
   const chainIdString = CHAIN_IDS.split(" ");

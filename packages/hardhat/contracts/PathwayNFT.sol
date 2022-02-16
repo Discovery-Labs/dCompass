@@ -75,6 +75,22 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         emit ReceiveCalled(msg.sender, msg.value);
     }
 
+    function createPathway(
+        string memory _pathwayId,
+        string memory _projectId,
+        bool callRewards,
+        address _ERC20Address,
+        bool useNative,
+        uint amount
+    ) external payable {
+            require(status[_pathwayId] == PathwayStatus.NONEXISTENT);
+            status[_pathwayId] = PathwayStatus.PENDING;
+            projectIdforPathway[_pathwayId] = _projectId;
+            if (callRewards){
+                addPathwayCreationReward(_pathwayId, _ERC20Address, useNative, amount);
+            }
+    }
+
     function voteForApproval(
         address[] memory _contributors,
         string memory _pathwayId,
@@ -85,13 +101,16 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         uint256 votesNeeded
     ) public {
         require(
-            status[_pathwayId] != PathwayStatus.DENIED &&
-                status[_pathwayId] != PathwayStatus.APPROVED,
-            "finalized pathway"
+            status[_pathwayId] == PathwayStatus.PENDING,
+            "status not pending"
         );
         require(
             !reviewerVotes[_pathwayId][_msgSender()],
             "already voted for this pathway"
+        );
+        require(
+            keccak256(abi.encodePacked(projectIdforPathway[_pathwayId])) == keccak256(abi.encodePacked(_projectId)),
+            "incorrect projectId"
         );
         bool voteAllowed = verifyContract.metaDataVerify(
             _msgSender(),
@@ -113,16 +132,13 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         require(thresholdCheck, "incorrect votes needed sent");
         votes[_pathwayId]++;
         reviewerVotes[_pathwayId][_msgSender()] = true;
-        if (status[_pathwayId] == PathwayStatus.NONEXISTENT) {
+        if (votes[_pathwayId] == 0) {
             require(_contributors.length > 0, "empty array");
             contributors[_pathwayId] = _contributors;
-            projectIdforPathway[_pathwayId] = _projectId;
             if (votesNeeded <= votes[_pathwayId]) {
                 status[_pathwayId] = PathwayStatus.APPROVED;
                 emit PathwayApproved(_pathwayId);
                 //vrfContract.getRandomNumber(_pathwayId, contributors[_pathwayId].length);
-            } else {
-                status[_pathwayId] = PathwayStatus.PENDING;
             }
         } else {
             if (votes[_pathwayId] >= votesNeeded) {
@@ -164,7 +180,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     }
 
     //TODO: move these to rewards contract!
-    function addPathwayCreationReward(string memory _pathwayId, address _ERC20Address, bool useNative, uint amount) external payable{
+    function addPathwayCreationReward(string memory _pathwayId, address _ERC20Address, bool useNative, uint amount) public payable{
         require (status[_pathwayId] == PathwayStatus.PENDING, "pathway not pending");
         if(useNative){
             require(msg.value >= amount, "not enough sent");
@@ -268,6 +284,10 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
         }
         return tokenIds;
+    }
+
+    function setAppDiamond(address newAppDiamond) external onlyOwner {
+        appDiamond = newAppDiamond;
     }
 
     function _beforeTokenTransfer(
