@@ -3,6 +3,7 @@ const {ethers} = require("hardhat");
 const { smock } = require('@defi-wonderland/smock');
 const { BigNumber, Contract } = require("ethers");
 require('dotenv').config();
+const buildList = require("@uniswap/default-token-list");
 
 const verifyNFTInfo = async function(nonce, nonceId_Threshold, account, nftAddress, verifyAddress, stringId, threshold){
   const serverAddress =  process.env.SERVER_ADDRESS;
@@ -61,6 +62,28 @@ describe("PathwayNFT", function() {
     const DiamondCutFacet = await ethers.getContractFactory('DiamondCutFacet')
     const diamondCutFacet = await DiamondCutFacet.deploy()
     await diamondCutFacet.deployed()
+    await pathwayNFT.setAppDiamond(appDiamond.address);
+
+    const chainIds = [1,4,42,137,80001];
+    const chainAddrObj = {}
+    chainIds.forEach(value => {chainAddrObj[value] = []})
+    const tokens = buildList.tokens;
+    tokens.map((value, index) => {
+      if (chainIds.includes(value.chainId)){
+          chainAddrObj[value.chainId].push(value.address)
+      }
+    })
+
+    for (let i=0; i< chainIds.length; i++){
+      await appDiamond.addERC20PerChain(chainIds[i], chainAddrObj[chainIds[i]]);
+    }
+
+    let chainIdTest;
+    for (let i=0; i< chainIds.length; i++){
+      chainIdTest = await appDiamond.getERC20Addrs(chainIds[i]);
+      console.log(chainIdTest);
+      expect(chainIdTest).to.be.eql(chainAddrObj[chainIds[i]])
+    }
     
     //await rng.addContractToWhiteList(`${pathwayNFT.address}`);
     await projectNFT.connect(addr2).setAppDiamond(appDiamond.address);
@@ -107,6 +130,13 @@ describe("PathwayNFT", function() {
       expect(await pathwayNFT.votes("firstCourseProject")).to.be.equal(0);
       expect(await pathwayNFT.reviewerVotes("firstCourseProject", `${owner.address}`)).to.be.false;
 
+      //await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", false, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xff");
+      await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", {value : "0xde0b6b3a7640000"});
+      expect(await pathwayNFT.status("firstCourseProject")).to.be.equal(1);
+      nativeAmtTest = await pathwayNFT.nativeRewards("firstCourseProject");
+      expect(nativeAmtTest.toString()).to.be.equal('1000000000000000000');
+      await expect(pathwayNFT.addPathwayCreationReward("firstCourseProject", "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xde0b6b3a7640000")).to.be.revertedWith("ERC20 not approved");
+      
       //construct r,s, and v arrays
       let r = Array(2);
       let s = Array(2);
