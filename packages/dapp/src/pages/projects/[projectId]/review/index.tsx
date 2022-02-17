@@ -115,9 +115,6 @@ function ReviewProjectPage({
       if (contracts) {
         setProjectNFTContract(contracts.projectNFTContract);
       }
-      if (projectNFTContract) {
-        console.log(projectNFTContract);
-      }
     }
     init();
   }, [contracts, projectNFTContract]);
