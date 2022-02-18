@@ -32,9 +32,11 @@ import SetThreshold from "components/custom/review/SetThreshold";
 import CheckIfReviewer from "components/custom/review/CheckIfReviewer";
 import ProjectNFTInfo from "components/custom/review/ProjectNFTInfo";
 import AddProjectWallet from "components/custom/review/AddProjectWallet";
-import ProjectStatus from "components/custom/review/ProjectStatus";
 import VoteForApproval from "components/custom/review/VoteForApproval";
 import ProjectTest1 from "components/custom/review/ProjectTest1";
+import CreateToken from "components/custom/review/CreateToken";
+import ProjectRefund from "components/custom/review/ProjectRefund";
+import VoteForRejection from "components/custom/review/VoteForRejection";
 
 function ReviewProjects() {
   const { t } = useTranslation("common");
@@ -84,8 +86,10 @@ function ReviewProjects() {
             <SetThreshold contract={projectNFTContract} />
             <CheckIfReviewer contract={projectNFTContract} />
             <AddProjectWallet contract={projectNFTContract} />
-            <ProjectStatus contract={projectNFTContract} />
             <VoteForApproval contract={projectNFTContract} />
+            <VoteForRejection contract={projectNFTContract} />
+            <CreateToken contract={projectNFTContract} />
+            <ProjectRefund contract={projectNFTContract} />
 
             <ProjectTest1 contract={projectNFTContract} />
           </>
