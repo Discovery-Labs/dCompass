@@ -106,6 +106,11 @@ function ProjectPage({
   gitbook,
 }: any) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenSquad,
+    onOpen: onOpenSquad,
+    onClose: onCloseSquad,
+  } = useDisclosure();
   const projectMarkdownTheme = usePageMarkdownTheme();
 
   const { t } = useTranslation("common");
@@ -326,7 +331,12 @@ function ProjectPage({
                   <Heading as="h3" size="lg" color={getTextColor}>
                     {squad.name}
                   </Heading>
-                  <MembersAddress squad={squad} />
+                  <MembersAddress
+                    squad={squad}
+                    isOpen={isOpenSquad}
+                    onOpen={onOpenSquad}
+                    onClose={onCloseSquad}
+                  />
                 </CardMedia>
               ))}
             </SimpleGrid>
