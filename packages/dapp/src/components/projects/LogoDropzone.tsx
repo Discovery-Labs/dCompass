@@ -71,19 +71,21 @@ const LogoDropzone = ({
   ));
 
   useEffect(() => {
-    const logoValues = getValues("logo");
+    if (getValues) {
+      const logoValues = getValues("logo");
 
-    if (logoValues) {
-      const logoFiles = [];
-      logoFiles.push(logoValues[0]);
-      setFiles(
-        logoFiles.map((file: File) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
-      );
-      // console.log(logoFiles);
+      if (logoValues) {
+        const logoFiles = [];
+        logoFiles.push(logoValues[0]);
+        setFiles(
+          logoFiles.map((file: File) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file),
+            })
+          )
+        );
+        // console.log(logoFiles);
+      }
     }
   }, [getValues]);
 
