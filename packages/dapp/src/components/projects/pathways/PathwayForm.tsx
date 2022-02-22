@@ -94,10 +94,10 @@ export default function PathwayForm() {
   return (
     <VStack w="full">
       <FormControl isInvalid={errors.title}>
-        <FormLabel htmlFor="title">Pathway title</FormLabel>
+        <FormLabel htmlFor="title">Title</FormLabel>
         <HStack>
           <Input
-            placeholder="Pathway title here..."
+            placeholder="Title here..."
             {...register(`title`, {
               required: REQUIRED_FIELD_LABEL,
               maxLength: {
@@ -116,7 +116,7 @@ export default function PathwayForm() {
         <FormLabel htmlFor="description">Description</FormLabel>
         <CodeEditor
           language="markdown"
-          placeholder="Project description"
+          placeholder="Pathway description (markdown)"
           {...register("description", {
             required: REQUIRED_FIELD_LABEL,
           })}

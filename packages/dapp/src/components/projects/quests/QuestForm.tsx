@@ -335,9 +335,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
       </VStack>
 
       <FormControl isInvalid={errors.name}>
-        <FormLabel htmlFor="name">Quest name</FormLabel>
+        <FormLabel htmlFor="name">Title</FormLabel>
         <Input
-          placeholder="Quest name"
+          placeholder="Quest title"
           {...register("name", {
             required: REQUIRED_FIELD_LABEL,
             maxLength: {
@@ -355,7 +355,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         <FormLabel htmlFor="description">Description</FormLabel>
         <CodeEditor
           language="markdown"
-          placeholder="Project description"
+          placeholder="Quest description (markdown)"
           {...register("description", {
             required: REQUIRED_FIELD_LABEL,
           })}
