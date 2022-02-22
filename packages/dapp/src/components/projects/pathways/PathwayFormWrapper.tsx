@@ -50,8 +50,6 @@ function PathwayFormWrapper() {
       createdAt: new Date().toISOString(),
     };
 
-    console.log("---- currency", values.rewardCurrency.value);
-
     const formData = new FormData();
     formData.append("metadata", JSON.stringify(serlializedValues));
 
@@ -102,7 +100,7 @@ function PathwayFormWrapper() {
         `ceramic://${router.query.projectId}`,
         isRewardProvider,
         // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-        values.rewardCurrency.value,
+        values.rewardCurrency.value.split(":")[1],
         false,
         pathwayDoc.content.rewardAmount
       );
