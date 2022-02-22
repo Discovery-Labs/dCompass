@@ -242,7 +242,7 @@ export interface IERC721Enumerable extends BaseContract {
       owner: string,
       index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { tokenId: BigNumber }>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 

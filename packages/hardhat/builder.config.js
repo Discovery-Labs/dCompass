@@ -1,0 +1,1 @@
+usePlugin("buidler-gas-reporter");

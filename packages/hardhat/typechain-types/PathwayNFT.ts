@@ -24,6 +24,7 @@ export interface PathwayNFTInterface extends utils.Interface {
     "addPathwayCreationReward(string,address,bool,uint256)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "createPathway(string,string,bool,address,bool,uint256)": FunctionFragment;
     "createToken(string,string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -36,6 +37,7 @@ export interface PathwayNFTInterface extends utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "reviewerVotes(string,address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
+    "setAppDiamond(address)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "status(string)": FunctionFragment;
     "statusStrings(uint256)": FunctionFragment;
@@ -63,6 +65,10 @@ export interface PathwayNFTInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "createPathway",
+    values: [string, string, boolean, string, boolean, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "createToken",
     values: [
@@ -112,6 +118,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAppDiamond",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
@@ -188,6 +198,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "createPathway",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "createToken",
     data: BytesLike
   ): Result;
@@ -224,6 +238,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAppDiamond",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -390,6 +408,16 @@ export interface PathwayNFT extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    createPathway(
+      _pathwayId: string,
+      _projectId: string,
+      callRewards: boolean,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     createToken(
       _tokenURI: string,
       _pathwayId: string,
@@ -455,6 +483,11 @@ export interface PathwayNFT extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setAppDiamond(
+      newAppDiamond: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -555,6 +588,16 @@ export interface PathwayNFT extends BaseContract {
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  createPathway(
+    _pathwayId: string,
+    _projectId: string,
+    callRewards: boolean,
+    _ERC20Address: string,
+    useNative: boolean,
+    amount: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   createToken(
     _tokenURI: string,
     _pathwayId: string,
@@ -611,6 +654,11 @@ export interface PathwayNFT extends BaseContract {
     to: string,
     tokenId: BigNumberish,
     _data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setAppDiamond(
+    newAppDiamond: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -705,6 +753,16 @@ export interface PathwayNFT extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    createPathway(
+      _pathwayId: string,
+      _projectId: string,
+      callRewards: boolean,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     createToken(
       _tokenURI: string,
       _pathwayId: string,
@@ -762,6 +820,11 @@ export interface PathwayNFT extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAppDiamond(
+      newAppDiamond: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -926,6 +989,16 @@ export interface PathwayNFT extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    createPathway(
+      _pathwayId: string,
+      _projectId: string,
+      callRewards: boolean,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     createToken(
       _tokenURI: string,
       _pathwayId: string,
@@ -988,6 +1061,11 @@ export interface PathwayNFT extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setAppDiamond(
+      newAppDiamond: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1092,6 +1170,16 @@ export interface PathwayNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    createPathway(
+      _pathwayId: string,
+      _projectId: string,
+      callRewards: boolean,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     createToken(
       _tokenURI: string,
       _pathwayId: string,
@@ -1160,6 +1248,11 @@ export interface PathwayNFT extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAppDiamond(
+      newAppDiamond: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

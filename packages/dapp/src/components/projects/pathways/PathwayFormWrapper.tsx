@@ -20,7 +20,7 @@ function PathwayFormWrapper() {
   const [addPathwayMutation] = useMutation(CREATE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
-  const { self, account } = useContext(Web3Context);
+  const { self, account, contracts } = useContext(Web3Context);
   const {
     reset,
     handleSubmit,
@@ -28,6 +28,8 @@ function PathwayFormWrapper() {
   } = useFormContext();
 
   async function onSubmit(values: Record<string, any>) {
+    // TODO: add a field for this
+    const isRewardProvider = true;
     const { prerequisites, ...pathwayOptions } = values;
     const prereqs = prerequisites
       ? {
@@ -47,6 +49,8 @@ function PathwayFormWrapper() {
       createdBy: account,
       createdAt: new Date().toISOString(),
     };
+
+    console.log("---- currency", values.rewardCurrency.value);
 
     const formData = new FormData();
     formData.append("metadata", JSON.stringify(serlializedValues));
@@ -91,7 +95,20 @@ function PathwayFormWrapper() {
         },
       },
     });
-    console.log({ addedPathway });
+
+    const createPathwayOnChainTx =
+      await contracts.pathwayNFTContract.createPathway(
+        pathwayDoc.id.toUrl(),
+        `ceramic://${router.query.projectId}`,
+        isRewardProvider,
+        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+        values.rewardCurrency.value,
+        false,
+        pathwayDoc.content.rewardAmount
+      );
+
+    await createPathwayOnChainTx.wait(1);
+    console.log({ addedPathway, createPathwayOnChainTx });
     return router.push(`/projects/${router.query.projectId}/`);
   }
 
