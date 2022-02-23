@@ -15,6 +15,7 @@ import {
   InputLeftAddon,
   Text,
 } from "@chakra-ui/react";
+import useCustomColor from "core/hooks/useCustomColor";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -32,6 +33,7 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 });
 const CreateProjectForm = () => {
   const [code, setCode] = useState<string>();
+  const { codeEditorScheme } = useCustomColor();
   const { data, loading, error } = useQuery(ALL_TAGS_QUERY);
   const {
     register,
@@ -101,7 +103,7 @@ const CreateProjectForm = () => {
           style={{
             fontSize: "16px",
           }}
-          className="code-editor"
+          className={codeEditorScheme}
           padding={15}
         />
         <FormErrorMessage>

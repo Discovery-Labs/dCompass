@@ -20,6 +20,11 @@ function useCustomColor() {
   );
   const accentColorScheme = useColorModeValue("accentLight", "accentDark");
 
+  const codeEditorScheme = useColorModeValue(
+    "code-editor-light",
+    "code-editor"
+  );
+
   const getTextColor = useColorModeValue(
     colors.neutralDarkest,
     colors.neutralLightest
@@ -35,6 +40,7 @@ function useCustomColor() {
     getAccentColor,
     getColoredText,
     accentColorScheme,
+    codeEditorScheme,
     getTextColor,
     getBgColor,
   };
