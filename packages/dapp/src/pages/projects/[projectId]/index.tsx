@@ -116,6 +116,7 @@ function ProjectPage({
   const { t } = useTranslation("common");
   const { getTextColor, getColoredText } = useCustomColor();
   const { account, isReviewer } = useContext(Web3Context);
+  console.log({ isReviewer });
   const { data, loading, error } = useQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
     {

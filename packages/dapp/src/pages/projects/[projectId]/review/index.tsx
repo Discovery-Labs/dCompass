@@ -142,7 +142,6 @@ function ReviewProjectPage({
       const voteForApprovalTx =
         await contracts.projectNFTContract.voteForApproval(
           contributors,
-          [defaultMainnetDAIToken.address],
           10,
           id
         );

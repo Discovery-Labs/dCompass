@@ -16,7 +16,9 @@ import {
   AlertIcon,
   Tag,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
+import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
@@ -30,6 +32,7 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 
 export default function PathwayForm() {
   // const router = useRouter();
+  const { chainId } = useWeb3React();
   const { tokens } = useTokenList();
   const {
     control,
@@ -91,6 +94,21 @@ export default function PathwayForm() {
     value: `${token.chainId}:${token.address}`,
   }));
 
+  const nativeToken = useMemo(() => {
+    const isMatic = chainId === 80001 || chainId === 137;
+    const token = isMatic
+      ? {
+          label: "MATIC - Native token",
+          value: "MATIC",
+        }
+      : {
+          label: "ETH - Native token",
+          value: "ETH",
+        };
+    setValue("rewardCurrency", token);
+    return { token, isMatic };
+  }, [chainId, setValue]);
+
   return (
     <VStack w="full">
       <FormControl isInvalid={errors.title}>
@@ -145,7 +163,10 @@ export default function PathwayForm() {
       <HStack w="full" alignItems="center">
         <FormControl isInvalid={errors.rewardAmount}>
           <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
-          <NumberInput step={10_000} defaultValue={10_000}>
+          <NumberInput
+            step={nativeToken.isMatic ? 10_000 : 5}
+            defaultValue={nativeToken.isMatic ? 10_000 : 5}
+          >
             <NumberInputField
               placeholder=""
               {...register(`rewardAmount`, {
@@ -169,7 +190,8 @@ export default function PathwayForm() {
           rules={{
             required: REQUIRED_FIELD_LABEL,
           }}
-          options={erc20Options}
+          value={nativeToken.token}
+          options={[nativeToken.token, ...erc20Options]}
           placeholder="WETH, DAI,..."
         />
       </HStack>
