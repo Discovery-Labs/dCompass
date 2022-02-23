@@ -131,7 +131,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       { from: DEPLOYER_PRIVATE_KEY },
       "addERC20PerChain",
       chainIdsArray[i],
-      chainAddrObj[chainIds[i]]
+      chainAddrObj[chainIdsArray[i]]
     );
   }
 
