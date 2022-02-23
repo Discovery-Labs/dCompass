@@ -1,6 +1,6 @@
 {
   "name": "@discovery-dao/hardhat",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "dCompass Contract ABIs",
   "author": "Discovery DAO",
   "homepage": "",
@@ -36,11 +36,12 @@
     "@typechain/ethers-v5": "^9.0.0",
     "@typechain/hardhat": "^4.0.0",
     "@uniswap/default-token-list": "^3.0.0",
+    "buidler-gas-reporter": "^0.1.4",
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.4.7",
     "hardhat": "^2.6.4",
-    "hardhat-gas-reporter": "^1.0.7",
+    "hardhat-gas-reporter": "^1.0.8",
     "typechain": "^7.0.0"
   },
   "dependencies": {

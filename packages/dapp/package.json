@@ -27,9 +27,9 @@
     "@chakra-ui/react": "^1.8.1",
     "@chakra-ui/theme-tools": "^1.2.2",
     "@datamodels/identity-accounts-web": "^0.1.2",
-    "@discovery-dao/hardhat": "^0.0.8",
+    "@discovery-dao/hardhat": "^0.0.9",
     "@discovery-dao/schemas": "^0.0.5",
-    "@discovery-dao/ui": "^0.0.7",
+    "@discovery-dao/ui": "^0.0.8",
     "@emotion/cache": "^11.4.0",
     "@emotion/react": "^11.4.1",
     "@emotion/server": "^11.4.0",
@@ -112,6 +112,6 @@
     "typescript": "^4.4.4"
   },
   "engines": {
-    "node": "14.x"
+    "node": ">=14.x"
   }
 }

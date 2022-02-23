@@ -8,7 +8,8 @@ const buildList = require("@uniswap/default-token-list");
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const { DEPLOYER_PRIVATE_KEY, DEV_ADDRESS, SERVER_ADDRESS, CHAIN_IDS} = process.env;
+  const { DEPLOYER_PRIVATE_KEY, DEV_ADDRESS, SERVER_ADDRESS, CHAIN_IDS } =
+    process.env;
 
   const project = await deploy("ProjectNFT", {
     from: DEPLOYER_PRIVATE_KEY,
@@ -70,19 +71,24 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
-  const sponsorSFT = await deploy("SponsorPassSFT",{
+  const sponsorSFT = await deploy("SponsorPassSFT", {
     from: DEPLOYER_PRIVATE_KEY,
     args: [
       [`0xde0b6b3a7640000`, `0x29a2241af62c0000`, `0x4563918244f40000`],
-      project.address
+      project.address,
     ],
     log: true,
-  }
-  )
+  });
 
   const appDiamond = await deploy("AppDiamond", {
     from: DEPLOYER_PRIVATE_KEY,
-    args: [project.address, pathway.address, verify.address, sponsorSFT.address, SERVER_ADDRESS],
+    args: [
+      project.address,
+      pathway.address,
+      verify.address,
+      sponsorSFT.address,
+      SERVER_ADDRESS,
+    ],
     log: true,
   });
 
@@ -105,28 +111,29 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     appDiamond.address
   );
 
-  //const chainIds = [1,4,42,137,80001];
-  const chainIdString = CHAIN_IDS.split(" ");
-  let chainIds = Array();
-  chainIdString.map(value =>{chainIds.push(Number(value))})
-  const chainAddrObj = {}
-  chainIds.forEach(value => {chainAddrObj[value] = []})
-  const tokens = buildList.tokens;
-  tokens.map((value, index) => {
-    if (chainIds.includes(value.chainId)){
-        chainAddrObj[value.chainId].push(value.address)
-    }
-  })
+  // const chainIds = CHAIN_IDS || "1, 4, 42, 137, 80001";
+  // const chainIdsArray = chainIds.split(", ");
+  // console.log({ chainIdsArray });
+  // const chainAddrObj = {};
+  // chainIdsArray.forEach((value) => {
+  //   chainAddrObj[value] = [];
+  // });
+  // const tokens = buildList.tokens;
+  // tokens.map((value, index) => {
+  //   if (chainIdsArray.includes(value.chainId)) {
+  //     chainAddrObj[value.chainId].push(value.address);
+  //   }
+  // });
 
-  for (let i=0; i< chainIds.length; i++){
-    await deployments.execute(
-      "AppDiamond",
-      { from: DEPLOYER_PRIVATE_KEY },
-      "addERC20PerChain",
-      chainIds[i],
-      chainAddrObj[chainIds[i]]
-    );
-  }
+  // for (let i = 0; i < chainIdsArray.length; i++) {
+  //   await deployments.execute(
+  //     "AppDiamond",
+  //     { from: DEPLOYER_PRIVATE_KEY },
+  //     "addERC20PerChain",
+  //     chainIds[i],
+  //     chainAddrObj[chainIds[i]]
+  //   );
+  // }
 
   /*
     // Getting a previously deployed contract

@@ -44,6 +44,7 @@ import {
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+import ProjectInfo from "components/custom/review/ProjectInfo";
 
 type Props = {
   projectId: string | null;
@@ -115,9 +116,6 @@ function ReviewProjectPage({
       if (contracts) {
         setProjectNFTContract(contracts.projectNFTContract);
       }
-      if (projectNFTContract) {
-        console.log(projectNFTContract);
-      }
     }
     init();
   }, [contracts, projectNFTContract]);
@@ -178,6 +176,9 @@ function ReviewProjectPage({
     }
     return null;
   };
+  const handleRejectProject = async () => {
+    console.log("handleRejectProject", id);
+  };
   const handleCreateToken = async () => {
     if (chainId && account) {
       const cids = tokenUris.map(
@@ -221,7 +222,12 @@ function ReviewProjectPage({
               <Button onClick={handleApproveProject} leftIcon={<CheckIcon />}>
                 {t("approve-project")}
               </Button>
-              <Button ml="5" colorScheme="secondary" leftIcon={<CloseIcon />}>
+              <Button
+                onClick={handleRejectProject}
+                ml="5"
+                colorScheme="secondary"
+                leftIcon={<CloseIcon />}
+              >
                 {t("reject-project")}
               </Button>
             </HStack>
@@ -249,6 +255,10 @@ function ReviewProjectPage({
         <Flex align="center" maxW="full">
           {createdBy && <Blockies seed={createdBy} className="blockies" />}
           <VStack align="flex-start" ml="2">
+            {projectNFTContract && id && (
+              <ProjectInfo contract={projectNFTContract} id={id} />
+            )}
+
             <Text color={getColoredText} textStyle="small" isTruncated>
               {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
