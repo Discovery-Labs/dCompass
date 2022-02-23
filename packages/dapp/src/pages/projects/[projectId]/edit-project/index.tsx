@@ -17,6 +17,7 @@ import {
   EDIT_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
+import CreateProjectWallet from "components/custom/CreateProjectWallet";
 
 type Props = {
   projectId: string | null;
@@ -167,6 +168,8 @@ function EditProjectStepper(project: Project) {
         <CenteredFrame>
           <Card h="full" w="2xl">
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
+              {id && <CreateProjectWallet id={id} />}
+
               <EditProjectForm />
               <SquadsForm />
               <Button isLoading={methods.formState.isSubmitting} type="submit">
