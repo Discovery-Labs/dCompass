@@ -210,10 +210,10 @@ function Projects() {
             onChange={(e: Array<string>) => filterWithTags(e)}
             defaultValue={fiterTags}
           >
-            <MenuList>
+            <MenuList w="full">
               {tagsData.getAllTags.map(({ id, color, label }: Tag) => (
-                <MenuItem key={id}>
-                  <Checkbox colorScheme={color} value={id}>
+                <MenuItem w="full" key={id}>
+                  <Checkbox w="full" colorScheme={color} value={id}>
                     {label}
                   </Checkbox>
                 </MenuItem>
