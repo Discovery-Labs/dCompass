@@ -28,6 +28,7 @@
     "faucet": "hardhat --network localhost faucet"
   },
   "devDependencies": {
+    "@chainlink/contracts": "^0.4.0",
     "@defi-wonderland/smock": "^2.0.7",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.7",
