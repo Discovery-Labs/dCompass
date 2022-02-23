@@ -27,7 +27,8 @@
     "semantic-release": "semantic-release --branches main"
   },
   "peerDependencies": {
-    "react": ">=16"
+    "react": ">=16",
+    "webpack": "*"
   },
   "husky": {
     "hooks": {
@@ -60,6 +61,8 @@
     "@storybook/addon-info": "^5.3.21",
     "@storybook/addon-links": "^6.3.10",
     "@storybook/addons": "^6.3.10",
+    "@storybook/builder-webpack5": "^6.4.19",
+    "@storybook/manager-webpack5": "^6.4.19",
     "@storybook/react": "^6.3.10",
     "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.9",
