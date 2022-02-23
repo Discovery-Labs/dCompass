@@ -1,11 +1,18 @@
 import { useMutation } from "@apollo/client";
 import { Heading, Button, Flex } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
+import { BigNumber, Contract, ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
+import {
+  DAIABI,
+  ERC20ABI,
+  externalTokens,
+} from "../../../core/contracts/external-contracts";
+import useTokenList from "../../../core/hooks/useTokenList";
 import { CREATE_PATHWAY_MUTATION } from "../../../graphql/pathways";
 
 import PathwayForm from "./PathwayForm";
@@ -16,7 +23,8 @@ const pathwaysDefaultValues = {
 
 function PathwayFormWrapper() {
   const router = useRouter();
-  const { library } = useWeb3React();
+  const { library, chainId } = useWeb3React();
+  const { tokens } = useTokenList();
   const [addPathwayMutation] = useMutation(CREATE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
@@ -26,6 +34,52 @@ function PathwayFormWrapper() {
     handleSubmit,
     formState: { isSubmitting },
   } = useFormContext();
+
+  const approveTokenAllowance = async (token: string) => {
+    const [tokenChainIdStr, tokenAddress] = token.split(":");
+    const tokenChainId = parseInt(tokenChainIdStr, 10);
+    const maxApproval = "100000000000000000000000000000000000000000000000000";
+    const tokenInfos = tokens.find(
+      (tkn) => tkn.address === tokenAddress && tkn.chainId === tokenChainId
+    );
+    if (!tokenInfos || !chainId) {
+      throw new Error("Token not allowed");
+    }
+    const newAllowance = ethers.utils.parseUnits(
+      maxApproval,
+      tokenInfos.decimals
+    );
+    console.log({ newAllowance });
+    const tokenBasedOnChainId =
+      externalTokens[chainId as keyof typeof externalTokens];
+    if (!tokenBasedOnChainId) {
+      throw new Error("Unsupported network");
+    }
+    const externalTokenContracts = tokenBasedOnChainId.contracts;
+    const foundSupportedToken = externalTokenContracts[
+      tokenInfos.symbol as keyof typeof externalTokenContracts
+    ] as {
+      address: string;
+      abi: typeof ERC20ABI | typeof DAIABI;
+    };
+    if (!foundSupportedToken) {
+      throw new Error("Token not supported on this network");
+    }
+
+    console.log({ foundSupportedToken });
+    const selectedTokenContract = new Contract(
+      tokenAddress,
+      foundSupportedToken.abi,
+      library.getSigner()
+    );
+
+    const res = await selectedTokenContract.approve(
+      contracts.pathwayNFTContract.address,
+      newAllowance
+    );
+    await res.wait(1);
+    return tokenInfos;
+  };
 
   async function onSubmit(values: Record<string, any>) {
     // TODO: add a field for this
@@ -68,7 +122,6 @@ function PathwayFormWrapper() {
       projectId: `ceramic://${router.query.projectId}`,
     };
 
-    console.log("submitted", finalValues);
     const pathwayDoc = await self.client.dataModel.createTile(
       "Pathway",
       { ...finalValues, createdAt: new Date().toISOString() },
@@ -76,7 +129,6 @@ function PathwayFormWrapper() {
         pin: true,
       }
     );
-    console.log(pathwayDoc);
 
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
@@ -94,19 +146,42 @@ function PathwayFormWrapper() {
       },
     });
 
-    const createPathwayOnChainTx =
-      await contracts.pathwayNFTContract.createPathway(
-        pathwayDoc.id.toUrl(),
-        `ceramic://${router.query.projectId}`,
-        isRewardProvider,
-        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-        values.rewardCurrency.value.split(":")[1],
-        false,
-        pathwayDoc.content.rewardAmount
+    // if the native token is used
+    const isNativeToken = values.rewardCurrency.value.split(":").length === 0;
+    if (isNativeToken) {
+      const createPathwayOnChainTx =
+        await contracts.pathwayNFTContract.createPathway(
+          pathwayDoc.id.toUrl(),
+          `ceramic://${router.query.projectId}`,
+          isRewardProvider,
+          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+          undefined,
+          true,
+          pathwayDoc.content.rewardAmount
+        );
+    } else {
+      // TODO: check balance first
+      const tokenDetails = await approveTokenAllowance(
+        values.rewardCurrency.value
       );
+      const rewardAmount = ethers.utils.parseUnits(
+        pathwayDoc.content.rewardAmount.toString(),
+        tokenDetails.decimals
+      );
+      const createPathwayOnChainTx =
+        await contracts.pathwayNFTContract.createPathway(
+          pathwayDoc.id.toUrl(),
+          `ceramic://${router.query.projectId}`,
+          isRewardProvider,
+          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+          values.rewardCurrency.value.split(":")[1],
+          false,
+          rewardAmount
+        );
 
-    await createPathwayOnChainTx.wait(1);
-    console.log({ addedPathway, createPathwayOnChainTx });
+      await createPathwayOnChainTx.wait(1);
+    }
+
     return router.push(`/projects/${router.query.projectId}/`);
   }
 
