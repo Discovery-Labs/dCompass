@@ -112,14 +112,18 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   );
 
   const chainIds = CHAIN_IDS || "1, 4, 42, 137, 80001";
-  const chainIdsArray = chainIds.split(", ");
-  console.log({ chainIdsArray });
+  const chainIdsArray = chainIds
+    .split(", ")
+    .map((chainId) => parseInt(chainId, 10));
+
   const chainAddrObj = {};
   chainIdsArray.forEach((value) => {
     chainAddrObj[value] = [];
   });
+
   const tokens = buildList.tokens;
   tokens.map((value, index) => {
+    console.log(value.chainId);
     if (chainIdsArray.includes(value.chainId)) {
       chainAddrObj[value.chainId].push(value.address);
     }

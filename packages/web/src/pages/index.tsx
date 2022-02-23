@@ -20,6 +20,7 @@ import Members from "components/Sections/Members";
 import useCustomColor from "hooks/useCustomColor";
 import useThemeImage from "hooks/useThemeImage";
 import React from "react";
+import GitcoinFooter from '../components/layout/GitcoinFooter';
 
 const Home = () => {
   const { getOverBgColor, getColoredText } = useCustomColor();
@@ -267,7 +268,7 @@ const Home = () => {
       </Section>
 
       <Section>
-        <Footer />
+        <GitcoinFooter />
       </Section>
     </Box>
   );
