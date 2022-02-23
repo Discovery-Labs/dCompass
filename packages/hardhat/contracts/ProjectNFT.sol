@@ -21,7 +21,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     mapping (address => bool) public reviewers;
     uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )
     uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation
-    address payable appWallet;//sign in a script and also withdraw slashed stakes
+    address payable public appWallet;//sign in a script and also withdraw slashed stakes
     address payable appDiamond;//address of the app level diamond
     address payable sponsorSFTAddr;//address of ERC-1155 that controls sponsor staking
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
