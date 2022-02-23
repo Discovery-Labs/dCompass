@@ -35,6 +35,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     mapping(string => mapping(address => bool)) public reviewerVotes; //vote record of approved voters for PathwayId
     mapping (string => uint) public nativeRewards;//pathway rewards in native token
     mapping (string => mapping(address => uint)) internal erc20Amounts;//pathway reward Amts in other tokens
+    uint256 public fee = 1500; //number divided by 10000 for fee. for example 100 = 1%
 
     enum PathwayStatus {
         NONEXISTENT,
