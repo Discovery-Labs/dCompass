@@ -111,29 +111,29 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     appDiamond.address
   );
 
-  // const chainIds = CHAIN_IDS || "1, 4, 42, 137, 80001";
-  // const chainIdsArray = chainIds.split(", ");
-  // console.log({ chainIdsArray });
-  // const chainAddrObj = {};
-  // chainIdsArray.forEach((value) => {
-  //   chainAddrObj[value] = [];
-  // });
-  // const tokens = buildList.tokens;
-  // tokens.map((value, index) => {
-  //   if (chainIdsArray.includes(value.chainId)) {
-  //     chainAddrObj[value.chainId].push(value.address);
-  //   }
-  // });
+  const chainIds = CHAIN_IDS || "1, 4, 42, 137, 80001";
+  const chainIdsArray = chainIds.split(", ");
+  console.log({ chainIdsArray });
+  const chainAddrObj = {};
+  chainIdsArray.forEach((value) => {
+    chainAddrObj[value] = [];
+  });
+  const tokens = buildList.tokens;
+  tokens.map((value, index) => {
+    if (chainIdsArray.includes(value.chainId)) {
+      chainAddrObj[value.chainId].push(value.address);
+    }
+  });
 
-  // for (let i = 0; i < chainIdsArray.length; i++) {
-  //   await deployments.execute(
-  //     "AppDiamond",
-  //     { from: DEPLOYER_PRIVATE_KEY },
-  //     "addERC20PerChain",
-  //     chainIds[i],
-  //     chainAddrObj[chainIds[i]]
-  //   );
-  // }
+  for (let i = 0; i < chainIdsArray.length; i++) {
+    await deployments.execute(
+      "AppDiamond",
+      { from: DEPLOYER_PRIVATE_KEY },
+      "addERC20PerChain",
+      chainIdsArray[i],
+      chainAddrObj[chainIds[i]]
+    );
+  }
 
   /*
     // Getting a previously deployed contract
