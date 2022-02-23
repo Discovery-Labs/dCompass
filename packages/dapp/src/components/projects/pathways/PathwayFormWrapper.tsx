@@ -147,17 +147,25 @@ function PathwayFormWrapper() {
     });
 
     // if the native token is used
-    const isNativeToken = values.rewardCurrency.value.split(":").length === 0;
+    const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
+    const isNativeToken = tokenAddressOrSymbol ? false : true;
+
     if (isNativeToken) {
+      const nativeRewardAmount = (
+        pathwayDoc.content.rewardAmount * 1e18
+      ).toString();
       const createPathwayOnChainTx =
         await contracts.pathwayNFTContract.createPathway(
           pathwayDoc.id.toUrl(),
           `ceramic://${router.query.projectId}`,
           isRewardProvider,
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-          undefined,
+          account,
           true,
-          pathwayDoc.content.rewardAmount
+          nativeRewardAmount,
+          {
+            value: nativeRewardAmount,
+          }
         );
     } else {
       // TODO: check balance first
