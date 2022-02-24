@@ -68,9 +68,10 @@ const SquadDropzone = ({
   useEffect(() => {
     const squadsImage = getValues(`squads[${nestIndex}].image`);
 
-    if (squadsImage) {
+    if (squadsImage && typeof squadsImage !== "string") {
       const logoFiles = [];
       logoFiles.push(squadsImage[0]);
+      // console.log("logoFiles", squadsImage);
       setFiles(
         logoFiles.map((file: File) =>
           Object.assign(file, {
