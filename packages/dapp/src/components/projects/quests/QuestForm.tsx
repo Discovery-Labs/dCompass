@@ -21,6 +21,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -93,6 +94,7 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 });
 
 const CreateQuestForm: React.FunctionComponent = () => {
+  const { codeEditorScheme } = useCustomColor();
   const { tokens } = useTokenList();
   const { library } = useWeb3React();
   const { self, account } = useContext(Web3Context);
@@ -366,7 +368,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           style={{
             fontSize: "16px",
           }}
-          className="code-editor"
+          className={codeEditorScheme}
           padding={15}
         />
         <FormErrorMessage>

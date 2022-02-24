@@ -16,6 +16,7 @@ import {
   AlertIcon,
   Tag,
 } from "@chakra-ui/react";
+import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
@@ -32,6 +33,8 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 
 export default function PathwayForm() {
   // const router = useRouter();
+  const { codeEditorScheme } = useCustomColor();
+
   const { chainId } = useWeb3React();
   const { tokens } = useTokenList();
   const {
@@ -145,7 +148,7 @@ export default function PathwayForm() {
           style={{
             fontSize: "16px",
           }}
-          className="code-editor"
+          className={codeEditorScheme}
           padding={15}
         />
         <FormErrorMessage>
