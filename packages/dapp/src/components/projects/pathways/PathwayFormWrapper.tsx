@@ -1,17 +1,13 @@
 import { useMutation } from "@apollo/client";
 import { Heading, Button, Flex } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
-import { BigNumber, Contract, ethers } from "ethers";
+import { Contract, ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
-import {
-  DAIABI,
-  ERC20ABI,
-  externalTokens,
-} from "../../../core/contracts/external-contracts";
+
 import useTokenList from "../../../core/hooks/useTokenList";
 import { CREATE_PATHWAY_MUTATION } from "../../../graphql/pathways";
 
@@ -35,41 +31,27 @@ function PathwayFormWrapper() {
     formState: { isSubmitting },
   } = useFormContext();
 
-  const approveTokenAllowance = async (token: string) => {
+  const approveTokenAllowance = async (
+    token: string,
+    maxApproval = "1000000000000000000000000000000"
+  ) => {
     const [tokenChainIdStr, tokenAddress] = token.split(":");
     const tokenChainId = parseInt(tokenChainIdStr, 10);
-    const maxApproval = "100000000000000000000000000000000000000000000000000";
     const tokenInfos = tokens.find(
       (tkn) => tkn.address === tokenAddress && tkn.chainId === tokenChainId
     );
     if (!tokenInfos || !chainId) {
-      throw new Error("Token not allowed");
+      throw new Error("Token not supported");
     }
     const newAllowance = ethers.utils.parseUnits(
       maxApproval,
       tokenInfos.decimals
     );
     console.log({ newAllowance });
-    const tokenBasedOnChainId =
-      externalTokens[chainId as keyof typeof externalTokens];
-    if (!tokenBasedOnChainId) {
-      throw new Error("Unsupported network");
-    }
-    const externalTokenContracts = tokenBasedOnChainId.contracts;
-    const foundSupportedToken = externalTokenContracts[
-      tokenInfos.symbol as keyof typeof externalTokenContracts
-    ] as {
-      address: string;
-      abi: typeof ERC20ABI | typeof DAIABI;
-    };
-    if (!foundSupportedToken) {
-      throw new Error("Token not supported on this network");
-    }
 
-    console.log({ foundSupportedToken });
     const selectedTokenContract = new Contract(
       tokenAddress,
-      foundSupportedToken.abi,
+      tokenInfos.abi,
       library.getSigner()
     );
 
@@ -170,7 +152,8 @@ function PathwayFormWrapper() {
     } else {
       // TODO: check balance first
       const tokenDetails = await approveTokenAllowance(
-        values.rewardCurrency.value
+        values.rewardCurrency.value,
+        values.rewardAmount
       );
       const rewardAmount = ethers.utils.parseUnits(
         pathwayDoc.content.rewardAmount.toString(),
