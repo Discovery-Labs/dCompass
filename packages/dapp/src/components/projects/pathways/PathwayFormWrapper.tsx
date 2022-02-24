@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Heading, Button, Flex } from "@chakra-ui/react";
+import { Heading, Button, Flex, useToast } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { Contract, ethers } from "ethers";
 import { useRouter } from "next/router";
@@ -18,6 +18,7 @@ const pathwaysDefaultValues = {
 };
 
 function PathwayFormWrapper() {
+  const toast = useToast();
   const router = useRouter();
   const { library, chainId } = useWeb3React();
   const { tokens } = useTokenList();
@@ -28,13 +29,11 @@ function PathwayFormWrapper() {
   const {
     reset,
     handleSubmit,
+    setError,
     formState: { isSubmitting },
   } = useFormContext();
 
-  const approveTokenAllowance = async (
-    token: string,
-    maxApproval = "1000000000000000000000000000000"
-  ) => {
+  const getSelectedTokenContract = (token: string) => {
     const [tokenChainIdStr, tokenAddress] = token.split(":");
     const tokenChainId = parseInt(tokenChainIdStr, 10);
     const tokenInfos = tokens.find(
@@ -43,19 +42,29 @@ function PathwayFormWrapper() {
     if (!tokenInfos || !chainId) {
       throw new Error("Token not supported");
     }
+
+    return {
+      tokenContract: new Contract(
+        tokenAddress,
+        tokenInfos.abi,
+        library.getSigner()
+      ),
+      tokenInfos,
+    };
+  };
+
+  const approveTokenAllowance = async (
+    token: string,
+    maxApproval = "1000000000000000000000000000000"
+  ) => {
+    const { tokenContract, tokenInfos } = getSelectedTokenContract(token);
+
     const newAllowance = ethers.utils.parseUnits(
       maxApproval,
       tokenInfos.decimals
     );
     console.log({ newAllowance });
-
-    const selectedTokenContract = new Contract(
-      tokenAddress,
-      tokenInfos.abi,
-      library.getSigner()
-    );
-
-    const res = await selectedTokenContract.approve(
+    const res = await tokenContract.approve(
       contracts.pathwayNFTContract.address,
       newAllowance
     );
@@ -66,6 +75,60 @@ function PathwayFormWrapper() {
   async function onSubmit(values: Record<string, any>) {
     // TODO: add a field for this
     const isRewardProvider = true;
+
+    // check if the native token is used
+    const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
+    const isNativeToken = tokenAddressOrSymbol ? false : true;
+
+    let balance = 0;
+    if (!isNativeToken) {
+      const { tokenContract, tokenInfos } = getSelectedTokenContract(
+        values.rewardCurrency.value
+      );
+
+      balance = parseFloat(
+        ethers.utils.formatUnits(
+          await tokenContract.balanceOf(account),
+          tokenInfos.decimals
+        )
+      );
+      const isValidBalance = balance >= parseFloat(values.rewardAmount);
+
+      if (!isValidBalance) {
+        toast({
+          title: "Insufficient funds",
+          description: `You don't have enough funds to provide the pathway rewards in this currency`,
+          status: "error",
+          position: "top-right",
+          duration: 6000,
+          isClosable: true,
+          variant: "subtle",
+        });
+        return setError("rewardAmount", {
+          message: "Insufficient funds",
+        });
+      }
+    } else {
+      balance = parseFloat(
+        ethers.utils.formatEther(await library.getBalance(account))
+      );
+      const isValidBalance = balance >= parseFloat(values.rewardAmount);
+      if (!isValidBalance) {
+        toast({
+          title: "Insufficient funds",
+          description: "You don't have enough funds to provide pathway rewards",
+          status: "error",
+          position: "top-right",
+          duration: 6000,
+          isClosable: true,
+          variant: "subtle",
+        });
+        return setError("rewardAmount", {
+          message: "Insufficient funds",
+        });
+      }
+    }
+    // TODO: check prereqs
     const { prerequisites, ...pathwayOptions } = values;
     const prereqs = prerequisites
       ? {
@@ -112,26 +175,6 @@ function PathwayFormWrapper() {
       }
     );
 
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify({
-        id: `ceramic://${router.query.projectId}`,
-      }),
-      account,
-    ]);
-
-    const addedPathway = await addPathwayMutation({
-      variables: {
-        input: {
-          id: pathwayDoc.id.toUrl(),
-          pathwayCreatorSignature: signature.result,
-        },
-      },
-    });
-
-    // if the native token is used
-    const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
-    const isNativeToken = tokenAddressOrSymbol ? false : true;
-
     if (isNativeToken) {
       const nativeRewardAmount = (
         pathwayDoc.content.rewardAmount * 1e18
@@ -172,6 +215,22 @@ function PathwayFormWrapper() {
 
       await createPathwayOnChainTx.wait(1);
     }
+
+    const signature = await library.provider.send("personal_sign", [
+      JSON.stringify({
+        id: `ceramic://${router.query.projectId}`,
+      }),
+      account,
+    ]);
+
+    const addedPathway = await addPathwayMutation({
+      variables: {
+        input: {
+          id: pathwayDoc.id.toUrl(),
+          pathwayCreatorSignature: signature.result,
+        },
+      },
+    });
 
     return router.push(`/projects/${router.query.projectId}/`);
   }
