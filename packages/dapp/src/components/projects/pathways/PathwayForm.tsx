@@ -190,7 +190,6 @@ export default function PathwayForm() {
           rules={{
             required: REQUIRED_FIELD_LABEL,
           }}
-          value={nativeToken.token}
           options={[nativeToken.token, ...erc20Options]}
           placeholder="WETH, DAI,..."
         />
