@@ -1,6 +1,8 @@
 import { Heading, Text } from "@chakra-ui/react";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { useEffect, useState } from "react";
+import { useContext } from "react";
+import { Web3Context } from "contexts/Web3Provider";
 
 type ProjectInfoProps = {
   contract: ProjectNFT;
@@ -8,6 +10,7 @@ type ProjectInfoProps = {
 };
 
 type ProjectNFTInfo = {
+  reviewerVotes: string;
   approvedVotes: string;
   rejectedVotes: string;
   contributorsLength: number;
@@ -21,9 +24,17 @@ type ProjectNFTInfo = {
 
 function ProjectInfo({ contract, id }: ProjectInfoProps) {
   const [projectNFTInfo, setProjectNFTInfo] = useState<ProjectNFTInfo>();
+  const { account } = useContext(Web3Context);
 
   useEffect(() => {
     async function init() {
+      let reviewerVotes = "Not set yet";
+      if (account) {
+        const hasReviewerVoted = await contract.reviewerVotes(id, account);
+        reviewerVotes = hasReviewerVoted
+          ? "You have already voted"
+          : "You have not voted yet";
+      }
       const approvedVotes = await contract.votes(id);
       const rejectedVotes = await contract.votesReject(id);
       const allContributors = await contract.getContributors(id);
@@ -34,6 +45,7 @@ function ProjectInfo({ contract, id }: ProjectInfoProps) {
       const stakePerProject = await contract.stakePerProject(id);
 
       setProjectNFTInfo({
+        reviewerVotes: reviewerVotes,
         approvedVotes: approvedVotes.toString(),
         rejectedVotes: rejectedVotes.toString(),
         contributorsLength: allContributors.length,
@@ -53,6 +65,7 @@ function ProjectInfo({ contract, id }: ProjectInfoProps) {
       {projectNFTInfo && (
         <>
           <Heading>Project: test1</Heading>
+          <Text>You have voted: {projectNFTInfo.reviewerVotes}</Text>
           <Text>Approved Votes: {projectNFTInfo.approvedVotes}</Text>
           <Text>Rejected Votes: {projectNFTInfo.rejectedVotes}</Text>
           <Text>Contributors: {projectNFTInfo.contributorsLength}</Text>
