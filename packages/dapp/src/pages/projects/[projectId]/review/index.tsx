@@ -45,6 +45,7 @@ import {
 } from "../../../../graphql/projects";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import ProjectInfo from "components/custom/review/ProjectInfo";
+import AddProjectContributor from "components/custom/review/AddProjectContributor";
 
 type Props = {
   projectId: string | null;
@@ -255,7 +256,10 @@ function ReviewProjectPage({
           {createdBy && <Blockies seed={createdBy} className="blockies" />}
           <VStack align="flex-start" ml="2">
             {projectNFTContract && id && (
-              <ProjectInfo contract={projectNFTContract} id={id} />
+              <>
+                <AddProjectContributor contract={projectNFTContract} id={id} />
+                <ProjectInfo contract={projectNFTContract} id={id} />
+              </>
             )}
 
             <Text color={getColoredText} textStyle="small" isTruncated>

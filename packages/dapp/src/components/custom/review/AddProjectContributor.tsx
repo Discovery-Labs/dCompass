@@ -4,16 +4,18 @@ import { useState } from "react";
 
 type AddProjectContributorProps = {
   contract: ProjectNFT;
+  id: string;
 };
 
-function AddProjectContributor({ contract }: AddProjectContributorProps) {
-  const [reviewer, setReviewer] = useState("");
+function AddProjectContributor({ contract, id }: AddProjectContributorProps) {
+  const [contributor, setContributor] = useState("");
 
-  const handleReviewerChange = (event: any) => setReviewer(event.target.value);
+  const handleContributorChange = (event: any) =>
+    setContributor(event.target.value);
   const handleAddProjectContributor = async () => {
-    if (reviewer !== "") {
+    if (contributor !== "") {
       try {
-        await contract.addReviewer(reviewer);
+        await contract.addProjectContributor(id, contributor);
       } catch (error) {
         console.log(error);
       }
@@ -22,13 +24,13 @@ function AddProjectContributor({ contract }: AddProjectContributorProps) {
 
   return (
     <>
-      <Text>Add Reviewer</Text>
+      <Text>Add Contributor</Text>
       <Input
-        value={reviewer}
-        onChange={handleReviewerChange}
-        placeholder="add reviewer"
+        value={contributor}
+        onChange={handleContributorChange}
+        placeholder="add Contributor"
       />
-      <Button onClick={handleAddProjectContributor}>Add reviewer</Button>
+      <Button onClick={handleAddProjectContributor}>Add Contributor</Button>
     </>
   );
 }
