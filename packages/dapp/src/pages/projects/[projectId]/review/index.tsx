@@ -123,35 +123,35 @@ function ReviewProjectPage({
 
   useEffect(() => {
     async function init() {
-      if (contracts && id) {
-        const statusInt = await contracts.projectNFTContract.status(id);
-        const isMinted = await contracts.projectNFTContract.projectMinted(id);
-        const statusString = await contracts.projectNFTContract.statusStrings(
-          statusInt
-        );
+      if (projectNFTContract && id) {
+        const statusInt = await projectNFTContract.status(id);
+        const isMinted = await projectNFTContract.projectMinted(id);
+        const statusString = await projectNFTContract.statusStrings(statusInt);
         setStatus(isMinted ? "MINTED" : statusString);
       }
     }
     init();
-  }, [contracts, id]);
+  }, [projectNFTContract, id]);
 
   const handleApproveProject = async () => {
-    if (chainId && account) {
-      const contributors = squads.flatMap(
-        ({ members }: { members: string[] }) => members
-      );
-      const voteForApprovalTx =
-        await contracts.projectNFTContract.voteForApproval(
+    if (projectNFTContract && chainId && account && status === "PENDING") {
+      try {
+        const contributors = squads.flatMap(
+          ({ members }: { members: string[] }) => members
+        );
+
+        const voteForApprovalTx = await projectNFTContract.voteForApproval(
           contributors,
           10,
           id
         );
-      // get return values or events
-      await voteForApprovalTx.wait(1);
-      const statusInt = await contracts.projectNFTContract.status(id);
-      const statusString = await contracts.projectNFTContract.statusStrings(
-        statusInt
-      );
+        // get return values or events
+        await voteForApprovalTx.wait(1);
+      } catch (e) {
+        console.log("Approve Failed:", e);
+      }
+      const statusInt = await projectNFTContract.status(id);
+      const statusString = await projectNFTContract.statusStrings(statusInt);
       setStatus(statusString);
       if (statusString === "APPROVED") {
         const mutationInput = {
@@ -177,7 +177,25 @@ function ReviewProjectPage({
     return null;
   };
   const handleRejectProject = async () => {
-    console.log("handleRejectProject", id);
+    if (projectNFTContract && chainId && account && status === "PENDING") {
+      try {
+        const voteForRejectionTx = await projectNFTContract.voteForRejection(
+          id
+        );
+        // get return values or events
+        await voteForRejectionTx.wait(1);
+      } catch (e) {
+        console.log("Rejection Failed:", e);
+      }
+      const statusInt = await projectNFTContract.status(id);
+      const statusString = await projectNFTContract.statusStrings(statusInt);
+      setStatus(statusString);
+      if (statusString === "DENIED") {
+        // project Refund
+      }
+      return statusString;
+    }
+    return null;
   };
   const handleCreateToken = async () => {
     if (chainId && account) {
@@ -219,7 +237,11 @@ function ReviewProjectPage({
         <VStack align="left">
           {status && (status === "PENDING" || status === "NONEXISTENT") && (
             <HStack>
-              <Button onClick={handleApproveProject} leftIcon={<CheckIcon />}>
+              <Button
+                onClick={handleApproveProject}
+                leftIcon={<CheckIcon />}
+                disabled={status !== "PENDING" ? true : false}
+              >
                 {t("approve-project")}
               </Button>
               <Button
@@ -227,6 +249,7 @@ function ReviewProjectPage({
                 ml="5"
                 colorScheme="secondary"
                 leftIcon={<CloseIcon />}
+                disabled={status !== "PENDING" ? true : false}
               >
                 {t("reject-project")}
               </Button>
