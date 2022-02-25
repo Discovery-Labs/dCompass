@@ -15,25 +15,47 @@ import {
   Alert,
   AlertIcon,
   Tag,
+  AlertTitle,
+  AlertDescription,
+  Progress,
+  Stack,
 } from "@chakra-ui/react";
 import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
+import { useQuery } from "@apollo/client";
 
-import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
+import {
+  difficultyOptions,
+  REQUIRED_FIELD_LABEL,
+} from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
+import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
+import { useRouter } from "next/router";
+import { streamIdToUrl } from "../../../core/helpers";
+import { Pathway } from "../../../core/types";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
 });
 
 export default function PathwayForm() {
-  // const router = useRouter();
+  const router = useRouter();
   const { codeEditorScheme } = useCustomColor();
+  const { data, loading, error } = useQuery(
+    GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
+    {
+      variables: {
+        projectId: streamIdToUrl(router.query.projectId as string),
+      },
+    }
+  );
+
+  console.log({ data });
 
   const { chainId } = useWeb3React();
   const { tokens } = useTokenList();
@@ -46,50 +68,6 @@ export default function PathwayForm() {
   } = useFormContext();
 
   const { rewardAmount, rewardCurrency, rewardUserCap } = watch();
-  const difficultyOptions = [
-    {
-      label: "Beginner",
-      value: "beginner",
-      colorScheme: "white",
-    },
-    {
-      label: "Intermediate",
-      value: "intermediate",
-      colorScheme: "yellow",
-    },
-    {
-      label: "Advanced",
-      value: "advanced",
-      colorScheme: "blue",
-    },
-    {
-      label: "Expert",
-      value: "expert",
-      colorScheme: "red",
-    },
-    {
-      label: "Wizard",
-      value: "wizard",
-      colorScheme: "black",
-    },
-  ];
-  const existingQuestsOptions = [
-    {
-      label: "Gitcoin Applicant Quest",
-      value: "gitcoin-applicant-quest-id",
-      colorScheme: "purple",
-    },
-    {
-      label: "FDD Applicant Quest",
-      value: "fdd-applicant-quest-id",
-      colorScheme: "purple",
-    },
-    {
-      label: "Gitcoin Grant donator",
-      value: "gitcoin-grant-donator-quest",
-      colorScheme: "purple",
-    },
-  ];
 
   const rewardPerUser = parseFloat(rewardAmount) / parseInt(rewardUserCap, 10);
   const erc20Options = tokens.map((token) => ({
@@ -111,6 +89,58 @@ export default function PathwayForm() {
     setValue("rewardCurrency", token);
     return { token, isMatic };
   }, [chainId, setValue]);
+
+  if (loading)
+    return (
+      <Stack>
+        <Progress size="xs" isIndeterminate />
+      </Stack>
+    );
+  if (error)
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle mr={2}>Network error</AlertTitle>
+        <AlertDescription>{error.message}</AlertDescription>
+      </Alert>
+    );
+
+  // const existingGitcoinQuestsOptions = [
+  //   {
+  //     label: "Gitcoin Applicant Quest",
+  //     value: "gitcoin-applicant-quest-id",
+  //     colorScheme: "purple",
+  //   },
+  //   {
+  //     label: "FDD Applicant Quest",
+  //     value: "fdd-applicant-quest-id",
+  //     colorScheme: "purple",
+  //   },
+  //   {
+  //     label: "Gitcoin Grant donator",
+  //     value: "gitcoin-grant-donator-quest",
+  //     colorScheme: "purple",
+  //   },
+  // ];
+  // const demoProjectWithPathwaysAsPrereqs = [
+  //   {
+  //     label: "Gitcoin DAO",
+  //     options: existingGitcoinQuestsOptions,
+  //   },
+  // ];
+
+  const existingPathwaysOptions = data.getAllPathwaysByProjectId
+    .filter((pathway: Pathway) => pathway.quests?.length > 0)
+    .map((pathway: Pathway) => {
+      return {
+        label: pathway.title,
+        options: pathway.quests.map((quest) => ({
+          label: quest.name,
+          value: quest.id,
+          colorScheme: "purple",
+        })),
+      };
+    });
 
   return (
     <VStack w="full">
@@ -248,7 +278,8 @@ export default function PathwayForm() {
         name="prerequisites"
         label="Prerequisites"
         isMulti
-        options={existingQuestsOptions}
+        options={existingPathwaysOptions}
+        hasStickyGroupHeaders
       />
       <Divider bg="none" py="5" />
     </VStack>

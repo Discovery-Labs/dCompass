@@ -58,12 +58,10 @@ function PathwayFormWrapper() {
     maxApproval = "1000000000000000000000000000000"
   ) => {
     const { tokenContract, tokenInfos } = getSelectedTokenContract(token);
-
     const newAllowance = ethers.utils.parseUnits(
       maxApproval,
       tokenInfos.decimals
     );
-    console.log({ newAllowance });
     const res = await tokenContract.approve(
       contracts.pathwayNFTContract.address,
       newAllowance
@@ -192,6 +190,7 @@ function PathwayFormWrapper() {
             value: nativeRewardAmount,
           }
         );
+      await createPathwayOnChainTx.wait(1);
     } else {
       // TODO: check balance first
       const tokenDetails = await approveTokenAllowance(
@@ -223,7 +222,7 @@ function PathwayFormWrapper() {
       account,
     ]);
 
-    const addedPathway = await addPathwayMutation({
+    await addPathwayMutation({
       variables: {
         input: {
           id: pathwayDoc.id.toUrl(),

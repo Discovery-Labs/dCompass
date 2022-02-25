@@ -57,26 +57,45 @@ export class GetAllPathwaysByProjectIdResolver {
     );
 
     const serializedPathways = Object.values(pathwaysWithDetails).map(
-      (stream) => {
+      async (stream) => {
         const serverSidePathwayInfos = pathwaysWithAdditionalDetails.find(
           (pathway: Pathway) => pathway.id === stream.id.toUrl(),
         );
         if (serverSidePathwayInfos) {
-          const quests =
+          const questsStreams =
             serverSidePathwayInfos.quests &&
             serverSidePathwayInfos.quests.length > 0
-              ? serverSidePathwayInfos.quests.map((questId: string) => ({
-                  id: questId,
-                }))
+              ? await ceramicClient.ceramic.multiQuery(
+                  serverSidePathwayInfos.quests.map((questId: string) => ({
+                    streamId: questId,
+                  })),
+                )
               : [];
+          const quests = Object.values(questsStreams).map((questStream) => ({
+            id: questStream.id.toUrl(),
+            ...questStream.content,
+          }));
 
-          const pendingQuests =
+          console.log({ quests });
+
+          const pendingQuestsStreams =
             serverSidePathwayInfos.pendingQuests &&
             serverSidePathwayInfos.pendingQuests.length > 0
-              ? serverSidePathwayInfos.pendingQuests.map((questId: string) => ({
-                  id: questId,
-                }))
+              ? await ceramicClient.ceramic.multiQuery(
+                  serverSidePathwayInfos.pendingQuests.map(
+                    (questId: string) => ({
+                      id: questId,
+                    }),
+                  ),
+                )
               : [];
+
+          const pendingQuests = Object.values(pendingQuestsStreams).map(
+            (pendingQuestStream) => ({
+              id: pendingQuestStream.id.toUrl(),
+              ...pendingQuestStream.content,
+            }),
+          );
           return {
             id: stream.id.toUrl(),
             ...stream.state.content,

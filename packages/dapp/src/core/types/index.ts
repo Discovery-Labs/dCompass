@@ -33,7 +33,7 @@ export type Pathway = {
   title: string;
   description: string;
   projectId: string;
-  quests: { id: string }[];
+  quests: { id: string; name: string }[];
   difficulty: string;
   rewardCurrency: string;
   rewardAmount: string;

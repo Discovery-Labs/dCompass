@@ -10,3 +10,30 @@ export const namespaces = {
   near: "Near",
 };
 export const REQUIRED_FIELD_LABEL = "This is required";
+export const difficultyOptions = [
+  {
+    label: "Beginner",
+    value: "beginner",
+    colorScheme: "white",
+  },
+  {
+    label: "Intermediate",
+    value: "intermediate",
+    colorScheme: "yellow",
+  },
+  {
+    label: "Advanced",
+    value: "advanced",
+    colorScheme: "blue",
+  },
+  {
+    label: "Expert",
+    value: "expert",
+    colorScheme: "red",
+  },
+  {
+    label: "Wizard",
+    value: "wizard",
+    colorScheme: "black",
+  },
+];

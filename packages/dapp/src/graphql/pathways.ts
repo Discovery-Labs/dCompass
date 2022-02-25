@@ -62,6 +62,7 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
       projectId
       quests {
         id
+        name
       }
     }
   }
