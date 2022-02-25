@@ -33,7 +33,7 @@ export class VerifyPathwayResolver {
     const ogProject = await ceramicClient.ceramic.loadStream(projectId);
     console.log('approving pathway');
     const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: id, projectId }),
+      JSON.stringify({ id: ogPathway.id.toUrl(), projectId }),
       pathwayMinterSignature,
     );
 
@@ -60,26 +60,23 @@ export class VerifyPathwayResolver {
     );
 
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
-      verifyContract.noncesParentIdChildId(
-        projectId.split('://')[1],
-        ogPathway.id.toString(),
-      ),
-      verifyContract.thresholdNoncesById(ogPathway.id.toString()),
+      verifyContract.noncesParentIdChildId(projectId, ogPathway.id.toUrl()),
+      verifyContract.thresholdNoncesById(ogPathway.id.toUrl()),
     ]);
 
-    console.log({ pathwayId: ogPathway.id.toString() });
+    console.log({ pathwayId: ogPathway.id.toUrl() });
     const [metadataVerify, tresholdVerify] = await Promise.all([
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
         nonceId: metadataNonceId,
-        objectId: ogPathway.id.toString(),
+        objectId: ogPathway.id.toUrl(),
         senderAddress: decodedAddress,
         verifyContract: verifyContract.address,
       }),
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
         nonceId: thresholdNonceId,
-        objectId: ogPathway.id.toString(),
+        objectId: ogPathway.id.toUrl(),
         senderAddress: decodedAddress,
         verifyContract: verifyContract.address,
         votesNeeded: 1,

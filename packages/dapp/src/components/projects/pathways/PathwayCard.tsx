@@ -63,13 +63,14 @@ function PathwayCard({
   const { account, contracts } = useContext(Web3Context);
   const { chainId, library } = useWeb3React();
   const router = useRouter();
-  const id = streamUrlToId(pathway.id);
 
   useEffect(() => {
     async function init() {
-      if (contracts && id) {
-        const statusInt = await contracts.pathwayNFTContract.status(id);
-        const isMinted = await contracts.pathwayNFTContract.pathwayMinted(id);
+      if (contracts && pathway.id) {
+        const statusInt = await contracts.pathwayNFTContract.status(pathway.id);
+        const isMinted = await contracts.pathwayNFTContract.pathwayMinted(
+          pathway.id
+        );
         const statusString = await contracts.pathwayNFTContract.statusStrings(
           statusInt
         );
@@ -77,7 +78,7 @@ function PathwayCard({
       }
     }
     init();
-  }, [contracts, id]);
+  }, [contracts, pathway.id]);
 
   const isContributor = account && projectContributors.includes(account);
   function openPathway() {
@@ -115,8 +116,8 @@ function PathwayCard({
       const voteForApprovalTx =
         await contracts.pathwayNFTContract.voteForApproval(
           projectContributors,
-          id,
-          streamUrlToId(pathway.projectId),
+          pathway.id,
+          pathway.projectId,
           [metadataVerifySignature.r, thresholdVerifySignature.r],
           [metadataVerifySignature.s, thresholdVerifySignature.s],
           [metadataVerifySignature.v, thresholdVerifySignature.v],
@@ -126,7 +127,7 @@ function PathwayCard({
       // get return values or events
       const receipt = await voteForApprovalTx.wait(1);
       console.log({ receipt });
-      const statusInt = await contracts.pathwayNFTContract.status(id);
+      const statusInt = await contracts.pathwayNFTContract.status(pathway.id);
       const statusString = await contracts.pathwayNFTContract.statusStrings(
         statusInt
       );
@@ -179,8 +180,8 @@ function PathwayCard({
       const { url } = await nftCidRes.json();
       const createTokenTx = await contracts.pathwayNFTContract.createToken(
         url,
-        id,
-        streamUrlToId(pathway.projectId),
+        pathway.id,
+        pathway.projectId,
         [metadataVerifySignature.r, thresholdVerifySignature.r],
         [metadataVerifySignature.s, thresholdVerifySignature.s],
         [metadataVerifySignature.v, thresholdVerifySignature.v],
@@ -190,7 +191,9 @@ function PathwayCard({
       // get return values or events
       const receipt = await createTokenTx.wait(1);
       console.log({ receipt });
-      const isMinted = await contracts.pathwayNFTContract.pathwayMinted(id);
+      const isMinted = await contracts.pathwayNFTContract.pathwayMinted(
+        pathway.id
+      );
       if (isMinted) {
         setStatus("MINTED");
       }

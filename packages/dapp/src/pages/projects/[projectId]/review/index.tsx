@@ -101,7 +101,6 @@ function ReviewProjectPage({
   gitbook,
 }: any) {
   const { t } = useTranslation("common");
-  const { defaultMainnetDAIToken } = useTokenList();
   const { isReviewer, contracts } = useContext(Web3Context);
   const { chainId, account, library } = useWeb3React();
   const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
@@ -111,6 +110,9 @@ function ReviewProjectPage({
   const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
   const { getColoredText } = useCustomColor();
   const projectMarkdownTheme = usePageMarkdownTheme();
+
+  const isPendingOrNonExistent =
+    status === "PENDING" || status === "NONEXISTENT";
 
   useEffect(() => {
     async function init() {
@@ -134,7 +136,7 @@ function ReviewProjectPage({
   }, [projectNFTContract, id]);
 
   const handleApproveProject = async () => {
-    if (projectNFTContract && chainId && account && status === "PENDING") {
+    if (projectNFTContract && chainId && account && isPendingOrNonExistent) {
       try {
         const contributors = squads.flatMap(
           ({ members }: { members: string[] }) => members
@@ -216,6 +218,7 @@ function ReviewProjectPage({
     }
     return null;
   };
+
   return isReviewer ? (
     <Container>
       <Flex w="full">
@@ -235,12 +238,12 @@ function ReviewProjectPage({
 
         <Spacer />
         <VStack align="left">
-          {status && (status === "PENDING" || status === "NONEXISTENT") && (
+          {status && isPendingOrNonExistent && (
             <HStack>
               <Button
                 onClick={handleApproveProject}
                 leftIcon={<CheckIcon />}
-                disabled={status !== "PENDING" ? true : false}
+                disabled={!isPendingOrNonExistent}
               >
                 {t("approve-project")}
               </Button>
@@ -249,7 +252,7 @@ function ReviewProjectPage({
                 ml="5"
                 colorScheme="secondary"
                 leftIcon={<CloseIcon />}
-                disabled={status !== "PENDING" ? true : false}
+                disabled={status !== "PENDING"}
               >
                 {t("reject-project")}
               </Button>
