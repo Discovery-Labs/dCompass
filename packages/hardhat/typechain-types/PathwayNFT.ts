@@ -24,12 +24,17 @@ export interface PathwayNFTInterface extends utils.Interface {
     "addPathwayCreationReward(string,address,bool,uint256)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "createPathway(string,string,bool,address,bool,uint256)": FunctionFragment;
+    "claimPathwayRewards(string,bool,address,bytes32,bytes32,uint8)": FunctionFragment;
+    "createPathway(string,string,uint256,bool,address,bool,uint256)": FunctionFragment;
     "createToken(string,string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
+    "currentNumUsersRewardPerPathwayERC20(string,address)": FunctionFragment;
+    "currentNumUsersRewardPerPathwayNative(string)": FunctionFragment;
+    "fee()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "name()": FunctionFragment;
     "nativeRewards(string)": FunctionFragment;
+    "numUsersRewardPerPathway(string)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "pathwayMinted(string)": FunctionFragment;
@@ -49,6 +54,7 @@ export interface PathwayNFTInterface extends utils.Interface {
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "userRewardedForPathwayNative(string,address)": FunctionFragment;
     "voteForApproval(address[],string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
     "voteForRejection(string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
     "votes(string)": FunctionFragment;
@@ -66,8 +72,20 @@ export interface PathwayNFTInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "claimPathwayRewards",
+    values: [string, boolean, string, BytesLike, BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "createPathway",
-    values: [string, string, boolean, string, boolean, BigNumberish]
+    values: [
+      string,
+      string,
+      BigNumberish,
+      boolean,
+      string,
+      boolean,
+      BigNumberish
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "createToken",
@@ -82,6 +100,15 @@ export interface PathwayNFTInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "currentNumUsersRewardPerPathwayERC20",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentNumUsersRewardPerPathwayNative",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "fee", values?: undefined): string;
+  encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
   ): string;
@@ -92,6 +119,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "nativeRewards",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "numUsersRewardPerPathway",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -162,6 +193,10 @@ export interface PathwayNFTInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "userRewardedForPathwayNative",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "voteForApproval",
     values: [
       string[],
@@ -198,6 +233,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "claimPathwayRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "createPathway",
     data: BytesLike
   ): Result;
@@ -205,6 +244,15 @@ export interface PathwayNFTInterface extends utils.Interface {
     functionFragment: "createToken",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentNumUsersRewardPerPathwayERC20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentNumUsersRewardPerPathwayNative",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -216,6 +264,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nativeRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "numUsersRewardPerPathway",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -277,6 +329,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userRewardedForPathwayNative",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -408,9 +464,20 @@ export interface PathwayNFT extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    claimPathwayRewards(
+      _pathwayId: string,
+      native: boolean,
+      _ERC20Address: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     createPathway(
       _pathwayId: string,
       _projectId: string,
+      numUsersRewarded: BigNumberish,
       callRewards: boolean,
       _ERC20Address: string,
       useNative: boolean,
@@ -429,6 +496,19 @@ export interface PathwayNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    currentNumUsersRewardPerPathwayERC20(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    currentNumUsersRewardPerPathwayNative(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    fee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -443,6 +523,11 @@ export interface PathwayNFT extends BaseContract {
     name(overrides?: CallOverrides): Promise<[string]>;
 
     nativeRewards(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    numUsersRewardPerPathway(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -541,6 +626,12 @@ export interface PathwayNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    userRewardedForPathwayNative(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     voteForApproval(
       _contributors: string[],
       _pathwayId: string,
@@ -588,9 +679,20 @@ export interface PathwayNFT extends BaseContract {
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  claimPathwayRewards(
+    _pathwayId: string,
+    native: boolean,
+    _ERC20Address: string,
+    r: BytesLike,
+    s: BytesLike,
+    v: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   createPathway(
     _pathwayId: string,
     _projectId: string,
+    numUsersRewarded: BigNumberish,
     callRewards: boolean,
     _ERC20Address: string,
     useNative: boolean,
@@ -609,6 +711,19 @@ export interface PathwayNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  currentNumUsersRewardPerPathwayERC20(
+    arg0: string,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  currentNumUsersRewardPerPathwayNative(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  fee(overrides?: CallOverrides): Promise<BigNumber>;
+
   getApproved(
     tokenId: BigNumberish,
     overrides?: CallOverrides
@@ -623,6 +738,11 @@ export interface PathwayNFT extends BaseContract {
   name(overrides?: CallOverrides): Promise<string>;
 
   nativeRewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  numUsersRewardPerPathway(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -706,6 +826,12 @@ export interface PathwayNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  userRewardedForPathwayNative(
+    arg0: string,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   voteForApproval(
     _contributors: string[],
     _pathwayId: string,
@@ -753,9 +879,20 @@ export interface PathwayNFT extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    claimPathwayRewards(
+      _pathwayId: string,
+      native: boolean,
+      _ERC20Address: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     createPathway(
       _pathwayId: string,
       _projectId: string,
+      numUsersRewarded: BigNumberish,
       callRewards: boolean,
       _ERC20Address: string,
       useNative: boolean,
@@ -774,6 +911,19 @@ export interface PathwayNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    currentNumUsersRewardPerPathwayERC20(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentNumUsersRewardPerPathwayNative(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -788,6 +938,11 @@ export interface PathwayNFT extends BaseContract {
     name(overrides?: CallOverrides): Promise<string>;
 
     nativeRewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    numUsersRewardPerPathway(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -874,6 +1029,12 @@ export interface PathwayNFT extends BaseContract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    userRewardedForPathwayNative(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     voteForApproval(
       _contributors: string[],
@@ -989,9 +1150,20 @@ export interface PathwayNFT extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    claimPathwayRewards(
+      _pathwayId: string,
+      native: boolean,
+      _ERC20Address: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     createPathway(
       _pathwayId: string,
       _projectId: string,
+      numUsersRewarded: BigNumberish,
       callRewards: boolean,
       _ERC20Address: string,
       useNative: boolean,
@@ -1010,6 +1182,19 @@ export interface PathwayNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    currentNumUsersRewardPerPathwayERC20(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentNumUsersRewardPerPathwayNative(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -1024,6 +1209,11 @@ export interface PathwayNFT extends BaseContract {
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     nativeRewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    numUsersRewardPerPathway(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1119,6 +1309,12 @@ export interface PathwayNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    userRewardedForPathwayNative(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     voteForApproval(
       _contributors: string[],
       _pathwayId: string,
@@ -1170,9 +1366,20 @@ export interface PathwayNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    claimPathwayRewards(
+      _pathwayId: string,
+      native: boolean,
+      _ERC20Address: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     createPathway(
       _pathwayId: string,
       _projectId: string,
+      numUsersRewarded: BigNumberish,
       callRewards: boolean,
       _ERC20Address: string,
       useNative: boolean,
@@ -1191,6 +1398,19 @@ export interface PathwayNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    currentNumUsersRewardPerPathwayERC20(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentNumUsersRewardPerPathwayNative(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    fee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -1205,6 +1425,11 @@ export interface PathwayNFT extends BaseContract {
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nativeRewards(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    numUsersRewardPerPathway(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1307,6 +1532,12 @@ export interface PathwayNFT extends BaseContract {
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userRewardedForPathwayNative(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     voteForApproval(

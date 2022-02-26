@@ -28,6 +28,7 @@ module.exports = {
   networks: {
     localhost: {
       url: "http://localhost:8545",
+      accounts: [DEPLOYER_PRIVATE_KEY],
     },
     mumbai: {
       url: /*INFURA_ID

@@ -24,6 +24,7 @@ export interface ProjectNFTInterface extends utils.Interface {
     "addProjectContributor(string,address)": FunctionFragment;
     "addProjectWallet(string,address,string)": FunctionFragment;
     "addReviewer(address)": FunctionFragment;
+    "appWallet()": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "changeProjectWallet(string,address)": FunctionFragment;
@@ -77,6 +78,7 @@ export interface ProjectNFTInterface extends utils.Interface {
     values: [string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "addReviewer", values: [string]): string;
+  encodeFunctionData(functionFragment: "appWallet", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approve",
     values: [string, BigNumberish]
@@ -231,6 +233,7 @@ export interface ProjectNFTInterface extends utils.Interface {
     functionFragment: "addReviewer",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "appWallet", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -477,6 +480,8 @@ export interface ProjectNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    appWallet(overrides?: CallOverrides): Promise<[string]>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -683,6 +688,8 @@ export interface ProjectNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  appWallet(overrides?: CallOverrides): Promise<string>;
+
   approve(
     to: string,
     tokenId: BigNumberish,
@@ -870,6 +877,8 @@ export interface ProjectNFT extends BaseContract {
     ): Promise<void>;
 
     addReviewer(_reviewer: string, overrides?: CallOverrides): Promise<void>;
+
+    appWallet(overrides?: CallOverrides): Promise<string>;
 
     approve(
       to: string,
@@ -1130,6 +1139,8 @@ export interface ProjectNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    appWallet(overrides?: CallOverrides): Promise<BigNumber>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -1336,6 +1347,8 @@ export interface ProjectNFT extends BaseContract {
       _reviewer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    appWallet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approve(
       to: string,

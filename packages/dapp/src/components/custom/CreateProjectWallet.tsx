@@ -24,7 +24,8 @@ function AddProjectWallet({ id }: AddProjectWalletProps) {
         //   `Adding Project Wallet ${projectWallet} with Level ${level} to: ${id}`
         // );
         await projectNFTContract.addProjectWallet(id, projectWallet, level, {
-          value: `0xde0b6b3a7640000`,
+          value: `0xde0b6b3a7640000`, // 1 eth
+          // value: `0x2540BE400`, // small amount
         });
         setEditMode(false);
       } catch (error) {
