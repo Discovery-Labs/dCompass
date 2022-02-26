@@ -32,6 +32,9 @@ library LibDiamond {
         mapping (string => uint) questTokenId;//ERC1155 tokenId associated with this quest
         mapping (uint => string) tokenQuestId;//reverse of map above
         mapping (string => uint[]) tokenIdsPerPathway;//all tokenIds for a pathway. useful for getter
+        //pathwayId => addressOfUser => addressERC20 => bool
+        mapping (string => mapping(address => bool)) userRewardedForPathwayERC20;//has user received funds for this pathway in ERC20Token Address
+        mapping (string => mapping(address => bool)) userRewardedForPathwayNative;//has user received funds for this pathway in native token
         /* TODO : add in pathway and eventually quest level control */
     }
 
