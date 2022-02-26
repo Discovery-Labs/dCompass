@@ -29,13 +29,9 @@ import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import AddReviewer from "components/custom/review/AddReviewer";
 import SetThreshold from "components/custom/review/SetThreshold";
-import CheckIfReviewer from "components/custom/review/CheckIfReviewer";
 import ProjectNFTInfo from "components/custom/review/ProjectNFTInfo";
-import AddProjectWallet from "components/custom/review/AddProjectWallet";
-import VoteForApproval from "components/custom/review/VoteForApproval";
 import CreateToken from "components/custom/review/CreateToken";
 import ProjectRefund from "components/custom/review/ProjectRefund";
-import VoteForRejection from "components/custom/review/VoteForRejection";
 
 function ReviewProjects() {
   const { t } = useTranslation("common");
@@ -83,10 +79,6 @@ function ReviewProjects() {
             <ProjectNFTInfo contract={projectNFTContract} />
             <AddReviewer contract={projectNFTContract} />
             <SetThreshold contract={projectNFTContract} />
-            <CheckIfReviewer contract={projectNFTContract} />
-            <AddProjectWallet contract={projectNFTContract} />
-            <VoteForApproval contract={projectNFTContract} />
-            <VoteForRejection contract={projectNFTContract} />
             <CreateToken contract={projectNFTContract} />
             <ProjectRefund contract={projectNFTContract} />
           </>
