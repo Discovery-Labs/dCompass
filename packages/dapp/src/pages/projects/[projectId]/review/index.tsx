@@ -107,6 +107,7 @@ function ReviewProjectPage({
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
+  const [hasVoted, setHasVoted] = useState(false);
   const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
   const { getColoredText } = useCustomColor();
   const projectMarkdownTheme = usePageMarkdownTheme();
@@ -125,11 +126,14 @@ function ReviewProjectPage({
 
   useEffect(() => {
     async function init() {
-      if (projectNFTContract && id) {
+      if (projectNFTContract && id && account) {
         const statusInt = await projectNFTContract.status(id);
         const isMinted = await projectNFTContract.projectMinted(id);
         const statusString = await projectNFTContract.statusStrings(statusInt);
         setStatus(isMinted ? "MINTED" : statusString);
+
+        const hasVoted = await projectNFTContract.reviewerVotes(id, account);
+        setHasVoted(hasVoted);
       }
     }
     init();
@@ -238,12 +242,15 @@ function ReviewProjectPage({
 
         <Spacer />
         <VStack align="left">
+          <Text textStyle="small">
+            {hasVoted && status == "PENDING" ? "You have already voted" : ""}
+          </Text>
           {status && isPendingOrNonExistent && (
             <HStack>
               <Button
                 onClick={handleApproveProject}
                 leftIcon={<CheckIcon />}
-                disabled={!isPendingOrNonExistent}
+                disabled={!isPendingOrNonExistent || hasVoted}
               >
                 {t("approve-project")}
               </Button>
@@ -252,7 +259,7 @@ function ReviewProjectPage({
                 ml="5"
                 colorScheme="secondary"
                 leftIcon={<CloseIcon />}
-                disabled={status !== "PENDING"}
+                disabled={status !== "PENDING" || hasVoted}
               >
                 {t("reject-project")}
               </Button>

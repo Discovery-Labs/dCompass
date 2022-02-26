@@ -30,7 +30,6 @@ import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import AddReviewer from "components/custom/review/AddReviewer";
 import SetThreshold from "components/custom/review/SetThreshold";
 import ProjectNFTInfo from "components/custom/review/ProjectNFTInfo";
-import CreateToken from "components/custom/review/CreateToken";
 import ProjectRefund from "components/custom/review/ProjectRefund";
 
 function ReviewProjects() {
@@ -79,7 +78,6 @@ function ReviewProjects() {
             <ProjectNFTInfo contract={projectNFTContract} />
             <AddReviewer contract={projectNFTContract} />
             <SetThreshold contract={projectNFTContract} />
-            <CreateToken contract={projectNFTContract} />
             <ProjectRefund contract={projectNFTContract} />
           </>
         )}
