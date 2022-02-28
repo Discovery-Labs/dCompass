@@ -294,7 +294,7 @@ function ProjectPage({
 
               <TabPanels>
                 <TabPanel>
-                  <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                  <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
                     {renderPathways(
                       data.getAllPathwaysByProjectId.filter(
                         (pathway: Pathway) => !pathway.isPending
@@ -304,7 +304,7 @@ function ProjectPage({
                 </TabPanel>
                 {isReviewer && (
                   <TabPanel>
-                    <SimpleGrid columns={[1, 2, 2, 3]} spacing={10}>
+                    <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
                       {renderPathways(
                         data.getAllPathwaysByProjectId.filter(
                           (pathway: Pathway) => pathway.isPending
@@ -314,7 +314,7 @@ function ProjectPage({
                   </TabPanel>
                 )}
                 <TabPanel>
-                  <SimpleGrid columns={[1, 2, 2, 3]} spacing={10} />
+                  <SimpleGrid columns={[1, 1, 2, 3]} spacing={10} />
                 </TabPanel>
               </TabPanels>
             </Tabs>
@@ -345,7 +345,7 @@ function ProjectPage({
 
           {/* Bounties */}
           <TabPanel>
-            <SimpleGrid columns={[1, 2, 2, 3]} spacing={10} />
+            <SimpleGrid columns={[1, 1, 2, 3]} spacing={10} />
           </TabPanel>
         </TabPanels>
       </Tabs>

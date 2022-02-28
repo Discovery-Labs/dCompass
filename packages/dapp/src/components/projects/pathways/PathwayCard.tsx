@@ -17,6 +17,7 @@ import {
   Icon,
   useBreakpointValue,
   Tooltip,
+  Box,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 // import { ethers } from "ethers";
@@ -52,7 +53,8 @@ function PathwayCard({
 }) {
   const { getRewardCurrency } = useTokenList();
   const pathwayCardMarkdownTheme = useCardMarkdownTheme();
-  const { getTextColor, getBgColor, getAccentColor } = useCustomColor();
+  const { getTextColor, getBgColor, getAccentColor, getOverBgColor } =
+    useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
@@ -202,8 +204,16 @@ function PathwayCard({
   };
 
   return (
-    <Card h="xl" w="md">
-      <Flex w="full" h="160px">
+    <Card h="xl">
+      <HStack>
+        <Tag>{pathway.difficulty}</Tag>
+        <Tag variant="outline">0/{pathway.rewardUserCap} Claimed</Tag>
+        {/* Max reward supply is not essential for who want to complete the quest. */}
+        {/* <Tag variant="outline">
+          {pathway.rewardAmount} {getRewardCurrency(pathway.rewardCurrency)}
+        </Tag> */}
+      </HStack>
+      <Flex w="full">
         <Tooltip label={pathway.title} hasArrow placement="top">
           <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
             {pathway.title}
@@ -211,78 +221,57 @@ function PathwayCard({
         </Tooltip>
       </Flex>
       <VStack w="full" align="flex-start">
-        <ReactMarkdown
-          className="card-markdown"
-          components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
-          skipHtml
+        <Box
+          bgGradient={`linear(0deg, ${getOverBgColor} 10%, ${getTextColor} 60%, ${getTextColor})`}
+          bgClip="text"
         >
-          {pathway.description}
-        </ReactMarkdown>
-      </VStack>
-      <VStack w="full" align="left">
-        <HStack>
-          <Icon as={FiUserCheck} />
-          <Text
-            fontWeight="bold"
-            fontSize="xl"
-            color={getTextColor}
-            textTransform="uppercase"
+          <ReactMarkdown
+            className="card-markdown"
+            components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
+            skipHtml
           >
-            Claimed
-          </Text>
-          <Spacer />
-          <Flex align="end" direction="column">
-            <Tag variant="outline">0/{pathway.rewardUserCap}</Tag>
-          </Flex>
-        </HStack>
+            {pathway.description}
+          </ReactMarkdown>
+        </Box>
       </VStack>
-      <VStack w="full" align="left">
-        <HStack>
-          <Icon as={GiTwoCoins} />
-          <Text
-            fontWeight="bold"
-            fontSize="xl"
-            color={getTextColor}
-            textTransform="uppercase"
+      <VStack w="full" align="start">
+        <Text as="h2" fontSize="2xl" color={getTextColor}>
+          Rewards
+        </Text>
+        <HStack align="start">
+          <Stack
+            layerStyle="outline-hover3"
+            py={2}
+            px={4}
+            m={0}
+            justifyContent="space-around"
+            direction="row"
+            spacing={4}
+            align="center"
           >
-            Rewards
-          </Text>
-          <Spacer />
-          <Flex align="end" direction="column">
-            <Tag variant="outline">
-              {pathway.rewardAmount} {getRewardCurrency(pathway.rewardCurrency)}
-            </Tag>
-          </Flex>
+            <Avatar size="md" src={`https://ipfs.io/ipfs/${pathway.image}`} />
+            <Text color="purple.500" fontSize="3xl" fontWeight="bold">
+              NFT
+            </Text>
+          </Stack>
         </HStack>
-
         <Stack
-          w="full"
-          justifyContent="space-between"
+          layerStyle="outline-hover3"
+          py={2}
+          px={4}
+          m={0}
+          justifyContent="space-around"
           direction="row"
           spacing={4}
           align="center"
         >
-          <Avatar
-            boxSize="4.5rem"
-            src={`https://ipfs.io/ipfs/${pathway.image}`}
-          />
-          <Text color="purple.500" fontSize="3xl" fontWeight="bold">
-            NFT
-          </Text>
-          <Text fontFamily="heading" fontSize={{ base: "4xl", md: "6xl" }}>
-            +
-          </Text>
           <Flex
             align="center"
             justify="center"
             fontFamily="heading"
             fontWeight="bold"
-            fontSize={{ base: "sm", md: "lg" }}
             bg="violet.100"
             color="purple.500"
-            rounded="full"
-            width={useBreakpointValue({ base: "44px", md: "60px" })}
-            height={useBreakpointValue({ base: "44px", md: "60px" })}
           >
             <Text fontSize="3xl" fontWeight="bold">
               {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
@@ -291,53 +280,6 @@ function PathwayCard({
           </Flex>
         </Stack>
       </VStack>
-
-      <VStack w="full" align="left">
-        <HStack>
-          <Icon as={BsBarChartFill} />
-          <Text
-            fontWeight="bold"
-            fontSize="xl"
-            color={getTextColor}
-            textTransform="uppercase"
-          >
-            Difficulty
-          </Text>
-          <Spacer />
-          <Flex align="end" direction="column">
-            <Tag>{pathway.difficulty}</Tag>
-          </Flex>
-        </HStack>
-      </VStack>
-      <Tooltip
-        label={`0% - 0/${pathway.quests?.length || 0} quests completed`}
-        hasArrow
-        placement="top"
-      >
-        <VStack w="full" align="left">
-          <HStack>
-            <Icon as={GoTasklist} />
-            <Text
-              fontWeight="bold"
-              fontSize="xl"
-              color={getTextColor}
-              textTransform="uppercase"
-            >
-              Progress
-            </Text>
-            <Progress
-              w="full"
-              size="md"
-              rounded="md"
-              value={0}
-              border={`solid 1px ${getAccentColor}`}
-              hasStripe
-              colorScheme="accentDark"
-              bgColor={getBgColor}
-            />
-          </HStack>
-        </VStack>
-      </Tooltip>
 
       {isContributor && status !== "MINTED" && (
         <VStack w="full" align="left">
@@ -379,6 +321,27 @@ function PathwayCard({
           )}
         </VStack>
       )}
+      <Spacer />
+
+      <Tooltip
+        label={`0% - 0/${pathway.quests?.length || 0} quests completed`}
+        hasArrow
+        placement="top"
+      >
+        <HStack w="full">
+          <Progress
+            w="full"
+            size="md"
+            rounded="md"
+            value={0}
+            border={`solid 1px ${getAccentColor}`}
+            hasStripe
+            colorScheme="accentDark"
+            bgColor={getBgColor}
+          />
+        </HStack>
+      </Tooltip>
+
       <Flex w="full" justify="space-between">
         <Button
           leftIcon={<RiSwordLine />}
