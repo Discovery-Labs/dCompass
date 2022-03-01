@@ -79,6 +79,9 @@ function PathwayFormWrapper() {
     const isNativeToken = tokenAddressOrSymbol ? false : true;
 
     let balance = 0;
+    const rewardAmnt = parseFloat(values.rewardAmount);
+    const feeAmount = (rewardAmnt * 15) / 100;
+    const totalToPay = rewardAmnt + feeAmount;
     if (!isNativeToken) {
       const { tokenContract, tokenInfos } = getSelectedTokenContract(
         values.rewardCurrency.value
@@ -90,7 +93,7 @@ function PathwayFormWrapper() {
           tokenInfos.decimals
         )
       );
-      const isValidBalance = balance >= parseFloat(values.rewardAmount);
+      const isValidBalance = balance >= totalToPay;
 
       if (!isValidBalance) {
         toast({
@@ -110,7 +113,7 @@ function PathwayFormWrapper() {
       balance = parseFloat(
         ethers.utils.formatEther(await library.getBalance(account))
       );
-      const isValidBalance = balance >= parseFloat(values.rewardAmount);
+      const isValidBalance = balance >= totalToPay;
       if (!isValidBalance) {
         toast({
           title: "Insufficient funds",
@@ -174,13 +177,12 @@ function PathwayFormWrapper() {
     );
 
     if (isNativeToken) {
-      const nativeRewardAmount = (
-        pathwayDoc.content.rewardAmount * 1e18
-      ).toString();
+      const nativeRewardAmount = (totalToPay * 1e18).toString();
       const createPathwayOnChainTx =
         await contracts.pathwayNFTContract.createPathway(
           pathwayDoc.id.toUrl(),
           `ceramic://${router.query.projectId}`,
+          parseInt(values.rewardUserCap, 10),
           isRewardProvider,
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
           account,
@@ -195,16 +197,17 @@ function PathwayFormWrapper() {
       // TODO: check balance first
       const tokenDetails = await approveTokenAllowance(
         values.rewardCurrency.value,
-        values.rewardAmount
+        totalToPay.toString()
       );
       const rewardAmount = ethers.utils.parseUnits(
-        pathwayDoc.content.rewardAmount.toString(),
+        totalToPay.toString(),
         tokenDetails.decimals
       );
       const createPathwayOnChainTx =
         await contracts.pathwayNFTContract.createPathway(
           pathwayDoc.id.toUrl(),
           `ceramic://${router.query.projectId}`,
+          parseInt(values.rewardUserCap, 10),
           isRewardProvider,
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
           values.rewardCurrency.value.split(":")[1],

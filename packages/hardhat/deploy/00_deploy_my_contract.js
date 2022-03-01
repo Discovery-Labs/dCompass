@@ -123,7 +123,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   const tokens = buildList.tokens;
   tokens.map((value, index) => {
-    console.log(value.chainId);
     if (chainIdsArray.includes(value.chainId)) {
       chainAddrObj[value.chainId].push(value.address);
     }

@@ -19,6 +19,7 @@ import {
   AlertDescription,
   Progress,
   Stack,
+  Heading,
 } from "@chakra-ui/react";
 import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
@@ -79,11 +80,11 @@ export default function PathwayForm() {
     const isMatic = chainId === 80001 || chainId === 137;
     const token = isMatic
       ? {
-          label: "MATIC - Native token",
+          label: "MATIC",
           value: "MATIC",
         }
       : {
-          label: "ETH - Native token",
+          label: "ETH",
           value: "ETH",
         };
     setValue("rewardCurrency", token);
@@ -193,40 +194,69 @@ export default function PathwayForm() {
         {...{ register, setValue, errors }}
       />
 
-      <HStack w="full" alignItems="center">
-        <FormControl isInvalid={errors.rewardAmount}>
-          <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
-          <NumberInput
-            step={nativeToken.isMatic ? 10_000 : 5}
-            defaultValue={nativeToken.isMatic ? 10_000 : 5}
-          >
-            <NumberInputField
-              placeholder=""
-              {...register(`rewardAmount`, {
-                required: REQUIRED_FIELD_LABEL,
-              })}
-            />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-          <FormErrorMessage>
-            {errors.rewardAmount && errors.rewardAmount.message}
-          </FormErrorMessage>
-        </FormControl>
+      <VStack w="full">
+        <HStack w="full" alignItems="center">
+          <FormControl isInvalid={errors.rewardAmount}>
+            <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
+            <NumberInput
+              step={nativeToken.isMatic ? 10_000 : 5}
+              defaultValue={nativeToken.isMatic ? 10_000 : 5}
+            >
+              <NumberInputField
+                placeholder=""
+                {...register(`rewardAmount`, {
+                  required: REQUIRED_FIELD_LABEL,
+                })}
+              />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+            <FormErrorMessage>
+              {errors.rewardAmount && errors.rewardAmount.message}
+            </FormErrorMessage>
+          </FormControl>
 
-        <ControlledSelect
-          control={control}
-          name="rewardCurrency"
-          label="Reward currency"
-          rules={{
-            required: REQUIRED_FIELD_LABEL,
-          }}
-          options={[nativeToken.token, ...erc20Options]}
-          placeholder="WETH, DAI,..."
-        />
-      </HStack>
+          <ControlledSelect
+            control={control}
+            name="rewardCurrency"
+            label="Reward currency"
+            rules={{
+              required: REQUIRED_FIELD_LABEL,
+            }}
+            options={[nativeToken.token, ...erc20Options]}
+            placeholder="WETH, DAI,..."
+          />
+        </HStack>
+        {rewardAmount && (
+          <Alert
+            rounded="lg"
+            w="full"
+            status={errors.rewardAmount ? "error" : "warning"}
+          >
+            <VStack pr="4" w="30%">
+              <AlertIcon />
+              <Text fontSize={"sm"}>Total with fee</Text>
+              <Tag colorScheme={errors.rewardAmount ? "red" : "primary"}>
+                {parseFloat(rewardAmount) +
+                  (parseFloat(rewardAmount) * 15) / 100}{" "}
+                {rewardCurrency.label}
+              </Tag>
+            </VStack>
+
+            <VStack w="70%">
+              <Heading as="h4" size="md">
+                dCompass takes a fee of 15% on the total of the pathway rewards.
+              </Heading>
+              <Text fontSize="md">
+                10% goes to the dCompass treasury and 5% goes to the Gitcoin DAO
+                treasury.
+              </Text>
+            </VStack>
+          </Alert>
+        )}
+      </VStack>
 
       <VStack alignItems="center" w="full">
         <FormControl isInvalid={errors.rewardUserCap}>
