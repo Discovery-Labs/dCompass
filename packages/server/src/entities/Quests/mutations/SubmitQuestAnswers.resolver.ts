@@ -28,8 +28,8 @@ export class SubmitQuestAnswersResolver {
       answerSubmition.questionAnswers.map(async (qa) => {
         const rightHashedAnswer = questions.find(
           (question: Question) => question.question === qa.question,
-        ).answer;
-        const isRight = await compareHash(qa.answer, rightHashedAnswer);
+        ).answers;
+        const isRight = await compareHash(qa.answers, rightHashedAnswer);
         return isRight;
       }),
     );

@@ -10,8 +10,7 @@ export class QuestQuestionAnswerInput {
   question: string;
 
   @Field()
-  @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  answer: string;
+  answers: string[];
 }
