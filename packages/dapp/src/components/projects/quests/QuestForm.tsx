@@ -25,7 +25,7 @@ import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
@@ -96,7 +96,7 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 const CreateQuestForm: React.FunctionComponent = () => {
   const { codeEditorScheme } = useCustomColor();
   const { tokens } = useTokenList();
-  const { library } = useWeb3React();
+  const { library, chainId } = useWeb3React();
   const { self, account } = useContext(Web3Context);
   const [createSnapshotVoterQuest] = useMutation(
     CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
@@ -133,6 +133,21 @@ const CreateQuestForm: React.FunctionComponent = () => {
     handleSubmit,
     formState: { errors },
   } = useFormContext();
+
+  const nativeToken = useMemo(() => {
+    const isMatic = chainId === 80001 || chainId === 137;
+    const token = isMatic
+      ? {
+          label: "MATIC",
+          value: "MATIC",
+        }
+      : {
+          label: "ETH",
+          value: "ETH",
+        };
+    setValue("rewardCurrency", token);
+    return { token, isMatic };
+  }, [chainId, setValue]);
 
   const currentValues = watch();
 
@@ -273,7 +288,10 @@ const CreateQuestForm: React.FunctionComponent = () => {
       <HStack w="full" alignItems="center">
         <FormControl isInvalid={errors.rewardAmount}>
           <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
-          <NumberInput step={10_000} defaultValue={10_000}>
+          <NumberInput
+            step={nativeToken.isMatic ? 10_000 : 5}
+            defaultValue={nativeToken.isMatic ? 10_000 : 5}
+          >
             <NumberInputField
               placeholder=""
               {...register(`rewardAmount`, {
@@ -297,7 +315,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
           rules={{
             required: REQUIRED_FIELD_LABEL,
           }}
-          options={erc20Options}
+          value={nativeToken.token}
+          options={[nativeToken.token, ...erc20Options]}
           placeholder="WETH, DAI,..."
         />
       </HStack>
