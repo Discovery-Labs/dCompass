@@ -198,12 +198,12 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         address appWallet = abi.decode(data, (address));
         uint appPortion = (amount*fee)/10000;
         if(useNative){
-            require(msg.value >= amount, "not enough sent");
+            require(msg.value >= amount + appPortion, "not enough sent");
             (success,) = payable(appWallet).call{value : appPortion}("");
             require(success);
-            nativeRewards[_pathwayId] += amount - appPortion;
-            if(msg.value > amount){
-                (bool success,) = payable(_msgSender()).call{value : msg.value - amount}("");
+            nativeRewards[_pathwayId] += amount;
+            if(msg.value > amount + appPortion){
+                (bool success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion}("");
                 require(success);
             }
         }
@@ -214,8 +214,8 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             success = abi.decode(data, (bool));
             require(success, "ERC20 not approved");
             IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion);
-            IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount - appPortion);
-            erc20Amounts[_pathwayId][_ERC20Address] += amount - appPortion;
+            IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount);
+            erc20Amounts[_pathwayId][_ERC20Address] += amount;
         }
     }
 
