@@ -155,7 +155,7 @@ export const CHAIN_INFO: ChainInfo = {
     docs: "https://hardhat.org/getting-started/",
     explorer: "",
     infoLink: "https://hardhat.org",
-    label: "Hardhat Local",
+    label: "Hardhat",
     logoUrl:
       "https://bafybeiaw2miirrpxabh5tex6uglfqurbht46uc3hezqrlxtcrp46eomgcu.ipfs.dweb.link/hardhat_logo.jpg",
   },

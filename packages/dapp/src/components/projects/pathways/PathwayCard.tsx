@@ -241,7 +241,7 @@ function PathwayCard({
         <HStack align="start">
           <Stack
             layerStyle="outline-hover3"
-            py={2}
+            py={1}
             px={4}
             m={0}
             justifyContent="space-around"
@@ -250,14 +250,14 @@ function PathwayCard({
             align="center"
           >
             <Avatar size="md" src={`https://ipfs.io/ipfs/${pathway.image}`} />
-            <Text color="purple.500" fontSize="3xl" fontWeight="bold">
+            <Text color="purple.500" fontWeight="bold">
               NFT
             </Text>
           </Stack>
         </HStack>
         <Stack
           layerStyle="outline-hover3"
-          py={2}
+          py={1}
           px={4}
           m={0}
           justifyContent="space-around"
@@ -273,7 +273,7 @@ function PathwayCard({
             bg="violet.100"
             color="purple.500"
           >
-            <Text fontSize="3xl" fontWeight="bold">
+            <Text fontWeight="bold">
               {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
               {getRewardCurrency(pathway.rewardCurrency)}
             </Text>
@@ -281,23 +281,20 @@ function PathwayCard({
         </Stack>
       </VStack>
 
-      {isContributor && status !== "MINTED" && (
+      <Spacer />
+
+      {isContributor && status !== "MINTED" ? (
         <VStack w="full" align="left">
-          <HStack>
-            <Text>Token status:</Text>
-            <Tag
-              variant="outline"
-              w="fit-content"
-              colorScheme={
-                status === "APPROVED" || status === "MINTED"
-                  ? "green"
-                  : "orange"
-              }
-              size="sm"
-            >
-              <TagLabel>{status}</TagLabel>
-            </Tag>
-          </HStack>
+          <Tag
+            variant="outline"
+            w="fit-content"
+            colorScheme={
+              status === "APPROVED" || status === "MINTED" ? "green" : "orange"
+            }
+            size="sm"
+          >
+            <TagLabel>{status}</TagLabel>
+          </Tag>
           {status && (status === "PENDING" || status === "NONEXISTENT") && (
             <HStack w="full" justifyContent="space-between">
               <Button
@@ -320,49 +317,50 @@ function PathwayCard({
             </HStack>
           )}
         </VStack>
-      )}
-      <Spacer />
-
-      <Tooltip
-        label={`0% - 0/${pathway.quests?.length || 0} quests completed`}
-        hasArrow
-        placement="top"
-      >
-        <HStack w="full">
-          <Progress
-            w="full"
-            size="md"
-            rounded="md"
-            value={0}
-            border={`solid 1px ${getAccentColor}`}
-            hasStripe
-            colorScheme="accentDark"
-            bgColor={getBgColor}
-          />
-        </HStack>
-      </Tooltip>
-
-      <Flex w="full" justify="space-between">
-        <Button
-          leftIcon={<RiSwordLine />}
-          fontSize="md"
-          onClick={() => openPathway()}
-        >
-          {pathway.quests?.length || 0} Quests
-        </Button>
-
-        {!pathway.isPending && (
-          <Button
-            fontSize="md"
-            variant="outline"
-            leftIcon={<RiHandCoinFill />}
-            disabled
-            onClick={() => console.log("Claim Pathway")}
+      ) : (
+        <>
+          <Tooltip
+            label={`0% - 0/${pathway.quests?.length || 0} quests completed`}
+            hasArrow
+            placement="top"
           >
-            Claim
-          </Button>
-        )}
-      </Flex>
+            <HStack w="full">
+              <Progress
+                w="full"
+                size="md"
+                rounded="md"
+                value={0}
+                border={`solid 1px ${getAccentColor}`}
+                hasStripe
+                colorScheme="accentDark"
+                bgColor={getBgColor}
+              />
+            </HStack>
+          </Tooltip>
+
+          <Flex w="full" justify="space-between">
+            <Button
+              leftIcon={<RiSwordLine />}
+              fontSize="md"
+              onClick={() => openPathway()}
+            >
+              {pathway.quests?.length || 0} Quests
+            </Button>
+
+            {!pathway.isPending && (
+              <Button
+                fontSize="md"
+                variant="outline"
+                leftIcon={<RiHandCoinFill />}
+                disabled
+                onClick={() => console.log("Claim Pathway")}
+              >
+                Claim
+              </Button>
+            )}
+          </Flex>
+        </>
+      )}
     </Card>
   );
 }

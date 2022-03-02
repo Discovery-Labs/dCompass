@@ -303,14 +303,14 @@ export default function PathwayForm() {
         options={difficultyOptions}
       />
 
-      <ControlledSelect
+      {/* <ControlledSelect
         control={control}
         name="prerequisites"
         label="Prerequisites"
         isMulti
         options={existingPathwaysOptions}
         hasStickyGroupHeaders
-      />
+      /> */}
       <Divider bg="none" py="5" />
     </VStack>
   );
