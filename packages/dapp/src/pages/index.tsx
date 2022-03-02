@@ -62,6 +62,8 @@ function Projects() {
   const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
     fetchPolicy: "cache-and-network",
   });
+
+  console.log({ loadingTags, loading });
   const [filteredProjects, setFilteredProjects] = useState<Array<Project>>([]);
 
   const [searchedProjects, setSearchedProjects] = useState<
