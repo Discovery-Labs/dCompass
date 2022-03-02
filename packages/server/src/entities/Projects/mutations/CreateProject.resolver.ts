@@ -26,10 +26,13 @@ export class CreateProjectResolver {
       creatorSignature,
     );
     const ogProject = await ceramicClient.ceramic.loadStream(id);
+    console.log('CTRLR', ogProject.controllers[0]);
     const ownerAccounts = await ceramicClient.dataStore.get(
       'cryptoAccounts',
       ogProject.controllers[0],
     );
+
+    console.log({ ownerAccounts });
     if (!ownerAccounts) throw new ForbiddenError('Unauthorized');
     const formattedAccounts = Object.keys(ownerAccounts).map(
       (account) => account.split('@')[0],

@@ -9,6 +9,7 @@ import { GetProjectByIdResolver } from './queries/GetProjectById.resolver';
 import { AppService } from '../../app.service';
 import { ApproveProjectResolver } from './mutations/ApproveProject.resolver';
 import { EditProjectResolver } from './mutations/EditProject.resolver';
+import { CeramicProjectService } from './CeramicProject.service';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EditProjectResolver } from './mutations/EditProject.resolver';
     EditProjectResolver,
     ApproveProjectResolver,
     AppService,
+    CeramicProjectService,
   ],
   exports: [],
 })

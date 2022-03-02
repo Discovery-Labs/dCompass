@@ -5,7 +5,7 @@ import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import ThreeTierPricing from "../../../components/custom/Pricing";
@@ -17,6 +17,8 @@ import { schemaAliases } from "../../../core/ceramic";
 import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 import Card from "components/custom/Card";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
+import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+import { isAddress } from "ethers/lib/utils";
 
 const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
@@ -37,6 +39,8 @@ function CreateProjectStepper() {
   const router = useRouter();
   const { self } = useContext(Web3Context);
   const { account, library } = useWeb3React();
+  const { contracts } = useContext(Web3Context);
+  const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -65,12 +69,30 @@ function CreateProjectStepper() {
       gitbook: null,
       github: null,
       twitter: null,
+      sponsorTier: "GOLD" as "SILVER" | "GOLD" | "DIAMOND",
+      projectWallet: null as null | string,
     },
   });
+
+  useEffect(() => {
+    async function init() {
+      if (contracts) {
+        setProjectNFTContract(contracts.projectNFTContract);
+      }
+    }
+    init();
+  }, [contracts]);
 
   async function onSubmit() {
     const values = methods.getValues();
     console.log({ values });
+    if (!projectNFTContract) {
+      throw new Error("ProjectNFTContract not deployed on this network");
+    }
+
+    if (!values.projectWallet || !isAddress(values.projectWallet)) {
+      throw new Error("Not a valid project wallet address");
+    }
 
     const formData = new FormData();
     if (values.logo) {
@@ -150,6 +172,21 @@ function CreateProjectStepper() {
       }),
       account,
     ]);
+
+    const stakeAmountsInETH = {
+      SILVER: 1,
+      GOLD: 3,
+      DIAMOND: 5,
+    };
+    await projectNFTContract.addProjectWallet(
+      projectId,
+      values.projectWallet,
+      values.sponsorTier,
+      {
+        value: (stakeAmountsInETH[values.sponsorTier] * 1e18).toString(),
+      }
+    );
+
     const allProjects = await createProjectMutation({
       variables: {
         input: {
