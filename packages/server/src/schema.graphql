@@ -250,11 +250,17 @@ type Query {
   """Gets all the tags in Discovery"""
   getAllTags: [Tag!]
 
+  """Return the DID of the dCompass backend server"""
+  getAppDID: String
+
   """Gets a pathway by its Stream ID"""
   getPathwayById(pathwayId: String!): Pathway
 
   """Gets a project by its Stream ID"""
   getProjectById(projectId: String!): Project
+
+  """Gets a quiz quest by its Stream ID"""
+  getQuizQuestById(questId: String!): QuizQuest
 }
 
 type Quest {

@@ -40,6 +40,11 @@ export class CreateQuizQuestResolver {
     const formattedAccounts = Object.keys(ownerAccounts).map(
       (account) => account.split('@')[0],
     );
+    console.log({
+      isValid: !formattedAccounts.includes(decodedAddress),
+      formattedAccounts,
+      decodedAddress,
+    });
     if (!formattedAccounts.includes(decodedAddress)) {
       throw new ForbiddenError('Unauthorized');
     }

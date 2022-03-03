@@ -29,7 +29,7 @@ export class SubmitQuestAnswersResolver {
         const rightHashedAnswer = questions.find(
           (question: Question) => question.question === qa.question,
         ).answers;
-        const isRight = await compareHash(qa.answers, rightHashedAnswer);
+        const isRight = await compareHash(qa.answer, rightHashedAnswer);
         return isRight;
       }),
     );

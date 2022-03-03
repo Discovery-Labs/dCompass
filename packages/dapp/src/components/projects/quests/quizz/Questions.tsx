@@ -85,7 +85,7 @@ export default function Questions({ control, register }: any) {
 
             <ControlledSelect
               control={control}
-              name={`questions[${index}].answers`}
+              name={`questions[${index}].answer`}
               label="Correct answer(s)"
               isMulti
               rules={{

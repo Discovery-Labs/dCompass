@@ -177,7 +177,6 @@ function PathwayFormWrapper() {
     );
 
     if (isNativeToken) {
-      const nativeRewardAmount = (totalToPay * 1e18).toString();
       const createPathwayOnChainTx =
         await contracts.pathwayNFTContract.createPathway(
           pathwayDoc.id.toUrl(),
@@ -187,9 +186,9 @@ function PathwayFormWrapper() {
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
           account,
           true,
-          nativeRewardAmount,
+          (rewardAmnt * 1e18).toString(),
           {
-            value: nativeRewardAmount,
+            value: (totalToPay * 1e18).toString(),
           }
         );
       await createPathwayOnChainTx.wait(1);
@@ -200,7 +199,7 @@ function PathwayFormWrapper() {
         totalToPay.toString()
       );
       const rewardAmount = ethers.utils.parseUnits(
-        totalToPay.toString(),
+        rewardAmnt.toString(),
         tokenDetails.decimals
       );
       const createPathwayOnChainTx =
