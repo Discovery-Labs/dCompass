@@ -15,6 +15,10 @@ import {
   Icon,
   SimpleGrid,
   Image,
+  Box,
+  Input,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
@@ -46,6 +50,8 @@ import {
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import ProjectInfo from "components/custom/review/ProjectInfo";
 import AddProjectContributor from "components/custom/review/AddProjectContributor";
+import { SiTwitter, SiDiscord, SiGithub, SiGitbook } from "react-icons/si";
+import { BsGlobe } from "react-icons/bs";
 
 type Props = {
   projectId: string | null;
@@ -285,16 +291,9 @@ function ReviewProjectPage({
         </VStack>
       </Flex>
       <Flex w="full" direction="column" pt="4">
-        <Flex align="center" maxW="full">
-          {createdBy && <Blockies seed={createdBy} className="blockies" />}
-          <VStack align="flex-start" ml="2">
-            {projectNFTContract && id && (
-              <>
-                <AddProjectContributor contract={projectNFTContract} id={id} />
-                <ProjectInfo contract={projectNFTContract} id={id} />
-              </>
-            )}
-
+        <VStack w="full" align="flex-start" ml="2">
+          <VStack align="flex-start">
+            {createdBy && <Blockies seed={createdBy} className="blockies" />}
             <Text color={getColoredText} textStyle="small" isTruncated>
               {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
@@ -302,27 +301,74 @@ function ReviewProjectPage({
               {t("by")} {createdBy}
             </Text>
           </VStack>
-        </Flex>
-        <Stack direction="row" pt="4">
-          {tags.map((tag: TagType) => (
-            <Badge key={tag.id} colorScheme={tag.color}>
-              {tag.label}
-            </Badge>
-          ))}
-        </Stack>
-        <SocialLinks
-          website={website}
-          discord={discord}
-          twitter={twitter}
-          github={github}
-          gitbook={gitbook}
-        />
-        <ReactMarkdown
-          components={ChakraUIRenderer(projectMarkdownTheme)}
-          skipHtml
-        >
-          {description}
-        </ReactMarkdown>
+
+          <Stack direction="row" pt="4">
+            {tags.map((tag: TagType) => (
+              <Badge key={tag.id} colorScheme={tag.color}>
+                {tag.label}
+              </Badge>
+            ))}
+          </Stack>
+
+          <ReactMarkdown
+            components={ChakraUIRenderer(projectMarkdownTheme)}
+            skipHtml
+          >
+            {description}
+          </ReactMarkdown>
+
+          {projectNFTContract && id && (
+            <>
+              <HStack
+                pt="4"
+                w="full"
+                align="start"
+                justify="space-between"
+                spacing={8}
+              >
+                <AddProjectContributor contract={projectNFTContract} id={id} />
+                <Box layerStyle="outline-card">
+                  <ProjectInfo contract={projectNFTContract} id={id} />
+                </Box>
+              </HStack>
+            </>
+          )}
+        </VStack>
+
+        <VStack align="flex-start">
+          <Heading>Links</Heading>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={BsGlobe} />
+            </InputLeftElement>
+            <Input value={website} disabled />
+          </InputGroup>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={SiTwitter} />
+            </InputLeftElement>
+            <Input value={twitter} disabled />
+          </InputGroup>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={SiDiscord} />
+            </InputLeftElement>
+            <Input value={discord} disabled />
+          </InputGroup>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={SiGithub} />
+            </InputLeftElement>
+            <Input value={github} disabled />
+          </InputGroup>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={SiGitbook} />
+            </InputLeftElement>
+            <Input value={gitbook} disabled />
+          </InputGroup>
+        </VStack>
+
         <Heading as="h3" size="lg" py="4">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
         </Heading>

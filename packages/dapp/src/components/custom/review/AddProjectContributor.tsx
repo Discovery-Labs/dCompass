@@ -1,4 +1,4 @@
-import { Button, Input, Text } from "@chakra-ui/react";
+import { Button, Input, Text, VStack } from "@chakra-ui/react";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { useState } from "react";
 
@@ -23,7 +23,7 @@ function AddProjectContributor({ contract, id }: AddProjectContributorProps) {
   };
 
   return (
-    <>
+    <VStack w="full" align="start">
       <Text>Add Contributor</Text>
       <Input
         value={contributor}
@@ -31,7 +31,7 @@ function AddProjectContributor({ contract, id }: AddProjectContributorProps) {
         placeholder="add Contributor"
       />
       <Button onClick={handleAddProjectContributor}>Add Contributor</Button>
-    </>
+    </VStack>
   );
 }
 

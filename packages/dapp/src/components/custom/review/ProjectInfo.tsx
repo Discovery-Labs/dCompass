@@ -1,8 +1,6 @@
-import { Heading, Text } from "@chakra-ui/react";
+import { Text, VStack } from "@chakra-ui/react";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { useEffect, useState } from "react";
-import { useContext } from "react";
-import { Web3Context } from "contexts/Web3Provider";
 
 type ProjectInfoProps = {
   contract: ProjectNFT;
@@ -10,7 +8,6 @@ type ProjectInfoProps = {
 };
 
 type ProjectNFTInfo = {
-  reviewerVotes: string;
   approvedVotes: string;
   rejectedVotes: string;
   contributorsLength: number;
@@ -24,17 +21,9 @@ type ProjectNFTInfo = {
 
 function ProjectInfo({ contract, id }: ProjectInfoProps) {
   const [projectNFTInfo, setProjectNFTInfo] = useState<ProjectNFTInfo>();
-  const { account } = useContext(Web3Context);
 
   useEffect(() => {
     async function init() {
-      let reviewerVotes = "Not set yet";
-      if (account) {
-        const hasReviewerVoted = await contract.reviewerVotes(id, account);
-        reviewerVotes = hasReviewerVoted
-          ? "You have already voted"
-          : "You have not voted yet";
-      }
       const approvedVotes = await contract.votes(id);
       const rejectedVotes = await contract.votesReject(id);
       const allContributors = await contract.getContributors(id);
@@ -45,7 +34,6 @@ function ProjectInfo({ contract, id }: ProjectInfoProps) {
       const stakePerProject = await contract.stakePerProject(id);
 
       setProjectNFTInfo({
-        reviewerVotes: reviewerVotes,
         approvedVotes: approvedVotes.toString(),
         rejectedVotes: rejectedVotes.toString(),
         contributorsLength: allContributors.length,
@@ -63,19 +51,35 @@ function ProjectInfo({ contract, id }: ProjectInfoProps) {
   return (
     <>
       {projectNFTInfo && (
-        <>
-          <Heading>Project: test1</Heading>
-          <Text>You have voted: {projectNFTInfo.reviewerVotes}</Text>
-          <Text>Approved Votes: {projectNFTInfo.approvedVotes}</Text>
-          <Text>Rejected Votes: {projectNFTInfo.rejectedVotes}</Text>
-          <Text>Contributors: {projectNFTInfo.contributorsLength}</Text>
-          <Text>All contributors: {projectNFTInfo.allContributors}</Text>
-          <Text>Is project minted: {projectNFTInfo.isProjectMinted}</Text>
-          <Text>Project threshold: {projectNFTInfo.projectThresholds}</Text>
-          <Text>Sponsor level: {projectNFTInfo.sponsorLevel}</Text>
-          <Text>Project wallets: {projectNFTInfo.projectWallets}</Text>
-          <Text>Stake Per Project: {projectNFTInfo.stakePerProject}</Text>
-        </>
+        <VStack align="start">
+          <Text textStyle="small">
+            All contributors: {projectNFTInfo.allContributors}
+          </Text>
+          <Text textStyle="small">
+            Contributors: {projectNFTInfo.contributorsLength}
+          </Text>
+          <Text textStyle="small">
+            Approved Votes: {projectNFTInfo.approvedVotes}
+          </Text>
+          <Text textStyle="small">
+            Rejected Votes: {projectNFTInfo.rejectedVotes}
+          </Text>
+          <Text textStyle="small">
+            Is project minted: {projectNFTInfo.isProjectMinted}
+          </Text>
+          <Text textStyle="small">
+            Project threshold: {projectNFTInfo.projectThresholds}
+          </Text>
+          <Text textStyle="small">
+            Sponsor level: {projectNFTInfo.sponsorLevel}
+          </Text>
+          <Text textStyle="small">
+            Project wallets: {projectNFTInfo.projectWallets}
+          </Text>
+          <Text textStyle="small">
+            Stake Per Project: {projectNFTInfo.stakePerProject}
+          </Text>
+        </VStack>
       )}
     </>
   );
