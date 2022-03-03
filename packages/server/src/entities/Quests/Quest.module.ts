@@ -12,6 +12,7 @@ import { CreateQuizQuestResolver } from './mutations/CreateQuizQuest.resolver';
 // import { SubmitQuestAnswersResolver } from './mutations/SubmitQuestAnswers.resolver';
 import { CreateSnapshotVoterQuestResolver } from './mutations/CreateSnapshotVoterQuest.resolver';
 import { GetAllQuestsByPathwayIdResolver } from './queries/GetAllQuestsByPathwayId.resolver';
+import { GetQuizQuestByIdResolver } from './queries/GetQuizQuestById.resolver';
 
 @Module({
   imports: [RedisModule],
@@ -22,6 +23,7 @@ import { GetAllQuestsByPathwayIdResolver } from './queries/GetAllQuestsByPathway
     CreateQuizQuestResolver,
     ApproveQuestResolver,
     GetAllQuestsByPathwayIdResolver,
+    GetQuizQuestByIdResolver,
     // CreateQuestResolver,
     // GetQuestByIdResolver,
     // SubmitQuestAnswersResolver,

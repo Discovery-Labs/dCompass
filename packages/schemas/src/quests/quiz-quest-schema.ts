@@ -19,11 +19,8 @@ export const QuizQuestSchema = {
             type: "string",
             maxLength: 500,
           },
-          answers: {
-            type: "array",
-            items: {
-              type: "string",
-            },
+          answer: {
+            type: "string",
           },
           choices: {
             type: "array",

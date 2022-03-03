@@ -19,6 +19,7 @@ import { ProjectModule } from './entities/Projects/Project.module';
 import { PathwayModule } from './entities/Pathways/Pathway.module';
 import { QuestModule } from './entities/Quests/Quest.module';
 import { TagModule } from './entities/Tags/Tag.module';
+import { GetAppDIDResolver } from './entities/App/queries/GetAppDID.resolver';
 
 @Module({
   imports: [
@@ -57,7 +58,7 @@ import { TagModule } from './entities/Tags/Tag.module';
     TagModule,
   ],
   controllers: [AppController, HealthController, CeramicController],
-  providers: [AppService, ConfigService],
+  providers: [AppService, ConfigService, GetAppDIDResolver],
 })
 export class AppModule {}
 

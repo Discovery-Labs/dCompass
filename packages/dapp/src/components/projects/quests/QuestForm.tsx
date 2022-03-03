@@ -1,7 +1,9 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Alert,
+  AlertDescription,
   AlertIcon,
+  AlertTitle,
   Button,
   Divider,
   Flex,
@@ -16,6 +18,7 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Progress,
   Stack,
   Tag,
   Text,
@@ -48,41 +51,42 @@ import SnapshotForm from "./snapshot/SnapshotForm";
 import NFTOwnerForm from "./token/NFTOwnerForm";
 import TokenHolderForm from "./token/TokenHolderForm";
 import TwitterFollowerForm from "./twitter/TwitterFollowerForm";
+import { GET_APP_DID } from "../../../graphql/app";
 
 type QuestionFormItemType = {
   question: string;
   options: { value: string }[];
-  answer: string;
+  answer: { value: string }[];
 };
 const questTypeOptions = [
   {
     label: "Snapshot voter",
     value: "snapshot-voter",
   },
-  {
-    label: "Twitter follower",
-    value: "twitter-follower",
-  },
-  {
-    label: "Discord member",
-    value: "discord-member",
-  },
-  {
-    label: "Token holder",
-    value: "token-holder",
-  },
-  {
-    label: "POAP owner",
-    value: "poap-owner",
-  },
-  {
-    label: "Github contributor",
-    value: "github-contributor",
-  },
-  {
-    label: "NFT owner",
-    value: "nft-owner",
-  },
+  // {
+  //   label: "Twitter follower",
+  //   value: "twitter-follower",
+  // },
+  // {
+  //   label: "Discord member",
+  //   value: "discord-member",
+  // },
+  // {
+  //   label: "Token holder",
+  //   value: "token-holder",
+  // },
+  // {
+  //   label: "POAP owner",
+  //   value: "poap-owner",
+  // },
+  // {
+  //   label: "Github contributor",
+  //   value: "github-contributor",
+  // },
+  // {
+  //   label: "NFT owner",
+  //   value: "nft-owner",
+  // },
   {
     label: "Quiz",
     value: "quiz",
@@ -102,6 +106,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
     { refetchQueries: "all" }
   );
+  const { data, loading, error } = useQuery(GET_APP_DID);
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
     refetchQueries: "all",
   });
@@ -117,10 +122,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
       refetchQueries: "all",
     }
   );
-  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
-  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
-  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
-  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
 
   const router = useRouter();
@@ -183,16 +184,35 @@ const CreateQuestForm: React.FunctionComponent = () => {
     });
 
     const { cids } = await cidsRes.json();
+
+    const appDid = data.getAppDID;
+    console.log({ appDid });
     const finalValues =
       questType === "quiz"
         ? {
             ...values,
-            questions: values.questions.map(
-              ({ question, options, answer }: QuestionFormItemType) => ({
-                question,
-                choices: options.map((option) => option.value),
-                answer,
-              })
+            questions: await Promise.all(
+              values.questions.map(
+                async ({
+                  question,
+                  options,
+                  answer,
+                }: QuestionFormItemType) => ({
+                  question,
+                  choices: options.map((option) => option.value),
+                  answer: JSON.stringify(
+                    await self.client.ceramic.did?.createDagJWE(
+                      answer.map((a) => a.value),
+                      [
+                        // logged-in user,
+                        self.id,
+                        // backend ceramic did
+                        appDid,
+                      ]
+                    )
+                  ),
+                })
+              )
             ),
             image: cids[values.name],
             rewardCurrency: values.rewardCurrency.value,
@@ -270,6 +290,22 @@ const CreateQuestForm: React.FunctionComponent = () => {
     value: `${token.chainId}:${token.address}`,
   }));
 
+  if (loading) {
+    <Stack>
+      <Progress size="xs" isIndeterminate />
+      <Text>Loading app configuration</Text>
+    </Stack>;
+  }
+
+  if (error)
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle mr={2}>Network error</AlertTitle>
+        <AlertDescription>{error.message}</AlertDescription>
+      </Alert>
+    );
+
   return (
     <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
       <Heading>Create quest</Heading>
@@ -315,7 +351,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
           rules={{
             required: REQUIRED_FIELD_LABEL,
           }}
-          value={nativeToken.token}
           options={[nativeToken.token, ...erc20Options]}
           placeholder="WETH, DAI,..."
         />
