@@ -7,6 +7,7 @@ import { useWatch } from "react-hook-form";
 import { lookupAddress, lookupEns } from "../../core/hooks/useResolveEnsName";
 
 const AddressInput = ({ name, control, register, setValue }: any) => {
+  const [isEdit, setIsEdit] = useState(true);
   const [ens, setEns] = useState<string>();
   const value = useWatch({
     control,
@@ -35,13 +36,16 @@ const AddressInput = ({ name, control, register, setValue }: any) => {
 
   return (
     <VStack w="full">
-      {value && (
+      {value && isEdit === false && (
         <Alert
           roundedTop="lg"
           roundedBottom="lg"
           w="full"
           status="info"
           colorScheme="primary"
+          onClick={() => {
+            setIsEdit(true);
+          }}
         >
           <Blockies className="blockies" seed={value || ""} />
           <VStack pl="4" w="full" align="flex-start">
@@ -50,7 +54,13 @@ const AddressInput = ({ name, control, register, setValue }: any) => {
           </VStack>
         </Alert>
       )}
-      <Input {...register(name)} defaultValue={value} />
+      {isEdit === true && (
+        <Input
+          {...register(name)}
+          defaultValue={value}
+          onBlur={() => setIsEdit(false)}
+        />
+      )}
     </VStack>
   );
 };

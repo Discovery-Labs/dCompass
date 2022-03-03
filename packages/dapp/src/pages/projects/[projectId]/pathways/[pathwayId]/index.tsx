@@ -399,7 +399,7 @@ function PathwayPage({
               </HStack>
             </TabPanel>
             <TabPanel px="0">
-              <Tabs w="full" variant="line">
+              <Tabs w="full" variant="unstyled">
                 <HStack justifyContent="space-between">
                   <TabList>
                     <Tab>{t("all-quests")}</Tab>

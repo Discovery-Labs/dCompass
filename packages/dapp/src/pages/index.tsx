@@ -225,7 +225,7 @@ function Projects() {
         </Menu>
       </HStack>
 
-      <Tabs w="full" variant="line">
+      <Tabs w="full" variant="unstyled">
         <TabList>
           <Tab>{t("all-projects")}</Tab>
           <Tab>{t("my-projects")}</Tab>
