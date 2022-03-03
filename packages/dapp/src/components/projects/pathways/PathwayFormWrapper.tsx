@@ -211,10 +211,7 @@ function PathwayFormWrapper() {
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
           values.rewardCurrency.value.split(":")[1],
           false,
-          rewardAmount,
-          {
-            value: totalToPay.toString(),
-          }
+          rewardAmount
         );
 
       await createPathwayOnChainTx.wait(1);

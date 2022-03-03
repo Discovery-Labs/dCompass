@@ -779,7 +779,7 @@
       "chainId": "4",
       "contracts": {
         "AppDiamond": {
-          "address": "0xF6078F4f8e2754660C48e6D7dF104d1b8C68a898",
+          "address": "0x314237573441d3cfff785c9034aD7F5D324885Fa",
           "abi": [
             {
               "inputs": [
@@ -1202,7 +1202,7 @@
           ]
         },
         "PathwayNFT": {
-          "address": "0x41f3072284948eE7a96bdA853b428c07AdBffac5",
+          "address": "0x831fa7c4d40Ff0cc8Fb7F26582fa9e620D0ba8B8",
           "abi": [
             {
               "inputs": [
@@ -3265,7 +3265,7 @@
           ]
         },
         "RandomNumberConsumer": {
-          "address": "0x3adA0f2890Cd46AE11eC3619bB6a415CA7519A79",
+          "address": "0x5CC387AeCba2Ac9c90fdBD8F51032D4e4DAf944c",
           "abi": [
             {
               "inputs": [
