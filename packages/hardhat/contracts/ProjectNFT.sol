@@ -171,10 +171,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         require(success);
         uint stakeAmount = abi.decode(data, (uint256)); 
         require (msg.value >= stakeAmount, "not enough staked");
-        (success, data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("isAddrOwner(address)")), _projectWallet));
+        /*(success, data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("isAddrOwner(address)")), _projectWallet));
         require(success);
         bool isActive = abi.decode(data, (bool));
-        require(!isActive, "address already linked with active project");
+        require(!isActive, "address already linked with active project");*/
         projectWallets[_projectId] = _projectWallet;
         stakePerProject[_projectId] = stakeAmount;
         sponsorLevel[_projectId] = pendingSponsorLevel;
