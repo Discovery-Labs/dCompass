@@ -15,7 +15,8 @@ contract SponsorPassSFT is ERC1155 {
     mapping (uint => uint) public stakeAmounts;
     address payable projectNFTAddr;//project NFT Address this will interact with
     mapping (string => uint) levelByProject;//level of each project...needed in case a wallet, so can read level by project
-    mapping (address => bool) public isAddrOwner;//does this wallet already have a project?
+    //mapping (address => uint) public isAddrOwner;//is address associated with project owner?
+    mapping (string => address) public walletByProj;//wallet address for a project
     mapping (address => string) public projByWallet;//wallet which is project wallet
 
     constructor(uint[] memory _initStakeAmounts, address payable _projectNFTAddr)
@@ -30,9 +31,10 @@ contract SponsorPassSFT is ERC1155 {
 
     function mint(uint _id, address _to, string memory projectId) external {
         require(msg.sender == projectNFTAddr, "invalid contract calling mint");
-        require(!isAddrOwner[_to], "address currently has active token");
-        isAddrOwner[_to] = true;
-        projByWallet[_to] = projectId;
+        //require(!isAddrOwner[_to], "address currently has active token");
+        //isAddrOwner[_to] += true;
+        walletByProj[projectId] = _to;
+        //projByWallet[_to] = projectId;
         levelByProject[projectId] = _id;
         _mint(_to, _id, 1, "");
     }
@@ -40,8 +42,9 @@ contract SponsorPassSFT is ERC1155 {
     function updateLevel(uint _id, address _from, string memory projectId, uint newLevel) external {
         //burn one NFT from current level and mint one from another level
         require(msg.sender == projectNFTAddr, "invalid contract calling mint");
-        require(isAddrOwner[_from], "no token to burn");
-        require(keccak256(abi.encodePacked(projByWallet[_from]))==keccak256(abi.encodePacked(projectId)), "not current owner associated with project");
+        //require(isAddrOwner[_from], "no token to burn");
+        require(_from == walletByProj[projectId], "not wallet associated with project");
+        //require(keccak256(abi.encodePacked(projByWallet[_from]))==keccak256(abi.encodePacked(projectId)), "not current owner associated with project");
         _burn(_from,_id,1);
         levelByProject[projectId] = newLevel;
         _mint(_from, newLevel, 1, "");
@@ -59,14 +62,17 @@ contract SponsorPassSFT is ERC1155 {
             from == _msgSender() || isApprovedForAll(from, _msgSender()),
             "ERC1155: caller is not owner nor approved"
         );
-        require(isAddrOwner[from] && !isAddrOwner[to], "ERC1155: from or to have incorrect ownership");
+        //require(isAddrOwner[from] && !isAddrOwner[to], "ERC1155: from or to have incorrect ownership");
+        string memory _projectId = abi.decode(data, (string));
+        require(walletByProj[_projectId] == from, "ERC1155: from is not project wallet");
         _safeTransferFrom(from, to, id, amount, data);
-        (bool success,) = projectNFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("changeProjectWallet(string,address)")), projByWallet[from], to));
+        (bool success,) = projectNFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("changeProjectWallet(string,address)")), _projectId, to));
         require(success, "unsuccessful projectNFT call");
-        projByWallet[to] = projByWallet[from];
+        walletByProj[_projectId] = to;
+        /*projByWallet[to] = projByWallet[from];
         delete projByWallet[from];
         delete isAddrOwner[from];
-        isAddrOwner[to] = true;
+        isAddrOwner[to] = true;*/
     }
 
     function safeBatchTransferFrom(
