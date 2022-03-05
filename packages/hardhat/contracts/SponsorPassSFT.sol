@@ -64,7 +64,8 @@ contract SponsorPassSFT is ERC1155 {
         );
         //require(isAddrOwner[from] && !isAddrOwner[to], "ERC1155: from or to have incorrect ownership");
         string memory _projectId = abi.decode(data, (string));
-        require(walletByProj[_projectId] == from, "ERC1155: from is not project wallet");
+        require (walletByProj[_projectId] == from, "ERC1155: from is not project wallet");
+        require (levelByProject[_projectId] == id, "ERC1155: incorrect level for project");
         _safeTransferFrom(from, to, id, amount, data);
         (bool success,) = projectNFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("changeProjectWallet(string,address)")), _projectId, to));
         require(success, "unsuccessful projectNFT call");
