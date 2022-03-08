@@ -65,8 +65,8 @@ export default function ThreeTierPricing() {
   } = useFormContext();
   const [selectedPass, setSelectedPass] = useState("GOLD");
   function selectPlan(plan: string) {
+    setValue("sponsorTier", plan);
     setSelectedPass(plan);
-    setValue("sponsorTier", selectedPass);
   }
 
   const { getRootProps, getRadioProps } = useRadioGroup({

@@ -18,6 +18,7 @@ import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 import Card from "components/custom/Card";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
 import { isAddress } from "ethers/lib/utils";
 
 const { PROJECTS_ALIAS } = schemaAliases;
@@ -41,6 +42,7 @@ function CreateProjectStepper() {
   const { account, library } = useWeb3React();
   const { contracts } = useContext(Web3Context);
   const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
+  const [sponsorPassSFT, setSponsorPassSFT] = useState<SponsorPassSFT>();
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -78,6 +80,7 @@ function CreateProjectStepper() {
     async function init() {
       if (contracts) {
         setProjectNFTContract(contracts.projectNFTContract);
+        setSponsorPassSFT(contracts.SponsorPassSFT);
       }
     }
     init();
@@ -88,6 +91,9 @@ function CreateProjectStepper() {
     console.log({ values });
     if (!projectNFTContract) {
       throw new Error("ProjectNFTContract not deployed on this network");
+    }
+    if (!sponsorPassSFT) {
+      throw new Error("SponsorPassSFT not deployed on this network");
     }
 
     if (!values.projectWallet || !isAddress(values.projectWallet)) {
@@ -173,17 +179,22 @@ function CreateProjectStepper() {
       account,
     ]);
 
-    const stakeAmountsInETH = {
+    const stakeAmountsIndex = {
       SILVER: 1,
-      GOLD: 3,
-      DIAMOND: 5,
+      GOLD: 2,
+      DIAMOND: 3,
     };
+
+    const stakeAmounts = await sponsorPassSFT.stakeAmounts(
+      stakeAmountsIndex[values.sponsorTier]
+    );
+
     await projectNFTContract.addProjectWallet(
       projectId,
       values.projectWallet,
       values.sponsorTier,
       {
-        value: (stakeAmountsInETH[values.sponsorTier] * 1e18).toString(),
+        value: stakeAmounts,
       }
     );
 

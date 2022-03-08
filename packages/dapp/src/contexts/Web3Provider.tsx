@@ -132,7 +132,16 @@ const Web3Provider = ({ children }: { children: any }) => {
             abis[strChainId][network.name].contracts.PathwayNFT.abi,
             signer
           );
-          setContracts({ projectNFTContract, pathwayNFTContract });
+          const SponsorPassSFT = new ethers.Contract(
+            abis[strChainId][network.name].contracts.SponsorPassSFT.address,
+            abis[strChainId][network.name].contracts.SponsorPassSFT.abi,
+            signer
+          );
+          setContracts({
+            projectNFTContract,
+            pathwayNFTContract,
+            SponsorPassSFT,
+          });
           const isValidReviewer = await projectNFTContract.reviewers(account);
           setIsReviewer(isValidReviewer);
         }
@@ -210,7 +219,16 @@ const Web3Provider = ({ children }: { children: any }) => {
           abis[strChainId][network.name].contracts.PathwayNFT.abi,
           signer
         );
-        setContracts({ projectNFTContract, pathwayNFTContract });
+        const SponsorPassSFT = new ethers.Contract(
+          abis[strChainId][network.name].contracts.SponsorPassSFT.address,
+          abis[strChainId][network.name].contracts.SponsorPassSFT.abi,
+          signer
+        );
+        setContracts({
+          projectNFTContract,
+          pathwayNFTContract,
+          SponsorPassSFT,
+        });
         const isValidReviewer = await projectNFTContract.reviewers(
           connectedAccount
         );
