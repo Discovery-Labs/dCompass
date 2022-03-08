@@ -11,6 +11,7 @@ import { CreateQuizQuestResolver } from './mutations/CreateQuizQuest.resolver';
 // import { GetQuestByIdResolver } from './queries/GetQuestById.resolver';
 // import { SubmitQuestAnswersResolver } from './mutations/SubmitQuestAnswers.resolver';
 import { CreateSnapshotVoterQuestResolver } from './mutations/CreateSnapshotVoterQuest.resolver';
+import { SubmitQuestAnswersResolver } from './mutations/SubmitQuestAnswers.resolver';
 import { GetAllQuestsByPathwayIdResolver } from './queries/GetAllQuestsByPathwayId.resolver';
 import { GetQuizQuestByIdResolver } from './queries/GetQuizQuestById.resolver';
 
@@ -24,9 +25,9 @@ import { GetQuizQuestByIdResolver } from './queries/GetQuizQuestById.resolver';
     ApproveQuestResolver,
     GetAllQuestsByPathwayIdResolver,
     GetQuizQuestByIdResolver,
+    SubmitQuestAnswersResolver,
     // CreateQuestResolver,
     // GetQuestByIdResolver,
-    // SubmitQuestAnswersResolver,
   ],
   exports: [],
 })

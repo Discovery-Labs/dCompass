@@ -40,33 +40,33 @@ export const questBaseProperties = {
   rewardCurrency: {
     type: "string",
   },
-  nfts: {
-    type: "array",
-    minItems: 1,
-    items: {
-      type: "object",
-      properties: {
-        claimedBy: {
-          type: "array",
-          title: "claimedBy",
-          items: {
-            type: "string",
-          },
-        },
-        rarity: {
-          type: "string",
-          enum: ["common", "uncommon", "epic", "legendary"],
-        },
-        name: {
-          type: "string",
-          maxLength: 200,
-        },
-        url: {
-          $ref: "#/definitions/IPFSUrl",
-        },
-      },
-    },
-  },
+  // nfts: {
+  //   type: "array",
+  //   minItems: 1,
+  //   items: {
+  //     type: "object",
+  //     properties: {
+  //       claimedBy: {
+  //         type: "array",
+  //         title: "claimedBy",
+  //         items: {
+  //           type: "string",
+  //         },
+  //       },
+  //       rarity: {
+  //         type: "string",
+  //         enum: ["common", "uncommon", "epic", "legendary"],
+  //       },
+  //       name: {
+  //         type: "string",
+  //         maxLength: 200,
+  //       },
+  //       url: {
+  //         $ref: "#/definitions/IPFSUrl",
+  //       },
+  //     },
+  //   },
+  // },
 };
 
 export const QuestSchema = {

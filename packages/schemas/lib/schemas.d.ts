@@ -516,6 +516,47 @@ export declare const schemas: {
                         type: string;
                         title: string;
                         properties: {
+                            name: {
+                                type: string;
+                                title: string;
+                                maxLength: number;
+                            };
+                            description: {
+                                type: string;
+                            };
+                            pathwayId: {
+                                $ref: string;
+                            };
+                            completedBy: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            createdAt: {
+                                type: string;
+                                format: string;
+                                maxLength: number;
+                            };
+                            updatedAt: {
+                                type: string;
+                                format: string;
+                                maxLength: number;
+                            };
+                            questType: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            rewardAmount: {
+                                type: string;
+                            };
+                            rewardUserCap: {
+                                type: string;
+                            };
+                            rewardCurrency: {
+                                type: string;
+                            };
                             id: {
                                 $ref: string;
                             };
@@ -577,33 +618,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
             definitions: {
@@ -670,33 +684,6 @@ export declare const schemas: {
                 rewardCurrency: {
                     type: string;
                 };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
-                };
             };
         };
         NFTOwnerQuest: {
@@ -757,33 +744,6 @@ export declare const schemas: {
                 rewardCurrency: {
                     type: string;
                 };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
-                };
             };
         };
         PoapOwnerQuest: {
@@ -836,33 +796,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };
@@ -920,33 +853,6 @@ export declare const schemas: {
                 rewardCurrency: {
                     type: string;
                 };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
-                };
             };
         };
         QuizQuest: {
@@ -969,7 +875,6 @@ export declare const schemas: {
                             };
                             answer: {
                                 type: string;
-                                maxLength: number;
                             };
                             choices: {
                                 type: string;
@@ -1024,33 +929,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };
@@ -1115,33 +993,6 @@ export declare const schemas: {
                 rewardCurrency: {
                     type: string;
                 };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
-                };
             };
         };
         TwitterFollowerVoterQuest: {
@@ -1197,33 +1048,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };

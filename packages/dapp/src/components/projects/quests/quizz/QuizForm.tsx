@@ -1,17 +1,69 @@
-import { Button, VStack } from "@chakra-ui/react";
-import { useState } from "react";
+import { ApolloError, useMutation } from "@apollo/client";
+import { Button, useToast, VStack } from "@chakra-ui/react";
+import { useContext, useState } from "react";
+import { Web3Context } from "../../../../contexts/Web3Context";
+import { SUBMIT_QUEST_ANSWERS_MUTATION } from "../../../../graphql/quests";
 
 import RadioButtons from "../../../custom/quiz/RadioButtons";
 
-function QuizForm({ questions, questId }: any) {
+function QuizForm({ questions, questId, successCallback }: any) {
+  const toast = useToast();
+  const { self } = useContext(Web3Context);
   const [questionAnswers, setQuestionAnswer] =
     useState<Array<Record<string, string>>>();
   const [isLoading, setIsLoading] = useState(false);
-  const handleSubmit = () => {
+  const [submitQuestAnswersMutation] = useMutation(
+    SUBMIT_QUEST_ANSWERS_MUTATION
+  );
+
+  const handleSubmit = async () => {
     setIsLoading(true);
-    console.log({ quizValues: questionAnswers, questId });
     // TODO: call ceramic & back-end here
-    setIsLoading(false);
+    let isValid = false;
+    try {
+      const submitQuestAnswers = await submitQuestAnswersMutation({
+        variables: {
+          input: {
+            questId,
+            did: self.id,
+            questionAnswers,
+          },
+        },
+      });
+      isValid = submitQuestAnswers.data;
+      isValid
+        ? toast({
+            title: "Well done!",
+            description: `You did submit the correct answers!`,
+            status: "success",
+            position: "top-right",
+            duration: 6000,
+            isClosable: true,
+            variant: "subtle",
+          })
+        : toast({
+            title: "Incorrect answers",
+            description: `You didn't submit the correct answers!`,
+            status: "error",
+            position: "top-right",
+            duration: 6000,
+            isClosable: true,
+            variant: "subtle",
+          });
+      return isValid ? successCallback() : isValid;
+    } catch (error) {
+      isValid = false;
+      toast({
+        title: "Error!",
+        description: (error as ApolloError).message,
+        status: "error",
+        position: "top-right",
+        duration: 6000,
+        isClosable: true,
+        variant: "subtle",
+      });
+    }
+    return setIsLoading(false);
   };
   return (
     <VStack>

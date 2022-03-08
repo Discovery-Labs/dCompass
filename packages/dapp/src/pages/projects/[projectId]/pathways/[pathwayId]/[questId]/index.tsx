@@ -23,7 +23,7 @@ import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Blockies from "react-blockies";
 import { BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
@@ -118,6 +118,7 @@ function QuestPage({
   chainId: tokenChainId,
   namespace,
 }: any) {
+  const [tabIndex, setTabIndex] = useState(0);
   const { t } = useTranslation("common");
   const { getRewardCurrency } = useTokenList();
   const questMarkdownTheme = usePageMarkdownTheme();
@@ -139,6 +140,10 @@ function QuestPage({
       projectId: streamIdToUrl(projectId),
     },
   });
+
+  const handleTabsChange = (index: number) => {
+    setTabIndex(index);
+  };
 
   const isOwner = createdBy === account;
   if (loading || projectLoading)
@@ -189,7 +194,7 @@ function QuestPage({
         <Heading as="h1" size="2xl" color={getColoredText} py="4">
           {name} <Icon as={RiSwordLine} color={getColoredText} />
         </Heading>
-        <Tabs w="full">
+        <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">
             <TabList>
               <Tab>Guide</Tab>
@@ -371,7 +376,11 @@ function QuestPage({
             <TabPanel px="0">
               {/* TODO: Make a wrapper component */}
               {type?.value === "quiz" && (
-                <QuizForm questions={questions} questId={id} />
+                <QuizForm
+                  questions={questions}
+                  questId={id}
+                  successCallback={() => handleTabsChange(1)}
+                />
               )}
               {type?.value === "snapshot-voter" && (
                 <SnapshotVoterForm proposalId={proposalId} questId={id} />

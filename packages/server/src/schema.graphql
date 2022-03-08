@@ -139,6 +139,9 @@ type Mutation {
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
 
+  """Submits quest answers"""
+  submitQuestAnswers(input: QuestAnswersSubmitionInput!): Boolean!
+
   """Verify a new Pathway right before minting in dCompass"""
   verifyPathway(input: VerifyPathwayInput!): Pathway
 }
@@ -281,6 +284,17 @@ type Quest {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
+}
+
+input QuestAnswersSubmitionInput {
+  did: String!
+  questId: String!
+  questionAnswers: [QuestQuestionAnswerInput!]!
+}
+
+input QuestQuestionAnswerInput {
+  answer: String!
+  question: String!
 }
 
 type QuizQuest {

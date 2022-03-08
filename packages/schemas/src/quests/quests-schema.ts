@@ -1,3 +1,5 @@
+import { questBaseProperties } from "./quest-schema";
+
 export const QuestsSchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
   title: "QuestsList",
@@ -13,6 +15,7 @@ export const QuestsSchema = {
           id: {
             $ref: "#/definitions/CeramicStreamId",
           },
+          ...questBaseProperties,
         },
       },
     },
