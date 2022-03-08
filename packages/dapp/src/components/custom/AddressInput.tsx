@@ -58,7 +58,11 @@ const AddressInput = ({ name, control, register, setValue }: any) => {
         <Input
           {...register(name)}
           defaultValue={value}
-          onBlur={() => setIsEdit(false)}
+          onBlur={() => {
+            if (value) {
+              setIsEdit(false);
+            }
+          }}
         />
       )}
     </VStack>
