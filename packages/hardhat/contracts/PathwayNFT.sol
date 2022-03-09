@@ -35,6 +35,8 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     mapping(string => mapping(address => bool)) public reviewerVotes; //vote record of approved voters for PathwayId
     mapping (string => uint) public nativeRewards;//pathway rewards in native token
     mapping (string => mapping(address => uint)) internal erc20Amounts;//pathway reward Amts in other tokens
+    mapping (string => bool) public nativeRefundClaimed;//pathway refund claimed
+    mapping (string => mapping(address => bool)) erc20RefundClaimed;//pathway erc20 refund claimed
     mapping (string => uint) public numUsersRewardPerPathway;//number of users rewarded per pathway
     mapping (string => uint) public currentNumUsersRewardPerPathwayNative;//current number of users already claimed native reward per pathway
     mapping (string => mapping ( address => uint)) public currentNumUsersRewardPerPathwayERC20;// currentnumber of users already claimed reward per pathway per ERC20 Address
@@ -216,6 +218,26 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion);
             IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount);
             erc20Amounts[_pathwayId][_ERC20Address] += amount;
+        }
+    }
+
+    function claimRejectionRefund(string _pathwayId, bool native, address _ERC20Address) external {
+        require(status[_pathwayId] == PathwayStatus.DENIED, "incorrect pathway status");
+        string memory _projectId = projectIdforPathway[_pathwayId];
+        (bool success, bytes memory data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("projectWallets(string)")), _projectId));
+        require(success);
+        address refundWallet = abi.decode(data, (address));
+        require(refundWallet != address(0));
+        if(native){
+            require(!nativeRefundClaimed[_pathwayId], "native reward already claimed");
+            (success,) = payable(refundWallet).call{value : nativeRewards[_pathwayId]}("");
+            require(success);
+            nativeRefundClaimed[_pathwayId] = true;
+        }
+        else{
+            require(!erc20RefundClaimed[_pathwayId][_ERC20Address], "erc20 reward already claimed");
+            IERC20(_ERC20Address).transfer(refundWallet, erc20Amounts[_pathwayId][_ERC20Address]);
+            erc20RefundClaimed[_pathwayId][_ERC20Address] = true;
         }
     }
 
