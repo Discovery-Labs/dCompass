@@ -142,7 +142,9 @@ describe("ProjectNFT", function() {
       expect(await projectNFT.projectWallets("firstTestProject")).to.be.equal(`${addr5.address}`);//addr5 is project wallet address
       expect(await sponsorSFT.balanceOf(`${addr5.address}` , 1)).to.be.equal(1);//SFT minted now
       expect(await sponsorSFT.balanceOf(`${addr4.address}` , 1)).to.be.equal(0);//addr4 not project wallet
-      await sponsorSFT.connect(addr5).safeTransferFrom(`${addr5.address}`, `${addr4.address}`, 1, 1, "0x");//transfer of sft and project wallet to addr4
+      const abiCoder = new ethers.utils.AbiCoder();
+      const encodedProject = abiCoder.encode(["string"], ["firstTestProject"]);
+      await sponsorSFT.connect(addr5).safeTransferFrom(`${addr5.address}`, `${addr4.address}`, 1, 1, encodedProject);//transfer of sft and project wallet to addr4
       expect(await projectNFT.projectWallets("firstTestProject")).to.be.equal(`${addr4.address}`);//addr4 is project wallet address
       expect(await sponsorSFT.balanceOf(`${addr5.address}` , 1)).to.be.equal(0);//addr5 transferred SFT to addr4
       expect(await sponsorSFT.balanceOf(`${addr4.address}` , 1)).to.be.equal(1);//addr4 now has 1 SFT
