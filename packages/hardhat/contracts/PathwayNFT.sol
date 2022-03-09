@@ -221,7 +221,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         }
     }
 
-    function claimRejectionRefund(string _pathwayId, bool native, address _ERC20Address) external {
+    function claimRejectionRefund(string memory _pathwayId, bool native, address _ERC20Address) external {
         require(status[_pathwayId] == PathwayStatus.DENIED, "incorrect pathway status");
         string memory _projectId = projectIdforPathway[_pathwayId];
         (bool success, bytes memory data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("projectWallets(string)")), _projectId));
