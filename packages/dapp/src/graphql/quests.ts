@@ -93,20 +93,12 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
   }
 `;
 
-export const GET_QUEST_BY_ID_QUERY = gql`
-  query GetQuestById($questId: String!) {
-    getQuestById(questId: $questId) {
+export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
+  query GetQuizQuestById($questId: String!) {
+    getQuizQuestById(questId: $questId) {
       id
       name
-      createdBy
-      createdAt
-      difficulty
-      description
-      rewardCurrency
-      rewardAmount
-      rewardUserCap
-      image
-      pathwayId
+      completedBy
     }
   }
 `;

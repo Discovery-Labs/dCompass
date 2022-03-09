@@ -46,6 +46,9 @@ import { PROJECT_BY_ID_QUERY } from "../../../../../../graphql/projects";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
+import { GET_QUIZ_QUEST_BY_ID_QUERY } from "../../../../../../graphql/quests";
+import { initializeApollo } from "../../../../../../../lib/apolloClient";
+import QuestCompletedByList from "../../../../../../components/projects/quests/QuestCompletedByList";
 
 type Props = {
   projectId: string | null;
@@ -69,8 +72,15 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const core = ceramicCoreFactory();
-  // const client = initializeApollo();
+  const client = initializeApollo();
   try {
+    // TODO: call backend
+    const { data } = await client.query({
+      query: GET_QUIZ_QUEST_BY_ID_QUERY,
+      variables: {
+        questId: `ceramic://${questId}`,
+      },
+    });
     const questInfos = await core.ceramic.loadStream(questId);
     const questCreatorDID = questInfos.controllers[0];
     const questCreatorBasicProfile = await core.get(
@@ -81,12 +91,13 @@ export const getServerSideProps: GetServerSideProps<
       props: {
         id: questId,
         ...questInfos.content,
-        ...(await serverSideTranslations(locale, ["common"])),
+        ...data.getQuizQuestById,
         projectId,
         createdBy: {
           did: questCreatorDID,
           name: questCreatorBasicProfile?.name,
         },
+        ...(await serverSideTranslations(locale, ["common"])),
       },
     };
   } catch (error) {
@@ -102,6 +113,7 @@ function QuestPage({
   description,
   image,
   createdAt,
+  completedBy,
   rewardAmount,
   rewardCurrency,
   rewardUserCap,
@@ -198,8 +210,9 @@ function QuestPage({
           <HStack justifyContent="space-between">
             <TabList>
               <Tab>Guide</Tab>
-              <Tab>Details &amp; rewards</Tab>
               <Tab>Play quest</Tab>
+              <Tab>Details &amp; rewards</Tab>
+              <Tab>Completed by</Tab>
             </TabList>
           </HStack>
 
@@ -215,6 +228,42 @@ function QuestPage({
               </VStack>
             </TabPanel>
 
+            <TabPanel px="0">
+              {/* TODO: Make a wrapper component */}
+              {type?.value === "quiz" && (
+                <QuizForm
+                  questions={questions}
+                  questId={id}
+                  successCallback={() => handleTabsChange(2)}
+                />
+              )}
+              {type?.value === "snapshot-voter" && (
+                <SnapshotVoterForm proposalId={proposalId} questId={id} />
+              )}
+              {type?.value === "github-contributor" && (
+                <GithubContributorQuestForm
+                  githubOrgId={githubOrgId}
+                  questId={id}
+                />
+              )}
+              {type?.value === "nft-owner" && (
+                <ClaimNFTOwnerForm
+                  questId={id}
+                  contractAddress={collectionContractAddress}
+                  namespace={namespace || "eip155"}
+                  collectionChainId={tokenChainId}
+                />
+              )}
+              {type?.value === "token-holder" && (
+                <ClaimTokenHolderForm
+                  questId={id}
+                  amount={amount}
+                  contractAddress={tokenContractAddress}
+                  namespace={namespace || "eip155"}
+                  tokenChainId={tokenChainId}
+                />
+              )}
+            </TabPanel>
             <TabPanel px="0">
               <HStack w="full" align="left" justifyContent="space-between">
                 <VStack align="left">
@@ -374,40 +423,11 @@ function QuestPage({
               </HStack>
             </TabPanel>
             <TabPanel px="0">
-              {/* TODO: Make a wrapper component */}
-              {type?.value === "quiz" && (
-                <QuizForm
-                  questions={questions}
-                  questId={id}
-                  successCallback={() => handleTabsChange(1)}
-                />
-              )}
-              {type?.value === "snapshot-voter" && (
-                <SnapshotVoterForm proposalId={proposalId} questId={id} />
-              )}
-              {type?.value === "github-contributor" && (
-                <GithubContributorQuestForm
-                  githubOrgId={githubOrgId}
-                  questId={id}
-                />
-              )}
-              {type?.value === "nft-owner" && (
-                <ClaimNFTOwnerForm
-                  questId={id}
-                  contractAddress={collectionContractAddress}
-                  namespace={namespace || "eip155"}
-                  collectionChainId={tokenChainId}
-                />
-              )}
-              {type?.value === "token-holder" && (
-                <ClaimTokenHolderForm
-                  questId={id}
-                  amount={amount}
-                  contractAddress={tokenContractAddress}
-                  namespace={namespace || "eip155"}
-                  tokenChainId={tokenChainId}
-                />
-              )}
+              <VStack w="full" align="flex-start">
+                {completedBy && (
+                  <QuestCompletedByList completedBy={completedBy} />
+                )}
+              </VStack>
             </TabPanel>
           </TabPanels>
         </Tabs>
