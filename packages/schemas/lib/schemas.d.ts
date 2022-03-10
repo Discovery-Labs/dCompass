@@ -4,9 +4,13 @@ export declare const schemas: {
             $schema: string;
             title: string;
             type: string;
-            properties: {
-                _id: {
-                    type: string;
+            items: {
+                type: string;
+                title: string;
+                properties: {
+                    id: {
+                        type: string;
+                    };
                 };
             };
         };
@@ -45,7 +49,7 @@ export declare const schemas: {
                             isFeatured: {
                                 type: string;
                             };
-                            id: {
+                            _id: {
                                 type: string;
                             };
                             name: {
@@ -129,7 +133,7 @@ export declare const schemas: {
                                     type: string;
                                     title: string;
                                     properties: {
-                                        id: {
+                                        _id: {
                                             type: string;
                                         };
                                     };
@@ -202,7 +206,7 @@ export declare const schemas: {
             title: string;
             type: string;
             properties: {
-                id: {
+                _id: {
                     type: string;
                 };
                 name: {
@@ -286,7 +290,7 @@ export declare const schemas: {
                         type: string;
                         title: string;
                         properties: {
-                            id: {
+                            _id: {
                                 type: string;
                             };
                         };
@@ -402,6 +406,9 @@ export declare const schemas: {
             description: string;
             type: string;
             properties: {
+                _id: {
+                    type: string;
+                };
                 createdAt: {
                     type: string;
                     format: string;
@@ -498,6 +505,9 @@ export declare const schemas: {
                         type: string;
                         title: string;
                         properties: {
+                            _id: {
+                                type: string;
+                            };
                             name: {
                                 type: string;
                                 title: string;
@@ -560,6 +570,9 @@ export declare const schemas: {
             description: string;
             type: string;
             properties: {
+                _id: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -625,6 +638,9 @@ export declare const schemas: {
                     type: string;
                     maxLength: number;
                 };
+                _id: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -685,6 +701,9 @@ export declare const schemas: {
                 chainId: {
                     type: string;
                 };
+                _id: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -737,6 +756,9 @@ export declare const schemas: {
                 poapTokenId: {
                     type: string;
                     maxLength: number;
+                };
+                _id: {
+                    type: string;
                 };
                 name: {
                     type: string;
@@ -793,6 +815,9 @@ export declare const schemas: {
                         type: string;
                         maxLength: number;
                     };
+                };
+                _id: {
+                    type: string;
                 };
                 name: {
                     type: string;
@@ -871,6 +896,9 @@ export declare const schemas: {
                         };
                     };
                 };
+                _id: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -934,6 +962,9 @@ export declare const schemas: {
                 chainId: {
                     type: string;
                 };
+                _id: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -989,6 +1020,9 @@ export declare const schemas: {
                         type: string;
                         maxLength: number;
                     };
+                };
+                _id: {
+                    type: string;
                 };
                 name: {
                     type: string;

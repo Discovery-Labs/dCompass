@@ -16,6 +16,7 @@ import { NETWORK_URLS } from "../core/connectors";
 import { ALL_SUPPORTED_CHAIN_IDS } from "../core/connectors/chains";
 import { useActiveWeb3React } from "../core/hooks/web3";
 import NETWORKS from "../core/networks";
+import { getPrivateIdentity } from "../core/thread-db/thread-db";
 
 import { initialState, Web3Context } from "./Web3Context";
 import { Web3Reducer } from "./Web3Reducer";
@@ -168,6 +169,9 @@ const Web3Provider = ({ children }: { children: any }) => {
             "https://verifications-clay.3boxlabs.com"
         );
         setIdentityLink(identityLinkService);
+
+        const threadDBIdentity = await getPrivateIdentity(mySelf);
+        console.log({ threadDBIdentity });
         // Get ens
         let ens = null;
         try {

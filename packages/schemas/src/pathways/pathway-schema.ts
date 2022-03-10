@@ -5,6 +5,9 @@ export const PathwaySchema = {
     "A pathway covers a specific topic within a project or an ecosystem",
   type: "object",
   properties: {
+    _id: {
+      type: "string",
+    },
     createdAt: {
       type: "string",
       format: "date-time",

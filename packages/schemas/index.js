@@ -33,11 +33,14 @@ const createModels = async () => {
     dapp: "dCompass",
   });
 
-  const dappIdentity = await getIdentity(process.env.THREAD_DB_IDENTITY_KEY);
+  const dappIdentity = getIdentity(process.env.THREAD_DB_IDENTITY_KEY);
   const threadDBClient = await getAuthorizedDevClient(dappIdentity);
 
   console.log({ threadDBClient });
+  // TODO: db versionning
   const dCompassThreadId = await createDB(threadDBClient);
+
+  // TODO: Create tags
 
   // Connect to the testnet local Ceramic node
   const ceramic = new CeramicClient("https://ceramic-clay.3boxlabs.com"); // "http://localhost:7007"
@@ -51,17 +54,7 @@ const createModels = async () => {
   manager.addJSONModel(webAccounts.model);
   for (const [schemaName, schema] of Object.entries(schemas.dCompass)) {
     console.log({ schema });
-    // TODO: fix Error: the collection schema _id property must be a string
-    const createdCollection = await newCollectionFromSchema({
-      client: threadDBClient,
-      threadID: dCompassThreadId,
-      schema,
-      schemaName,
-    });
-    const dbInfo = await getThreadInfo(threadDBClient, dCompassThreadId);
-    console.log({ dbInfo, createdCollection });
     const createdSchemaID = await manager.createSchema(schemaName, schema);
-
     // Create the definition using the created schema ID
     if (createdSchemaID) {
       const schemaURL = manager.getSchemaURL(createdSchemaID);
@@ -77,6 +70,17 @@ const createModels = async () => {
         }
       );
       console.log({ definition });
+    }
+
+    if (!schema.title.toLocaleLowerCase().includes("list")) {
+      const createdCollection = await newCollectionFromSchema({
+        client: threadDBClient,
+        threadID: dCompassThreadId,
+        schema,
+        schemaName,
+      });
+      const dbInfo = await getThreadInfo(threadDBClient, dCompassThreadId);
+      console.log({ dbInfo, createdCollection });
     }
   }
   // Publish model to Ceramic node

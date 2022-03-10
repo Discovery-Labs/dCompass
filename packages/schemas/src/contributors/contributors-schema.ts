@@ -1,6 +1,6 @@
 export const ContributorsSchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
-  title: "Contributors",
+  title: "ContributorsList",
   type: "array",
   items: {
     type: "object",

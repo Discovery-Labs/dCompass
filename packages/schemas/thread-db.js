@@ -61,18 +61,9 @@ async function joinFromInfo(client, info) {
   return await client.joinFromInfo(info);
 }
 
-async function getIdentity(did) {
-  let identity;
-  try {
-    if (!did) {
-      throw new Error("No did!");
-    }
-    identity = await PrivateKey.fromString(did);
-    console.log({ identity });
-    return identity;
-  } catch (e) {
-    throw e;
-  }
+function getIdentity(key) {
+  const identity = PrivateKey.fromString(key);
+  return identity;
 }
 
 async function getAuthorizedDevClient(identity) {

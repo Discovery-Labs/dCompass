@@ -1,4 +1,7 @@
 export const questBaseProperties = {
+  _id: {
+    type: "string",
+  },
   name: {
     type: "string",
     title: "name",

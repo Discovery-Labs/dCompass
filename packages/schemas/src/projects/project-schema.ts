@@ -1,5 +1,5 @@
 export const projectProperties = {
-  id: {
+  _id: {
     type: "string",
   },
   name: {
@@ -83,7 +83,7 @@ export const projectProperties = {
       type: "object",
       title: "TagItem",
       properties: {
-        id: {
+        _id: {
           type: "string",
         },
       },
