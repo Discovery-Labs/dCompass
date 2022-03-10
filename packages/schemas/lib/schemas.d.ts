@@ -4,20 +4,9 @@ export declare const schemas: {
             $schema: string;
             title: string;
             type: string;
-            items: {
-                type: string;
-                title: string;
-                properties: {
-                    id: {
-                        $ref: string;
-                    };
-                };
-            };
-            definitions: {
-                CeramicStreamId: {
+            properties: {
+                _id: {
                     type: string;
-                    pattern: string;
-                    maxLength: number;
                 };
             };
         };
@@ -57,7 +46,7 @@ export declare const schemas: {
                                 type: string;
                             };
                             id: {
-                                $ref: string;
+                                type: string;
                             };
                             name: {
                                 type: string;
@@ -141,7 +130,7 @@ export declare const schemas: {
                                     title: string;
                                     properties: {
                                         id: {
-                                            $ref: string;
+                                            type: string;
                                         };
                                     };
                                 };
@@ -214,7 +203,7 @@ export declare const schemas: {
             type: string;
             properties: {
                 id: {
-                    $ref: string;
+                    type: string;
                 };
                 name: {
                     type: string;
@@ -298,7 +287,7 @@ export declare const schemas: {
                         title: string;
                         properties: {
                             id: {
-                                $ref: string;
+                                type: string;
                             };
                         };
                     };
@@ -400,17 +389,10 @@ export declare const schemas: {
                         title: string;
                         properties: {
                             id: {
-                                $ref: string;
+                                type: string;
                             };
                         };
                     };
-                };
-            };
-            definitions: {
-                CeramicStreamId: {
-                    type: string;
-                    pattern: string;
-                    maxLength: number;
                 };
             };
         };
@@ -477,7 +459,7 @@ export declare const schemas: {
                         title: string;
                         properties: {
                             id: {
-                                $ref: string;
+                                type: string;
                             };
                         };
                     };
@@ -490,7 +472,7 @@ export declare const schemas: {
                         title: string;
                         properties: {
                             id: {
-                                $ref: string;
+                                type: string;
                             };
                         };
                     };
@@ -558,7 +540,7 @@ export declare const schemas: {
                                 type: string;
                             };
                             id: {
-                                $ref: string;
+                                type: string;
                             };
                         };
                     };
@@ -1078,6 +1060,9 @@ export declare const schemas: {
             description: string;
             type: string;
             properties: {
+                _id: {
+                    type: string;
+                };
                 createdAt: {
                     type: string;
                     format: string;

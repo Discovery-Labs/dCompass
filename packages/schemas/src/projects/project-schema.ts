@@ -1,6 +1,6 @@
 export const projectProperties = {
   id: {
-    $ref: "#/definitions/CeramicStreamId",
+    type: "string",
   },
   name: {
     type: "string",
@@ -84,7 +84,7 @@ export const projectProperties = {
       title: "TagItem",
       properties: {
         id: {
-          $ref: "#/definitions/CeramicStreamId",
+          type: "string",
         },
       },
     },

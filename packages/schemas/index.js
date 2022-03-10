@@ -10,6 +10,13 @@ const basicProfile = require("@datamodels/identity-profile-basic");
 const cryptoAccounts = require("@datamodels/identity-accounts-crypto");
 const webAccounts = require("@datamodels/identity-accounts-web");
 const { schemas } = require("./lib/schemas");
+const {
+  createDB,
+  newCollectionFromSchema,
+  getAuthorizedDevClient,
+  getIdentity,
+  getThreadInfo,
+} = require("./thread-db");
 
 const { writeFile } = promises;
 const createModels = async () => {
@@ -22,6 +29,16 @@ const createModels = async () => {
   });
   await did.authenticate();
 
+  const appJWS = await did.createDagJWS({
+    dapp: "dCompass",
+  });
+
+  const dappIdentity = await getIdentity(process.env.THREAD_DB_IDENTITY_KEY);
+  const threadDBClient = await getAuthorizedDevClient(dappIdentity);
+
+  console.log({ threadDBClient });
+  const dCompassThreadId = await createDB(threadDBClient);
+
   // Connect to the testnet local Ceramic node
   const ceramic = new CeramicClient("https://ceramic-clay.3boxlabs.com"); // "http://localhost:7007"
   ceramic.did = did;
@@ -33,7 +50,18 @@ const createModels = async () => {
   manager.addJSONModel(cryptoAccounts.model);
   manager.addJSONModel(webAccounts.model);
   for (const [schemaName, schema] of Object.entries(schemas.dCompass)) {
+    console.log({ schema });
+    // TODO: fix Error: the collection schema _id property must be a string
+    const createdCollection = await newCollectionFromSchema({
+      client: threadDBClient,
+      threadID: dCompassThreadId,
+      schema,
+      schemaName,
+    });
+    const dbInfo = await getThreadInfo(threadDBClient, dCompassThreadId);
+    console.log({ dbInfo, createdCollection });
     const createdSchemaID = await manager.createSchema(schemaName, schema);
+
     // Create the definition using the created schema ID
     if (createdSchemaID) {
       const schemaURL = manager.getSchemaURL(createdSchemaID);

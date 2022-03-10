@@ -4,6 +4,9 @@ export declare const TagSchema: {
     description: string;
     type: string;
     properties: {
+        _id: {
+            type: string;
+        };
         createdAt: {
             type: string;
             format: string;

@@ -62,7 +62,7 @@ export const PathwaySchema = {
         title: "QuestItem",
         properties: {
           id: {
-            $ref: "#/definitions/CeramicStreamId",
+            type: "string",
           },
         },
       },
@@ -75,7 +75,7 @@ export const PathwaySchema = {
         title: "PendingQuestItem",
         properties: {
           id: {
-            $ref: "#/definitions/CeramicStreamId",
+            type: "string",
           },
         },
       },
