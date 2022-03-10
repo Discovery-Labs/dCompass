@@ -1,12 +1,12 @@
-import { Divider, VStack, useRadioGroup, Text } from "@chakra-ui/react";
+import { Divider, VStack, useCheckboxGroup, Text } from "@chakra-ui/react";
 
-import RadioCard from "./RadioCard";
+import CheckboxCard from "./CheckboxCard";
 
-const RadioButtons = ({ quiz, setQuestionAnswer }: any) => {
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name: "option",
-    defaultValue: "default",
-    onChange: (nextValue: string) => {
+const CheckboxButtons = ({ quiz, setQuestionAnswer }: any) => {
+  const { getCheckboxProps } = useCheckboxGroup({
+    defaultValue: [],
+    onChange: (nextValue: string[]) => {
+      console.log("answers", nextValue);
       setQuestionAnswer((currentState: any) => {
         return currentState
           ? [...currentState, { question: quiz.question, answer: nextValue }]
@@ -14,10 +14,9 @@ const RadioButtons = ({ quiz, setQuestionAnswer }: any) => {
       });
     },
   });
-  const group = getRootProps();
 
   return (
-    <VStack {...group} py="6">
+    <VStack py="6">
       <Text>{quiz.question}</Text>
       <div
         style={{
@@ -26,11 +25,11 @@ const RadioButtons = ({ quiz, setQuestionAnswer }: any) => {
         }}
       >
         {quiz.choices.map((choice: string) => {
-          const radio = getRadioProps({ value: choice });
+          const checkbox = getCheckboxProps({ value: choice });
           return (
-            <RadioCard key={choice} {...radio}>
+            <CheckboxCard key={choice} {...checkbox}>
               {choice}
-            </RadioCard>
+            </CheckboxCard>
           );
         })}
       </div>
@@ -39,4 +38,4 @@ const RadioButtons = ({ quiz, setQuestionAnswer }: any) => {
   );
 };
 
-export default RadioButtons;
+export default CheckboxButtons;

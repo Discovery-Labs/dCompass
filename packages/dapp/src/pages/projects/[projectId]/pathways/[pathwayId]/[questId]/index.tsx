@@ -326,9 +326,11 @@ function QuestPage({
                       {t("creation-date")}{" "}
                       {new Date(createdAt || Date.now()).toLocaleString()}
                     </Text>
-                    <Text fontSize="sm" isTruncated>
-                      {t("by")} {createdBy.name || createdBy.did}
-                    </Text>
+                    {createdBy && (
+                      <Text fontSize="sm" isTruncated>
+                        {t("by")} {createdBy.name || createdBy.did}
+                      </Text>
+                    )}
                     {isOwner && (
                       // TODO: edit quest form
                       <NextLink
