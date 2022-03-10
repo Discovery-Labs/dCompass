@@ -205,13 +205,13 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             require(success);
             nativeRewards[_pathwayId] += amount;
             if(msg.value > amount + appPortion){
-                (bool success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion}("");
+                (success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion}("");
                 require(success);
             }
         }
         else{
             require(_ERC20Address != address(0));
-            (bool success, bytes memory data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("checkApprovedERC20PerProjectByChain(string,uint256,address)")), projectIdforPathway[_pathwayId],block.chainid, _ERC20Address));
+            (success, data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("checkApprovedERC20PerProjectByChain(string,uint256,address)")), projectIdforPathway[_pathwayId],block.chainid, _ERC20Address));
             require(success);
             success = abi.decode(data, (bool));
             require(success, "ERC20 not approved");
