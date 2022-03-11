@@ -1,16 +1,15 @@
 export declare const schemas: {
     dCompass: {
-        Contributors: {
+        UserPrivateIdentity: {
             $schema: string;
             title: string;
             type: string;
-            items: {
-                type: string;
-                title: string;
-                properties: {
-                    id: {
-                        type: string;
-                    };
+            properties: {
+                _id: {
+                    type: string;
+                };
+                privateIdentity: {
+                    type: string;
                 };
             };
         };

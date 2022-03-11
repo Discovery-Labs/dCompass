@@ -1,6 +1,7 @@
 import ABIS from "@discovery-dao/hardhat/abis.json";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
+import { PrivateKey } from "@textile/crypto";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
@@ -108,6 +109,13 @@ const Web3Provider = ({ children }: { children: any }) => {
     });
   };
 
+  const setPrivateIdentity = (identity: null | any) => {
+    dispatch({
+      type: "SET_PRIVATE_IDENTITY",
+      payload: identity,
+    });
+  };
+
   useEffect(() => {
     const coreCeramic = ceramicCoreFactory();
     setCore(coreCeramic);
@@ -169,9 +177,9 @@ const Web3Provider = ({ children }: { children: any }) => {
             "https://verifications-clay.3boxlabs.com"
         );
         setIdentityLink(identityLinkService);
-
         const threadDBIdentity = await getPrivateIdentity(mySelf);
-        console.log({ threadDBIdentity });
+        setPrivateIdentity(threadDBIdentity);
+        console.log({ threadDBIdentity: threadDBIdentity.toString() });
         // Get ens
         let ens = null;
         try {
@@ -257,7 +265,8 @@ const Web3Provider = ({ children }: { children: any }) => {
       connectNetwork: CERAMIC_TESTNET,
       model: publishedModel,
     });
-
+    const threadDBIdentity = await getPrivateIdentity(mySelf);
+    setPrivateIdentity(threadDBIdentity);
     setSelf(mySelf);
 
     provider.on("chainChanged", () => {

@@ -16,18 +16,20 @@ export const getIdentity = (key?: string) => {
 };
 
 export const getPrivateIdentity = async (self: any) => {
-  const restoredIdentity = await self.get("UserPrivateIdentity");
+  const restoredIdentity = await self.get("@dCompass/userprivateidentity");
+  console.log("pvId", { restoredIdentity, did: self.id });
   if (restoredIdentity?.privateIdentity) {
     /** Convert the cached identity string to a PrivateKey and return */
     return PrivateKey.fromString(restoredIdentity.privateIdentity);
   }
   /** New identity based on DID */
-  const identity = PrivateKey.fromString(self.id);
-  await self.set("UserPrivateIdentity", {
-    privateIdentity: identity.toString(),
+  console.log({ did: self.id.split(":3:")[1] });
+  const newKey = PrivateKey.fromRandom();
+  await self.set("@dCompass/userprivateidentity", {
+    _id: newKey.toString(),
+    privateIdentity: newKey.toString(),
   });
-  console.log({ identity });
-  return identity;
+  return newKey;
 };
 
 export const sign = (identity: PrivateKey, msg: string) => {
