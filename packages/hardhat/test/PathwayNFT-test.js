@@ -147,10 +147,10 @@ describe("PathwayNFT", function() {
       expect(await pathwayNFT.reviewerVotes("firstCourseProject", `${owner.address}`)).to.be.false;
 
       //await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", false, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xff");
-      await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", 200, true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", {value : "0xde0b6b3a7640000"});
+      await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", 200, true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", {value : "0xff59ee833b30000"});
       expect(await pathwayNFT.status("firstCourseProject")).to.be.equal(1);
       nativeAmtTest = await pathwayNFT.nativeRewards("firstCourseProject");
-      expect(nativeAmtTest.toString()).to.be.equal('850000000000000000');
+      expect(nativeAmtTest.toString()).to.be.equal('1000000000000000000');
       await expect(pathwayNFT.addPathwayCreationReward("firstCourseProject", "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xde0b6b3a7640000")).to.be.revertedWith("ERC20 not approved");
       
       //construct r,s, and v arrays

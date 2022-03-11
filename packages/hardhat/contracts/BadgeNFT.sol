@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./RandomNumberConsumer.sol";
 import "./Verify.sol";
 
@@ -23,18 +24,26 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     Verify verifyContract;//Verify contract instance
     address projectNFTAddress; // address for the projectNFTs
     address pathwayNFTAddress; // address for the pathwayNFTs
+    address appDiamond;//address needed for checking valid erc20Addrs per chain
     mapping (uint => string) public statusStrings;
     mapping (string => bool) public badgeMinted; // tracks if mint has been done
     mapping (string => address[]) internal contributors; //contributors to this quest
     mapping (string => string) public pathwayIdforBadge;//the pathwayId that is the parent
     mapping (string => BadgeStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes per badgeId;
+     mapping (string => uint) public votesReject;//tally of rejection votes per badgeId;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of approved voters for badgeId
     mapping (string => uint) public nativeRewards;//badge rewards in native token
     mapping (string => mapping(address => uint)) internal erc20Amounts;//badge reward Amts in other tokens
     mapping (string => bool) public nativeRefundClaimed;//badge refund claimed
     mapping (string => mapping(address => bool)) erc20RefundClaimed;//pathway erc20 refund claimed
     mapping (string => uint) public numUsersRewardPerBadge;//number of users rewarded per badge
+    mapping (string => uint) public currentNumUsersRewardPerBadgeNative;//current number of users already claimed native reward per badge
+    mapping (string => mapping ( address => uint)) public currentNumUsersRewardPerBadgeERC20;// current number of users already claimed reward per badge per ERC20 Address
+    
+    //pathwayId => ERC20Address => senderAddress => bool
+    mapping (string => mapping(address => mapping (address => bool))) userRewardedForBadgeERC20;//has user received funds for this badge in ERC20Token Address
+    mapping (string => mapping(address => bool)) public userRewardedForBadgeNative;//has user received funds for this badge in native token
     uint256 public fee = 1500; //number divided by 10000 for fee. for example 100 = 1%
 
     enum BadgeStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
@@ -114,8 +123,8 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     }
 
     function voteForRejection(string memory _badgeId, string memory _pathwayId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint256 votesNeeded) public {
-        require(status[_pathwayId] == PathwayStatus.PENDING, "badge not pending");
-        require(!reviewerVotes[_pathwayId][_msgSender()], "already voted for this badge");
+        require(status[_badgeId] == BadgeStatus.PENDING, "badge not pending");
+        require(!reviewerVotes[_badgeId][_msgSender()], "already voted for this badge");
         require(
             keccak256(abi.encodePacked(pathwayIdforBadge[_badgeId])) == keccak256(abi.encodePacked(_pathwayId)),
             "incorrect pathwayId"
@@ -147,37 +156,35 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         }
     }
 
-    function voteForRejection(string memory _badgeId, string memory _pathwayId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint256 votesNeeded) public {
-        require(status[_badgeId] == BadgeStatus.PENDING, "badge not pending");
-        require(!reviewerVotes[_badgeId][_msgSender()], "already voted for this badge");
-        require(
-            keccak256(abi.encodePacked(pathwayIdforBadge[_badgeId])) == keccak256(abi.encodePacked(_pathwayId)),
-            "incorrect pathwayId"
-        );
-        bool voteAllowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _badgeId,
-            _pathwayId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(voteAllowed, "sender is not approved pathway voter");
-        bool thresholdCheck = verifyContract.thresholdVerify(
-            _msgSender(),
-            _badgeId,
-            votesNeeded,
-            r[1],
-            s[1],
-            v[1]
-        );
-        require(thresholdCheck, "incorrect votes needed sent");
-        votesReject[_badgeId]++;
-        reviewerVotes[_badgeId][_msgSender()] = true;        
-        if(votesReject[_badgeId] >= votesNeeded){
-            status[_badgeId] = BadgeStatus.DENIED;
-            /*(bool success,) = appWallet.call{value : stakePerProject[_projectId]}("");
-            require(success, "transfer failed");*/
+    function addBadgeCreationReward(string memory _badgeId, address _ERC20Address, bool useNative, uint amount) public payable{
+        require (status[_badgeId] == BadgeStatus.PENDING, "badge not pending");
+        require (numUsersRewardPerBadge[_badgeId] > 0, "no user rewards");
+        (bool success , bytes memory data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("appWallet()"))));
+        require(success);
+        address appWallet = abi.decode(data, (address));
+        uint appPortion = (amount*fee)/10000;
+        if(useNative){
+            require(msg.value >= amount + appPortion, "not enough sent");
+            (success,) = payable(appWallet).call{value : appPortion}("");
+            require(success);
+            nativeRewards[_badgeId] += amount;
+            if(msg.value > amount + appPortion){
+                (success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion}("");
+                require(success);
+            }
+        }
+        else{
+            require(_ERC20Address != address(0));
+            (success, data) = pathwayNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("projectIdforPathway(string)")), pathwayIdforBadge[_badgeId]));
+            require(success);
+            string memory projectId = abi.decode(data, (string));
+            (success, data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("checkApprovedERC20PerProjectByChain(string,uint256,address)")), projectId, block.chainid, _ERC20Address));
+            require(success);
+            success = abi.decode(data, (bool));
+            require(success, "ERC20 not approved");
+            IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion);
+            IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount);
+            erc20Amounts[_badgeId][_ERC20Address] += amount;
         }
     }
 
@@ -220,6 +227,10 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     }
     return tokenIds;
   }
+
+  function setAppDiamond(address newAppDiamond) external onlyOwner {
+        appDiamond = newAppDiamond;
+    }
 
     function _beforeTokenTransfer(
         address from,
