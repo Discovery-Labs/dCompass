@@ -2,13 +2,14 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 import {IAdventurerNFT} from "./interfaces/IAdventurerNFT.sol";
+import {IAdventureMetadata} from "./interfaces/IAdventureMetadata.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
-abstract contract AdventurerNFT is IAdventurerNFT, ERC721URIStorage, ERC721Enumerable, Initializable {
+abstract contract AdventurerNFT is IAdventurerNFT, IAdventureMetadata, ERC721URIStorage, ERC721Enumerable, Initializable {
     using Counters for Counters.Counter;
     
     Counters.Counter private _tokenIds;
@@ -34,13 +35,17 @@ abstract contract AdventurerNFT is IAdventurerNFT, ERC721URIStorage, ERC721Enume
         objectId = objectId;
         isPathway = _isPathway;
         parentId = _parentId;
-        /*name = string(
-            abi.encodePacked("DCOMP-NFT-", _objectId)
-        );
-        symbol = string(
-            abi.encodePacked("DCOMP-NFT-",_objectId)
-        );*/
     }
+
+    function name() public override(ERC721, IAdventureMetadata) view returns(string memory){
+        string memory baseName = super.name();
+        return string(abi.encodePacked(baseName, "-", objectId));
+    }  
+
+    function symbol() public override(ERC721, IAdventureMetadata) view returns(string memory){
+        string memory baseSymbol = super.symbol();
+        return string(abi.encodePacked(baseSymbol, "-", objectId));
+    } 
 
     function _beforeTokenTransfer(
         address from,
