@@ -45,6 +45,30 @@ abstract contract AdventurerNFT is IAdventurerNFT, IAdventureMetadata, ERC721URI
     function symbol() public override(ERC721, IAdventureMetadata) view returns(string memory){
         string memory baseSymbol = super.symbol();
         return string(abi.encodePacked(baseSymbol, "-", objectId));
+    }
+
+    function mint(address _to, uint256 count) external returns (uint256 newTokenId){
+        bool success;
+        bytes memory data;
+        address senderCheck;
+        if(isPathway){
+            (success, data) = factory.call(abi.encodeWithSelector(bytes4(keccak256("pathwayNFTAddress()"))));
+            require(success);
+            senderCheck = abi.decode(data, (address));
+        }
+        else{
+            (success, data) = factory.call(abi.encodeWithSelector(bytes4(keccak256("badgeNFTAddress()"))));
+            require(success);
+            senderCheck = abi.decode(data, (address));
+        }
+        require(msg.sender == senderCheck, "AdventurerNFT : incorrect mint address");
+
+        //just in case different "versions" of pathways or quests drop without a new NFT
+        require(balanceOf(_to) + 1 == count, "AdventureNFT : not allowed to mint again");
+        _tokenIds.increment();
+        newTokenId = _tokenIds.current();
+        _mint(_to, newTokenId);
+        //tokenURI?
     } 
 
     function _beforeTokenTransfer(
