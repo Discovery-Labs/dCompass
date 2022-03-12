@@ -25,6 +25,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     address projectNFTAddress; // address for the projectNFTs
     address pathwayNFTAddress; // address for the pathwayNFTs
     address appDiamond;//address needed for checking valid erc20Addrs per chain
+    address adventureFactory;//address of the adventure factory
     mapping (uint => string) public statusStrings;
     mapping (string => bool) public badgeMinted; // tracks if mint has been done
     mapping (string => address[]) internal contributors; //contributors to this quest
@@ -40,7 +41,8 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (string => uint) public numUsersRewardPerBadge;//number of users rewarded per badge
     mapping (string => uint) public currentNumUsersRewardPerBadgeNative;//current number of users already claimed native reward per badge
     mapping (string => mapping ( address => uint)) public currentNumUsersRewardPerBadgeERC20;// current number of users already claimed reward per badge per ERC20 Address
-    
+    mapping (string => address) public adventurerAddress;//address of adventurer NFT
+
     //pathwayId => ERC20Address => senderAddress => bool
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForBadgeERC20;//has user received funds for this badge in ERC20Token Address
     mapping (string => mapping(address => bool)) public userRewardedForBadgeNative;//has user received funds for this badge in native token
@@ -210,34 +212,82 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         }
     }
 
-    function createToken(string memory _tokenURI, string memory _badgeId, string memory _projectId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint votesNeeded) public returns(uint[] memory){
+    function createToken(
+        string memory _tokenURI,
+        string memory _badgeId,
+        string memory _pathwayId,
+        bytes32[2] memory r,
+        bytes32[2] memory s,
+        uint8[2] memory v,
+        uint256 votesNeeded
+    ) public returns (uint256[] memory) {
         require(!badgeMinted[_badgeId], "already minted");
-        require(vrfContract.blockNumberResults(_badgeId) > 0, "no request yet");
-        bool mintAllowed = verifyContract.metaDataVerify(_msgSender(), _badgeId, _projectId, r[0], s[0], v[0]);
-        require(mintAllowed, "sender is not approved project minter");
-        if(status[_badgeId]==BadgeStatus.PENDING){
+        bool allowed = verifyContract.metaDataVerify(
+            _msgSender(),
+            _badgeId,
+            _pathwayId,
+            r[0],
+            s[0],
+            v[0]
+        );
+        require(allowed, "sender is not approved pathway minter");
+        if (status[_badgeId] == BadgeStatus.PENDING) {
             require(votesNeeded <= votes[_badgeId], "not enough votes");
-            bool thresholdCheck = verifyContract.thresholdVerify(_msgSender(), _badgeId, votesNeeded, r[1], s[1], v[1]);
-            require(thresholdCheck, "incorrect votes needed sent");
+            allowed = verifyContract.thresholdVerify(
+                _msgSender(),
+                _badgeId,
+                votesNeeded,
+                r[1],
+                s[1],
+                v[1]
+            );
+            require(allowed, "incorrect votes needed sent");
             status[_badgeId] = BadgeStatus.APPROVED;
         }
-        require(status[_badgeId] == BadgeStatus.APPROVED, "can only mint badges in approved status");        
+        require(
+            status[_badgeId] == BadgeStatus.APPROVED,
+            "can only mint for badges in approved status"
+        );
+
+        //TODO : this can later be made a require instead of if statement?
+        bytes memory data;
+        (allowed, data) = pathwayNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("projectIdforPathway(string)")), pathwayIdforBadge[_badgeId]));
+        require(allowed);
+        string memory _projectId = abi.decode(data, (string));
+
+        (allowed, data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("projectDiamondAddrs(string)")), _projectId));
+        require(allowed);
+        //address projectDiamond = abi.decode(data, (address));
+        /*if(projectDiamond != address(0)){
+            (allowed, data) = projectDiamond.call(abi.encodeWithSelector(bytes4(keccak256("addPathwayId(string)")), _pathwayId));
+            require(allowed);
+        }*/
 
         //batch minting
-        uint256[] memory newItems = new uint256[](contributors[_badgeId].length);
+        
+        uint256[] memory newItems = new uint256[](
+            contributors[_badgeId].length
+        );
         uint256 newItemId;
+        
+        for (uint256 i = 0; i < contributors[_badgeId].length; i++) {
+            _tokenIds.increment();
+            newItemId = _tokenIds.current();
 
-        for(uint i =0; i< contributors[_badgeId].length; i++){
-        _tokenIds.increment();
-        newItemId = _tokenIds.current();
-        
-        _mint(contributors[_badgeId][i], newItemId);
-        _setTokenURI(newItemId, _tokenURI);
-        
-        emit NFTBadgeMinted(contributors[_badgeId][i], _tokenURI, _badgeId);
+            _mint(contributors[_badgeId][i], newItemId);
+            _setTokenURI(newItemId, _tokenURI);
+
+            emit NFTBadgeMinted(
+                contributors[_badgeId][i],
+                _tokenURI,
+                _pathwayId
+            );
         }
+        
+        _createAdventurerNFT(_badgeId, _pathwayId);
+
         badgeMinted[_badgeId] = true;
-        return newItems;    
+        return newItems;
     }
 
     function walletOfOwner(address _owner) public view returns (uint256[] memory)
@@ -250,8 +300,21 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     return tokenIds;
   }
 
-  function setAppDiamond(address newAppDiamond) external onlyOwner {
+  function _createAdventurerNFT(string memory _badgeId, string memory _pathwayId) internal {
+      (bool success , bytes memory data) = adventureFactory.call(abi.encodeWithSelector(bytes4(
+          keccak256("createNFTToken(string,bool,string)")
+      ), _badgeId, false, _pathwayId));
+      require(success);
+      address newTokenAddr = abi.decode(data, (address));
+      adventurerAddress[_badgeId] = newTokenAddr;
+  }
+
+    function setAppDiamond(address newAppDiamond) external onlyOwner {
         appDiamond = newAppDiamond;
+    }
+
+    function setAdventureFactory(address newFactory) external onlyOwner {
+        adventureFactory = newFactory;
     }
 
     function _beforeTokenTransfer(
