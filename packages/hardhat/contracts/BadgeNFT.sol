@@ -188,6 +188,28 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         }
     }
 
+    function claimRejectionRefund(string memory _badgeId, bool native, address _ERC20Address) external {
+        require(status[_badgeId] == BadgeStatus.DENIED, "incorrect badge status");
+        (bool success, bytes memory data) = pathwayNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("projectIdforPathway(string)")), pathwayIdforBadge[_badgeId]));
+        require(success);
+        string memory _projectId = abi.decode(data, (string));
+        (success, data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("projectWallets(string)")), _projectId));
+        require(success);
+        address refundWallet = abi.decode(data, (address));
+        require(refundWallet != address(0));
+        if(native){
+            require(!nativeRefundClaimed[_badgeId], "native reward already claimed");
+            (success,) = payable(refundWallet).call{value : nativeRewards[_badgeId]}("");
+            require(success);
+            nativeRefundClaimed[_badgeId] = true;
+        }
+        else{
+            require(!erc20RefundClaimed[_badgeId][_ERC20Address], "erc20 reward already claimed");
+            IERC20(_ERC20Address).transfer(refundWallet, erc20Amounts[_badgeId][_ERC20Address]);
+            erc20RefundClaimed[_badgeId][_ERC20Address] = true;
+        }
+    }
+
     function createToken(string memory _tokenURI, string memory _badgeId, string memory _projectId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint votesNeeded) public returns(uint[] memory){
         require(!badgeMinted[_badgeId], "already minted");
         require(vrfContract.blockNumberResults(_badgeId) > 0, "no request yet");
