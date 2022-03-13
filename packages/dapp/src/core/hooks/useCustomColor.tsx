@@ -34,6 +34,11 @@ function useCustomColor() {
     colors.neutralDarkest
   );
 
+  const getBorderColor = useColorModeValue(
+    colors.borderDark,
+    colors.borderLight
+  );
+
   return {
     getPrimaryColor,
     getOverBgColor,
@@ -43,6 +48,7 @@ function useCustomColor() {
     codeEditorScheme,
     getTextColor,
     getBgColor,
+    getBorderColor,
   };
 }
 
