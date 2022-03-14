@@ -2,6 +2,7 @@ import React, { useCallback, useContext } from 'react';
 import styled, { BaseThemedCssFunction, ThemeContext } from 'styled-components';
 import SkillCountSubtitle from './SkillCountSubtitle';
 import { SkillTheme } from '../theme';
+import Tippy from '@tippy.js/react';
 
 const css: BaseThemedCssFunction<SkillTheme> = require('styled-components').css;
 
@@ -47,21 +48,27 @@ function SkillTreeHeader(props: Props) {
   );
 
   return (
-    <StyledSkillTreeHeader
-      tabIndex={0}
-      onKeyDown={memoizedHandleKeyDown}
-      onPointerDown={handleClick}
-      isCollapsible={collapsible}
-      isDisabled={disabled}
+    <StyledTippy
+      zIndex={tooltipZIndex}
+      enabled={Boolean(description)}
+      content={description || ''}
     >
-      <div style={{ position: 'relative' }}>
-        <HeaderCaret isCollapsible={collapsible} isVisible={isVisible}>
-          ▲
-        </HeaderCaret>
-        <SkillTreeTitle id={id}>{title}</SkillTreeTitle>
-      </div>
-      <SkillCountSubtitle />
-    </StyledSkillTreeHeader>
+      <StyledSkillTreeHeader
+        tabIndex={0}
+        onKeyDown={memoizedHandleKeyDown}
+        onPointerDown={handleClick}
+        isCollapsible={collapsible}
+        isDisabled={disabled}
+      >
+        <div style={{ position: 'relative' }}>
+          <HeaderCaret isCollapsible={collapsible} isVisible={isVisible}>
+            ▲
+          </HeaderCaret>
+          <SkillTreeTitle id={id}>{title}</SkillTreeTitle>
+        </div>
+        <SkillCountSubtitle />
+      </StyledSkillTreeHeader>
+    </StyledTippy>
   );
 }
 
@@ -107,7 +114,16 @@ const HeaderCaret = styled.span<HeaderCaretProps>`
     `}
 `;
 
+const StyledTippy = styled(Tippy)`
+  background: ${({ theme }) => theme.tooltipBackgroundColor};
+  color: ${({ theme }) => theme.tooltipFontColor};
 
+  &[data-placement^='top'] {
+    .tippy-arrow {
+      border-top-color: ${({ theme }) => theme.tooltipBackgroundColor};
+    }
+  }
+`;
 
 const SkillTreeTitle = styled.h2`
   font-family: ${({ theme }) => theme.headingFont};
