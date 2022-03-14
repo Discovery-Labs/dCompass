@@ -71,6 +71,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
+  const badge = await deploy("BadgeNFT", {
+    from: DEPLOYER_PRIVATE_KEY,
+    args: [vrf.address, project.address, pathway.address, verify.address],
+    log: true,
+  });
+  
   const sponsorSFT = await deploy("SponsorPassSFT", {
     from: DEPLOYER_PRIVATE_KEY,
     args: [
@@ -92,6 +98,18 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
+  const adventurerNFTImpl = await deploy("AdventurerNFT", {
+    from: DEPLOYER_PRIVATE_KEY,
+    args: [],
+    log: true,
+  });
+
+  const adventurerNFTFactory = await deploy("AdventurerBadgeFactory", {
+    from: DEPLOYER_PRIVATE_KEY,
+    args: [adventurerNFTImpl.address, project.address, pathway.address, badge.address, appDiamond.address],
+    log: true,
+  });
+
   await deployments.execute(
     "ProjectNFT",
     { from: DEPLOYER_PRIVATE_KEY },
@@ -109,6 +127,18 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     { from: DEPLOYER_PRIVATE_KEY },
     "setAppDiamond",
     appDiamond.address
+  );
+  await deployments.execute(
+    "BadgeNFT",
+    { from: DEPLOYER_PRIVATE_KEY },
+    "setAppDiamond",
+    appDiamond.address
+  );
+  await deployments.execute(
+    "BadgeNFT",
+    { from: DEPLOYER_PRIVATE_KEY },
+    "setAdventureFactory",
+    adventurerNFTFactory.address
   );
 
   const chainIds = CHAIN_IDS || "1, 4, 42, 137, 80001";
