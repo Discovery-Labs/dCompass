@@ -1,13 +1,15 @@
+import { Avatar, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import {
-  SkillTreeGroup,
-  SkillTree,
-  SkillProvider,
-  SkillType,
   SkillGroupDataType,
+  SkillProvider,
   SkillThemeType,
+  SkillTree,
+  SkillTreeGroup,
+  SkillType,
 } from "@discovery-dao/tree";
+import { Web3Context } from "contexts/Web3Provider";
 import useCustomColor from "core/hooks/useCustomColor";
-import { Heading } from "@chakra-ui/react";
+import { useContext, useEffect, useState } from "react";
 
 const gitcoinPath: SkillType[] = [
   {
@@ -56,7 +58,40 @@ const gitcoinPath: SkillType[] = [
   },
 ];
 
+type BadgeObject = {
+  contract: {
+    address: string;
+  };
+  id: {
+    tokenId: string;
+    tokenMetadata: {
+      tokenType: string;
+    };
+  };
+  balance: string;
+  title: string;
+  description: string;
+  tokenUri: {
+    gateway: string;
+  };
+  media: Array<{
+    gateway: string;
+  }>;
+  metadata: {
+    name: string;
+    description: string;
+    image: string;
+  };
+};
+
+type BadgesData = {
+  ownedNfts: Array<BadgeObject>;
+  totalCount: number;
+};
+
 function Profile() {
+  const [badges, setBadges] = useState<BadgesData>();
+  const { account } = useContext(Web3Context);
   const { getOverBgColor, getBorderColor, getPrimaryColor, getTextColor } =
     useCustomColor();
 
@@ -64,40 +99,51 @@ function Profile() {
     border: `2px solid ${getBorderColor}`,
     borderRadius: "8px",
     nodeBackgroundColor: getOverBgColor,
-    // backgroundColor: "",
-    // primaryFont: "",
     primaryFontColor: getTextColor,
     treeBackgroundColor: getOverBgColor,
     nodeBorderColor: getBorderColor,
-    // disabledTreeOpacity: 1,
     edgeBorder: `1px solid ${getBorderColor}`,
-    // headingFont: "",
-    // headingFontColor: "",
-    // headingFontSize: "",
-    // headingHoverColor: "",
-    // headingHoverColorTransition: "",
-    // tooltipBackgroundColor: "",
-    // tooltipFontColor: "",
-    // tooltipZIndex: 0,
-    // nodeAlternativeFontColor: "",
-    // nodeAltenativeActiveFontColor: "",
     nodeOverlayColor: getPrimaryColor,
-    // nodeAlternativeActiveBackgroundColor: "",
-    // nodeActiveBackgroundColor: "",
     nodeHoverBorder: "2px solid",
-    // nodeHoverBorderColor: "",
-    // nodeIconWidth: "",
-    // nodeMobileTextNodeHeight: "",
-    // nodeMobileTextNodeWidth: "",
-    // nodeMobileFontSize: "",
-    // nodeDesktopTextNodeHeight: "",
-    // nodeDesktopTextNodeWidth: "",
-    // nodeDesktopFontSize: "",
   };
+
+  const fetchBadgesBody = {
+    ownerAddr: account || "",
+    contractAddr: "0xc718EBf4A7B5eE42a5D0c152e5303fEe25C066AC",
+  };
+
+  const getBadges = async () => {
+    const badgesResponse = await fetch(`/api/user-badges`, {
+      method: "POST",
+      body: JSON.stringify(fetchBadgesBody),
+    });
+    const badgesData = await badgesResponse.json();
+    setBadges(badgesData);
+    console.log("badges", badges);
+  };
+
+  useEffect(() => {
+    getBadges();
+  }, []);
 
   return (
     <div>
-      Profile
+      <Heading>Badges</Heading>
+      <HStack py="4">
+        {badges &&
+          badges.totalCount !== 0 &&
+          badges.ownedNfts.map((badge) => (
+            <VStack key={badge.id.tokenId}>
+              <Avatar
+                size="lg"
+                name={badge.title}
+                src={badge.media[0].gateway}
+              />
+              <Text>{badge.title}</Text>
+            </VStack>
+          ))}
+        {!badges && <Text>Loading badges...</Text>}
+      </HStack>
       <Heading>Skill Tree</Heading>
       <SkillProvider>
         <SkillTreeGroup theme={treeTheme}>
