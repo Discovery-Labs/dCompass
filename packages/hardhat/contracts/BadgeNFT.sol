@@ -337,7 +337,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             userRewardedForBadgeERC20[_badgeId][_ERC20Address][_msgSender()] = true;
             currentNumUsersRewardPerBadgeERC20[_badgeId][_ERC20Address]++;
         }
-
+        _mintAdventurerBadge(_msgSender(), _badgeId);
     }
 
     function walletOfOwner(address _owner) public view returns (uint256[] memory)
@@ -348,6 +348,18 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
       tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
     }
     return tokenIds;
+  }
+
+  function _mintAdventurerBadge(address _to, string memory _badgeId) internal {
+      address adventurerBadgeAddress = adventurerAddress[_badgeId];
+      require(adventurerBadgeAddress != address(0), "invalid badge address");
+      (bool success, bytes memory data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("balanceOf(address)")), _msgSender()));
+      require(success);
+      uint256 balance = abi.decode(data, (uint256));
+      if(balance == 0){
+          (success, data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("mint(address,uint256)")), _msgSender(), 1));
+          require(success);
+      }
   }
 
   function _createAdventurerNFT(string memory _badgeId, string memory _pathwayId) internal {
