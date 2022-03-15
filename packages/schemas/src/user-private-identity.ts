@@ -9,5 +9,8 @@ export const UserPrivateIdentitySchema = {
     privateIdentity: {
       type: "string",
     },
+    token: {
+      type: "string",
+    },
   },
 };

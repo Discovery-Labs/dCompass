@@ -39,7 +39,7 @@ const createModels = async () => {
   console.log({ threadDBClient });
   // TODO: db versionning
   const dCompassThreadId = await createDB(threadDBClient);
-
+  console.log({ dCompassThreadId });
   // TODO: Create tags
 
   // Connect to the testnet local Ceramic node

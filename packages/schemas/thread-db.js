@@ -68,8 +68,8 @@ function getIdentity(key) {
 
 async function getAuthorizedDevClient(identity) {
   const auth = {
-    key: process.env.THREAD_DB_KEY,
-    secret: process.env.THREAD_DB_SECRET,
+    key: process.env.THREAD_DB_USER_GROUP_KEY,
+    secret: process.env.THREAD_DB_USER_GROUP_SECRET,
   };
   const client = await Client.withKeyInfo(auth);
   await client.getToken(identity);

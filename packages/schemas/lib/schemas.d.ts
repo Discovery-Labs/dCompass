@@ -11,6 +11,9 @@ export declare const schemas: {
                 privateIdentity: {
                     type: string;
                 };
+                token: {
+                    type: string;
+                };
             };
         };
         AppProjects: {

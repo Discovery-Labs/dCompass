@@ -1,4 +1,4 @@
-/* eslint-disable import/prefer-default-export */
+import { Client } from "@textile/hub";
 export type State = {
   loading: boolean;
   account: null | string;
@@ -7,6 +7,7 @@ export type State = {
   core: null | any;
   identityLink: null | any;
   privateIdentity: null | any;
+  authorizedClient: null | Client;
   contracts: null | any;
   isReviewer: boolean;
   connectWeb3?: any;

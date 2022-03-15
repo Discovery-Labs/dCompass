@@ -5,6 +5,7 @@ import {
   DBInfo,
   ThreadID,
   UserAuth,
+  createAPISig,
 } from "@textile/hub";
 
 export const getIdentity = (key?: string) => {
@@ -17,19 +18,29 @@ export const getIdentity = (key?: string) => {
 
 export const getPrivateIdentity = async (self: any) => {
   const restoredIdentity = await self.get("@dCompass/userprivateidentity");
-  console.log("pvId", { restoredIdentity, did: self.id });
   if (restoredIdentity?.privateIdentity) {
     /** Convert the cached identity string to a PrivateKey and return */
     return PrivateKey.fromString(restoredIdentity.privateIdentity);
   }
   /** New identity based on DID */
-  console.log({ did: self.id.split(":3:")[1] });
   const newKey = PrivateKey.fromRandom();
   await self.set("@dCompass/userprivateidentity", {
-    _id: newKey.toString(),
+    _id: self.id,
     privateIdentity: newKey.toString(),
   });
   return newKey;
+};
+
+export const getDBClient = async (auth: UserAuth) => {
+  if (!process.env.NEXT_PUBLIC_THREAD_DB_IDENTITY_KEY) {
+    throw new Error(
+      "Missing environment variable NEXT_PUBLIC_THREAD_DB_IDENTITY_KEY"
+    );
+  }
+  const client = Client.withUserAuth(auth);
+  const identity = getIdentity(process.env.NEXT_PUBLIC_THREAD_DB_IDENTITY_KEY);
+  await client.getToken(identity);
+  return client;
 };
 
 export const sign = (identity: PrivateKey, msg: string) => {
@@ -45,7 +56,31 @@ export const getUserThreadClient = (auth: UserAuth, did: string) => {
   return client;
 };
 
+export const getAuthorizedUserClient = async (identity: Identity) => {
+  // Check for user group keys
+  if (!process.env.THREAD_DB_USER_GROUP_KEY) {
+    throw new Error("Environment variables THREAD_DB_USER_GROUP_KEY missing.");
+  }
+
+  // TODO: Call api
+  const apiSig = await getAPISig();
+
+  if (!apiSig) {
+    throw new Error("Error API signature");
+  }
+
+  const userAuth = {
+    ...apiSig,
+    key: process.env.THREAD_DB_USER_GROUP_KEY,
+  } as UserAuth;
+
+  const client = Client.withUserAuth(userAuth);
+  await client.getToken(identity);
+  return client;
+};
+
 export const getAuthorizedDevClient = async (identity: Identity) => {
+  // Check for user group keys
   if (!process.env.THREAD_DB_KEY || !process.env.THREAD_DB_SECRET) {
     throw new Error(
       "Environment variables THREAD_DB_KEY & THREAD_DB_SECRET missing."
@@ -60,6 +95,18 @@ export const getAuthorizedDevClient = async (identity: Identity) => {
   return client;
 };
 
+export const getAPISig = async (seconds = 300) => {
+  // Check for user group secret
+  if (!process.env.THREAD_DB_USER_GROUP_SECRET) {
+    throw new Error("Environment variables THREAD_DB_USER_GROUP_KEY missing.");
+  }
+  const expiration = new Date(Date.now() + 1000 * seconds);
+  return await createAPISig(
+    process.env.THREAD_DB_USER_GROUP_SECRET,
+    expiration
+  );
+};
+
 export const newToken = async (client: Client, user: PrivateKey) => {
   const token = await client.getToken(user);
   return token;
@@ -68,6 +115,27 @@ export const newToken = async (client: Client, user: PrivateKey) => {
 export const createDB = async (client: Client) => {
   const thread: ThreadID = await client.newDB();
   return thread;
+};
+
+/**
+ * newClientDB creates a Client (remote DB) connection to the Hub
+ *
+ * A Hub connection is required to use the getToken API
+ */
+export const newClientDB = async () => {
+  // Check for user group keys
+  if (!process.env.THREAD_DB_USER_GROUP_KEY) {
+    throw new Error("Environment variables THREAD_DB_USER_GROUP_KEY missing.");
+  }
+  const API = process.env.API || undefined;
+  const db = await Client.withKeyInfo(
+    {
+      key: process.env.THREAD_DB_USER_GROUP_KEY,
+      secret: process.env.USER_API_SECRET,
+    },
+    API
+  );
+  return db;
 };
 
 // TODO: Invite users to the same thread
