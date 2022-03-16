@@ -224,10 +224,28 @@ const Web3Provider = ({ children }: { children: any }) => {
           abis[strChainId][network.name].contracts.SponsorPassSFT.abi,
           signer
         );
+        const AppDiamond = new ethers.Contract(
+          abis[strChainId][network.name].contracts.AppDiamond.address,
+          abis[strChainId][network.name].contracts.AppDiamond.abi,
+          signer
+        );
+        const BadgeNFT = new ethers.Contract(
+          abis[strChainId][network.name].contracts.BadgeNFT.address,
+          abis[strChainId][network.name].contracts.BadgeNFT.abi,
+          signer
+        );
+        const AdventurerNFT = new ethers.Contract(
+          abis[strChainId][network.name].contracts.AdventurerNFT.address,
+          abis[strChainId][network.name].contracts.AdventurerNFT.abi,
+          signer
+        );
         setContracts({
           projectNFTContract,
           pathwayNFTContract,
           SponsorPassSFT,
+          AppDiamond,
+          BadgeNFT,
+          AdventurerNFT,
         });
         const isValidReviewer = await projectNFTContract.reviewers(
           connectedAccount
