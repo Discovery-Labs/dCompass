@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client";
-import { Button, Flex, Stack } from "@chakra-ui/react";
+import { Button, Flex, Stack, Link } from "@chakra-ui/react";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useTranslation } from "next-i18next";
@@ -20,6 +21,8 @@ import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
 import { isAddress } from "ethers/lib/utils";
+import NextLink from "next/link";
+import useCustomColor from "core/hooks/useCustomColor";
 
 const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
@@ -36,6 +39,7 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
+  const { getPrimaryColor, getTextColor } = useCustomColor();
   const { t } = useTranslation("common");
   const router = useRouter();
   const { self } = useContext(Web3Context);
@@ -249,6 +253,16 @@ function CreateProjectStepper() {
       <FormProvider {...methods}>
         <CenteredFrame>
           <Card h="full" w={activeStep === 2 ? "fit-content" : "2xl"}>
+            <NextLink href={"/"} passHref>
+              <Link
+                textStyle={"small"}
+                color={getTextColor}
+                _hover={{ color: getPrimaryColor, textDecoration: "none" }}
+              >
+                <ChevronLeftIcon w={6} h={6} />
+                Back to projects
+              </Link>
+            </NextLink>
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
               <Steps
                 w="full"

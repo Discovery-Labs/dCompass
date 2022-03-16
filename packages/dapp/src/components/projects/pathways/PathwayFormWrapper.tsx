@@ -1,6 +1,8 @@
 import { useMutation } from "@apollo/client";
-import { Heading, Button, Flex, useToast } from "@chakra-ui/react";
+import { Heading, Button, Flex, useToast, Link } from "@chakra-ui/react";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { useWeb3React } from "@web3-react/core";
+import useCustomColor from "core/hooks/useCustomColor";
 import { Contract, ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useContext } from "react";
@@ -18,6 +20,7 @@ const pathwaysDefaultValues = {
 };
 
 function PathwayFormWrapper() {
+  const { getPrimaryColor, getTextColor } = useCustomColor();
   const toast = useToast();
   const router = useRouter();
   const { library, chainId } = useWeb3React();
@@ -238,6 +241,15 @@ function PathwayFormWrapper() {
 
   return (
     <>
+      <Link
+        textStyle={"small"}
+        color={getTextColor}
+        _hover={{ color: getPrimaryColor, textDecoration: "none" }}
+        onClick={() => router.back()}
+      >
+        <ChevronLeftIcon w={6} h={6} />
+        Back to Project
+      </Link>
       <Heading>Add Pathway</Heading>
       <PathwayForm />
 
