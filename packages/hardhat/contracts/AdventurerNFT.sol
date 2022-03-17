@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
-abstract contract AdventurerNFT is IAdventurerNFT, IAdventureMetadata, ERC721URIStorage, ERC721Enumerable, Initializable {
+contract AdventurerNFT is IAdventurerNFT, IAdventureMetadata, ERC721URIStorage, ERC721Enumerable, Initializable {
     using Counters for Counters.Counter;
     
     Counters.Counter private _tokenIds;

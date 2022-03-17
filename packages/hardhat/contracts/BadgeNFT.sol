@@ -290,19 +290,21 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         return newItems;
     }
 
-    function claimBadgeRewards(string memory _badgeId, bool native, address _ERC20Address, bytes32 r, bytes32 s, uint8 v) external {
+    function claimBadgeRewards(string memory _badgeId, bool native, address _ERC20Address, bytes32 r, bytes32 s, uint8 v, bool claimReward) external {
         uint amount;
-        if(native){
-            require(!userRewardedForBadgeNative[_badgeId][_msgSender()]);
-            require(currentNumUsersRewardPerBadgeNative[_badgeId] < numUsersRewardPerBadge[_badgeId]);
-            amount = nativeRewards[_badgeId] / numUsersRewardPerBadge[_badgeId];
-            require(amount > 0);
-        }
-        else{
-            require(!userRewardedForBadgeERC20[_badgeId][_ERC20Address][_msgSender()]);
-            require(currentNumUsersRewardPerBadgeERC20[_badgeId][_ERC20Address] < numUsersRewardPerBadge[_badgeId]);
-            amount = erc20Amounts[_badgeId][_ERC20Address] / numUsersRewardPerBadge[_badgeId];
-            require(amount > 0);
+        if(claimReward){
+            if(native){
+                require(!userRewardedForBadgeNative[_badgeId][_msgSender()]);
+                require(currentNumUsersRewardPerBadgeNative[_badgeId] < numUsersRewardPerBadge[_badgeId]);
+                amount = nativeRewards[_badgeId] / numUsersRewardPerBadge[_badgeId];
+                require(amount > 0);
+            }
+            else{
+                require(!userRewardedForBadgeERC20[_badgeId][_ERC20Address][_msgSender()]);
+                require(currentNumUsersRewardPerBadgeERC20[_badgeId][_ERC20Address] < numUsersRewardPerBadge[_badgeId]);
+                amount = erc20Amounts[_badgeId][_ERC20Address] / numUsersRewardPerBadge[_badgeId];
+                require(amount > 0);
+            }
         }
         bytes32 hashRecover = keccak256(
             abi.encodePacked(
@@ -326,16 +328,18 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             r,
             s
         ), "Incorrect signer");
-        if(native){
-            (success, ) = payable(_msgSender()).call{value : amount}("");
-            require(success);
-            userRewardedForBadgeNative[_badgeId][_msgSender()] = true;
-            currentNumUsersRewardPerBadgeNative[_badgeId]++;
-        }
-        else{
-            IERC20(_ERC20Address).transfer(_msgSender(), amount);
-            userRewardedForBadgeERC20[_badgeId][_ERC20Address][_msgSender()] = true;
-            currentNumUsersRewardPerBadgeERC20[_badgeId][_ERC20Address]++;
+        if(claimReward){
+            if(native){
+                (success, ) = payable(_msgSender()).call{value : amount}("");
+                require(success);
+                userRewardedForBadgeNative[_badgeId][_msgSender()] = true;
+                currentNumUsersRewardPerBadgeNative[_badgeId]++;
+            }
+            else{
+                IERC20(_ERC20Address).transfer(_msgSender(), amount);
+                userRewardedForBadgeERC20[_badgeId][_ERC20Address][_msgSender()] = true;
+                currentNumUsersRewardPerBadgeERC20[_badgeId][_ERC20Address]++;
+            }
         }
         _mintAdventurerBadge(_msgSender(), _badgeId);
     }
