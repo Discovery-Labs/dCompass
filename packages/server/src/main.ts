@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 // import { sessionMiddleware } from './core/resources/Redis/redis';
 import { Context } from './core/utils/types';
+import { ThreadID } from '@textile/hub';
 import { NextFunction } from 'express';
 import {
   BadRequestException,
@@ -22,6 +23,7 @@ import {
   ceramicCoreFactory,
   ceramicDataModelFactory,
 } from './services/ceramic/data-models';
+import { getDBClient } from './core/resources/ThreadDB/thread-db';
 
 const {
   api: { protocol, hostname, port, corsOptions },
@@ -41,6 +43,13 @@ async function bootstrap() {
 
   const ceramicClient = await ceramicDataModelFactory();
 
+  const dbClient = await getDBClient();
+  const appThreads = await dbClient.listThreads();
+  const latestThreadId = ThreadID.fromString(
+    appThreads[appThreads.length - 1].id,
+  );
+  const ceramicCore = ceramicCoreFactory();
+
   // app.use(cookieParser(sessionOptions.secret));
   // app.use(sessionMiddleware);
   /* Cookie & Session cleaner */
@@ -53,7 +62,9 @@ async function bootstrap() {
 
   app.use((req: Context['req'], _res: Context['res'], next: NextFunction) => {
     req.ceramicClient = ceramicClient;
-    req.ceramicCore = ceramicCoreFactory();
+    req.dbClient = dbClient;
+    req.latestThreadId = latestThreadId;
+    req.ceramicCore = ceramicCore;
     next();
   });
 

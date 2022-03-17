@@ -1,14 +1,13 @@
 import ABIS from "@discovery-dao/hardhat/abis.json";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
+// import { Client, ThreadID, Where } from "@textile/hub";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
-import { Client, UserAuth } from "@textile/hub";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 // import Authereum from "authereum";
 import { ethers } from "ethers";
-import { identity } from "lodash";
 import { useReducer, useEffect, useCallback, useMemo } from "react";
 import Web3Modal from "web3modal";
 
@@ -18,12 +17,13 @@ import { NETWORK_URLS } from "../core/connectors";
 import { ALL_SUPPORTED_CHAIN_IDS } from "../core/connectors/chains";
 import { useActiveWeb3React } from "../core/hooks/web3";
 import NETWORKS from "../core/networks";
-import {
-  getAuthorizedUserClient,
-  getDBClient,
-  getPrivateIdentity,
-  sign,
-} from "../core/thread-db/thread-db";
+// import {
+//   getAuthorizedUserClient,
+//   getDBClient,
+//   getIdentity,
+//   getPrivateIdentity,
+//   sign,
+// } from "../core/thread-db/thread-db";
 
 import { initialState, Web3Context } from "./Web3Context";
 import { Web3Reducer } from "./Web3Reducer";
@@ -115,19 +115,19 @@ const Web3Provider = ({ children }: { children: any }) => {
     });
   };
 
-  const setPrivateIdentity = (identity: null | any) => {
-    dispatch({
-      type: "SET_PRIVATE_IDENTITY",
-      payload: identity,
-    });
-  };
+  // const setPrivateIdentity = (identity: null | any) => {
+  //   dispatch({
+  //     type: "SET_PRIVATE_IDENTITY",
+  //     payload: identity,
+  //   });
+  // };
 
-  const setThreadDBAuthorizedClient = (client: null | Client) => {
-    dispatch({
-      type: "SET_THREAD_DB_AUTHORIZED_CLIENT",
-      payload: client,
-    });
-  };
+  // const setThreadDBAuthorizedClient = (client: null | Client) => {
+  //   dispatch({
+  //     type: "SET_THREAD_DB_AUTHORIZED_CLIENT",
+  //     payload: client,
+  //   });
+  // };
 
   useEffect(() => {
     const coreCeramic = ceramicCoreFactory();
@@ -190,28 +190,64 @@ const Web3Provider = ({ children }: { children: any }) => {
             "https://verifications-clay.3boxlabs.com"
         );
         setIdentityLink(identityLinkService);
-        const threadDBIdentity = await getPrivateIdentity(mySelf);
-        setPrivateIdentity(threadDBIdentity);
+        // const threadDBIdentity = await getPrivateIdentity(mySelf);
+        // setPrivateIdentity(threadDBIdentity);
 
-        const authResult = await fetch("http://localhost:5000/token", {
-          method: "POST",
-          body: JSON.stringify({
-            privateIdentity: threadDBIdentity.toString(),
-          }),
-          headers: {
-            "Content-Type": "Application/json",
-          },
-        });
+        // const authResult = await fetch("http://localhost:5000/token", {
+        //   method: "POST",
+        //   body: JSON.stringify({
+        //     privateIdentity: threadDBIdentity.toString(),
+        //   }),
+        //   headers: {
+        //     "Content-Type": "Application/json",
+        //   },
+        // });
 
-        const { userAuth } = await authResult.json();
+        // const { userAuth } = await authResult.json();
 
-        console.log({ userAuth });
+        // const appIdentity = getIdentity(
+        //   process.env.NEXT_PUBLIC_THREAD_DB_IDENTITY_KEY
+        // );
+        // const dbAppClient = await getDBClient(userAuth, appIdentity);
+        // const appThreads = await dbAppClient.listThreads();
+        // const latestThreadId = ThreadID.fromString(
+        //   appThreads[appThreads.length - 3].id
+        // );
+        // const collections = await dbAppClient.listCollections(latestThreadId);
+        // const projectCollection = collections.find(
+        //   (collection) => collection.name === "Project"
+        // );
+        // if (!projectCollection) {
+        //   throw new Error("Collection not found");
+        // }
+        // const projectName = "dCompass first test";
+        // const newProject = await dbAppClient.create(latestThreadId, "Project", [
+        //   {
+        //     name: projectName,
+        //     description: "An awesome project",
+        //   },
+        // ]);
 
-        const dbClient = await getDBClient(userAuth);
+        // const query = new Where("name").eq(projectName);
+        // const foundProject = await dbAppClient.find(
+        //   latestThreadId,
+        //   "Project",
+        //   query
+        // );
+        // console.log({ foundProject });
+        // setThreadDBAuthorizedClient(dbAppClient);
 
-        const userDBs = await dbClient.listDBs();
-        const userThreads = await dbClient.listThreads();
-        console.log({ userDBs, userThreads });
+        // const dbClient = await getDBClient(userAuth, threadDBIdentity);
+        // const currentDBInfos = await dbClient.getDBInfo(
+        //   ThreadID.fromString(latestThreadId)
+        // );
+        // const dbClientWithJoinedInfos = await dbClient.joinFromInfo(
+        //   currentDBInfos
+        // );
+        // console.log({ dbClientWithJoinedInfos });
+        // const userDBs = await dbClient.listDBs();
+        // const userThreads = await dbClient.listThreads();
+        // console.log({ userDBs, userThreads });
 
         // const threads = await userThreadClient.listDBs();
         // console.log({ threads });
@@ -221,7 +257,6 @@ const Web3Provider = ({ children }: { children: any }) => {
         //   self,
         //   threadDBIdentity
         // );
-        // setThreadDBAuthorizedClient(authorizedClient);
         // Get ens
         let ens = null;
         try {
@@ -308,14 +343,15 @@ const Web3Provider = ({ children }: { children: any }) => {
       model: publishedModel,
     });
     setSelf(mySelf);
-    const threadDBIdentity = await getPrivateIdentity(mySelf);
-    setPrivateIdentity(threadDBIdentity);
+    // const threadDBIdentity = await getPrivateIdentity(mySelf);
+    // setPrivateIdentity(threadDBIdentity);
+    // const authorizedClient = await getDBClient();
 
-    const authorizedClient = await getAuthorizedUserClient(
-      self,
-      threadDBIdentity
-    );
-    setThreadDBAuthorizedClient(authorizedClient);
+    // const authorizedClient = await getAuthorizedUserClient(
+    //   self,
+    //   threadDBIdentity
+    // );
+    // setThreadDBAuthorizedClient(authorizedClient);
 
     provider.on("chainChanged", () => {
       // window.location.reload();

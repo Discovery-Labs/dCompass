@@ -49,16 +49,6 @@ input CreateQuestInput {
   questCreatorSignature: String!
 }
 
-input CreateTagInput {
-  color: String!
-  label: String!
-  value: String!
-}
-
-input CreateTagsInput {
-  tags: [CreateTagInput!]!
-}
-
 input EditProjectInput {
   color: String
   description: String
@@ -129,12 +119,6 @@ type Mutation {
 
   """Create a new Snapshot Voter Quest in dCompass"""
   createSnapshotVoterQuest(input: CreateQuestInput!): SnapshotVoterQuest
-
-  """Create a new Tag in Discovery"""
-  createTag(input: CreateTagInput!): Tag
-
-  """Creates multiple new Tags in Discovery"""
-  createTags(input: CreateTagsInput!): [Tag!]
 
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
@@ -223,6 +207,7 @@ type Project {
   pendingMembers: [String!]
   repos: [String!]
   squads: [Squad!]!
+  streamId: String!
   tags: [Tag!]
   tokenUris: [String!]!
   twitter: String
@@ -259,7 +244,7 @@ type Query {
   """Gets a pathway by its Stream ID"""
   getPathwayById(pathwayId: String!): Pathway
 
-  """Gets a project by its Stream ID"""
+  """Gets a project by its document ID"""
   getProjectById(projectId: String!): Project
 
   """Gets a quiz quest by its Stream ID"""

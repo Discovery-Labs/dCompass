@@ -31,14 +31,13 @@ export const getPrivateIdentity = async (self: any) => {
   return newKey;
 };
 
-export const getDBClient = async (auth: UserAuth) => {
+export const getDBClient = async (auth: UserAuth, identity: PrivateKey) => {
   if (!process.env.NEXT_PUBLIC_THREAD_DB_IDENTITY_KEY) {
     throw new Error(
       "Missing environment variable NEXT_PUBLIC_THREAD_DB_IDENTITY_KEY"
     );
   }
   const client = Client.withUserAuth(auth);
-  const identity = getIdentity(process.env.NEXT_PUBLIC_THREAD_DB_IDENTITY_KEY);
   await client.getToken(identity);
   return client;
 };
@@ -56,24 +55,10 @@ export const getUserThreadClient = (auth: UserAuth, did: string) => {
   return client;
 };
 
-export const getAuthorizedUserClient = async (identity: Identity) => {
-  // Check for user group keys
-  if (!process.env.THREAD_DB_USER_GROUP_KEY) {
-    throw new Error("Environment variables THREAD_DB_USER_GROUP_KEY missing.");
-  }
-
-  // TODO: Call api
-  const apiSig = await getAPISig();
-
-  if (!apiSig) {
-    throw new Error("Error API signature");
-  }
-
-  const userAuth = {
-    ...apiSig,
-    key: process.env.THREAD_DB_USER_GROUP_KEY,
-  } as UserAuth;
-
+export const getAuthorizedUserClient = async (
+  userAuth: UserAuth,
+  identity: Identity
+) => {
   const client = Client.withUserAuth(userAuth);
   await client.getToken(identity);
   return client;

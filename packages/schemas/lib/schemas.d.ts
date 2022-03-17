@@ -28,30 +28,10 @@ export declare const schemas: {
                         type: string;
                         title: string;
                         properties: {
-                            pendingPathways: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    $ref: string;
-                                };
-                            };
-                            pendingMembers: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    $ref: string;
-                                };
-                            };
-                            tokenUris: {
-                                type: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            isFeatured: {
-                                type: string;
-                            };
                             _id: {
+                                type: string;
+                            };
+                            streamId: {
                                 type: string;
                             };
                             name: {
@@ -109,6 +89,29 @@ export declare const schemas: {
                                 items: {
                                     $ref: string;
                                 };
+                            };
+                            pendingPathways: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    $ref: string;
+                                };
+                            };
+                            pendingMembers: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    $ref: string;
+                                };
+                            };
+                            tokenUris: {
+                                type: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            isFeatured: {
+                                type: string;
                             };
                             createdBy: {
                                 type: string;
@@ -211,6 +214,9 @@ export declare const schemas: {
                 _id: {
                     type: string;
                 };
+                streamId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -266,6 +272,29 @@ export declare const schemas: {
                     items: {
                         $ref: string;
                     };
+                };
+                pendingPathways: {
+                    type: string;
+                    title: string;
+                    items: {
+                        $ref: string;
+                    };
+                };
+                pendingMembers: {
+                    type: string;
+                    title: string;
+                    items: {
+                        $ref: string;
+                    };
+                };
+                tokenUris: {
+                    type: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                isFeatured: {
+                    type: string;
                 };
                 createdBy: {
                     type: string;

@@ -11,6 +11,9 @@ export class Project extends BaseEntity {
   id: string;
 
   @Field()
+  streamId: string;
+
+  @Field()
   name: string;
 
   @Field()

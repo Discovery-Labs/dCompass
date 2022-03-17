@@ -36,6 +36,24 @@ export const sign = (identity: PrivateKey, msg: string) => {
   return credentials;
 };
 
+export const getDBClient = async () => {
+  if (!process.env.THREAD_DB_IDENTITY_KEY) {
+    throw new Error('Missing environment variable THREAD_DB_IDENTITY_KEY');
+  }
+  const threadDBIdentity = getIdentity(process.env.THREAD_DB_IDENTITY_KEY);
+  if (!process.env.THREAD_DB_USER_GROUP_KEY) {
+    throw new Error(
+      'Missing environment variable NEXT_PUBLIC_THREAD_DB_IDENTITY_KEY',
+    );
+  }
+  const client = await Client.withKeyInfo({
+    key: process.env.THREAD_DB_USER_GROUP_KEY,
+    secret: process.env.THREAD_DB_USER_GROUP_SECRET,
+  });
+  await client.getToken(threadDBIdentity);
+  return client;
+};
+
 export const getUserThreadClient = (auth: UserAuth, did: string) => {
   const user = getIdentity(did);
   console.log({ user });

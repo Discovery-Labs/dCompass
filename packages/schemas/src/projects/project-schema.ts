@@ -2,6 +2,9 @@ export const projectProperties = {
   _id: {
     type: "string",
   },
+  streamId: {
+    type: "string",
+  },
   name: {
     type: "string",
     title: "name",
@@ -57,6 +60,29 @@ export const projectProperties = {
     items: {
       $ref: "#/definitions/CeramicStreamId",
     },
+  },
+  pendingPathways: {
+    type: "array",
+    title: "pending pathways",
+    items: {
+      $ref: "#/definitions/CeramicStreamId",
+    },
+  },
+  pendingMembers: {
+    type: "array",
+    title: "pending members",
+    items: {
+      $ref: "#/definitions/CeramicStreamId",
+    },
+  },
+  tokenUris: {
+    type: "array",
+    items: {
+      type: "string",
+    },
+  },
+  isFeatured: {
+    type: "boolean",
   },
   createdBy: {
     type: "string",

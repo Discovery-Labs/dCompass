@@ -4,12 +4,16 @@ import { ethers } from 'ethers';
 
 import { schemaAliases } from '../../../core/constants/idx';
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseCeramicClient, UseThreadDBClient } from '../../../core/utils/types';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
 import { CreateProjectInput } from '../dto/CreateProject.input';
 import { CreateProjectOutput } from '../dto/CreateProject.output';
+// import { Project } from '../Project.entity';
 
 @Resolver(() => [String])
 export class CreateProjectResolver {
+  constructor(private readonly threadDBService: ThreadDBService) {}
   @Mutation(() => [CreateProjectOutput], {
     nullable: true,
     description: 'Create a new Project in dCompass',
@@ -18,6 +22,8 @@ export class CreateProjectResolver {
   async createProject(
     @UseCeramic()
     { ceramicClient }: UseCeramicClient,
+    @UseThreadDB()
+    { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('input') { id, tokenUris, creatorSignature }: CreateProjectInput,
   ): Promise<CreateProjectOutput[] | null> {
     // Check that the current user is the owner of the project
@@ -40,6 +46,24 @@ export class CreateProjectResolver {
     if (!formattedAccounts.includes(decodedAddress)) {
       throw new ForbiddenError('Unauthorized');
     }
+
+    const newProject = await this.threadDBService.create({
+      collectionName: 'Project',
+      threadId: latestThreadId,
+      values: [
+        {
+          streamId: id,
+          ...ogProject.content,
+          tokenUris,
+          isFeatured: false,
+          createdBy: decodedAddress,
+          createdAt: new Date().toISOString(),
+        },
+      ],
+      dbClient,
+    });
+
+    console.log({ newProject });
 
     const existingProjects = await ceramicClient.dataStore.get(
       schemaAliases.APP_PROJECTS_ALIAS,

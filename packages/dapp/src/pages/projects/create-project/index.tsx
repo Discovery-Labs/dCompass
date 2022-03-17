@@ -121,7 +121,7 @@ function CreateProjectStepper() {
       logo: cids.logo,
       website: `https://${values.website}`,
       createdBy: account,
-      tags: values.tags.map((tag) => ({ id: `ceramic://${tag.value}` })),
+      tags: values.tags.map((tag) => ({ id: tag.value })),
       squads: values.squads.map((squad) => {
         const members = squad.members.map(
           (member: any) => member.value
