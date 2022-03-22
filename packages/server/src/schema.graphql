@@ -16,12 +16,6 @@ input ApproveProjectInput {
   tokenUris: [String!]!
 }
 
-type ApproveProjectOutput {
-  id: String!
-  isFeatured: Boolean!
-  tokenUris: [String!]!
-}
-
 input ApproveQuestInput {
   id: String!
   questApproverSignature: String!
@@ -97,7 +91,7 @@ type Mutation {
   approvePathway(input: ApprovePathwayInput!): Pathway
 
   """Approves a new Project in dCompass"""
-  approveProject(input: ApproveProjectInput!): [ApproveProjectOutput!]
+  approveProject(input: ApproveProjectInput!): Project
 
   """Approve a new Quest in dCompass"""
   approveQuest(input: ApproveQuestInput!): Quest
@@ -205,6 +199,7 @@ type Project {
   pathways: [Pathway!]
   peerProjects: [String!]
   pendingMembers: [String!]
+  pendingPathways: [Pathway!]
   repos: [String!]
   squads: [Squad!]!
   streamId: String!

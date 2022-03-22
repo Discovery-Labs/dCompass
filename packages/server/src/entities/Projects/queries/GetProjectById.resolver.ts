@@ -41,9 +41,11 @@ export class GetProjectByIdResolver {
     }
 
     const [project] = foundProjects as any[];
+    const { _id, _mod, ...rest } = project;
+
     return {
-      id: project._id,
-      ...project,
+      id: _id,
+      ...rest,
       tags: allTags
         .map((t: any) => ({ id: t._id, ...t }))
         .filter((tag: any) =>

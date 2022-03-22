@@ -70,6 +70,9 @@ export class Project extends BaseEntity {
   @Field(() => [Pathway])
   pathways?: Pathway[];
 
+  @Field(() => [Pathway])
+  pendingPathways?: Pathway[];
+
   @Field(() => [Squad])
   squads: Squad[];
 

@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps<
     const { data } = await client.query({
       query: PROJECT_BY_ID_QUERY,
       variables: {
-        projectId: `ceramic://${id}`,
+        projectId: id,
       },
     });
 
@@ -92,6 +92,7 @@ export const getServerSideProps: GetServerSideProps<
 
 function ReviewProjectPage({
   id,
+  streamId,
   tokenUris,
   logo,
   name,
@@ -132,18 +133,21 @@ function ReviewProjectPage({
 
   useEffect(() => {
     async function init() {
-      if (projectNFTContract && id && account) {
-        const statusInt = await projectNFTContract.status(id);
-        const isMinted = await projectNFTContract.projectMinted(id);
+      if (projectNFTContract && streamId && account) {
+        const statusInt = await projectNFTContract.status(streamId);
+        const isMinted = await projectNFTContract.projectMinted(streamId);
         const statusString = await projectNFTContract.statusStrings(statusInt);
         setStatus(isMinted ? "MINTED" : statusString);
 
-        const hasVoted = await projectNFTContract.reviewerVotes(id, account);
+        const hasVoted = await projectNFTContract.reviewerVotes(
+          streamId,
+          account
+        );
         setHasVoted(hasVoted);
       }
     }
     init();
-  }, [projectNFTContract, id]);
+  }, [projectNFTContract, streamId, account]);
 
   const handleApproveProject = async () => {
     if (projectNFTContract && chainId && account && isPendingOrNonExistent) {
@@ -155,14 +159,14 @@ function ReviewProjectPage({
         const voteForApprovalTx = await projectNFTContract.voteForApproval(
           contributors,
           10,
-          id
+          streamId
         );
         // get return values or events
         await voteForApprovalTx.wait(1);
       } catch (e) {
         console.log("Approve Failed:", e);
       }
-      const statusInt = await projectNFTContract.status(id);
+      const statusInt = await projectNFTContract.status(streamId);
       const statusString = await projectNFTContract.statusStrings(statusInt);
       setStatus(statusString);
       if (statusString === "APPROVED") {
@@ -192,14 +196,14 @@ function ReviewProjectPage({
     if (projectNFTContract && chainId && account && status === "PENDING") {
       try {
         const voteForRejectionTx = await projectNFTContract.voteForRejection(
-          id
+          streamId
         );
         // get return values or events
         await voteForRejectionTx.wait(1);
       } catch (e) {
         console.log("Rejection Failed:", e);
       }
-      const statusInt = await projectNFTContract.status(id);
+      const statusInt = await projectNFTContract.status(streamId);
       const statusString = await projectNFTContract.statusStrings(statusInt);
       setStatus(statusString);
       if (statusString === "DENIED") {
@@ -218,11 +222,13 @@ function ReviewProjectPage({
       const createTokenTx = await contracts.projectNFTContract.createToken(
         firstParts,
         secondParts,
-        id
+        streamId
       );
       // get return values or events
       const receipt = await createTokenTx.wait(2);
-      const isMinted = await contracts.projectNFTContract.projectMinted(id);
+      const isMinted = await contracts.projectNFTContract.projectMinted(
+        streamId
+      );
       setStatus("MINTED");
       console.log({ receipt, isMinted });
     }
@@ -317,7 +323,7 @@ function ReviewProjectPage({
             {description}
           </ReactMarkdown>
 
-          {projectNFTContract && id && (
+          {projectNFTContract && streamId && (
             <>
               <HStack
                 pt="4"
@@ -326,9 +332,12 @@ function ReviewProjectPage({
                 justify="space-between"
                 spacing={8}
               >
-                <AddProjectContributor contract={projectNFTContract} id={id} />
+                <AddProjectContributor
+                  contract={projectNFTContract}
+                  id={streamId}
+                />
                 <Box layerStyle="outline-card">
-                  <ProjectInfo contract={projectNFTContract} id={id} />
+                  <ProjectInfo contract={projectNFTContract} id={streamId} />
                 </Box>
               </HStack>
             </>

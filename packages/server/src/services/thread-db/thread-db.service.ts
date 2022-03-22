@@ -35,6 +35,20 @@ export class ThreadDBService {
     return dbClient.create(threadId, collectionName, values);
   }
 
+  async update({
+    collectionName,
+    dbClient,
+    threadId,
+    values,
+  }: {
+    dbClient: Client;
+    threadId: ThreadID;
+    collectionName: string;
+    values: any[];
+  }) {
+    return dbClient.save(threadId, collectionName, values);
+  }
+
   async query({
     collectionName,
     dbClient,

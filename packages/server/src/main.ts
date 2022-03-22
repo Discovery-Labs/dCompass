@@ -43,13 +43,6 @@ async function bootstrap() {
 
   const ceramicClient = await ceramicDataModelFactory();
 
-  const dbClient = await getDBClient();
-  const appThreads = await dbClient.listThreads();
-  const latestThreadId = ThreadID.fromString(
-    appThreads[appThreads.length - 1].id,
-  );
-  const ceramicCore = ceramicCoreFactory();
-
   // app.use(cookieParser(sessionOptions.secret));
   // app.use(sessionMiddleware);
   /* Cookie & Session cleaner */
@@ -60,13 +53,21 @@ async function bootstrap() {
   //   next();
   // });
 
-  app.use((req: Context['req'], _res: Context['res'], next: NextFunction) => {
-    req.ceramicClient = ceramicClient;
-    req.dbClient = dbClient;
-    req.latestThreadId = latestThreadId;
-    req.ceramicCore = ceramicCore;
-    next();
-  });
+  app.use(
+    async (req: Context['req'], _res: Context['res'], next: NextFunction) => {
+      const dbClient = await getDBClient();
+      const appThreads = await dbClient.listThreads();
+      const latestThreadId = ThreadID.fromString(
+        appThreads[appThreads.length - 1].id,
+      );
+      const ceramicCore = ceramicCoreFactory();
+      req.ceramicClient = ceramicClient;
+      req.dbClient = dbClient;
+      req.latestThreadId = latestThreadId;
+      req.ceramicCore = ceramicCore;
+      next();
+    },
+  );
 
   const configService = app.get(ConfigService);
   const corsConfig = configService.get<CorsConfig>('cors');

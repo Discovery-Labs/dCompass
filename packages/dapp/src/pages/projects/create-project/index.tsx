@@ -20,6 +20,7 @@ import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
 import { isAddress } from "ethers/lib/utils";
+import { ethers } from "ethers";
 
 const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
@@ -158,19 +159,6 @@ function CreateProjectStepper() {
 
     const { metadataCids } = await nftCidRes.json();
 
-    // Get user's existing projects
-    const existingProjects = await self.client.dataStore.get(PROJECTS_ALIAS);
-
-    // Index his new project
-    if (existingProjects && existingProjects.projects.length > 0) {
-      await self.client.dataStore.set(PROJECTS_ALIAS, {
-        projects: [...existingProjects.projects, projectId],
-      });
-    } else {
-      await self.client.dataStore.set(PROJECTS_ALIAS, {
-        projects: [projectId],
-      });
-    }
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: projectId,

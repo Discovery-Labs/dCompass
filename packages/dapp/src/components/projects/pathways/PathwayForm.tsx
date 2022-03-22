@@ -130,18 +130,18 @@ export default function PathwayForm() {
   //   },
   // ];
 
-  const existingPathwaysOptions = data.getAllPathwaysByProjectId
-    .filter((pathway: Pathway) => pathway.quests?.length > 0)
-    .map((pathway: Pathway) => {
-      return {
-        label: pathway.title,
-        options: pathway.quests.map((quest) => ({
-          label: quest.name,
-          value: quest.id,
-          colorScheme: "purple",
-        })),
-      };
-    });
+  // const existingPathwaysOptions = data.getAllPathwaysByProjectId
+  //   .filter((pathway: Pathway) => pathway.quests?.length > 0)
+  //   .map((pathway: Pathway) => {
+  //     return {
+  //       label: pathway.title,
+  //       options: pathway.quests.map((quest) => ({
+  //         label: quest.name,
+  //         value: quest.id,
+  //         colorScheme: "purple",
+  //       })),
+  //     };
+  //   });
 
   return (
     <VStack w="full">
