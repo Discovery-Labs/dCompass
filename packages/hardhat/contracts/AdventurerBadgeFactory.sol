@@ -25,6 +25,8 @@ contract AdventurerBadgeFactory is IAdventurerBadgeFactory, Ownable {
     mapping (uint => string) public typeStrings;
     mapping (string => string) public parentIdPerObjectId;
     mapping (string => address) public getNFTAddrs;
+    mapping (address => mapping (uint => string)) public userBadgesByIndex;//get user badge per quest/pathwayId with known index
+    mapping (address => uint) public userBadgeNumber;//get number of user badges 
 
     address[] internal allAddrs;
 
@@ -50,6 +52,18 @@ contract AdventurerBadgeFactory is IAdventurerBadgeFactory, Ownable {
 
     function getAllAddrs() external view returns (address[] memory){
         return allAddrs;
+    }
+
+    function getAllUserBadges(address user) external view returns(string memory){
+        uint numBadges = userBadgeNumber[user];
+        require(numBadges > 0, "no badges");
+        uint index = 1;
+        string memory ret;
+        while(index <= numBadges){
+            ret = string(abi.encodePacked(ret, "__", userBadgesByIndex[user][index]));
+            index++;
+        }
+        return ret;
     }
 
     function createNFTToken(
