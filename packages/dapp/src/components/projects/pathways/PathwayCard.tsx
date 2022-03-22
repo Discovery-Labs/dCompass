@@ -14,8 +14,6 @@ import {
   TagLabel,
   Progress,
   Stack,
-  Icon,
-  useBreakpointValue,
   Tooltip,
   Box,
 } from "@chakra-ui/react";
@@ -24,15 +22,10 @@ import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useRouter } from "next/router";
 import { useContext, useState, useEffect } from "react";
-import { BsBarChartFill } from "react-icons/bs";
-import { FiUserCheck } from "react-icons/fi";
-import { GiTwoCoins } from "react-icons/gi";
-import { GoTasklist } from "react-icons/go";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { streamUrlToId } from "../../../core/helpers";
 import useCustomColor from "../../../core/hooks/useCustomColor";
 import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
@@ -68,10 +61,12 @@ function PathwayCard({
 
   useEffect(() => {
     async function init() {
-      if (contracts && pathway.id) {
-        const statusInt = await contracts.pathwayNFTContract.status(pathway.id);
+      if (contracts && pathway.streamId) {
+        const statusInt = await contracts.pathwayNFTContract.status(
+          pathway.streamId
+        );
         const isMinted = await contracts.pathwayNFTContract.pathwayMinted(
-          pathway.id
+          pathway.streamId
         );
         const statusString = await contracts.pathwayNFTContract.statusStrings(
           statusInt
@@ -80,15 +75,11 @@ function PathwayCard({
       }
     }
     init();
-  }, [contracts, pathway.id]);
+  }, [contracts, pathway.streamId]);
 
   const isContributor = account && projectContributors.includes(account);
   function openPathway() {
-    return router.push(
-      `/projects/${streamUrlToId(pathway.projectId)}/pathways/${streamUrlToId(
-        pathway.id
-      )}`
-    );
+    return router.push(`/projects/${pathway.projectId}/pathways/${pathway.id}`);
   }
 
   const handleApprovePathway = async () => {
@@ -114,12 +105,12 @@ function PathwayCard({
 
       const [metadataVerifySignature, thresholdVerifySignature] =
         data.approvePathway.expandedServerSignatures;
-
+      console.log({ pwayId: pathway.streamId, pId: pathway.projectStreamId });
       const voteForApprovalTx =
         await contracts.pathwayNFTContract.voteForApproval(
           projectContributors,
-          pathway.id,
-          pathway.projectId,
+          pathway.streamId,
+          data.approvePathway.projectStreamId,
           [metadataVerifySignature.r, thresholdVerifySignature.r],
           [metadataVerifySignature.s, thresholdVerifySignature.s],
           [metadataVerifySignature.v, thresholdVerifySignature.v],
@@ -136,6 +127,7 @@ function PathwayCard({
       console.log({ statusString });
       setStatus(statusString);
     }
+    // TODO: user feedback
     return null;
   };
 
@@ -182,8 +174,8 @@ function PathwayCard({
       const { url } = await nftCidRes.json();
       const createTokenTx = await contracts.pathwayNFTContract.createToken(
         url,
-        pathway.id,
-        pathway.projectId,
+        pathway.streamId,
+        data.verifyPathway.projectStreamId,
         [metadataVerifySignature.r, thresholdVerifySignature.r],
         [metadataVerifySignature.s, thresholdVerifySignature.s],
         [metadataVerifySignature.v, thresholdVerifySignature.v],
@@ -200,6 +192,7 @@ function PathwayCard({
         setStatus("MINTED");
       }
     }
+    // TODO: user feedback
     return null;
   };
 

@@ -2,7 +2,6 @@ import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { ForbiddenError } from 'apollo-server-errors';
 import { ethers } from 'ethers';
 
-import { schemaAliases } from '../../../core/constants/idx';
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
 import { UseCeramicClient, UseThreadDBClient } from '../../../core/utils/types';
@@ -47,7 +46,7 @@ export class CreateProjectResolver {
       throw new ForbiddenError('Unauthorized');
     }
 
-    const newProject = await this.threadDBService.create({
+    await this.threadDBService.create({
       collectionName: 'Project',
       threadId: latestThreadId,
       values: [
@@ -63,32 +62,6 @@ export class CreateProjectResolver {
       dbClient,
     });
 
-    console.log({ newProject });
-
-    const existingProjects = await ceramicClient.dataStore.get(
-      schemaAliases.APP_PROJECTS_ALIAS,
-    );
-
-    const projects = existingProjects?.projects ?? [];
-    console.log({ projects });
-
-    await ceramicClient.dataStore.set(schemaAliases.APP_PROJECTS_ALIAS, {
-      projects: [
-        {
-          id,
-          tokenUris,
-          isFeatured: false,
-          createdBy: decodedAddress,
-          createdAt: new Date().toISOString(),
-        },
-        ...projects,
-      ],
-    });
-
-    const allProjects = await ceramicClient.dataStore.get(
-      schemaAliases.APP_PROJECTS_ALIAS,
-    );
-
-    return allProjects.projects;
+    return null;
   }
 }

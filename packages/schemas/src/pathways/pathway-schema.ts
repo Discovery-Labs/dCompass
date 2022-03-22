@@ -8,6 +8,9 @@ export const PathwaySchema = {
     _id: {
       type: "string",
     },
+    streamId: {
+      type: "string",
+    },
     createdAt: {
       type: "string",
       format: "date-time",
@@ -24,7 +27,7 @@ export const PathwaySchema = {
       maxLength: 100,
     },
     projectId: {
-      $ref: "#/definitions/CeramicStreamId",
+      type: "string",
     },
     image: {
       type: "string",

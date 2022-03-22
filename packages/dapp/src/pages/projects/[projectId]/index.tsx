@@ -291,20 +291,14 @@ function ProjectPage({
               <TabPanels>
                 <TabPanel>
                   <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
-                    {renderPathways(
-                      data.getAllPathwaysByProjectId.filter(
-                        (pathway: Pathway) => !pathway.isPending
-                      )
-                    )}
+                    {renderPathways(data.getAllPathwaysByProjectId.pathways)}
                   </SimpleGrid>
                 </TabPanel>
                 {isReviewer && (
                   <TabPanel>
                     <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
                       {renderPathways(
-                        data.getAllPathwaysByProjectId.filter(
-                          (pathway: Pathway) => pathway.isPending
-                        )
+                        data.getAllPathwaysByProjectId.pendingPathways
                       )}
                     </SimpleGrid>
                   </TabPanel>

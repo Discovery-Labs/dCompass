@@ -1,5 +1,16 @@
-import { useMutation } from "@apollo/client";
-import { Heading, Button, Flex, useToast } from "@chakra-ui/react";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  Heading,
+  Button,
+  Flex,
+  useToast,
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Progress,
+  Stack,
+} from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import { Contract, ethers } from "ethers";
 import { useRouter } from "next/router";
@@ -9,7 +20,10 @@ import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 
 import useTokenList from "../../../core/hooks/useTokenList";
-import { CREATE_PATHWAY_MUTATION } from "../../../graphql/pathways";
+import {
+  CREATE_PATHWAY_MUTATION,
+  GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
+} from "../../../graphql/pathways";
 
 import PathwayForm from "./PathwayForm";
 
@@ -25,6 +39,16 @@ function PathwayFormWrapper() {
   const [addPathwayMutation] = useMutation(CREATE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
+  const { data, loading, error } = useQuery(
+    GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
+    {
+      variables: {
+        projectId: router.query.projectId,
+      },
+    }
+  );
+
+  console.log({ data });
   const { self, account, contracts } = useContext(Web3Context);
   const {
     reset,
@@ -165,7 +189,7 @@ function PathwayFormWrapper() {
     const finalValues = {
       ...serlializedValues,
       image: cids[values.title],
-      projectId: `ceramic://${router.query.projectId}`,
+      projectId: router.query.projectId,
     };
 
     const pathwayDoc = await self.client.dataModel.createTile(
@@ -180,7 +204,7 @@ function PathwayFormWrapper() {
       const createPathwayOnChainTx =
         await contracts.pathwayNFTContract.createPathway(
           pathwayDoc.id.toUrl(),
-          `ceramic://${router.query.projectId}`,
+          data.getAllPathwaysByProjectId.streamId,
           parseInt(values.rewardUserCap, 10),
           isRewardProvider,
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
@@ -205,7 +229,7 @@ function PathwayFormWrapper() {
       const createPathwayOnChainTx =
         await contracts.pathwayNFTContract.createPathway(
           pathwayDoc.id.toUrl(),
-          `ceramic://${router.query.projectId}`,
+          data.getAllPathwaysByProjectId.streamId,
           parseInt(values.rewardUserCap, 10),
           isRewardProvider,
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
@@ -219,7 +243,8 @@ function PathwayFormWrapper() {
 
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
-        id: `ceramic://${router.query.projectId}`,
+        id: pathwayDoc.id.toUrl(),
+        projectId: router.query.projectId,
       }),
       account,
     ]);
@@ -236,6 +261,20 @@ function PathwayFormWrapper() {
     return router.push(`/projects/${router.query.projectId}/`);
   }
 
+  if (loading)
+    return (
+      <Stack>
+        <Progress size="xs" isIndeterminate />
+      </Stack>
+    );
+  if (error)
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle mr={2}>Network error</AlertTitle>
+        <AlertDescription>{error.message}</AlertDescription>
+      </Alert>
+    );
   return (
     <>
       <Heading>Add Pathway</Heading>

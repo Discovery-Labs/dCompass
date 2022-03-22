@@ -60,6 +60,7 @@ export const getServerSideProps: GetServerSideProps<
   const locale = ctx.locale || "en";
   const pathwayId = ctx.params?.pathwayId ?? null;
   const projectId = ctx.params?.projectId ?? null;
+  console.log({ pathwayId, projectId });
   if (!pathwayId || !projectId) {
     return {
       redirect: { destination: "/", permanent: true },
@@ -70,7 +71,7 @@ export const getServerSideProps: GetServerSideProps<
     const { data } = await client.query({
       query: GET_PATHWAY_BY_ID_QUERY,
       variables: {
-        pathwayId: `ceramic://${pathwayId}`,
+        pathwayId,
       },
     });
     console.log({ data });
@@ -82,6 +83,7 @@ export const getServerSideProps: GetServerSideProps<
       },
     };
   } catch (error) {
+    console.log({ error });
     return {
       redirect: { destination: "/404", permanent: true },
     };

@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { getIdentity } from '../../core/resources/ThreadDB/thread-db';
-import { Client, ThreadID, QueryJSON } from '@textile/hub';
+import { Client, ThreadID, QueryJSON, Where } from '@textile/hub';
+import { Tag } from '../../entities/Tags/Tag.entity';
 
 @Injectable()
 export class ThreadDBService {
@@ -66,5 +67,48 @@ export class ThreadDBService {
     return dbClient.find(threadId, collectionName, {
       limit: 1000,
     });
+  }
+
+  async getProjectById({
+    dbClient,
+    threadId,
+    projectId,
+  }: {
+    dbClient: Client;
+    threadId: ThreadID;
+    projectId: string;
+  }) {
+    const [foundProjects, allTags] = await Promise.all([
+      this.query({
+        collectionName: 'Project',
+        dbClient,
+        threadId,
+        query: new Where('_id').eq(projectId),
+      }),
+      this.query({
+        collectionName: 'Tag',
+        threadId,
+        dbClient,
+      }),
+    ]);
+
+    if (!foundProjects || foundProjects.length === 0) {
+      throw new NotFoundException('Project not found');
+    }
+
+    const [project] = foundProjects as any[];
+    console.log({ project });
+    const { _id, _mod, ...rest } = project;
+
+    const foundProject = {
+      id: _id,
+      ...rest,
+      tags: allTags
+        .map((t: any) => ({ id: t._id, ...t }))
+        .filter((tag: any) =>
+          project.tags.map((pjTag: Tag) => pjTag.id).includes(tag.id),
+        ),
+    };
+    return foundProject;
   }
 }

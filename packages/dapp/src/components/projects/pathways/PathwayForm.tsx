@@ -15,10 +15,6 @@ import {
   Alert,
   AlertIcon,
   Tag,
-  AlertTitle,
-  AlertDescription,
-  Progress,
-  Stack,
   Heading,
 } from "@chakra-ui/react";
 import useCustomColor from "core/hooks/useCustomColor";
@@ -26,37 +22,21 @@ import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { useQuery } from "@apollo/client";
 
 import {
   difficultyOptions,
   REQUIRED_FIELD_LABEL,
 } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
-import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
-import { useRouter } from "next/router";
-import { streamIdToUrl } from "../../../core/helpers";
-import { Pathway } from "../../../core/types";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
 });
 
 export default function PathwayForm() {
-  const router = useRouter();
   const { codeEditorScheme } = useCustomColor();
-  const { data, loading, error } = useQuery(
-    GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
-    {
-      variables: {
-        projectId: streamIdToUrl(router.query.projectId as string),
-      },
-    }
-  );
-
-  console.log({ data });
 
   const { chainId } = useWeb3React();
   const { tokens } = useTokenList();
@@ -90,21 +70,6 @@ export default function PathwayForm() {
     setValue("rewardCurrency", token);
     return { token, isMatic };
   }, [chainId, setValue]);
-
-  if (loading)
-    return (
-      <Stack>
-        <Progress size="xs" isIndeterminate />
-      </Stack>
-    );
-  if (error)
-    return (
-      <Alert status="error">
-        <AlertIcon />
-        <AlertTitle mr={2}>Network error</AlertTitle>
-        <AlertDescription>{error.message}</AlertDescription>
-      </Alert>
-    );
 
   // const existingGitcoinQuestsOptions = [
   //   {

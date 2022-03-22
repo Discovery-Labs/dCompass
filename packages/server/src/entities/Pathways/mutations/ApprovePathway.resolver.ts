@@ -2,20 +2,24 @@ import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { ethers } from 'ethers';
 import { ForbiddenError } from 'apollo-server-express';
 import { NotFoundException } from '@nestjs/common';
+import { Where } from '@textile/hub';
 import ABIS from '@discovery-dao/hardhat/abis.json';
 
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
+import { UseThreadDBClient } from '../../../core/utils/types';
 import { Pathway } from '../Pathway.entity';
-import { schemaAliases } from '../../../core/constants/idx';
 import { ApprovePathwayInput } from '../dto/ApprovePathway.input';
 import { Squad } from '../../Squads/Squad.entity';
 import { verifyNFTInfo } from '../../../core/utils/security/verify';
 import { AppService } from '../../../app.service';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
 
 @Resolver(() => Pathway)
 export class ApprovePathwayResolver {
-  constructor(public readonly appService: AppService) {}
+  constructor(
+    public readonly appService: AppService,
+    private readonly threadDBService: ThreadDBService,
+  ) {}
 
   @Mutation(() => Pathway, {
     nullable: true,
@@ -23,93 +27,64 @@ export class ApprovePathwayResolver {
     name: 'approvePathway',
   })
   async approvePathway(
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('input')
     { id, pathwayApproverSignature, chainId }: ApprovePathwayInput,
   ): Promise<Pathway | null | undefined> {
-    // Check that the current user is the owner of the pathway
-    const ogPathway = await ceramicClient.ceramic.loadStream(id);
-    const projectId = ogPathway.content.projectId;
-    console.log('approving pathway');
+    const [foundPathway] = await this.threadDBService.query({
+      collectionName: 'Pathway',
+      dbClient,
+      threadId: latestThreadId,
+      query: new Where('_id').eq(id),
+    });
+    if (!foundPathway) {
+      throw new NotFoundException('Pathway not found by back-end');
+    }
+    const pathway = foundPathway as Pathway;
+    const { projectId } = pathway;
+    const foundProject = await this.threadDBService.getProjectById({
+      dbClient,
+      threadId: latestThreadId,
+      projectId,
+    });
+    console.log({ foundProject });
+    const projectStreamId = foundProject.streamId;
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({ id: id, projectId }),
       pathwayApproverSignature,
     );
+    // TODO: Keep track of address & network to avoid impersonation
     console.log({ decodedAddress });
-    const allProjects = await ceramicClient.dataStore.get(
-      schemaAliases.APP_PROJECTS_ALIAS,
-    );
-    const projects = allProjects?.projects ?? [];
-    const ogProject = await ceramicClient.ceramic.loadStream(projectId);
-
-    const additionalFields = projects.find(
-      (project: { id: string }) => project.id === projectId,
-    );
-
-    if (!ogProject || !additionalFields) {
-      throw new NotFoundException('Project not found');
-    }
-
-    const projectIndexedFields = {
-      ...ogProject.content,
-      ...additionalFields,
-    };
-
-    const projectContributors = projectIndexedFields.squads
-      ? projectIndexedFields.squads.flatMap((squad: Squad) =>
+    const projectContributors = foundProject.squads
+      ? foundProject.squads.flatMap((squad: Squad) =>
           squad.members.map((m) => m.toLowerCase()),
         )
       : [];
 
-    if (
-      !projectIndexedFields ||
-      !projectContributors.includes(decodedAddress.toLowerCase())
-    ) {
+    if (!projectContributors.includes(decodedAddress.toLowerCase())) {
       throw new ForbiddenError('Unauthorized');
     }
 
-    // remove previously indexed project and recreate it as with the new pending pathway
-    const existingProjects = projects.filter(
-      (project: { id: string }) => project.id !== projectIndexedFields.id,
-    );
-
-    const appProjectsUpdated = [
-      {
-        id: projectId,
-        ...projectIndexedFields,
-        // add pathway in approved pathways
-        pathways: [
-          ...(projectIndexedFields.pathways ?? []),
-          ogPathway.id.toUrl(),
-        ],
-        // remove pathway from pending pathways
-        pendingPathways: [
-          ...(projectIndexedFields.pendingPathways
-            ? projectIndexedFields.pendingPathways.filter(
-                (pathway: string) => pathway !== ogPathway.id.toUrl(),
-              )
-            : []),
-        ],
-      },
-      ...existingProjects,
-    ];
-
-    await ceramicClient.dataStore.set(schemaAliases.APP_PROJECTS_ALIAS, {
-      projects: appProjectsUpdated,
-    });
-
-    const previousPathways = await ceramicClient.dataStore.get(
-      schemaAliases.PATHWAYS_ALIAS,
-    );
-    const allPathways = previousPathways?.pathways ?? [];
-    await ceramicClient.dataStore.set(schemaAliases.PATHWAYS_ALIAS, {
-      pathways: [
-        ...allPathways,
-        {
-          id: ogPathway.id.toUrl(),
-          ...ogPathway.content,
-        },
+    const existingPathways = foundProject.pathways ?? [];
+    // remove previously pending pathway and set it as approved
+    const updatedProject = {
+      _id: projectId,
+      ...foundProject,
+      pathways: [...new Set(existingPathways), id],
+      pendingPathways: [
+        ...new Set(
+          foundProject.pendingPathways.filter(
+            (pathwayId: string) => pathwayId !== id,
+          ),
+        ),
       ],
+    };
+
+    await this.threadDBService.update({
+      collectionName: 'Project',
+      dbClient,
+      threadId: latestThreadId,
+      values: [updatedProject],
     });
 
     const chaindIdStr = chainId.toString();
@@ -124,26 +99,23 @@ export class ApprovePathwayResolver {
     );
 
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
-      verifyContract.noncesParentIdChildId(
-        projectId.split('://')[1],
-        ogPathway.id.toUrl(),
-      ),
-      verifyContract.thresholdNoncesById(ogPathway.id.toUrl()),
+      verifyContract.noncesParentIdChildId(projectStreamId, pathway.streamId),
+      verifyContract.thresholdNoncesById(pathway.streamId),
     ]);
 
-    console.log({ pathwayId: ogPathway.id.toUrl() });
+    console.log({ pathwayId: pathway.streamId });
     const [metadataVerify, tresholdVerify] = await Promise.all([
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
         nonceId: metadataNonceId,
-        objectId: ogPathway.id.toUrl(),
+        objectId: pathway.streamId,
         senderAddress: decodedAddress,
         verifyContract: verifyContract.address,
       }),
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
         nonceId: thresholdNonceId,
-        objectId: ogPathway.id.toUrl(),
+        objectId: pathway.streamId,
         senderAddress: decodedAddress,
         verifyContract: verifyContract.address,
         votesNeeded: 1,
@@ -151,12 +123,12 @@ export class ApprovePathwayResolver {
     ]);
 
     return {
+      ...pathway,
       id,
-      ...ogPathway.content,
+      projectStreamId: foundProject.streamId,
       expandedServerSignatures: [
         { r: metadataVerify.r, s: metadataVerify.s, v: metadataVerify.v },
         { r: tresholdVerify.r, s: tresholdVerify.s, v: tresholdVerify.v },
-        ,
       ],
     };
   }

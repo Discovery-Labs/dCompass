@@ -80,7 +80,7 @@ export declare const schemas: {
                                 type: string;
                                 title: string;
                                 items: {
-                                    $ref: string;
+                                    type: string;
                                 };
                             };
                             members: {
@@ -94,7 +94,7 @@ export declare const schemas: {
                                 type: string;
                                 title: string;
                                 items: {
-                                    $ref: string;
+                                    type: string;
                                 };
                             };
                             pendingMembers: {
@@ -165,12 +165,12 @@ export declare const schemas: {
                                 };
                             };
                             parentProjectId: {
-                                $ref: string;
+                                type: string;
                             };
                             childProjects: {
                                 type: string;
                                 items: {
-                                    $ref: string;
+                                    type: string;
                                 };
                             };
                         };
@@ -263,7 +263,7 @@ export declare const schemas: {
                     type: string;
                     title: string;
                     items: {
-                        $ref: string;
+                        type: string;
                     };
                 };
                 members: {
@@ -277,7 +277,7 @@ export declare const schemas: {
                     type: string;
                     title: string;
                     items: {
-                        $ref: string;
+                        type: string;
                     };
                 };
                 pendingMembers: {
@@ -348,12 +348,12 @@ export declare const schemas: {
                     };
                 };
                 parentProjectId: {
-                    $ref: string;
+                    type: string;
                 };
                 childProjects: {
                     type: string;
                     items: {
-                        $ref: string;
+                        type: string;
                     };
                 };
             };
@@ -440,6 +440,9 @@ export declare const schemas: {
                 _id: {
                     type: string;
                 };
+                streamId: {
+                    type: string;
+                };
                 createdAt: {
                     type: string;
                     format: string;
@@ -456,7 +459,7 @@ export declare const schemas: {
                     maxLength: number;
                 };
                 projectId: {
-                    $ref: string;
+                    type: string;
                 };
                 image: {
                     type: string;
@@ -539,6 +542,9 @@ export declare const schemas: {
                             _id: {
                                 type: string;
                             };
+                            streamId: {
+                                type: string;
+                            };
                             name: {
                                 type: string;
                                 title: string;
@@ -602,6 +608,9 @@ export declare const schemas: {
             type: string;
             properties: {
                 _id: {
+                    type: string;
+                };
+                streamId: {
                     type: string;
                 };
                 name: {
@@ -672,6 +681,9 @@ export declare const schemas: {
                 _id: {
                     type: string;
                 };
+                streamId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -735,6 +747,9 @@ export declare const schemas: {
                 _id: {
                     type: string;
                 };
+                streamId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -789,6 +804,9 @@ export declare const schemas: {
                     maxLength: number;
                 };
                 _id: {
+                    type: string;
+                };
+                streamId: {
                     type: string;
                 };
                 name: {
@@ -848,6 +866,9 @@ export declare const schemas: {
                     };
                 };
                 _id: {
+                    type: string;
+                };
+                streamId: {
                     type: string;
                 };
                 name: {
@@ -930,6 +951,9 @@ export declare const schemas: {
                 _id: {
                     type: string;
                 };
+                streamId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -996,6 +1020,9 @@ export declare const schemas: {
                 _id: {
                     type: string;
                 };
+                streamId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -1053,6 +1080,9 @@ export declare const schemas: {
                     };
                 };
                 _id: {
+                    type: string;
+                };
+                streamId: {
                     type: string;
                 };
                 name: {

@@ -51,7 +51,7 @@ export const projectProperties = {
     type: "array",
     title: "pathways",
     items: {
-      $ref: "#/definitions/CeramicStreamId",
+      type: "string",
     },
   },
   members: {
@@ -65,7 +65,7 @@ export const projectProperties = {
     type: "array",
     title: "pending pathways",
     items: {
-      $ref: "#/definitions/CeramicStreamId",
+      type: "string",
     },
   },
   pendingMembers: {
@@ -136,12 +136,12 @@ export const projectProperties = {
     },
   },
   parentProjectId: {
-    $ref: "#/definitions/CeramicStreamId",
+    type: "string",
   },
   childProjects: {
     type: "array",
     items: {
-      $ref: "#/definitions/CeramicStreamId",
+      type: "string",
     },
   },
 };

@@ -159,10 +159,12 @@ type Pathway {
   isPending: Boolean
   prerequisites: [String!]
   projectId: String!
+  projectStreamId: String!
   quests: [Quest!]
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  streamId: String!
   title: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -222,7 +224,7 @@ input ProjectSquadsInput {
 
 type Query {
   """Gets all the pathways in dCompass"""
-  getAllPathwaysByProjectId(projectId: String!): [Pathway!]
+  getAllPathwaysByProjectId(projectId: String!): Project
 
   """Gets all the projects in dCompass"""
   getAllProjects: [Project!]
