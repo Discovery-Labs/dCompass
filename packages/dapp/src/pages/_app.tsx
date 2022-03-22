@@ -16,6 +16,7 @@ import Head from "next/head";
 
 import theme from "styles/customTheme";
 
+import "@uiw/react-markdown-preview/markdown.css";
 import "styles/globals.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";

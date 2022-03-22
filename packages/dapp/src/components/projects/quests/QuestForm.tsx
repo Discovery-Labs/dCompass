@@ -28,9 +28,10 @@ import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
+import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
@@ -98,6 +99,7 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 });
 
 const CreateQuestForm: React.FunctionComponent = () => {
+  const [code, setCode] = useState<string>();
   const { codeEditorScheme } = useCustomColor();
   const { tokens } = useTokenList();
   const { library, chainId } = useWeb3React();
@@ -129,11 +131,20 @@ const CreateQuestForm: React.FunctionComponent = () => {
     control,
     register,
     setValue,
+    getValues,
     watch,
     reset,
     handleSubmit,
     formState: { errors },
   } = useFormContext();
+
+  useEffect(() => {
+    const descriptionValues = getValues("description");
+
+    if (descriptionValues) {
+      setCode(descriptionValues);
+    }
+  }, [getValues]);
 
   const nativeToken = useMemo(() => {
     const isMatic = chainId === 80001 || chainId === 137;
@@ -410,6 +421,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
         <CodeEditor
+          value={code}
           language="markdown"
           placeholder="Quest description (markdown)"
           {...register("description", {
@@ -417,6 +429,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           })}
           onChange={(e) => {
             const { name } = e.target;
+            setCode(e.target.value);
             setValue(name, e.target.value);
           }}
           style={{
@@ -429,6 +442,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
           {errors.description && errors.description.message}
         </FormErrorMessage>
       </FormControl>
+
+      {code && <CodeEditorPreview code={code} />}
 
       <ControlledSelect
         control={control}

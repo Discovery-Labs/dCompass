@@ -24,10 +24,11 @@ import {
 import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { useQuery } from "@apollo/client";
 
+import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import {
   difficultyOptions,
   REQUIRED_FIELD_LABEL,
@@ -46,6 +47,7 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 
 export default function PathwayForm() {
   const router = useRouter();
+  const [code, setCode] = useState<string>();
   const { codeEditorScheme } = useCustomColor();
   const { data, loading, error } = useQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
@@ -64,9 +66,18 @@ export default function PathwayForm() {
     control,
     register,
     setValue,
+    getValues,
     watch,
     formState: { errors },
   } = useFormContext();
+
+  useEffect(() => {
+    const descriptionValues = getValues("description");
+
+    if (descriptionValues) {
+      setCode(descriptionValues);
+    }
+  }, [getValues]);
 
   const { rewardAmount, rewardCurrency, rewardUserCap } = watch();
 
@@ -167,6 +178,7 @@ export default function PathwayForm() {
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
         <CodeEditor
+          value={code}
           language="markdown"
           placeholder="Pathway description (markdown)"
           {...register("description", {
@@ -174,6 +186,7 @@ export default function PathwayForm() {
           })}
           onChange={(e) => {
             const { name } = e.target;
+            setCode(e.target.value);
             setValue(name, e.target.value);
           }}
           style={{
@@ -186,6 +199,8 @@ export default function PathwayForm() {
           {errors.description && errors.description.message}
         </FormErrorMessage>
       </FormControl>
+
+      {code && <CodeEditorPreview code={code} />}
 
       <ImageDropzone
         isRequired
