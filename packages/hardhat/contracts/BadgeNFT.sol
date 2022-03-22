@@ -363,6 +363,8 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
       if(balance == 0){
           (success, data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("mint(address,uint256)")), _msgSender(), 1));
           require(success);
+          (success, data) = adventureFactory.call(abi.encodeWithSelector(bytes4(keccak256("setUserInfo(address,string)")), _msgSender(), _badgeId));
+          require(success);
       }
   }
 

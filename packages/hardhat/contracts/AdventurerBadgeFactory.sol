@@ -66,6 +66,12 @@ contract AdventurerBadgeFactory is IAdventurerBadgeFactory, Ownable {
         return ret;
     }
 
+    function setUserInfo(address user, string memory _questOrPathwayId) external {
+        require(msg.sender == pathwayNFTAddress || msg.sender == badgeNFTAddress, "dCompFactory: WRONG_SENDER");
+        userBadgeNumber[user]++;
+        userBadgesByIndex[user][userBadgeNumber[user]] = _questOrPathwayId;
+    }
+
     function createNFTToken(
         string memory objectId,
         bool isPathway,
