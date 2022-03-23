@@ -217,6 +217,7 @@ function QuestPage({
           </HStack>
 
           <TabPanels>
+            {/* 1 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
@@ -228,6 +229,7 @@ function QuestPage({
               </VStack>
             </TabPanel>
 
+            {/* 2 Tab */}
             <TabPanel px="0">
               {/* TODO: Make a wrapper component */}
               {type?.value === "quiz" && (
@@ -264,6 +266,8 @@ function QuestPage({
                 />
               )}
             </TabPanel>
+
+            {/* 3 Tab */}
             <TabPanel px="0">
               <HStack w="full" align="left" justifyContent="space-between">
                 <VStack align="left">
@@ -424,6 +428,8 @@ function QuestPage({
                 </CardMedia>
               </HStack>
             </TabPanel>
+
+            {/* 3 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 {completedBy && (

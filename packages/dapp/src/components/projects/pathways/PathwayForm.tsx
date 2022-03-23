@@ -20,6 +20,7 @@ import {
   Progress,
   Stack,
   Heading,
+  Box,
 } from "@chakra-ui/react";
 import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
@@ -155,7 +156,7 @@ export default function PathwayForm() {
     });
 
   return (
-    <VStack w="full">
+    <VStack w="full" align="start">
       <FormControl isInvalid={errors.title}>
         <FormLabel htmlFor="title">Title</FormLabel>
         <HStack>
@@ -200,7 +201,11 @@ export default function PathwayForm() {
         </FormErrorMessage>
       </FormControl>
 
-      {code && <CodeEditorPreview code={code} />}
+      {code && (
+        <Box w="full">
+          <CodeEditorPreview code={code} />
+        </Box>
+      )}
 
       <ImageDropzone
         isRequired
@@ -318,14 +323,14 @@ export default function PathwayForm() {
         options={difficultyOptions}
       />
 
-      {/* <ControlledSelect
+      <ControlledSelect
         control={control}
         name="prerequisites"
         label="Prerequisites"
         isMulti
         options={existingPathwaysOptions}
         hasStickyGroupHeaders
-      /> */}
+      />
       <Divider bg="none" py="5" />
     </VStack>
   );
