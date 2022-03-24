@@ -80,15 +80,28 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
   query GetAllQuestsByPathwayId($pathwayId: String!) {
     getAllQuestsByPathwayId(pathwayId: $pathwayId) {
       id
-      name
+      streamId
+      title
       description
-      pathwayId
-      questType
       image
+      difficulty
       rewardCurrency
       rewardAmount
       rewardUserCap
       isPending
+      projectId
+      quests {
+        id
+        name
+        description
+        pathwayId
+        questType
+        image
+        rewardCurrency
+        rewardAmount
+        rewardUserCap
+        isPending
+      }
     }
   }
 `;

@@ -545,6 +545,9 @@ export declare const schemas: {
                             streamId: {
                                 type: string;
                             };
+                            pathwayId: {
+                                type: string;
+                            };
                             name: {
                                 type: string;
                                 title: string;
@@ -552,9 +555,6 @@ export declare const schemas: {
                             };
                             description: {
                                 type: string;
-                            };
-                            pathwayId: {
-                                $ref: string;
                             };
                             completedBy: {
                                 type: string;
@@ -613,6 +613,9 @@ export declare const schemas: {
                 streamId: {
                     type: string;
                 };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -620,9 +623,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -684,6 +684,9 @@ export declare const schemas: {
                 streamId: {
                     type: string;
                 };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -691,9 +694,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -750,6 +750,9 @@ export declare const schemas: {
                 streamId: {
                     type: string;
                 };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -757,9 +760,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -809,6 +809,9 @@ export declare const schemas: {
                 streamId: {
                     type: string;
                 };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -816,9 +819,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -871,6 +871,9 @@ export declare const schemas: {
                 streamId: {
                     type: string;
                 };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -878,9 +881,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -954,6 +954,9 @@ export declare const schemas: {
                 streamId: {
                     type: string;
                 };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -961,9 +964,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -1023,6 +1023,9 @@ export declare const schemas: {
                 streamId: {
                     type: string;
                 };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -1030,9 +1033,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -1085,6 +1085,9 @@ export declare const schemas: {
                 streamId: {
                     type: string;
                 };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -1092,9 +1095,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;

@@ -111,4 +111,25 @@ export class ThreadDBService {
     };
     return foundProject;
   }
+
+  async getPathwayById({
+    dbClient,
+    threadId,
+    pathwayId,
+  }: {
+    dbClient: Client;
+    threadId: ThreadID;
+    pathwayId: string;
+  }) {
+    const [foundPathway] = await this.query({
+      collectionName: 'Pathway',
+      dbClient,
+      threadId,
+      query: new Where('_id').eq(pathwayId),
+    });
+    if (!foundPathway) {
+      throw new NotFoundException('Pathway not found by back-end');
+    }
+    return foundPathway as any;
+  }
 }

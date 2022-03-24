@@ -230,7 +230,7 @@ type Query {
   getAllProjects: [Project!]
 
   """Gets all the quests in dCompass"""
-  getAllQuestsByPathwayId(pathwayId: String!): [Quest!]
+  getAllQuestsByPathwayId(pathwayId: String!): Pathway
 
   """Gets all the tags in Discovery"""
   getAllTags: [Tag!]

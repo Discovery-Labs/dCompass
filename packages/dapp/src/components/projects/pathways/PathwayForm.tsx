@@ -229,7 +229,7 @@ export default function PathwayForm() {
           <NumberInput step={1_000} defaultValue={1_000}>
             <NumberInputField
               roundedBottom="none"
-              placeholder=""
+              placeholder="Number of max. claims"
               {...register(`rewardUserCap`, {
                 required: REQUIRED_FIELD_LABEL,
               })}

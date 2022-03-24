@@ -1,16 +1,18 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { ethers } from 'ethers';
-// import { ForbiddenError } from 'apollo-server-express';
 
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
-import { schemaAliases } from '../../../core/constants/idx';
+import { UseCeramicClient, UseThreadDBClient } from '../../../core/utils/types';
 import { CreateQuestInput } from '../dto/CreateQuest.input';
 import { QuizQuest } from '../QuizQuest.entity';
 import { ForbiddenError } from 'apollo-server-express';
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
 
 @Resolver(() => QuizQuest)
 export class CreateQuizQuestResolver {
+  constructor(private readonly threadDBService: ThreadDBService) {}
+
   @Mutation(() => QuizQuest, {
     nullable: true,
     description: 'Create a new Quiz quest in dCompass',
@@ -18,13 +20,14 @@ export class CreateQuizQuestResolver {
   })
   async createQuizQuest(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB()
+    { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('input') { id, questCreatorSignature }: CreateQuestInput,
   ): Promise<QuizQuest | null | undefined> {
     // Check that the current user is the owner of the quest
     const ogQuest = await ceramicClient.ceramic.loadStream(id);
-    console.log({ ogQuestCtrl: ogQuest.controllers[0] });
     const pathwayId = ogQuest.content.pathwayId;
-    console.log({ pathwayId, id });
+    console.log({ pathwayId, id, ogQuest: ogQuest.content });
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({ id, pathwayId }),
       questCreatorSignature,
@@ -49,45 +52,42 @@ export class CreateQuizQuestResolver {
       throw new ForbiddenError('Unauthorized');
     }
 
-    const allPathways = await ceramicClient.dataStore.get(
-      schemaAliases.PATHWAYS_ALIAS,
-    );
-    const pathways = allPathways?.pathways ?? [];
+    const [newQuestId] = await this.threadDBService.create({
+      collectionName: 'Quest',
+      threadId: latestThreadId,
+      values: [
+        {
+          streamId: id,
+          ...ogQuest.content,
+          isPending: true,
+        },
+      ],
+      dbClient,
+    });
 
-    const pathwayIndexedFields = pathways.find(
-      (pathway: { id: string }) => pathway.id === pathwayId,
-    );
-    if (!pathwayIndexedFields) {
-      return null;
-    }
+    const pathwayDetails = await this.threadDBService.getPathwayById({
+      dbClient,
+      threadId: latestThreadId,
+      pathwayId,
+    });
 
-    console.log({ pathwayIndexedFields });
-
-    // remove previously indexed pathway and recreate it as with the new pending quest
-    const existingPathways = pathways.filter(
-      (pathway: { id: string }) => pathway.id !== pathwayIndexedFields.id,
-    );
-
-    console.log({ existingPathways });
-    // Add the new quest for review
-    const appPathwaysUpdated = [
-      {
-        id,
-        ...pathwayIndexedFields,
-        pendingQuests: [
-          ...(pathwayIndexedFields.pendingQuests ?? []),
-          ogQuest.id.toUrl(),
-        ],
-      },
-      ...existingPathways,
-    ];
-
-    await ceramicClient.dataStore.set(schemaAliases.PATHWAYS_ALIAS, {
-      pathways: appPathwaysUpdated,
+    const existingPendingQuests = pathwayDetails.pendingQuests ?? [];
+    await this.threadDBService.update({
+      collectionName: 'Pathway',
+      dbClient,
+      threadId: latestThreadId,
+      values: [
+        {
+          _id: pathwayId,
+          ...pathwayDetails,
+          pendingQuests: [...existingPendingQuests, newQuestId],
+        },
+      ],
     });
 
     return {
-      id,
+      id: newQuestId,
+      streamId: id,
       ...ogQuest.content,
     };
   }

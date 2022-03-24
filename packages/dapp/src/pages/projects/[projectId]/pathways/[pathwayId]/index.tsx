@@ -37,7 +37,6 @@ import { initializeApollo } from "../../../../../../lib/apolloClient";
 import CardMedia from "../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../components/layout/BreadcrumbItems";
 import QuestCard from "../../../../../components/projects/quests/QuestCard";
-import { streamUrlToId } from "../../../../../core/helpers";
 import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../core/hooks/useTokenList";
@@ -167,17 +166,15 @@ function PathwayPage({
           },
           {
             label: projectRes.getProjectById.name,
-            href: `/projects/${streamUrlToId(projectId)}`,
+            href: `/projects/${projectId}`,
           },
           {
             label: "Pathways",
-            href: `/projects/${streamUrlToId(projectId)}`,
+            href: `/projects/${projectId}`,
           },
           {
             label: title,
-            href: `/projects/${streamUrlToId(
-              projectId
-            )}/pathways/${streamUrlToId(id)}/`,
+            href: `/projects/${projectId}/pathways/${id}/`,
             isCurrentPage: true,
           },
         ]}
@@ -307,9 +304,7 @@ function PathwayPage({
                     {isOwner && (
                       // TODO: edit pathway form
                       <NextLink
-                        href={`/projects/${streamUrlToId(
-                          projectId
-                        )}/pathways/${streamUrlToId(id)}/edit-pathway`}
+                        href={`/projects/${projectId}/pathways/${id}/edit-pathway`}
                         passHref
                       >
                         <Button leftIcon={<EditIcon />}>
@@ -410,9 +405,7 @@ function PathwayPage({
                   </TabList>
                   {isOwner && (
                     <NextLink
-                      href={`/projects/${streamUrlToId(
-                        projectId
-                      )}/pathways/${streamUrlToId(id)}/add-quest`}
+                      href={`/projects/${projectId}/pathways/${id}/add-quest`}
                       passHref
                     >
                       <Button leftIcon={<PlusSquareIcon />}>
@@ -426,7 +419,7 @@ function PathwayPage({
                   <TabPanel>
                     <SimpleGrid columns={[1, 2]} spacing={10}>
                       {renderQuests(
-                        data.getAllQuestsByPathwayId.filter(
+                        data.getAllQuestsByPathwayId.quests.filter(
                           (quest: any) => !quest.isPending
                         )
                       )}
@@ -435,7 +428,7 @@ function PathwayPage({
                   <TabPanel>
                     <SimpleGrid columns={[1, 2]} spacing={10}>
                       {renderQuests(
-                        data.getAllQuestsByPathwayId.filter(
+                        data.getAllQuestsByPathwayId.quests.filter(
                           (quest: any) => quest.isPending
                         )
                       )}

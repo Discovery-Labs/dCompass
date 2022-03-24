@@ -1,91 +1,79 @@
 import { NotFoundException } from '@nestjs/common';
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { schemaAliases } from '../../../core/constants/idx';
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
-import { Pathway } from '../../Pathways/Pathway.entity';
-import { Quest } from '../Quest.entity';
+import { Where } from '@textile/hub';
 
-@Resolver(() => [Quest])
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseThreadDBClient } from '../../../core/utils/types';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
+import { Pathway } from '../../Pathways/Pathway.entity';
+
+@Resolver(() => Pathway)
 export class GetAllQuestsByPathwayIdResolver {
-  @Query(() => [Quest], {
+  constructor(private readonly threadDBService: ThreadDBService) {}
+  @Query(() => Pathway, {
     nullable: true,
     description: 'Gets all the quests in dCompass',
     name: 'getAllQuestsByPathwayId',
   })
   async getAllQuestsByPathwayId(
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('pathwayId') pathwayId: string,
-  ): Promise<Quest[] | null> {
-    const allPathways = await ceramicClient.dataStore.get(
-      schemaAliases.PATHWAYS_ALIAS,
-    );
-    const pathways = allPathways?.pathways ?? [];
-    const foundPathway = pathways.find(
-      (pathway: Pathway) => pathway.id === pathwayId,
-    );
-
-    console.log({ foundPathway });
+  ): Promise<Pathway | null> {
+    const [foundPathway] = await this.threadDBService.query({
+      collectionName: 'Pathway',
+      dbClient,
+      threadId: latestThreadId,
+      query: new Where('_id').eq(pathwayId),
+    });
     if (!foundPathway) {
       throw new NotFoundException('Pathway not found');
     }
-    const questIds = foundPathway.quests
-      ? foundPathway.quests.map((id: string) => ({
-          streamId: id,
-        }))
-      : [];
+    const { _id, ...pathway } = foundPathway as any;
 
-    const pendingQuestIds = foundPathway.pendingQuests
-      ? foundPathway.pendingQuests.map((id: string) => ({
-          streamId: id,
-        }))
-      : [];
+    const questIds = pathway.quests ?? [];
 
-    console.log({ questIds });
+    const pendingQuestIds = pathway.pendingQuests ?? [];
 
-    const [questsWithDetails, pendingQuestsWithDetails] = await Promise.all([
-      ceramicClient.ceramic.multiQuery(questIds),
-      ceramicClient.ceramic.multiQuery(pendingQuestIds),
-    ]);
-
-    console.log({ questsWithDetails, pendingQuestsWithDetails });
-
-    const serializedQuests = Object.values(questsWithDetails).map((stream) => {
-      return {
-        id: stream.id.toUrl(),
-        ...stream.state.content,
-        isPending: false,
-      };
-    });
-
-    const serializedPendingQuests = Object.values(pendingQuestsWithDetails).map(
-      (stream) => {
+    const questsWithDetails = await Promise.all(
+      questIds.map(async (questId: string) => {
+        const [pathway] = await this.threadDBService.query({
+          collectionName: 'Quest',
+          dbClient,
+          threadId: latestThreadId,
+          query: new Where('_id').eq(questId),
+        });
         return {
-          id: stream.id.toUrl(),
-          ...stream.state.content,
-          isPending: true,
+          id: (pathway as any)._id,
+          isPending: false,
+          ...(pathway as any),
         };
-      },
+      }),
     );
-    console.log({
-      serializedQuests: serializedQuests.map((quest) => ({
-        ...quest,
-        questType: quest.type.label,
-      })),
-      serializedPendingQuests: serializedPendingQuests.map((quest) => ({
-        ...quest,
-        questType: quest.type.label,
-      })),
-    });
-    return [
-      ...serializedQuests.map((quest) => ({
-        ...quest,
-        questType: quest.type.label,
-      })),
-      ...serializedPendingQuests.map((quest) => ({
-        ...quest,
-        questType: quest.type.label,
-      })),
-    ];
+    const pendingQuestsWithDetails = await Promise.all(
+      pendingQuestIds.map(async (questId: string) => {
+        const [pathway] = await this.threadDBService.query({
+          collectionName: 'Quest',
+          dbClient,
+          threadId: latestThreadId,
+          query: new Where('_id').eq(questId),
+        });
+        return {
+          id: (pathway as any)._id,
+          isPending: true,
+          ...(pathway as any),
+        };
+      }),
+    );
+
+    return {
+      id: _id,
+      ...pathway,
+      quests: [...questsWithDetails, ...pendingQuestsWithDetails].map(
+        (quest) => ({
+          ...quest,
+          questType: quest.type.label,
+        }),
+      ),
+    };
   }
 }
