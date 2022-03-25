@@ -62,28 +62,16 @@ export const PathwaySchema = {
     },
     quests: {
       type: "array",
-      title: "Quests",
+      title: "quests",
       items: {
-        type: "object",
-        title: "QuestItem",
-        properties: {
-          id: {
-            type: "string",
-          },
-        },
+        type: "string",
       },
     },
     pendingQuests: {
       type: "array",
-      title: "PendingQuests",
+      title: "pendingQuests",
       items: {
-        type: "object",
-        title: "PendingQuestItem",
-        properties: {
-          id: {
-            type: "string",
-          },
-        },
+        type: "string",
       },
     },
   },

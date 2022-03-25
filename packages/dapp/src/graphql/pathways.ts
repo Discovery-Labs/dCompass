@@ -68,7 +68,6 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
         projectId
         quests {
           id
-          name
         }
       }
       pendingPathways {
@@ -85,7 +84,6 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
         projectId
         quests {
           id
-          name
         }
       }
     }
@@ -110,7 +108,6 @@ export const GET_PATHWAY_BY_ID_QUERY = gql`
       prerequisites
       quests {
         id
-        name
       }
     }
   }

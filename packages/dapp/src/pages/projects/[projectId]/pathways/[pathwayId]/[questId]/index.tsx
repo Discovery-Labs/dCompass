@@ -78,7 +78,7 @@ export const getServerSideProps: GetServerSideProps<
     const { data } = await client.query({
       query: GET_QUIZ_QUEST_BY_ID_QUERY,
       variables: {
-        questId: `ceramic://${questId}`,
+        questId,
       },
     });
     const questInfos = await core.ceramic.loadStream(questId);

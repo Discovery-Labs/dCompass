@@ -497,12 +497,6 @@ export declare const schemas: {
                     title: string;
                     items: {
                         type: string;
-                        title: string;
-                        properties: {
-                            id: {
-                                type: string;
-                            };
-                        };
                     };
                 };
                 pendingQuests: {
@@ -510,12 +504,6 @@ export declare const schemas: {
                     title: string;
                     items: {
                         type: string;
-                        title: string;
-                        properties: {
-                            id: {
-                                type: string;
-                            };
-                        };
                     };
                 };
             };

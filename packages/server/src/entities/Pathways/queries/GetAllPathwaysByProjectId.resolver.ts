@@ -42,6 +42,9 @@ export class GetAllPathwaysByProjectIdResolver {
         return {
           id: (pathway as any)._id,
           ...(pathway as any),
+          quests: (pathway as any).quests.map((questId: string) => ({
+            id: questId,
+          })),
         };
       }),
     );
@@ -56,12 +59,19 @@ export class GetAllPathwaysByProjectIdResolver {
         return {
           id: (pathway as any)._id,
           ...(pathway as any),
+          quests: (pathway as any).quests.map((questId: string) => ({
+            id: questId,
+          })),
         };
       }),
     );
 
     // TODO: Query quests for each pathway
-    console.log({ pathwaysWithDetails, pendingPathwaysWithDetails });
+    console.log({
+      pathwaysWithDetails: pathwaysWithDetails[0].quests,
+      pendingPathwaysWithDetails,
+    });
+
     return {
       ...foundProject,
       pathways: pathwaysWithDetails,

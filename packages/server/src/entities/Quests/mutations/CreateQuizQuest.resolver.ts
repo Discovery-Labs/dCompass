@@ -32,7 +32,7 @@ export class CreateQuizQuestResolver {
       JSON.stringify({ id, pathwayId }),
       questCreatorSignature,
     );
-    console.log({ decodedAddress });
+    console.log({ decodedAddress, controllers: ogQuest.controllers });
 
     const ownerAccounts = await ceramicClient.dataStore.get(
       'cryptoAccounts',

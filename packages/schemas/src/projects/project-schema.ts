@@ -63,7 +63,7 @@ export const projectProperties = {
   },
   pendingPathways: {
     type: "array",
-    title: "pending pathways",
+    title: "pendingPathways",
     items: {
       type: "string",
     },

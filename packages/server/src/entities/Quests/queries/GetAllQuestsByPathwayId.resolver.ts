@@ -36,31 +36,31 @@ export class GetAllQuestsByPathwayIdResolver {
 
     const questsWithDetails = await Promise.all(
       questIds.map(async (questId: string) => {
-        const [pathway] = await this.threadDBService.query({
+        const [quest] = await this.threadDBService.query({
           collectionName: 'Quest',
           dbClient,
           threadId: latestThreadId,
           query: new Where('_id').eq(questId),
         });
         return {
-          id: (pathway as any)._id,
+          id: (quest as any)._id,
+          ...(quest as any),
           isPending: false,
-          ...(pathway as any),
         };
       }),
     );
     const pendingQuestsWithDetails = await Promise.all(
       pendingQuestIds.map(async (questId: string) => {
-        const [pathway] = await this.threadDBService.query({
+        const [quest] = await this.threadDBService.query({
           collectionName: 'Quest',
           dbClient,
           threadId: latestThreadId,
           query: new Where('_id').eq(questId),
         });
         return {
-          id: (pathway as any)._id,
+          id: (quest as any)._id,
+          ...(quest as any),
           isPending: true,
-          ...(pathway as any),
         };
       }),
     );

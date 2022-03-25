@@ -1,8 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { ethers } from 'ethers';
 import { ForbiddenError } from 'apollo-server-express';
-import { NotFoundException } from '@nestjs/common';
-import { Where } from '@textile/hub';
+
 import ABIS from '@discovery-dao/hardhat/abis.json';
 
 import { UseThreadDBClient } from '../../../core/utils/types';
@@ -31,17 +30,12 @@ export class ApprovePathwayResolver {
     @Args('input')
     { id, pathwayApproverSignature, chainId }: ApprovePathwayInput,
   ): Promise<Pathway | null | undefined> {
-    const [foundPathway] = await this.threadDBService.query({
-      collectionName: 'Pathway',
+    const foundPathway = await this.threadDBService.getPathwayById({
       dbClient,
       threadId: latestThreadId,
-      query: new Where('_id').eq(id),
+      pathwayId: id,
     });
-    if (!foundPathway) {
-      throw new NotFoundException('Pathway not found by back-end');
-    }
-    const pathway = foundPathway as Pathway;
-    const { projectId } = pathway;
+    const { projectId } = foundPathway;
     const foundProject = await this.threadDBService.getProjectById({
       dbClient,
       threadId: latestThreadId,
@@ -99,23 +93,26 @@ export class ApprovePathwayResolver {
     );
 
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
-      verifyContract.noncesParentIdChildId(projectStreamId, pathway.streamId),
-      verifyContract.thresholdNoncesById(pathway.streamId),
+      verifyContract.noncesParentIdChildId(
+        projectStreamId,
+        foundPathway.streamId,
+      ),
+      verifyContract.thresholdNoncesById(foundPathway.streamId),
     ]);
 
-    console.log({ pathwayId: pathway.streamId });
+    console.log({ pathwayId: foundPathway.streamId });
     const [metadataVerify, tresholdVerify] = await Promise.all([
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
         nonceId: metadataNonceId,
-        objectId: pathway.streamId,
+        objectId: foundPathway.streamId,
         senderAddress: decodedAddress,
         verifyContract: verifyContract.address,
       }),
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
         nonceId: thresholdNonceId,
-        objectId: pathway.streamId,
+        objectId: foundPathway.streamId,
         senderAddress: decodedAddress,
         verifyContract: verifyContract.address,
         votesNeeded: 1,
@@ -123,7 +120,7 @@ export class ApprovePathwayResolver {
     ]);
 
     return {
-      ...pathway,
+      ...foundPathway,
       id,
       projectStreamId: foundProject.streamId,
       expandedServerSignatures: [

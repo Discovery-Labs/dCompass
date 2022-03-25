@@ -32,6 +32,7 @@ export class GetPathwayByIdResolver {
     return {
       id: _id,
       ...pathway,
+      quests: pathway.quests.map((questId: string) => ({ id: questId })),
     } as Pathway;
   }
 }
