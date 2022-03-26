@@ -77,6 +77,7 @@ contract AdventurerBadgeFactory is IAdventurerBadgeFactory, Ownable {
         bool isPathway,
         string memory parentId
     ) external override returns (address newToken) {
+        require(msg.sender == pathwayNFTAddress || msg.sender == badgeNFTAddress, "dCompFactory: WRONG_SENDER");
         require(
             getNFTAddrs[objectId] ==
                 address(0),
