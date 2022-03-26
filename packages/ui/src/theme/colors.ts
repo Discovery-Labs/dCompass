@@ -64,15 +64,15 @@ const extendedColors: DeepPartial<
   neutralDarkest: '#0F0A1E',
   neutralDarker: '#18112C',
   neutralDark: '#513B91',
-  neutralLightest: '#fff',
-  neutralLighter: '#EFEDF5',
+  neutralLightest: '#EFEDF5',
+  neutralLighter: '#fff',
   neutralLight: '#AFA2D6',
 
   neutralDarkerAlpha: '#1a2227b3',
   neutralLighterAlpha: '#f0f0f0b3',
 
-  borderDark: '#30363d',
-  borderLight: '#c7d2da',
+  borderDark: '#6F3FF5',
+  borderLight: '#6F3FF5',
 
   // Functional
   success: '#9AF1A8',
