@@ -380,6 +380,14 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         return tokenIds;
     }
 
+    function getContributors(string memory _pathwayId) external view returns(address[] memory){
+        return contributors[_pathwayId];
+    }
+
+    function getAppDiamond() external view returns(address){
+        return appDiamond;
+    }
+
     function setAppDiamond(address newAppDiamond) external onlyOwner {
         appDiamond = newAppDiamond;
     }

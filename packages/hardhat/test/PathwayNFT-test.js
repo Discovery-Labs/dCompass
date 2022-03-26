@@ -198,6 +198,29 @@ describe("PathwayNFT", function() {
       expect(await pathwayNFT.reviewerVotes("firstCourseProject", `${addr1.address}`)).to.be.true;
       //expect(await rng.objectRequests('0xd112541cfa18fb778c806d9631e966e2804abf8d12eaa09fe867f32989722056')).to.be.equal('firstCourseProject');
       //expect(await rng.numContributors('0xd112541cfa18fb778c806d9631e966e2804abf8d12eaa09fe867f32989722056')).to.be.equal(5);
+      
+      nonce = await verify.noncesParentIdChildId("firstTestProject", "firstCourseProject");
+      nonceById = await verify.thresholdNoncesById("firstCourseProject");
+      
+      //get signature for pathway create Token
+      sig = await verifyNFTInfo(0,nonce, `${addr1.address}`, `${pathwayNFT.address}`, `${verify.address}`, "firstCourseProject", false);
+      r[0]=sig.r;
+      s[0]=sig.s;
+      v[0]=sig.v;
+      sig = await verifyNFTInfo(nonceById, 2, `${addr1.address}`, `${pathwayNFT.address}`, `${verify.address}`, "firstCourseProject", true);
+      r[1]=sig.r;
+      s[1]=sig.s;
+      v[1]=sig.v;
+      console.log(`${r} \n ${s} \n ${v}`)
+
+      await pathwayNFT.connect(addr1).createToken("test_URI_String", "firstCourseProject", "firstTestProject", r, s, v, 2);
+
+      let tokenURI;
+      for(var i = 1 ; i<=contributors.length; i++){
+        tokenURI = await pathwayNFT.tokenURI(i);
+        console.log(tokenURI);//should match "test_URI_String"
+      }
+      
       let verifyClaimParams = {};
       verifyClaimParams['account'] = `${addrs[2].address}`;
       verifyClaimParams['contract'] = `${pathwayNFT.address}`;
