@@ -38,10 +38,10 @@ contract AdventurerBadgeFactory is IAdventurerBadgeFactory, Ownable {
         address _appDiamond
     ) {
         dCompERC721TokenImplementation = _dCompERC721TokenImplementation;
-        address projectNFTAddress = _projectNFTAddress;
-        address pathwayNFTAddress = _pathwayNFTAddress;
-        address badgeNFTAddress = _badgeNFTAddress;
-        address appDiamond = _appDiamond;
+        projectNFTAddress = _projectNFTAddress;
+        pathwayNFTAddress = _pathwayNFTAddress;
+        badgeNFTAddress = _badgeNFTAddress;
+        appDiamond = _appDiamond;
         typeStrings[0] = "Pathway";
         typeStrings[1] = "Badge";
     }

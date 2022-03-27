@@ -159,7 +159,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     }
 
     function addBadgeCreationReward(string memory _badgeId, address _ERC20Address, bool useNative, uint amount) public payable{
-        require (status[_badgeId] == BadgeStatus.PENDING, "badge not pending");
+        require (status[_badgeId] == BadgeStatus.PENDING || status[_badgeId] == BadgeStatus.APPROVED, "badge not pending/approved");
         require (numUsersRewardPerBadge[_badgeId] > 0, "no user rewards");
         (bool success , bytes memory data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("appWallet()"))));
         require(success);
@@ -188,6 +188,12 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount);
             erc20Amounts[_badgeId][_ERC20Address] += amount;
         }
+    }
+
+    function setNumberOfUsersRewarded(string memory _badgeId, uint256 newNumber, bytes32 r, bytes32 s, uint8 v) external {
+        require(newNumber > numUsersRewardPerBadge[_badgeId] - 1, "BadgeNFT : invalid number");
+        _verify(_msgSender(), _badgeId, newNumber, r, s, v);
+        numUsersRewardPerBadge[_badgeId] = newNumber;
     }
 
     function claimRejectionRefund(string memory _badgeId, bool native, address _ERC20Address) external {
@@ -375,6 +381,35 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
       require(success);
       address newTokenAddr = abi.decode(data, (address));
       adventurerAddress[_badgeId] = newTokenAddr;
+  }
+
+  function _verify(address from, string memory _badgeId, uint256 payload, bytes32 r, bytes32 s, uint8 v) internal returns (bool){
+      bytes32 hashRecover = keccak256(
+            abi.encodePacked(
+                from,
+                address(this),
+                block.chainid,
+                nonces[_badgeId][from],
+                payload,
+                _badgeId
+            )
+        );
+        (bool success, bytes memory data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("appSigningAddr()"))));
+        require(success);
+        address signer = abi.decode(data, (address));
+        require (signer == ecrecover(
+            keccak256(
+                abi.encodePacked(
+                    "\x19Ethereum Signed Message:\n32",
+                    hashRecover
+                )
+            ),
+            v,
+            r,
+            s
+        ), "Incorrect signer");
+        nonces[_badgeId][from]++;
+        return true;
   }
 
     function getContributors(string memory _pathwayId) external view returns(address[] memory){
