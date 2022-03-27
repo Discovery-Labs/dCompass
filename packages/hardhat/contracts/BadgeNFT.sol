@@ -83,7 +83,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             pathwayIdforBadge[_badgeId] = _pathwayId;
             numUsersRewardPerBadge[_badgeId] = numUsersRewarded;
             if (callRewards){
-                //addBadgeCreationReward(_badgeId, _ERC20Address, useNative, amount);
+                addBadgeCreationReward(_badgeId, _ERC20Address, useNative, amount);
             }
     }
 
