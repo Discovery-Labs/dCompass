@@ -1,4 +1,13 @@
 export const questBaseProperties = {
+  _id: {
+    type: "string",
+  },
+  streamId: {
+    type: "string",
+  },
+  pathwayId: {
+    type: "string",
+  },
   name: {
     type: "string",
     title: "name",
@@ -6,9 +15,6 @@ export const questBaseProperties = {
   },
   description: {
     type: "string",
-  },
-  pathwayId: {
-    $ref: "#/definitions/CeramicStreamId",
   },
   completedBy: {
     type: "array",
@@ -40,33 +46,6 @@ export const questBaseProperties = {
   rewardCurrency: {
     type: "string",
   },
-  // nfts: {
-  //   type: "array",
-  //   minItems: 1,
-  //   items: {
-  //     type: "object",
-  //     properties: {
-  //       claimedBy: {
-  //         type: "array",
-  //         title: "claimedBy",
-  //         items: {
-  //           type: "string",
-  //         },
-  //       },
-  //       rarity: {
-  //         type: "string",
-  //         enum: ["common", "uncommon", "epic", "legendary"],
-  //       },
-  //       name: {
-  //         type: "string",
-  //         maxLength: 200,
-  //       },
-  //       url: {
-  //         $ref: "#/definitions/IPFSUrl",
-  //       },
-  //     },
-  //   },
-  // },
 };
 
 export const QuestSchema = {

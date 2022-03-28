@@ -4,6 +4,9 @@ export const TagSchema = {
   description: "A Tag covers an ecosystem or a set of topics",
   type: "object",
   properties: {
+    _id: {
+      type: "string",
+    },
     createdAt: {
       type: "string",
       format: "date-time",

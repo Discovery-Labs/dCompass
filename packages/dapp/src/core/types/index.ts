@@ -29,10 +29,12 @@ export type Project = {
 
 export type Pathway = {
   id: string;
+  streamId: string;
   image: string;
   title: string;
   description: string;
   projectId: string;
+  projectStreamId: string;
   quests: { id: string; name: string }[];
   difficulty: string;
   rewardCurrency: string;

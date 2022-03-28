@@ -11,32 +11,7 @@ export const AppProjectsSchema = {
       items: {
         type: "object",
         title: "project",
-        properties: {
-          ...projectProperties,
-          pendingPathways: {
-            type: "array",
-            title: "pending pathways",
-            items: {
-              $ref: "#/definitions/CeramicStreamId",
-            },
-          },
-          pendingMembers: {
-            type: "array",
-            title: "pending members",
-            items: {
-              $ref: "#/definitions/CeramicStreamId",
-            },
-          },
-          tokenUris: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-          },
-          isFeatured: {
-            type: "boolean",
-          },
-        },
+        properties: projectProperties,
       },
     },
   },

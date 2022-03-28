@@ -1,23 +1,57 @@
+import { NotFoundException } from '@nestjs/common';
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
-import { CeramicProjectService } from '../CeramicProject.service';
+import { Where } from '@textile/hub';
+
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseThreadDBClient } from '../../../core/utils/types';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
+import { Tag } from '../../Tags/Tag.entity';
 
 import { Project } from '../Project.entity';
 
 @Resolver(() => Project)
 export class GetProjectByIdResolver {
-  constructor(private readonly ceramicProjectService: CeramicProjectService) {}
+  constructor(private readonly threadDBService: ThreadDBService) {}
 
   @Query(() => Project, {
     nullable: true,
-    description: 'Gets a project by its Stream ID',
+    description: 'Gets a project by its document ID',
     name: 'getProjectById',
   })
   async getProjectById(
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('projectId') projectId: string,
   ): Promise<Project | null | undefined> {
-    return this.ceramicProjectService.getProjectById(ceramicClient, projectId);
+    console.log({ projectId });
+    const [foundProjects, allTags] = await Promise.all([
+      this.threadDBService.query({
+        collectionName: 'Project',
+        dbClient,
+        threadId: latestThreadId,
+        query: new Where('_id').eq(projectId),
+      }),
+      this.threadDBService.query({
+        collectionName: 'Tag',
+        threadId: latestThreadId,
+        dbClient,
+      }),
+    ]);
+
+    if (!foundProjects || foundProjects.length === 0) {
+      throw new NotFoundException('Project not found');
+    }
+    console.log({ isFound: foundProjects });
+    const [project] = foundProjects as any[];
+    const { _id, _mod, ...rest } = project;
+    console.log({ project });
+    return {
+      id: _id,
+      ...rest,
+      tags: allTags
+        .map((t: any) => ({ id: t._id, ...t }))
+        .filter((tag: any) =>
+          project.tags.map((pjTag: Tag) => pjTag.id).includes(tag.id),
+        ),
+    } as Project;
   }
 }

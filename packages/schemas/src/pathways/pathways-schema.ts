@@ -11,17 +11,10 @@ export const PathwaysSchema = {
         title: "PathwayItem",
         properties: {
           id: {
-            $ref: "#/definitions/CeramicStreamId",
+            type: "string",
           },
         },
       },
-    },
-  },
-  definitions: {
-    CeramicStreamId: {
-      type: "string",
-      pattern: "^ceramic://.+(\\\\?version=.+)?",
-      maxLength: 150,
     },
   },
 };

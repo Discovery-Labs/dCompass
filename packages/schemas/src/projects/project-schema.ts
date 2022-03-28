@@ -1,6 +1,9 @@
 export const projectProperties = {
-  id: {
-    $ref: "#/definitions/CeramicStreamId",
+  _id: {
+    type: "string",
+  },
+  streamId: {
+    type: "string",
   },
   name: {
     type: "string",
@@ -48,7 +51,7 @@ export const projectProperties = {
     type: "array",
     title: "pathways",
     items: {
-      $ref: "#/definitions/CeramicStreamId",
+      type: "string",
     },
   },
   members: {
@@ -57,6 +60,29 @@ export const projectProperties = {
     items: {
       $ref: "#/definitions/CeramicStreamId",
     },
+  },
+  pendingPathways: {
+    type: "array",
+    title: "pendingPathways",
+    items: {
+      type: "string",
+    },
+  },
+  pendingMembers: {
+    type: "array",
+    title: "pending members",
+    items: {
+      $ref: "#/definitions/CeramicStreamId",
+    },
+  },
+  tokenUris: {
+    type: "array",
+    items: {
+      type: "string",
+    },
+  },
+  isFeatured: {
+    type: "boolean",
   },
   createdBy: {
     type: "string",
@@ -83,8 +109,8 @@ export const projectProperties = {
       type: "object",
       title: "TagItem",
       properties: {
-        id: {
-          $ref: "#/definitions/CeramicStreamId",
+        _id: {
+          type: "string",
         },
       },
     },
@@ -110,12 +136,12 @@ export const projectProperties = {
     },
   },
   parentProjectId: {
-    $ref: "#/definitions/CeramicStreamId",
+    type: "string",
   },
   childProjects: {
     type: "array",
     items: {
-      $ref: "#/definitions/CeramicStreamId",
+      type: "string",
     },
   },
 };

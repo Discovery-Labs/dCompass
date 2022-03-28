@@ -1,47 +1,52 @@
 import { NotFoundException } from '@nestjs/common';
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { schemaAliases } from '../../../core/constants/idx';
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
+import { Where } from '@textile/hub';
+
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseThreadDBClient } from '../../../core/utils/types';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
 import { Quest } from '../Quest.entity';
 import { QuizQuest } from '../QuizQuest.entity';
 
 @Resolver(() => QuizQuest)
 export class GetQuizQuestByIdResolver {
+  constructor(private readonly threadDBService: ThreadDBService) {}
   @Query(() => QuizQuest, {
     nullable: true,
-    description: 'Gets a quiz quest by its Stream ID',
+    description: 'Gets a quiz quest by its ID',
     name: 'getQuizQuestById',
   })
   async getQuizQuestById(
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('questId') questId: string,
   ): Promise<Quest | null | undefined> {
-    const ogQuest = await ceramicClient.ceramic.loadStream(questId);
-    if (!ogQuest) {
-      throw new NotFoundException('Quest not found!');
+    const [foundQuest] = await this.threadDBService.query({
+      collectionName: 'Quest',
+      dbClient,
+      threadId: latestThreadId,
+      query: new Where('_id').eq(questId),
+    });
+    if (!foundQuest) {
+      throw new NotFoundException('Quest not found');
     }
-    const indexedQuests = await ceramicClient.dataStore.get(
-      schemaAliases.QUESTS_ALIAS,
-    );
-    const allQuests = indexedQuests?.quests ?? [];
-    const currentQuest = allQuests.find(
-      (quest: { id: string }) => quest.id === ogQuest.id.toUrl(),
-    );
-    if (!currentQuest) {
-      throw new NotFoundException('Quest not found or not approved yet!');
+    const { _id, ...quest } = foundQuest as any;
+
+    const [foundPathway] = await this.threadDBService.query({
+      collectionName: 'Pathway',
+      dbClient,
+      threadId: latestThreadId,
+      query: new Where('_id').eq(quest.pathwayId),
+    });
+    if (!foundPathway) {
+      throw new NotFoundException('Pathway not found');
     }
-    const parentPathway = await ceramicClient.ceramic.loadStream(
-      ogQuest.content.pathwayId,
-    );
+    const { _id: pathwayId, ...pathway } = foundPathway as any;
     return {
-      id: ogQuest.id.toUrl(),
-      ...ogQuest.content,
-      ...currentQuest,
+      id: _id,
+      ...quest,
       pathway: {
-        id: parentPathway.id.toUrl(),
-        ...parentPathway.content,
-        quests: parentPathway.content.quests,
+        id: pathwayId,
+        ...pathway,
       },
     };
   }
