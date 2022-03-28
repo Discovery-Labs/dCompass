@@ -4,9 +4,108 @@
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import type { IERC1155, IERC1155Interface } from "../IERC1155";
+import type { BadgeFacet, BadgeFacetInterface } from "../BadgeFacet";
 
 const _abi = [
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "approved",
+        type: "bool",
+      },
+    ],
+    name: "ApprovalForAll",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "ids",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "values",
+        type: "uint256[]",
+      },
+    ],
+    name: "TransferBatch",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+    ],
+    name: "TransferSingle",
+    type: "event",
+  },
   {
     anonymous: false,
     inputs: [
@@ -102,6 +201,55 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "_minter",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_badgeId",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_projectId",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_pathwayId",
+        type: "string",
+      },
+      {
+        internalType: "bytes32",
+        name: "r",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "s",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint8",
+        name: "v",
+        type: "uint8",
+      },
+    ],
+    name: "mint",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "from",
         type: "address",
       },
@@ -173,7 +321,7 @@ const _abi = [
       },
       {
         internalType: "bool",
-        name: "approved",
+        name: "status",
         type: "bool",
       },
     ],
@@ -203,15 +351,15 @@ const _abi = [
   },
 ];
 
-export class IERC1155__factory {
+export class BadgeFacet__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC1155Interface {
-    return new utils.Interface(_abi) as IERC1155Interface;
+  static createInterface(): BadgeFacetInterface {
+    return new utils.Interface(_abi) as BadgeFacetInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IERC1155 {
-    return new Contract(address, _abi, signerOrProvider) as IERC1155;
+  ): BadgeFacet {
+    return new Contract(address, _abi, signerOrProvider) as BadgeFacet;
   }
 }

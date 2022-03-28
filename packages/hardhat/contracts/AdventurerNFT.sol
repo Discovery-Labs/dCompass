@@ -20,7 +20,7 @@ contract AdventurerNFT is IAdventurerNFT, IAdventureMetadata, ERC721URIStorage, 
     bool public isPathway;
     string public parentId;
 
-    constructor() {
+    constructor() ERC721("dCompassNFT", "DCOMPNFT"){
         deployer = msg.sender;
     }
 

@@ -317,7 +317,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         _verify(_msgSender(), _badgeId, 0, r, s, v);
         if(claimReward){
             if(native){
-                (success, ) = payable(_msgSender()).call{value : amount}("");
+                (bool success, ) = payable(_msgSender()).call{value : amount}("");
                 require(success);
                 userRewardedForBadgeNative[_badgeId][_msgSender()] = true;
                 currentNumUsersRewardPerBadgeNative[_badgeId]++;

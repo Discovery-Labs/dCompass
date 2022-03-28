@@ -81,6 +81,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
+      name: "AdventurerBadgeFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AdventurerBadgeFactory__factory>;
+    getContractFactory(
+      name: "AdventurerNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AdventurerNFT__factory>;
+    getContractFactory(
       name: "AppDiamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AppDiamond__factory>;
@@ -92,6 +100,10 @@ declare module "hardhat/types/runtime" {
       name: "ERC1155BaseInternal",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155BaseInternal__factory>;
+    getContractFactory(
+      name: "BadgeFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BadgeFacet__factory>;
     getContractFactory(
       name: "BadgeNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -108,6 +120,18 @@ declare module "hardhat/types/runtime" {
       name: "OwnershipFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OwnershipFacet__factory>;
+    getContractFactory(
+      name: "IAdventureMetadata",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAdventureMetadata__factory>;
+    getContractFactory(
+      name: "IAdventurerBadgeFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAdventurerBadgeFactory__factory>;
+    getContractFactory(
+      name: "IAdventurerNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAdventurerNFT__factory>;
     getContractFactory(
       name: "IDiamondCut",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -259,6 +283,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
+      name: "AdventurerBadgeFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AdventurerBadgeFactory>;
+    getContractAt(
+      name: "AdventurerNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AdventurerNFT>;
+    getContractAt(
       name: "AppDiamond",
       address: string,
       signer?: ethers.Signer
@@ -273,6 +307,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1155BaseInternal>;
+    getContractAt(
+      name: "BadgeFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BadgeFacet>;
     getContractAt(
       name: "BadgeNFT",
       address: string,
@@ -293,6 +332,21 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.OwnershipFacet>;
+    getContractAt(
+      name: "IAdventureMetadata",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAdventureMetadata>;
+    getContractAt(
+      name: "IAdventurerBadgeFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAdventurerBadgeFactory>;
+    getContractAt(
+      name: "IAdventurerNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAdventurerNFT>;
     getContractAt(
       name: "IDiamondCut",
       address: string,
