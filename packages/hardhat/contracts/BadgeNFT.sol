@@ -40,6 +40,8 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (string => mapping(address => bool)) erc20RefundClaimed;//pathway erc20 refund claimed
     mapping (string => uint) public numUsersRewardPerBadge;//number of users rewarded per badge
     mapping (string => uint) public currentNumUsersRewardPerBadgeNative;//current number of users already claimed native reward per badge
+    mapping (string => mapping(address => uint)) public nonces;//nonce for certain verify functions per address per badgeId
+
     mapping (string => mapping ( address => uint)) public currentNumUsersRewardPerBadgeERC20;// current number of users already claimed reward per badge per ERC20 Address
     mapping (string => address) public adventurerAddress;//address of adventurer NFT
 
@@ -312,28 +314,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
                 require(amount > 0);
             }
         }
-        bytes32 hashRecover = keccak256(
-            abi.encodePacked(
-                _msgSender(),
-                address(this),
-                block.chainid,
-                _badgeId
-            )
-        );
-        (bool success, bytes memory data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("appSigningAddr()"))));
-        require(success);
-        address signer = abi.decode(data, (address));
-        require (signer == ecrecover(
-            keccak256(
-                abi.encodePacked(
-                    "\x19Ethereum Signed Message:\n32",
-                    hashRecover
-                )
-            ),
-            v,
-            r,
-            s
-        ), "Incorrect signer");
+        _verify(_msgSender(), _badgeId, 0, r, s, v);
         if(claimReward){
             if(native){
                 (success, ) = payable(_msgSender()).call{value : amount}("");
