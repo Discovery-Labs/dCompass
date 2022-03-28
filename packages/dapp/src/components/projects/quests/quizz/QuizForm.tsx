@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { Web3Context } from "../../../../contexts/Web3Context";
 import { SUBMIT_QUEST_ANSWERS_MUTATION } from "../../../../graphql/quests";
 
-import RadioButtons from "../../../custom/quiz/RadioButtons";
+import CheckboxButtons from "../../../custom/quiz/CheckboxButtons";
 
 function QuizForm({ questions, questId, successCallback }: any) {
   const toast = useToast();
@@ -69,7 +69,7 @@ function QuizForm({ questions, questId, successCallback }: any) {
   return (
     <VStack>
       {questions.map((question: any) => (
-        <RadioButtons
+        <CheckboxButtons
           key={question.question}
           quiz={question}
           setQuestionAnswer={setQuestionAnswer}

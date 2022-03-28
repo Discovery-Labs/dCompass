@@ -25,7 +25,6 @@ export interface SponsorPassSFTInterface extends utils.Interface {
     "SILVER()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "isAddrOwner(address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "mint(uint256,address,string)": FunctionFragment;
     "projByWallet(address)": FunctionFragment;
@@ -37,6 +36,7 @@ export interface SponsorPassSFTInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "updateLevel(uint256,address,string,uint256)": FunctionFragment;
     "uri(uint256)": FunctionFragment;
+    "walletByProj(string)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "DIAMOND", values?: undefined): string;
@@ -50,7 +50,6 @@ export interface SponsorPassSFTInterface extends utils.Interface {
     functionFragment: "balanceOfBatch",
     values: [string[], BigNumberish[]]
   ): string;
-  encodeFunctionData(functionFragment: "isAddrOwner", values: [string]): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
@@ -92,6 +91,10 @@ export interface SponsorPassSFTInterface extends utils.Interface {
     values: [BigNumberish, string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "walletByProj",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(functionFragment: "DIAMOND", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "GOLD", data: BytesLike): Result;
@@ -99,10 +102,6 @@ export interface SponsorPassSFTInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isAddrOwner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -143,6 +142,10 @@ export interface SponsorPassSFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "walletByProj",
+    data: BytesLike
+  ): Result;
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
@@ -243,8 +246,6 @@ export interface SponsorPassSFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    isAddrOwner(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
-
     isApprovedForAll(
       account: string,
       operator: string,
@@ -309,6 +310,8 @@ export interface SponsorPassSFT extends BaseContract {
     ): Promise<ContractTransaction>;
 
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
+    walletByProj(arg0: string, overrides?: CallOverrides): Promise<[string]>;
   };
 
   DIAMOND(overrides?: CallOverrides): Promise<BigNumber>;
@@ -328,8 +331,6 @@ export interface SponsorPassSFT extends BaseContract {
     ids: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
-
-  isAddrOwner(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   isApprovedForAll(
     account: string,
@@ -396,6 +397,8 @@ export interface SponsorPassSFT extends BaseContract {
 
   uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  walletByProj(arg0: string, overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     DIAMOND(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -414,8 +417,6 @@ export interface SponsorPassSFT extends BaseContract {
       ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
-
-    isAddrOwner(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
     isApprovedForAll(
       account: string,
@@ -481,6 +482,8 @@ export interface SponsorPassSFT extends BaseContract {
     ): Promise<void>;
 
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    walletByProj(arg0: string, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -551,8 +554,6 @@ export interface SponsorPassSFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isAddrOwner(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     isApprovedForAll(
       account: string,
       operator: string,
@@ -617,6 +618,8 @@ export interface SponsorPassSFT extends BaseContract {
     ): Promise<BigNumber>;
 
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    walletByProj(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -635,11 +638,6 @@ export interface SponsorPassSFT extends BaseContract {
     balanceOfBatch(
       accounts: string[],
       ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isAddrOwner(
-      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -711,6 +709,11 @@ export interface SponsorPassSFT extends BaseContract {
 
     uri(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    walletByProj(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

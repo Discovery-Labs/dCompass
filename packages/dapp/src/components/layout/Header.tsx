@@ -108,7 +108,7 @@ const Navbar = (props: any) => {
           >
             <LinkItem href="/">Projects</LinkItem>
             <LinkItem href="/quests">Quests</LinkItem>
-            <LinkItem href="/badges">Badges</LinkItem>
+            <LinkItem href="/profile">Profile</LinkItem>
             <MenuDropdown />
           </HStack>
         </HStack>

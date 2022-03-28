@@ -90,15 +90,15 @@ const variantSolid: SystemStyleFunction = (props) => {
   }
 
   return {
-    bg: mode(`${c}.500`, `${c}.200`)(props),
-    color: mode('white', `gray.800`)(props),
+    bg: mode(`${c}.300`, `${c}.300`)(props),
+    color: mode(colors.neutralLightest, colors.neutralLightest)(props),
     _hover: {
-      bg: mode(`${c}.600`, `${c}.300`)(props),
+      bg: mode(`${c}.400`, `${c}.400`)(props),
       _disabled: {
         bg: mode(`${c}.500`, `${c}.200`)(props),
       },
     },
-    _active: { bg: mode(`${c}.700`, `${c}.400`)(props) },
+    _active: { bg: mode(`${c}.400`, `${c}.400`)(props) },
   };
 };
 

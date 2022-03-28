@@ -16,13 +16,15 @@ import {
   AlertIcon,
   Tag,
   Heading,
+  Box,
 } from "@chakra-ui/react";
 import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
+import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import {
   difficultyOptions,
   REQUIRED_FIELD_LABEL,
@@ -36,6 +38,8 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 });
 
 export default function PathwayForm() {
+  const router = useRouter();
+  const [code, setCode] = useState<string>();
   const { codeEditorScheme } = useCustomColor();
 
   const { chainId } = useWeb3React();
@@ -44,9 +48,18 @@ export default function PathwayForm() {
     control,
     register,
     setValue,
+    getValues,
     watch,
     formState: { errors },
   } = useFormContext();
+
+  useEffect(() => {
+    const descriptionValues = getValues("description");
+
+    if (descriptionValues) {
+      setCode(descriptionValues);
+    }
+  }, [getValues]);
 
   const { rewardAmount, rewardCurrency, rewardUserCap } = watch();
 
@@ -109,7 +122,7 @@ export default function PathwayForm() {
   //   });
 
   return (
-    <VStack w="full">
+    <VStack w="full" align="start">
       <FormControl isInvalid={errors.title}>
         <FormLabel htmlFor="title">Title</FormLabel>
         <HStack>
@@ -132,6 +145,7 @@ export default function PathwayForm() {
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
         <CodeEditor
+          value={code}
           language="markdown"
           placeholder="Pathway description (markdown)"
           {...register("description", {
@@ -139,6 +153,7 @@ export default function PathwayForm() {
           })}
           onChange={(e) => {
             const { name } = e.target;
+            setCode(e.target.value);
             setValue(name, e.target.value);
           }}
           style={{
@@ -151,6 +166,12 @@ export default function PathwayForm() {
           {errors.description && errors.description.message}
         </FormErrorMessage>
       </FormControl>
+
+      {code && (
+        <Box w="full">
+          <CodeEditorPreview code={code} />
+        </Box>
+      )}
 
       <ImageDropzone
         isRequired
@@ -268,14 +289,14 @@ export default function PathwayForm() {
         options={difficultyOptions}
       />
 
-      {/* <ControlledSelect
+      <ControlledSelect
         control={control}
         name="prerequisites"
         label="Prerequisites"
         isMulti
         options={existingPathwaysOptions}
         hasStickyGroupHeaders
-      /> */}
+      />
       <Divider bg="none" py="5" />
     </VStack>
   );

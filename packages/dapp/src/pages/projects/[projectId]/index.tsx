@@ -249,8 +249,6 @@ function ProjectPage({
             <Tab>{t("about")}</Tab>
             <Tab>{t("pathways")}</Tab>
             <Tab>{t("guilds")}</Tab>
-            {/* <Tab>{t("bounties")}</Tab> */}
-            {/* <Tab>{t("events")}</Tab> */}
           </TabList>
         </HStack>
 
@@ -332,11 +330,6 @@ function ProjectPage({
               ))}
             </SimpleGrid>
           </TabPanel>
-
-          {/* Bounties */}
-          {/* <TabPanel>
-            <SimpleGrid columns={[1, 1, 2, 3]} spacing={10} />
-          </TabPanel> */}
         </TabPanels>
       </Tabs>
     </Container>

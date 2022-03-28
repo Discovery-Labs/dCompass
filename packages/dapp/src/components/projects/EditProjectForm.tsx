@@ -6,7 +6,6 @@ import {
   FormLabel,
   Heading,
   Input,
-  Textarea,
   Alert,
   AlertDescription,
   AlertIcon,
@@ -14,7 +13,11 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
+import dynamic from "next/dynamic";
+import { useState, useEffect } from "react";
 
+import CodeEditorPreview from "components/custom/CodeEditorPreview";
+import useCustomColor from "core/hooks/useCustomColor";
 import { Tag } from "../../core/types";
 import { ALL_TAGS_QUERY } from "../../graphql/tags";
 import IconWithState from "../custom/IconWithState";
@@ -22,10 +25,16 @@ import ControlledSelect from "../Inputs/ControlledSelect";
 
 import LogoDropzone from "./LogoDropzone";
 
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+});
 const EditProjectForm: React.FunctionComponent = () => {
+  const [code, setCode] = useState<string>();
+  const { codeEditorScheme } = useCustomColor();
   const {
     register,
     setValue,
+    getValues,
     watch,
     control,
     formState: { errors },
@@ -33,6 +42,14 @@ const EditProjectForm: React.FunctionComponent = () => {
   const { data, loading, error } = useQuery(ALL_TAGS_QUERY);
 
   const currentValues = watch();
+
+  useEffect(() => {
+    const descriptionValues = getValues("description");
+
+    if (descriptionValues) {
+      setCode(descriptionValues);
+    }
+  }, [getValues]);
 
   if (loading) return <Spinner />;
   if (error)
@@ -66,7 +83,9 @@ const EditProjectForm: React.FunctionComponent = () => {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-        <Textarea
+        <CodeEditor
+          value={code}
+          language="markdown"
           placeholder="Project description"
           {...register("description", {
             maxLength: {
@@ -74,11 +93,23 @@ const EditProjectForm: React.FunctionComponent = () => {
               message: "Maximum length should be 1200",
             },
           })}
+          onChange={(e) => {
+            const { name } = e.target;
+            setCode(e.target.value);
+            setValue(name, e.target.value);
+          }}
+          style={{
+            fontSize: "16px",
+          }}
+          className={codeEditorScheme}
+          padding={15}
         />
         <FormErrorMessage>
           {errors.description && errors.description.message}
         </FormErrorMessage>
       </FormControl>
+
+      {code && <CodeEditorPreview code={code} />}
 
       <FormControl isInvalid={errors.website}>
         <FormLabel htmlFor="website">Website</FormLabel>

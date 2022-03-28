@@ -228,6 +228,7 @@ function QuestPage({
           </HStack>
 
           <TabPanels>
+            {/* 1 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
@@ -239,6 +240,7 @@ function QuestPage({
               </VStack>
             </TabPanel>
 
+            {/* 2 Tab */}
             <TabPanel px="0">
               {completedBy.includes(self?.id) ? (
                 <Text>Quest already completed!</Text>
@@ -280,6 +282,8 @@ function QuestPage({
                 </Box>
               )}
             </TabPanel>
+
+            {/* 3 Tab */}
             <TabPanel px="0">
               <HStack w="full" align="left" justifyContent="space-between">
                 <VStack align="left">
@@ -342,9 +346,11 @@ function QuestPage({
                       {t("creation-date")}{" "}
                       {new Date(createdAt || Date.now()).toLocaleString()}
                     </Text>
-                    <Text fontSize="sm" isTruncated>
-                      {t("by")} {createdBy.name || createdBy.did}
-                    </Text>
+                    {createdBy && (
+                      <Text fontSize="sm" isTruncated>
+                        {t("by")} {createdBy.name || createdBy.did}
+                      </Text>
+                    )}
                     {isOwner && (
                       // TODO: edit quest form
                       <NextLink
@@ -434,6 +440,8 @@ function QuestPage({
                 </CardMedia>
               </HStack>
             </TabPanel>
+
+            {/* 3 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 {completedBy && (

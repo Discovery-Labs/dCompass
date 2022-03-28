@@ -16,7 +16,7 @@ import { LibDiamond } from "../libraries/LibDiamond.sol";
 
 
 
-abstract contract BadgeNFT is IERC1155, ERC1155BaseInternal{
+abstract contract BadgeFacet is IERC1155, ERC1155BaseInternal{
     
     function mint(address _minter, string memory _badgeId, string memory _projectId, string memory _pathwayId, bytes32 r, bytes32 s, uint8 v) external returns(bool){
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();

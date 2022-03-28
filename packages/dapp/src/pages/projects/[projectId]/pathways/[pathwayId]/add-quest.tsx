@@ -4,6 +4,10 @@ import Card from "components/custom/Card";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import CenteredFrame from "components/layout/CenteredFrame";
 import CreateQuestForm from "components/projects/quests/QuestForm";
+import { Link } from "@chakra-ui/react";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
+import useCustomColor from "core/hooks/useCustomColor";
+import { useRouter } from "next/router";
 
 export const questDefaultValues = {
   name: "",
@@ -11,6 +15,8 @@ export const questDefaultValues = {
 };
 
 function AddQuestForm() {
+  const { getPrimaryColor, getTextColor } = useCustomColor();
+  const router = useRouter();
   const methods = useForm({
     defaultValues: questDefaultValues,
   });
@@ -20,6 +26,15 @@ function AddQuestForm() {
       <FormProvider {...methods}>
         <CenteredFrame>
           <Card h="full" w="2xl">
+            <Link
+              textStyle={"small"}
+              color={getTextColor}
+              _hover={{ color: getPrimaryColor, textDecoration: "none" }}
+              onClick={() => router.back()}
+            >
+              <ChevronLeftIcon w={6} h={6} />
+              Back to pathway
+            </Link>
             <CreateQuestForm />
           </Card>
         </CenteredFrame>

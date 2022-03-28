@@ -13,7 +13,11 @@ import {
 import useCustomColor from "core/hooks/useCustomColor";
 import { useResolveEnsName } from "core/hooks/useResolveEnsName";
 import Blockies from "react-blockies";
-import { MdCheckCircle, MdContentCopy } from "react-icons/md";
+import {
+  MdCheckCircle,
+  MdContentCopy,
+  MdOutlinePersonSearch,
+} from "react-icons/md";
 
 const blockExplorerLink = (address: string, blockExplorer?: string) =>
   `${blockExplorer || "https://etherscan.io/"}${"address/"}${address}`;
@@ -78,15 +82,14 @@ function MemberAddress({
 
   return (
     <HStack
+      w="full"
       layerStyle="solid-card"
       py="1"
       px="2"
       _hover={{ cursor: "pointer", bg: "lighten(0.2)" }}
       fontSize={fontSize ?? 28}
     >
-      <Flex>
-        <Blockies className="blockies" seed={account} />
-      </Flex>
+      <Blockies className="blockies" seed={account} />
       {text}
       <IconButton
         size="sm"
@@ -98,6 +101,16 @@ function MemberAddress({
         aria-label="Copy Address"
         fontSize={fontSize}
         icon={hasCopied ? <Icon as={MdCheckCircle} /> : <MdContentCopy />}
+      />
+      <IconButton
+        size="sm"
+        variant="ghost"
+        onClick={(e) => {
+          console.log("go to profile", e);
+        }}
+        aria-label="Go to profile"
+        fontSize={fontSize}
+        icon={<Icon as={MdOutlinePersonSearch} />}
       />
     </HStack>
   );

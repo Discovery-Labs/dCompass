@@ -276,7 +276,7 @@ function PathwayCard({
 
       <Spacer />
 
-      {isContributor && status !== "MINTED" ? (
+      {isContributor && status !== "MINTED" && (
         <VStack w="full" align="left">
           <Tag
             variant="outline"
@@ -310,7 +310,13 @@ function PathwayCard({
             </HStack>
           )}
         </VStack>
-      ) : (
+      )}
+      {!isContributor && status !== "MINTED" && (
+        <VStack w="full" layerStyle="outline-card">
+          <Text>Under review</Text>
+        </VStack>
+      )}
+      {status == "MINTED" && (
         <>
           <Tooltip
             label={`0% - 0/${pathway.quests?.length || 0} quests completed`}

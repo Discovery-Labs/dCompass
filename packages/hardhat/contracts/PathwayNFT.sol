@@ -144,7 +144,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         require(thresholdCheck, "incorrect votes needed sent");
         votes[_pathwayId]++;
         reviewerVotes[_pathwayId][_msgSender()] = true;
-        if (votes[_pathwayId] == 0) {
+        if (votes[_pathwayId] == 1) {
             require(_contributors.length > 0, "empty array");
             contributors[_pathwayId] = _contributors;
             if (votesNeeded <= votes[_pathwayId]) {
@@ -164,6 +164,10 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     function voteForRejection(string memory _pathwayId, string memory _projectId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint256 votesNeeded) public {
         require(status[_pathwayId] == PathwayStatus.PENDING, "pathway not pending");
         require(!reviewerVotes[_pathwayId][_msgSender()], "already voted for this pathway");
+        require(
+            keccak256(abi.encodePacked(projectIdforPathway[_pathwayId])) == keccak256(abi.encodePacked(_projectId)),
+            "incorrect projectId"
+        );
         bool voteAllowed = verifyContract.metaDataVerify(
             _msgSender(),
             _pathwayId,
@@ -205,13 +209,13 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             require(success);
             nativeRewards[_pathwayId] += amount;
             if(msg.value > amount + appPortion){
-                (bool success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion}("");
+                (success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion}("");
                 require(success);
             }
         }
         else{
             require(_ERC20Address != address(0));
-            (bool success, bytes memory data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("checkApprovedERC20PerProjectByChain(string,uint256,address)")), projectIdforPathway[_pathwayId],block.chainid, _ERC20Address));
+            (success, data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("checkApprovedERC20PerProjectByChain(string,uint256,address)")), projectIdforPathway[_pathwayId],block.chainid, _ERC20Address));
             require(success);
             success = abi.decode(data, (bool));
             require(success, "ERC20 not approved");
@@ -374,6 +378,14 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
         }
         return tokenIds;
+    }
+
+    function getContributors(string memory _pathwayId) external view returns(address[] memory){
+        return contributors[_pathwayId];
+    }
+
+    function getAppDiamond() external view returns(address){
+        return appDiamond;
     }
 
     function setAppDiamond(address newAppDiamond) external onlyOwner {

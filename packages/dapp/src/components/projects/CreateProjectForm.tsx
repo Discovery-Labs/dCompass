@@ -15,6 +15,7 @@ import {
   InputLeftAddon,
   Text,
 } from "@chakra-ui/react";
+import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import useCustomColor from "core/hooks/useCustomColor";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
@@ -110,6 +111,8 @@ const CreateProjectForm = () => {
           {errors.description && errors.description.message}
         </FormErrorMessage>
       </FormControl>
+
+      {code && <CodeEditorPreview code={code} />}
 
       <FormControl isInvalid={errors.website}>
         <FormLabel htmlFor="website">Website</FormLabel>

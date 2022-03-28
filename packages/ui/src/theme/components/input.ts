@@ -90,7 +90,7 @@ const variantOutline: PartsStyleFunction<typeof parts> = (props) => {
       borderRadius: borderRadius,
       bg: 'inherit',
       _hover: {
-        borderColor: mode(`${c}.300`, `${c}.200`)(props),
+        borderColor: mode(`${c}.400`, `${c}.200`)(props),
       },
       _readOnly: {
         boxShadow: 'none !important',
