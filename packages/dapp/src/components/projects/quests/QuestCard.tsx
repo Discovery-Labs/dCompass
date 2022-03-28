@@ -73,6 +73,7 @@ function QuestCard({
     projectContributors && account && projectContributors.includes(account);
 
   const openQuest = (questId: string) => {
+    console.log(`${router.asPath}/${questId}`);
     return router.push(`${router.asPath}/${questId}`);
   };
 

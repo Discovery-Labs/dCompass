@@ -110,6 +110,7 @@ export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
   query GetQuizQuestById($questId: String!) {
     getQuizQuestById(questId: $questId) {
       id
+      streamId
       name
       completedBy
     }

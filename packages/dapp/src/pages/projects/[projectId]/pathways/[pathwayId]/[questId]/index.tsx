@@ -17,6 +17,7 @@ import {
   Stack,
   Tag,
   Progress,
+  Box,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { GetServerSideProps } from "next";
@@ -65,13 +66,18 @@ export const getServerSideProps: GetServerSideProps<
   const questId = ctx.params?.questId ?? null;
   const pathwayId = ctx.params?.pathwayId ?? null;
   const projectId = ctx.params?.projectId ?? null;
+  console.log({
+    cond: !pathwayId || !projectId || !questId,
+    pathwayId,
+    projectId,
+    questId,
+  });
   if (!pathwayId || !projectId || !questId) {
     return {
       redirect: { destination: "/", permanent: true },
     };
   }
 
-  const core = ceramicCoreFactory();
   const client = initializeApollo();
   try {
     // TODO: call backend
@@ -81,7 +87,16 @@ export const getServerSideProps: GetServerSideProps<
         questId,
       },
     });
-    const questInfos = await core.ceramic.loadStream(questId);
+
+    console.log({
+      streamId: data.getQuizQuestById.streamId,
+      data: data.getQuizQuestById,
+    });
+    const core = ceramicCoreFactory();
+
+    const questInfos = await core.ceramic.loadStream(
+      data.getQuizQuestById.streamId
+    );
     const questCreatorDID = questInfos.controllers[0];
     const questCreatorBasicProfile = await core.get(
       "basicProfile",
@@ -135,7 +150,7 @@ function QuestPage({
   const { getRewardCurrency } = useTokenList();
   const questMarkdownTheme = usePageMarkdownTheme();
 
-  const { account } = useContext(Web3Context);
+  const { account, self } = useContext(Web3Context);
   const { getTextColor, getColoredText } = useCustomColor();
 
   const { data, loading, error } = useQuery(GET_PATHWAY_BY_ID_QUERY, {
@@ -149,7 +164,7 @@ function QuestPage({
     error: projectError,
   } = useQuery(PROJECT_BY_ID_QUERY, {
     variables: {
-      projectId: streamIdToUrl(projectId),
+      projectId,
     },
   });
 
@@ -180,23 +195,19 @@ function QuestPage({
           },
           {
             label: projectRes.getProjectById.name,
-            href: `/projects/${streamUrlToId(projectId)}`,
+            href: `/projects/${projectId}`,
           },
           {
             label: "Pathways",
-            href: `/projects/${streamUrlToId(projectId)}`,
+            href: `/projects/${projectId}`,
           },
           {
             label: data.getPathwayById.title,
-            href: `/projects/${streamUrlToId(
-              projectId
-            )}/pathways/${streamUrlToId(pathwayId)}/`,
+            href: `/projects/${projectId}/pathways/${pathwayId}/`,
           },
           {
             label: name,
-            href: `/projects/${streamUrlToId(
-              projectId
-            )}/pathways/${streamUrlToId(pathwayId)}/${streamUrlToId(id)}`,
+            href: `/projects/${projectId}/pathways/${pathwayId}/${id}`,
             isCurrentPage: true,
           },
         ]}
@@ -229,39 +240,44 @@ function QuestPage({
             </TabPanel>
 
             <TabPanel px="0">
-              {/* TODO: Make a wrapper component */}
-              {type?.value === "quiz" && (
-                <QuizForm
-                  questions={questions}
-                  questId={id}
-                  successCallback={() => handleTabsChange(2)}
-                />
-              )}
-              {type?.value === "snapshot-voter" && (
-                <SnapshotVoterForm proposalId={proposalId} questId={id} />
-              )}
-              {type?.value === "github-contributor" && (
-                <GithubContributorQuestForm
-                  githubOrgId={githubOrgId}
-                  questId={id}
-                />
-              )}
-              {type?.value === "nft-owner" && (
-                <ClaimNFTOwnerForm
-                  questId={id}
-                  contractAddress={collectionContractAddress}
-                  namespace={namespace || "eip155"}
-                  collectionChainId={tokenChainId}
-                />
-              )}
-              {type?.value === "token-holder" && (
-                <ClaimTokenHolderForm
-                  questId={id}
-                  amount={amount}
-                  contractAddress={tokenContractAddress}
-                  namespace={namespace || "eip155"}
-                  tokenChainId={tokenChainId}
-                />
+              {completedBy.includes(self?.id) ? (
+                <Text>Quest already completed!</Text>
+              ) : (
+                <Box>
+                  {type?.value === "quiz" && (
+                    <QuizForm
+                      questions={questions}
+                      questId={id}
+                      successCallback={() => handleTabsChange(2)}
+                    />
+                  )}
+                  {type?.value === "snapshot-voter" && (
+                    <SnapshotVoterForm proposalId={proposalId} questId={id} />
+                  )}
+                  {type?.value === "github-contributor" && (
+                    <GithubContributorQuestForm
+                      githubOrgId={githubOrgId}
+                      questId={id}
+                    />
+                  )}
+                  {type?.value === "nft-owner" && (
+                    <ClaimNFTOwnerForm
+                      questId={id}
+                      contractAddress={collectionContractAddress}
+                      namespace={namespace || "eip155"}
+                      collectionChainId={tokenChainId}
+                    />
+                  )}
+                  {type?.value === "token-holder" && (
+                    <ClaimTokenHolderForm
+                      questId={id}
+                      amount={amount}
+                      contractAddress={tokenContractAddress}
+                      namespace={namespace || "eip155"}
+                      tokenChainId={tokenChainId}
+                    />
+                  )}
+                </Box>
               )}
             </TabPanel>
             <TabPanel px="0">
@@ -332,11 +348,7 @@ function QuestPage({
                     {isOwner && (
                       // TODO: edit quest form
                       <NextLink
-                        href={`/projects/${streamUrlToId(
-                          projectId
-                        )}/pathways/${streamUrlToId(pathwayId)}/${streamUrlToId(
-                          id
-                        )}/edit-quest`}
+                        href={`/projects/${projectId}/pathways/${pathwayId}/${id}/edit-quest`}
                         passHref
                       >
                         <Button leftIcon={<EditIcon />}>

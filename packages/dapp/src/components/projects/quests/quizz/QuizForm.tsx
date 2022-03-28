@@ -30,7 +30,7 @@ function QuizForm({ questions, questId, successCallback }: any) {
           },
         },
       });
-      isValid = submitQuestAnswers.data;
+      isValid = submitQuestAnswers.data.submitQuestAnswers;
       isValid
         ? toast({
             title: "Well done!",
@@ -50,6 +50,7 @@ function QuizForm({ questions, questId, successCallback }: any) {
             isClosable: true,
             variant: "subtle",
           });
+      setIsLoading(false);
       return isValid ? successCallback() : isValid;
     } catch (error) {
       isValid = false;
@@ -62,8 +63,8 @@ function QuizForm({ questions, questId, successCallback }: any) {
         isClosable: true,
         variant: "subtle",
       });
+      return setIsLoading(false);
     }
-    return setIsLoading(false);
   };
   return (
     <VStack>

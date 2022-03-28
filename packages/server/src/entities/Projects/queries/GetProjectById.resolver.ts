@@ -22,6 +22,7 @@ export class GetProjectByIdResolver {
     @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('projectId') projectId: string,
   ): Promise<Project | null | undefined> {
+    console.log({ projectId });
     const [foundProjects, allTags] = await Promise.all([
       this.threadDBService.query({
         collectionName: 'Project',
@@ -39,10 +40,10 @@ export class GetProjectByIdResolver {
     if (!foundProjects || foundProjects.length === 0) {
       throw new NotFoundException('Project not found');
     }
-
+    console.log({ isFound: foundProjects });
     const [project] = foundProjects as any[];
     const { _id, _mod, ...rest } = project;
-
+    console.log({ project });
     return {
       id: _id,
       ...rest,
