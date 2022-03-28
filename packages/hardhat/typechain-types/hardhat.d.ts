@@ -105,10 +105,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BadgeFacet__factory>;
     getContractFactory(
-      name: "BadgeNFT",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.BadgeNFT__factory>;
-    getContractFactory(
       name: "DiamondCutFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DiamondCutFacet__factory>;
@@ -312,11 +308,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.BadgeFacet>;
-    getContractAt(
-      name: "BadgeNFT",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.BadgeNFT>;
     getContractAt(
       name: "DiamondCutFacet",
       address: string,
