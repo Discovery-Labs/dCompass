@@ -205,10 +205,10 @@ type BadgesData = {
 function AccountProfile() {
   // const [badges, setBadges] = useState<BadgesData>();
   const router = useRouter();
+  const { user } = router.query;
   let address = "";
-  const { account } = router.query;
-  if (typeof account === "string") {
-    address = account;
+  if (typeof user === "string") {
+    address = user;
   }
 
   const { hasCopied, onCopy } = useClipboard(address);
@@ -274,7 +274,8 @@ function AccountProfile() {
     getColoredText,
   } = useCustomColor();
 
-  const treeTheme: SkillThemeType = {
+  const treeTheme = {
+    // : SkillThemeType
     border: `2px solid ${getBorderColor}`,
     borderRadius: "8px",
     nodeBackgroundColor: getOverBgColor,

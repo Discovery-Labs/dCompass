@@ -252,7 +252,8 @@ function Profile() {
     getColoredText,
   } = useCustomColor();
 
-  const treeTheme: SkillThemeType = {
+  const treeTheme = {
+    // : SkillThemeType
     border: `2px solid ${getBorderColor}`,
     borderRadius: "8px",
     nodeBackgroundColor: getOverBgColor,
