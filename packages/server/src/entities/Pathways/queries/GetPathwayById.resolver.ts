@@ -28,11 +28,15 @@ export class GetPathwayByIdResolver {
     if (!foundPathway) {
       throw new NotFoundException('Pathway not found by back-end');
     }
-    const { _id, ...pathway } = foundPathway as any;
+    const { _id, quests, ...pathway } = foundPathway as any;
     return {
       id: _id,
       ...pathway,
-      quests: pathway.quests.map((questId: string) => ({ id: questId })),
+      quests: quests
+        ? quests.map((questId: string) => ({
+            id: questId,
+          }))
+        : [],
     } as Pathway;
   }
 }

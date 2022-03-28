@@ -38,7 +38,6 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
 });
 
 export default function PathwayForm() {
-  const router = useRouter();
   const [code, setCode] = useState<string>();
   const { codeEditorScheme } = useCustomColor();
 
@@ -289,14 +288,14 @@ export default function PathwayForm() {
         options={difficultyOptions}
       />
 
-      <ControlledSelect
+      {/* <ControlledSelect
         control={control}
         name="prerequisites"
         label="Prerequisites"
         isMulti
         options={existingPathwaysOptions}
         hasStickyGroupHeaders
-      />
+      /> */}
       <Divider bg="none" py="5" />
     </VStack>
   );

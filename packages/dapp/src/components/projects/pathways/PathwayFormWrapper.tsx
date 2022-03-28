@@ -1,17 +1,12 @@
 import { useMutation, useQuery } from "@apollo/client";
 import {
-  Heading,
-  Button,
-  Flex,
-  useToast,
   Alert,
   AlertDescription,
   AlertIcon,
   AlertTitle,
   Progress,
-  Stack,
+  Heading, Button, Flex, useToast, Link, Stack
 } from "@chakra-ui/react";
-import { Heading, Button, Flex, useToast, Link } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { useWeb3React } from "@web3-react/core";
 import useCustomColor from "core/hooks/useCustomColor";

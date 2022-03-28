@@ -159,10 +159,16 @@ const Web3Provider = ({ children }: { children: any }) => {
             abis[strChainId][network.name].contracts.SponsorPassSFT.abi,
             signer
           );
+          const BadgeNFT = new ethers.Contract(
+            abis[strChainId][network.name].contracts.BadgeNFT.address,
+            abis[strChainId][network.name].contracts.BadgeNFT.abi,
+            signer
+          );
           setContracts({
             projectNFTContract,
             pathwayNFTContract,
             SponsorPassSFT,
+            BadgeNFT,
           });
           const isValidReviewer = await projectNFTContract.reviewers(account);
           setIsReviewer(isValidReviewer);
