@@ -53,6 +53,7 @@ import NFTOwnerForm from "./token/NFTOwnerForm";
 import TokenHolderForm from "./token/TokenHolderForm";
 import TwitterFollowerForm from "./twitter/TwitterFollowerForm";
 import { GET_APP_DID } from "../../../graphql/app";
+import { Contract } from "ethers";
 
 type QuestionFormItemType = {
   question: string;
@@ -60,10 +61,10 @@ type QuestionFormItemType = {
   answer: { value: string }[];
 };
 const questTypeOptions = [
-  {
-    label: "Snapshot voter",
-    value: "snapshot-voter",
-  },
+  // {
+  //   label: "Snapshot voter",
+  //   value: "snapshot-voter",
+  // },
   // {
   //   label: "Twitter follower",
   //   value: "twitter-follower",
@@ -104,26 +105,26 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const { tokens } = useTokenList();
   const { library, chainId } = useWeb3React();
   const { self, account } = useContext(Web3Context);
-  const [createSnapshotVoterQuest] = useMutation(
-    CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
-    { refetchQueries: "all" }
-  );
   const { data, loading, error } = useQuery(GET_APP_DID);
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
     refetchQueries: "all",
   });
-  const [createNFTOwnerQuestMutation] = useMutation(
-    CREATE_NFT_OWNER_QUEST_MUTATION,
-    {
-      refetchQueries: "all",
-    }
-  );
-  const [createGithubContributorQuestMutation] = useMutation(
-    CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION,
-    {
-      refetchQueries: "all",
-    }
-  );
+  // const [createSnapshotVoterQuest] = useMutation(
+  //   CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
+  //   { refetchQueries: "all" }
+  // );
+  // const [createNFTOwnerQuestMutation] = useMutation(
+  //   CREATE_NFT_OWNER_QUEST_MUTATION,
+  //   {
+  //     refetchQueries: "all",
+  //   }
+  // );
+  // const [createGithubContributorQuestMutation] = useMutation(
+  //   CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION,
+  //   {
+  //     refetchQueries: "all",
+  //   }
+  // );
   // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION);
 
   const router = useRouter();
@@ -138,6 +139,25 @@ const CreateQuestForm: React.FunctionComponent = () => {
     formState: { errors },
   } = useFormContext();
 
+  const getSelectedTokenContract = (token: string) => {
+    const [tokenChainIdStr, tokenAddress] = token.split(":");
+    const tokenChainId = parseInt(tokenChainIdStr, 10);
+    const tokenInfos = tokens.find(
+      (tkn) => tkn.address === tokenAddress && tkn.chainId === tokenChainId
+    );
+    if (!tokenInfos || !chainId) {
+      throw new Error("Token not supported");
+    }
+
+    return {
+      tokenContract: new Contract(
+        tokenAddress,
+        tokenInfos.abi,
+        library.getSigner()
+      ),
+      tokenInfos,
+    };
+  };
   useEffect(() => {
     const descriptionValues = getValues("description");
 
@@ -145,6 +165,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       setCode(descriptionValues);
     }
   }, [getValues]);
+
 
   const nativeToken = useMemo(() => {
     const isMatic = chainId === 80001 || chainId === 137;
@@ -229,7 +250,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             rewardCurrency: values.rewardCurrency.value,
             rewardAmount: parseFloat(values.rewardAmount),
             rewardUserCap: parseInt(values.rewardUserCap, 10),
-            pathwayId: `ceramic://${router.query.pathwayId}`,
+            pathwayId: router.query.pathwayId,
           }
         : {
             ...values,
@@ -237,7 +258,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             image: cids[values.name],
             rewardAmount: parseFloat(values.rewardAmount),
             rewardUserCap: parseInt(values.rewardUserCap, 10),
-            pathwayId: `ceramic://${router.query.pathwayId}`,
+            pathwayId: router.query.pathwayId,
           };
 
     const questDoc = await self.client.dataModel.createTile(
@@ -251,7 +272,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: questDoc.id.toUrl(),
-        pathwayId: `ceramic://${router.query.pathwayId}`,
+        pathwayId: router.query.pathwayId,
       }),
       account,
     ]);
@@ -264,12 +285,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     };
 
     let result;
-    if (questType === "snapshot-voter") {
-      const { data } = await createSnapshotVoterQuest({
-        variables: createQuestMutationVariables,
-      });
-      result = data.createSnapshotVoterQuest;
-    }
 
     if (questType === "quiz") {
       const { data } = await createQuizQuestMutation({
@@ -277,19 +292,26 @@ const CreateQuestForm: React.FunctionComponent = () => {
       });
       result = data.createQuizQuest;
     }
+    // TODO: support different types of quest
+    // if (questType === "snapshot-voter") {
+    //   const { data } = await createSnapshotVoterQuest({
+    //     variables: createQuestMutationVariables,
+    //   });
+    //   result = data.createSnapshotVoterQuest;
+    // }
 
-    if (questType === "nft-owner") {
-      const { data } = await createNFTOwnerQuestMutation({
-        variables: createQuestMutationVariables,
-      });
-      result = data.createQuizQuest;
-    }
-    if (questType === "github-contributor") {
-      const { data } = await createGithubContributorQuestMutation({
-        variables: createQuestMutationVariables,
-      });
-      result = data.createQuizQuest;
-    }
+    // if (questType === "nft-owner") {
+    //   const { data } = await createNFTOwnerQuestMutation({
+    //     variables: createQuestMutationVariables,
+    //   });
+    //   result = data.createQuizQuest;
+    // }
+    // if (questType === "github-contributor") {
+    //   const { data } = await createGithubContributorQuestMutation({
+    //     variables: createQuestMutationVariables,
+    //   });
+    //   result = data.createQuizQuest;
+    // }
     console.log({ result });
 
     return goBack();
@@ -320,88 +342,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
   return (
     <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
       <Heading>Create quest</Heading>
-
-      <ImageDropzone
-        {...{
-          register,
-          setValue,
-          errors,
-          fieldName: "image",
-          label: "Quest NFT Image reward",
-          isRequired: true,
-        }}
-      />
-
-      <HStack w="full" alignItems="center">
-        <FormControl isInvalid={errors.rewardAmount}>
-          <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
-          <NumberInput
-            step={nativeToken.isMatic ? 10_000 : 5}
-            defaultValue={nativeToken.isMatic ? 10_000 : 5}
-          >
-            <NumberInputField
-              placeholder=""
-              {...register(`rewardAmount`, {
-                required: REQUIRED_FIELD_LABEL,
-              })}
-            />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-          <FormErrorMessage>
-            {errors.rewardAmount && errors.rewardAmount.message}
-          </FormErrorMessage>
-        </FormControl>
-
-        <ControlledSelect
-          control={control}
-          name="rewardCurrency"
-          label="Reward currency"
-          rules={{
-            required: REQUIRED_FIELD_LABEL,
-          }}
-          options={[nativeToken.token, ...erc20Options]}
-          placeholder="WETH, DAI,..."
-        />
-      </HStack>
-
-      <VStack alignItems="center" w="full">
-        <FormControl isInvalid={errors.rewardUserCap}>
-          <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
-          <NumberInput step={1_000} defaultValue={1_000}>
-            <NumberInputField
-              roundedBottom="none"
-              placeholder=""
-              {...register(`rewardUserCap`, {
-                required: REQUIRED_FIELD_LABEL,
-              })}
-            />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-          {rewardCurrency && (
-            <Alert roundedBottom="lg" w="full" status="info">
-              <AlertIcon />
-              <Text fontSize="md">
-                A user that claims the pathway rewards will receive{" "}
-              </Text>
-              <Tag>
-                {rewardPerUser}{" "}
-                {rewardCurrency?.label && rewardCurrency.label.split(" - ")[0]}
-              </Tag>
-            </Alert>
-          )}
-          <FormErrorMessage>
-            {errors.rewardUserCap && errors.rewardUserCap.message}
-          </FormErrorMessage>
-        </FormControl>
-      </VStack>
-
-      <FormControl isInvalid={errors.name}>
+  <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Title</FormLabel>
         <Input
           placeholder="Quest title"
@@ -444,7 +385,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
       </FormControl>
 
       {code && <CodeEditorPreview code={code} />}
-
       <ControlledSelect
         control={control}
         name="type"
@@ -455,6 +395,116 @@ const CreateQuestForm: React.FunctionComponent = () => {
         }}
         options={questTypeOptions}
       />
+
+      <ImageDropzone
+        {...{
+          register,
+          setValue,
+          errors,
+          fieldName: "image",
+          label: "Quest NFT Image reward",
+          isRequired: true,
+        }}
+      />
+
+      <VStack w="full">
+        <HStack w="full" alignItems="center">
+          <FormControl isInvalid={errors.rewardAmount}>
+            <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
+            <NumberInput
+              step={nativeToken.isMatic ? 10_000 : 5}
+              defaultValue={nativeToken.isMatic ? 10_000 : 5}
+            >
+              <NumberInputField
+                placeholder=""
+                {...register(`rewardAmount`, {
+                  required: REQUIRED_FIELD_LABEL,
+                })}
+              />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+            <FormErrorMessage>
+              {errors.rewardAmount && errors.rewardAmount.message}
+            </FormErrorMessage>
+          </FormControl>
+
+          <ControlledSelect
+            control={control}
+            name="rewardCurrency"
+            label="Reward currency"
+            rules={{
+              required: REQUIRED_FIELD_LABEL,
+            }}
+            options={[nativeToken.token, ...erc20Options]}
+            placeholder="WETH, DAI,..."
+          />
+        </HStack>
+        {rewardAmount && (
+          <Alert
+            rounded="lg"
+            w="full"
+            status={errors.rewardAmount ? "error" : "warning"}
+          >
+            <VStack pr="4" w="30%">
+              <AlertIcon />
+              <Text fontSize={"sm"}>Total with fee</Text>
+              <Tag colorScheme={errors.rewardAmount ? "red" : "primary"}>
+                {parseFloat(rewardAmount) +
+                  (parseFloat(rewardAmount) * 15) / 100}{" "}
+                {rewardCurrency.label}
+              </Tag>
+            </VStack>
+
+            <VStack w="70%">
+              <Heading as="h4" size="md">
+                dCompass takes a fee of 15% on top of the total quest rewards.
+              </Heading>
+              <Text fontSize="md">
+                10% goes to the dCompass treasury and 5% goes to the Gitcoin DAO
+                treasury.
+              </Text>
+            </VStack>
+          </Alert>
+        )}
+      </VStack>
+
+      <VStack alignItems="center" w="full">
+        <FormControl isInvalid={errors.rewardUserCap}>
+          <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
+          <NumberInput step={1_000} defaultValue={1_000}>
+            <NumberInputField
+              roundedBottom="none"
+              placeholder="Number of max. claims"
+              {...register(`rewardUserCap`, {
+                required: REQUIRED_FIELD_LABEL,
+              })}
+            />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          {rewardCurrency && (
+            <Alert roundedBottom="lg" w="full" status="info">
+              <AlertIcon />
+              <Text fontSize="md">
+                A user that claims the pathway rewards will receive{" "}
+              </Text>
+              <Tag>
+                {rewardPerUser}{" "}
+                {rewardCurrency?.label && rewardCurrency.label.split(" - ")[0]}
+              </Tag>
+            </Alert>
+          )}
+          <FormErrorMessage>
+            {errors.rewardUserCap && errors.rewardUserCap.message}
+          </FormErrorMessage>
+        </FormControl>
+      </VStack>
+    
       {questDetails[questType]}
       <Divider bg="none" py="5" />
       <Flex w="full" justify="space-between">

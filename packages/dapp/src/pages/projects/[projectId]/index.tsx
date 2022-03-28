@@ -46,7 +46,6 @@ import MembersAddress from "../../../components/custom/MembersAddress";
 import ProfileForm from "../../../components/custom/profile/ProfileForm";
 import SocialLinks from "../../../components/custom/SocialLinks";
 import BreadcrumbItems from "../../../components/layout/BreadcrumbItems";
-import { streamUrlToId } from "../../../core/helpers";
 import { usePageMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import { Pathway, Tag } from "../../../core/types";
 import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
@@ -63,6 +62,8 @@ export const getServerSideProps: GetServerSideProps<
 > = async (ctx) => {
   const locale = ctx.locale || "en";
   const id = ctx.params?.projectId ?? null;
+
+  console.log({ inServSideP: id });
   if (id === null) {
     return {
       redirect: { destination: "/", permanent: true },
@@ -73,7 +74,7 @@ export const getServerSideProps: GetServerSideProps<
     const { data } = await client.query({
       query: PROJECT_BY_ID_QUERY,
       variables: {
-        projectId: `ceramic://${id}`,
+        projectId: id,
       },
     });
     return {
@@ -158,7 +159,7 @@ function ProjectPage({
           },
           {
             label: name,
-            href: `/projects/${streamUrlToId(id)}`,
+            href: `/projects/${id}`,
             isCurrentPage: true,
           },
         ]}
@@ -199,7 +200,7 @@ function ProjectPage({
               <ModalBody>
                 <ProfileForm
                   submitButtonLabel="Submit application"
-                  projectId={streamUrlToId(id)}
+                  projectId={id}
                   projectName={name}
                   onCloseForm={onClose}
                 />
@@ -207,10 +208,7 @@ function ProjectPage({
             </ModalContent>
           </Modal>
           {isOwner && (
-            <NextLink
-              href={`/projects/${streamUrlToId(id)}/edit-project/`}
-              passHref
-            >
+            <NextLink href={`/projects/${id}/edit-project/`} passHref>
               <Button variant="outline" leftIcon={<EditIcon />}>
                 Edit Project
               </Button>
@@ -278,9 +276,7 @@ function ProjectPage({
                 </TabList>
                 {isOwner && (
                   <NextLink
-                    href={`/projects/${streamUrlToId(
-                      id
-                    )}/pathways/add-pathway/`}
+                    href={`/projects/${id}/pathways/add-pathway/`}
                     passHref
                   >
                     <Button variant="outline" leftIcon={<AddIcon />}>
@@ -293,20 +289,14 @@ function ProjectPage({
               <TabPanels>
                 <TabPanel>
                   <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
-                    {renderPathways(
-                      data.getAllPathwaysByProjectId.filter(
-                        (pathway: Pathway) => !pathway.isPending
-                      )
-                    )}
+                    {renderPathways(data.getAllPathwaysByProjectId.pathways)}
                   </SimpleGrid>
                 </TabPanel>
                 {isReviewer && (
                   <TabPanel>
                     <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
                       {renderPathways(
-                        data.getAllPathwaysByProjectId.filter(
-                          (pathway: Pathway) => pathway.isPending
-                        )
+                        data.getAllPathwaysByProjectId.pendingPathways
                       )}
                     </SimpleGrid>
                   </TabPanel>

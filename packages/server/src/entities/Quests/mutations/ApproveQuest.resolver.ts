@@ -1,116 +1,139 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { ethers } from 'ethers';
-// import { ForbiddenError } from 'apollo-server-express';
-// import { Squad } from '../../Squads/Squad.entity';
-
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
-import { Quest } from '../Quest.entity';
-import { schemaAliases } from '../../../core/constants/idx';
+import { Where } from '@textile/hub';
 import { NotFoundException } from '@nestjs/common';
+
+import { UseThreadDBClient } from '../../../core/utils/types';
+import { Quest } from '../Quest.entity';
 import { ApproveQuestInput } from '../dto/ApproveQuest.input';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { ethers } from 'ethers';
+import { Squad } from '../../Squads/Squad.entity';
+import { ForbiddenError } from 'apollo-server-express';
 
 @Resolver(() => Quest)
 export class ApproveQuestResolver {
+  constructor(private readonly threadDBService: ThreadDBService) {}
   @Mutation(() => Quest, {
     nullable: true,
     description: 'Approve a new Quest in dCompass',
     name: 'approveQuest',
   })
   async approveQuest(
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('input') { id, questApproverSignature }: ApproveQuestInput,
   ): Promise<Quest | null | undefined> {
-    // Check that the current user is the owner of the pathway
-    const ogQuest = await ceramicClient.ceramic.loadStream(id);
-    const pathwayId = ogQuest.content.pathwayId;
-    console.log(ogQuest.content);
+    const [foundQuest] = await this.threadDBService.query({
+      collectionName: 'Quest',
+      dbClient,
+      threadId: latestThreadId,
+      query: new Where('_id').eq(id),
+    });
+    if (!foundQuest) {
+      throw new NotFoundException('Quest not found by back-end');
+    }
+    const quest = foundQuest as any;
+    // Check if the current user is a project contributor
+    const foundPathway = await this.threadDBService.getPathwayById({
+      dbClient,
+      threadId: latestThreadId,
+      pathwayId: quest.pathwayId,
+    });
+    const { projectId } = foundPathway;
+    const foundProject = await this.threadDBService.getProjectById({
+      dbClient,
+      threadId: latestThreadId,
+      projectId,
+    });
+    console.log({ foundProject });
+
     const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: id, pathwayId }),
+      JSON.stringify({ id: id, pathwayId: quest.pathwayId }),
       questApproverSignature,
     );
-
+    // TODO: Keep track of address & network to avoid impersonation
     console.log({ decodedAddress });
+    const projectContributors = foundProject.squads
+      ? foundProject.squads.flatMap((squad: Squad) =>
+          squad.members.map((m) => m.toLowerCase()),
+        )
+      : [];
 
-    const allPathways = await ceramicClient.dataStore.get(
-      schemaAliases.PATHWAYS_ALIAS,
-    );
-    const pathways = allPathways?.pathways ?? [];
-    const ogPathway = await ceramicClient.ceramic.loadStream(pathwayId);
-
-    const additionalFields = pathways.find(
-      (pathway: { id: string }) => pathway.id === pathwayId,
-    );
-
-    if (!ogPathway || !additionalFields) {
-      throw new NotFoundException('Pathway not found');
+    if (!projectContributors.includes(decodedAddress.toLowerCase())) {
+      throw new ForbiddenError('Unauthorized');
     }
 
-    const pathwayIndexedFields = {
-      ...ogPathway.content,
-      ...additionalFields,
+    const existingQuests = foundPathway.quests ?? [];
+    // remove previously pending quest and set it as approved
+    const updatedPathway = {
+      _id: quest.pathwayId,
+      ...foundPathway,
+      quests: [...new Set(existingQuests), id],
+      pendingQuests: [
+        ...new Set(
+          foundPathway.pendingQuests.filter(
+            (questId: string) => questId !== id,
+          ),
+        ),
+      ],
     };
 
-    console.log({ pathwayIndexedFields });
+    await this.threadDBService.update({
+      collectionName: 'Pathway',
+      dbClient,
+      threadId: latestThreadId,
+      values: [updatedPathway],
+    });
 
-    // TODO: check if address is part of project contributors
-    // const pathwayContributors = pathwayIndexedFields.squads
-    //   ? pathwayIndexedFields.squads.flatMap((squad: Squad) =>
-    //       squad.members.map((m) => m.toLowerCase()),
-    //     )
-    //   : [];
-
-    // if (
-    //   !pathwayIndexedFields ||
-    //   !pathwayContributors.includes(decodedAddress.toLowerCase())
-    // ) {
-    //   throw new ForbiddenError('Unauthorized');
+    // TODO: Verify metadata et al
+    // const chaindIdStr = chainId.toString();
+    // if (!Object.keys(ABIS).includes(chaindIdStr)) {
+    //   throw new Error('Unsupported Network');
     // }
 
-    // remove previously indexed pathway and recreate it as with the new pending quest
-    const existingPathways = pathways.filter(
-      (pathway: { id: string }) => pathway.id !== pathwayIndexedFields.id,
-    );
+    // const verifyContract = this.appService.getContract(chaindIdStr, 'Verify');
+    // const pathwayContract = this.appService.getContract(
+    //   chaindIdStr,
+    //   'PathwayNFT',
+    // );
 
-    // Approve quest and remove it from the pending quests
-    const appPathwaysUpdated = [
-      ...existingPathways,
-      {
-        id: pathwayId,
-        ...pathwayIndexedFields,
-        // add quest in approved quests
-        quests: [...(pathwayIndexedFields.quests ?? []), ogQuest.id.toUrl()],
-        // remove quest from pending quests
-        pendingQuests: [
-          ...(pathwayIndexedFields.pendingQuests
-            ? pathwayIndexedFields.pendingQuests.filter(
-                (quest: string) => quest !== ogQuest.id.toUrl(),
-              )
-            : []),
-        ],
-      },
-    ];
+    // const [metadataNonceId, thresholdNonceId] = await Promise.all([
+    //   verifyContract.noncesParentIdChildId(
+    //     projectStreamId,
+    //     foundPathway.streamId,
+    //   ),
+    //   verifyContract.thresholdNoncesById(foundPathway.streamId),
+    // ]);
 
-    await ceramicClient.dataStore.set(schemaAliases.PATHWAYS_ALIAS, {
-      pathways: appPathwaysUpdated,
-    });
+    // console.log({ pathwayId: foundPathway.streamId });
+    // const [metadataVerify, tresholdVerify] = await Promise.all([
+    //   verifyNFTInfo({
+    //     contractAddress: pathwayContract.address,
+    //     nonceId: metadataNonceId,
+    //     objectId: foundPathway.streamId,
+    //     senderAddress: decodedAddress,
+    //     verifyContract: verifyContract.address,
+    //   }),
+    //   verifyNFTInfo({
+    //     contractAddress: pathwayContract.address,
+    //     nonceId: thresholdNonceId,
+    //     objectId: foundPathway.streamId,
+    //     senderAddress: decodedAddress,
+    //     verifyContract: verifyContract.address,
+    //     votesNeeded: 1,
+    //   }),
+    // ]);
 
-    const previousQuests = await ceramicClient.dataStore.get(
-      schemaAliases.QUESTS_ALIAS,
-    );
-    const allQuests = previousQuests?.quests ?? [];
-    await ceramicClient.dataStore.set(schemaAliases.QUESTS_ALIAS, {
-      quests: [
-        ...allQuests,
-        {
-          id: ogQuest.id.toUrl(),
-          ...ogQuest.content,
-        },
-      ],
-    });
-    return {
-      id,
-      ...ogQuest.content,
-    };
+    // return {
+    //   ...foundPathway,
+    //   id,
+    //   projectStreamId: foundProject.streamId,
+    //   expandedServerSignatures: [
+    //     { r: metadataVerify.r, s: metadataVerify.s, v: metadataVerify.v },
+    //     { r: tresholdVerify.r, s: tresholdVerify.s, v: tresholdVerify.v },
+    //   ],
+    // };
+
+    return null;
   }
 }

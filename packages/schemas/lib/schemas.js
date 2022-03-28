@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.schemas = void 0;
-const contributors_schema_1 = require("./contributors/contributors-schema");
 const pathway_schema_1 = require("./pathways/pathway-schema");
 const pathways_schema_1 = require("./pathways/pathways-schema");
 const app_projects_schema_1 = require("./projects/app-projects-schema");
@@ -18,9 +17,10 @@ const token_holder_schema_1 = require("./quests/token-holder-schema");
 const twitter_follower_schema_1 = require("./quests/twitter-follower-schema");
 const tag_schema_1 = require("./tags/tag-schema");
 const tags_schema_1 = require("./tags/tags-schema");
+const user_private_identity_1 = require("./user-private-identity");
 exports.schemas = {
     dCompass: {
-        Contributors: contributors_schema_1.ContributorsSchema,
+        UserPrivateIdentity: user_private_identity_1.UserPrivateIdentitySchema,
         AppProjects: app_projects_schema_1.AppProjectsSchema,
         Projects: projects_schema_1.ProjectsSchema,
         Project: project_schema_1.ProjectSchema,

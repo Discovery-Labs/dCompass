@@ -15,10 +15,6 @@ import {
   Alert,
   AlertIcon,
   Tag,
-  AlertTitle,
-  AlertDescription,
-  Progress,
-  Stack,
   Heading,
   Box,
 } from "@chakra-ui/react";
@@ -27,7 +23,6 @@ import { useWeb3React } from "@web3-react/core";
 import dynamic from "next/dynamic";
 import { useMemo, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { useQuery } from "@apollo/client";
 
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import {
@@ -35,12 +30,8 @@ import {
   REQUIRED_FIELD_LABEL,
 } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
-import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
-import { useRouter } from "next/router";
-import { streamIdToUrl } from "../../../core/helpers";
-import { Pathway } from "../../../core/types";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
@@ -50,16 +41,6 @@ export default function PathwayForm() {
   const router = useRouter();
   const [code, setCode] = useState<string>();
   const { codeEditorScheme } = useCustomColor();
-  const { data, loading, error } = useQuery(
-    GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
-    {
-      variables: {
-        projectId: streamIdToUrl(router.query.projectId as string),
-      },
-    }
-  );
-
-  console.log({ data });
 
   const { chainId } = useWeb3React();
   const { tokens } = useTokenList();
@@ -103,21 +84,6 @@ export default function PathwayForm() {
     return { token, isMatic };
   }, [chainId, setValue]);
 
-  if (loading)
-    return (
-      <Stack>
-        <Progress size="xs" isIndeterminate />
-      </Stack>
-    );
-  if (error)
-    return (
-      <Alert status="error">
-        <AlertIcon />
-        <AlertTitle mr={2}>Network error</AlertTitle>
-        <AlertDescription>{error.message}</AlertDescription>
-      </Alert>
-    );
-
   // const existingGitcoinQuestsOptions = [
   //   {
   //     label: "Gitcoin Applicant Quest",
@@ -142,18 +108,18 @@ export default function PathwayForm() {
   //   },
   // ];
 
-  const existingPathwaysOptions = data.getAllPathwaysByProjectId
-    .filter((pathway: Pathway) => pathway.quests?.length > 0)
-    .map((pathway: Pathway) => {
-      return {
-        label: pathway.title,
-        options: pathway.quests.map((quest) => ({
-          label: quest.name,
-          value: quest.id,
-          colorScheme: "purple",
-        })),
-      };
-    });
+  // const existingPathwaysOptions = data.getAllPathwaysByProjectId
+  //   .filter((pathway: Pathway) => pathway.quests?.length > 0)
+  //   .map((pathway: Pathway) => {
+  //     return {
+  //       label: pathway.title,
+  //       options: pathway.quests.map((quest) => ({
+  //         label: quest.name,
+  //         value: quest.id,
+  //         colorScheme: "purple",
+  //       })),
+  //     };
+  //   });
 
   return (
     <VStack w="full" align="start">
@@ -284,7 +250,7 @@ export default function PathwayForm() {
           <NumberInput step={1_000} defaultValue={1_000}>
             <NumberInputField
               roundedBottom="none"
-              placeholder=""
+              placeholder="Number of max. claims"
               {...register(`rewardUserCap`, {
                 required: REQUIRED_FIELD_LABEL,
               })}

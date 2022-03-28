@@ -1,13 +1,18 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { ForbiddenError } from 'apollo-server-express';
-import { schemaAliases } from '../../../core/constants/idx';
+import { Where } from '@textile/hub';
+
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseCeramicClient, UseThreadDBClient } from '../../../core/utils/types';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
 import { QuestAnswersSubmitionInput } from '../dto/QuestAnswersSubmition.input';
+import { NotFoundException } from '@nestjs/common';
 // import { Question } from '../dto/Question';
 
 @Resolver(() => Boolean)
 export class SubmitQuestAnswersResolver {
+  constructor(private readonly threadDBService: ThreadDBService) {}
   @Mutation(() => Boolean, {
     nullable: false,
     description: 'Submits quest answers',
@@ -15,18 +20,22 @@ export class SubmitQuestAnswersResolver {
   })
   async submitQuestAnswers(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('input') answerSubmition: QuestAnswersSubmitionInput,
   ): Promise<boolean> {
-    const ogQuest = await ceramicClient.ceramic.loadStream(
-      answerSubmition.questId,
-    );
-    if (!ogQuest) {
-      return false;
+    const [foundQuest] = await this.threadDBService.query({
+      collectionName: 'Quest',
+      dbClient,
+      threadId: latestThreadId,
+      query: new Where('_id').eq(answerSubmition.questId),
+    });
+    if (!foundQuest) {
+      throw new NotFoundException('Quest not found');
     }
-    const questionAnswers = ogQuest.content.questions;
-
+    const { _id, ...quest } = foundQuest as any;
+    console.log({ quest });
     const decryptedQuestionAnswers = await Promise.all(
-      questionAnswers.map(
+      quest.questions.map(
         async (qa: { question: string; choices: string[]; answer: string }) => {
           const decryptedAnswers =
             await ceramicClient.ceramic.did?.decryptDagJWE(
@@ -48,47 +57,31 @@ export class SubmitQuestAnswersResolver {
         },
       ),
     );
-    const isSuccess = decryptedQuestionAnswers.every((result) => result);
+    const isSuccess = decryptedQuestionAnswers.every(
+      (answerIsCorrect) => answerIsCorrect,
+    );
     console.log({ isSuccess });
-    if (isSuccess) {
-      const previousQuests = await ceramicClient.dataStore.get(
-        schemaAliases.QUESTS_ALIAS,
-      );
-      const allQuests = previousQuests?.quests ?? [];
-      // console.log({ allQuests });
-      const currentQuest = allQuests.find(
-        (quest: { id: string }) =>
-          quest.id === `ceramic://${answerSubmition.questId}`,
-      );
-      console.log({ currentQuest });
-      if (!currentQuest) {
-        return false;
-      }
 
-      const isQuestAlreadyCompleted =
-        !!currentQuest.completedBy &&
-        currentQuest.completedBy.includes(answerSubmition.did);
+    // TODO: require signature
+    if (isSuccess) {
+      const alreadyCompletedBy = quest.completedBy ?? [];
+      const isQuestAlreadyCompleted = alreadyCompletedBy.includes(
+        answerSubmition.did,
+      );
       console.log({ isQuestAlreadyCompleted });
       if (isQuestAlreadyCompleted) {
         throw new ForbiddenError('Quest already completed');
       }
-      const questsWithoutCurrent = allQuests.filter(
-        (quest: { id: string }) =>
-          quest.id !== `ceramic://${answerSubmition.questId}`,
-      );
 
-      console.log({ questsWithoutCurrent });
-      await ceramicClient.dataStore.set(schemaAliases.QUESTS_ALIAS, {
-        quests: [
-          ...questsWithoutCurrent,
+      await this.threadDBService.update({
+        collectionName: 'Quest',
+        dbClient,
+        threadId: latestThreadId,
+        values: [
           {
-            id: ogQuest.id.toUrl(),
-            ...ogQuest.content,
-            ...currentQuest,
-            completedBy:
-              currentQuest.completedBy && currentQuest.completedBy.length > 0
-                ? [...currentQuest.completedBy, answerSubmition.did]
-                : [answerSubmition.did],
+            _id,
+            ...quest,
+            completedBy: [...alreadyCompletedBy, answerSubmition.did],
           },
         ],
       });

@@ -37,11 +37,13 @@ const ProjectCard = ({
 
   const router = useRouter();
 
+  console.log({ pId: project.id });
+
   function openProject() {
     router.push(
       isReviewMode
-        ? `/projects/${project.id.split("://")[1]}/review`
-        : `/projects/${project.id.split("://")[1]}`
+        ? `/projects/${project.id}/review`
+        : `/projects/${project.id}`
     );
   }
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;

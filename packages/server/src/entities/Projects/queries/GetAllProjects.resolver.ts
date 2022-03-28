@@ -1,20 +1,41 @@
 import { Resolver, Query } from '@nestjs/graphql';
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
-import { CeramicProjectService } from '../CeramicProject.service';
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseThreadDBClient } from '../../../core/utils/types';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
+import { Tag } from '../../Tags/Tag.entity';
 import { Project } from '../Project.entity';
 
 @Resolver(() => [Project])
 export class GetAllProjectsResolver {
-  constructor(private readonly ceramicProjectService: CeramicProjectService) {}
+  constructor(private readonly threadDBService: ThreadDBService) {}
   @Query(() => [Project], {
     nullable: true,
     description: 'Gets all the projects in dCompass',
     name: 'getAllProjects',
   })
   async getAllProjects(
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
   ): Promise<Project[] | null | undefined> {
-    return this.ceramicProjectService.getAllProjects(ceramicClient);
+    const [allProjects, allTags] = await Promise.all([
+      this.threadDBService.query({
+        collectionName: 'Project',
+        threadId: latestThreadId,
+        dbClient,
+      }),
+      this.threadDBService.query({
+        collectionName: 'Tag',
+        threadId: latestThreadId,
+        dbClient,
+      }),
+    ]);
+    return allProjects.map((project: any) => ({
+      id: project._id,
+      ...project,
+      tags: allTags
+        .map((t: any) => ({ id: t._id, ...t }))
+        .filter((tag: any) =>
+          project.tags.map((pjTag: Tag) => pjTag.id).includes(tag.id),
+        ),
+    })) as Project[];
   }
 }

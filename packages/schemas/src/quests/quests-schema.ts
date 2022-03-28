@@ -13,7 +13,7 @@ export const QuestsSchema = {
         title: "QuestItem",
         properties: {
           id: {
-            $ref: "#/definitions/CeramicStreamId",
+            type: "string",
           },
           ...questBaseProperties,
         },

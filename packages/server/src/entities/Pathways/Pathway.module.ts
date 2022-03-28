@@ -9,6 +9,7 @@ import { ApprovePathwayResolver } from './mutations/ApprovePathway.resolver';
 import { GetPathwayByIdResolver } from './queries/GetPathwayById.resolver';
 import { AppService } from '../../app.service';
 import { VerifyPathwayResolver } from './mutations/VerifyPathway.resolver';
+import { ThreadDBService } from '../../services/thread-db/thread-db.service';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { VerifyPathwayResolver } from './mutations/VerifyPathway.resolver';
     GetAllPathwaysByProjectIdResolver,
     VerifyPathwayResolver,
     AppService,
+    ThreadDBService,
   ],
   exports: [],
 })

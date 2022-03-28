@@ -21,6 +21,8 @@ import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
 import { isAddress } from "ethers/lib/utils";
+
+import { ethers } from "ethers";
 import NextLink from "next/link";
 import useCustomColor from "core/hooks/useCustomColor";
 
@@ -125,7 +127,7 @@ function CreateProjectStepper() {
       logo: cids.logo,
       website: `https://${values.website}`,
       createdBy: account,
-      tags: values.tags.map((tag) => ({ id: `ceramic://${tag.value}` })),
+      tags: values.tags.map((tag) => ({ id: tag.value })),
       squads: values.squads.map((squad) => {
         const members = squad.members.map(
           (member: any) => member.value
@@ -162,19 +164,6 @@ function CreateProjectStepper() {
 
     const { metadataCids } = await nftCidRes.json();
 
-    // Get user's existing projects
-    const existingProjects = await self.client.dataStore.get(PROJECTS_ALIAS);
-
-    // Index his new project
-    if (existingProjects && existingProjects.projects.length > 0) {
-      await self.client.dataStore.set(PROJECTS_ALIAS, {
-        projects: [...existingProjects.projects, projectId],
-      });
-    } else {
-      await self.client.dataStore.set(PROJECTS_ALIAS, {
-        projects: [projectId],
-      });
-    }
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: projectId,

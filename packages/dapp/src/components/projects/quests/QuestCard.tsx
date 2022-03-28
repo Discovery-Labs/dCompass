@@ -73,7 +73,8 @@ function QuestCard({
     projectContributors && account && projectContributors.includes(account);
 
   const openQuest = (questId: string) => {
-    return router.push(`${router.asPath}/${streamUrlToId(questId)}`);
+    console.log(`${router.asPath}/${questId}`);
+    return router.push(`${router.asPath}/${questId}`);
   };
 
   const handleApproveQuest = async () => {
