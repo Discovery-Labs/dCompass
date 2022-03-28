@@ -17,31 +17,19 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface SponsorPassSFTInterface extends utils.Interface {
-  contractName: "SponsorPassSFT";
+export interface BadgeFacetInterface extends utils.Interface {
+  contractName: "BadgeFacet";
   functions: {
-    "DIAMOND()": FunctionFragment;
-    "GOLD()": FunctionFragment;
-    "SILVER()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(uint256,address,string)": FunctionFragment;
-    "projByWallet(address)": FunctionFragment;
+    "mint(address,string,string,string,bytes32,bytes32,uint8)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
-    "setStakeAmounts(uint256,uint256)": FunctionFragment;
-    "stakeAmounts(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "updateLevel(uint256,address,string,uint256)": FunctionFragment;
-    "uri(uint256)": FunctionFragment;
-    "walletByProj(string)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "DIAMOND", values?: undefined): string;
-  encodeFunctionData(functionFragment: "GOLD", values?: undefined): string;
-  encodeFunctionData(functionFragment: "SILVER", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [string, BigNumberish]
@@ -56,11 +44,7 @@ export interface SponsorPassSFTInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [BigNumberish, string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "projByWallet",
-    values: [string]
+    values: [string, string, string, string, BytesLike, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
@@ -75,30 +59,10 @@ export interface SponsorPassSFTInterface extends utils.Interface {
     values: [string, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "setStakeAmounts",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "stakeAmounts",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "updateLevel",
-    values: [BigNumberish, string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "walletByProj",
-    values: [string]
-  ): string;
 
-  decodeFunctionResult(functionFragment: "DIAMOND", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "GOLD", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "SILVER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
@@ -109,10 +73,6 @@ export interface SponsorPassSFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "projByWallet",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "safeBatchTransferFrom",
     data: BytesLike
@@ -126,24 +86,7 @@ export interface SponsorPassSFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setStakeAmounts",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "stakeAmounts",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateLevel",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "walletByProj",
     data: BytesLike
   ): Result;
 
@@ -200,13 +143,13 @@ export type URIEvent = TypedEvent<
 
 export type URIEventFilter = TypedEventFilter<URIEvent>;
 
-export interface SponsorPassSFT extends BaseContract {
-  contractName: "SponsorPassSFT";
+export interface BadgeFacet extends BaseContract {
+  contractName: "BadgeFacet";
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: SponsorPassSFTInterface;
+  interface: BadgeFacetInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -228,12 +171,6 @@ export interface SponsorPassSFT extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    DIAMOND(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    GOLD(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    SILVER(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -253,13 +190,15 @@ export interface SponsorPassSFT extends BaseContract {
     ): Promise<[boolean]>;
 
     mint(
-      _id: BigNumberish,
-      _to: string,
-      projectId: string,
+      _minter: string,
+      _badgeId: string,
+      _projectId: string,
+      _pathwayId: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    projByWallet(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
     safeBatchTransferFrom(
       from: string,
@@ -281,44 +220,15 @@ export interface SponsorPassSFT extends BaseContract {
 
     setApprovalForAll(
       operator: string,
-      approved: boolean,
+      status: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    setStakeAmounts(
-      _tokenId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    stakeAmounts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    updateLevel(
-      _id: BigNumberish,
-      _from: string,
-      projectId: string,
-      newLevel: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
-
-    walletByProj(arg0: string, overrides?: CallOverrides): Promise<[string]>;
   };
-
-  DIAMOND(overrides?: CallOverrides): Promise<BigNumber>;
-
-  GOLD(overrides?: CallOverrides): Promise<BigNumber>;
-
-  SILVER(overrides?: CallOverrides): Promise<BigNumber>;
 
   balanceOf(
     account: string,
@@ -339,13 +249,15 @@ export interface SponsorPassSFT extends BaseContract {
   ): Promise<boolean>;
 
   mint(
-    _id: BigNumberish,
-    _to: string,
-    projectId: string,
+    _minter: string,
+    _badgeId: string,
+    _projectId: string,
+    _pathwayId: string,
+    r: BytesLike,
+    s: BytesLike,
+    v: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  projByWallet(arg0: string, overrides?: CallOverrides): Promise<string>;
 
   safeBatchTransferFrom(
     from: string,
@@ -367,45 +279,16 @@ export interface SponsorPassSFT extends BaseContract {
 
   setApprovalForAll(
     operator: string,
-    approved: boolean,
+    status: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  setStakeAmounts(
-    _tokenId: BigNumberish,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  stakeAmounts(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  updateLevel(
-    _id: BigNumberish,
-    _from: string,
-    projectId: string,
-    newLevel: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  walletByProj(arg0: string, overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
-    DIAMOND(overrides?: CallOverrides): Promise<BigNumber>;
-
-    GOLD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    SILVER(overrides?: CallOverrides): Promise<BigNumber>;
-
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -425,13 +308,15 @@ export interface SponsorPassSFT extends BaseContract {
     ): Promise<boolean>;
 
     mint(
-      _id: BigNumberish,
-      _to: string,
-      projectId: string,
+      _minter: string,
+      _badgeId: string,
+      _projectId: string,
+      _pathwayId: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
-
-    projByWallet(arg0: string, overrides?: CallOverrides): Promise<string>;
+    ): Promise<boolean>;
 
     safeBatchTransferFrom(
       from: string,
@@ -453,37 +338,14 @@ export interface SponsorPassSFT extends BaseContract {
 
     setApprovalForAll(
       operator: string,
-      approved: boolean,
+      status: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    setStakeAmounts(
-      _tokenId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    stakeAmounts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    updateLevel(
-      _id: BigNumberish,
-      _from: string,
-      projectId: string,
-      newLevel: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-    walletByProj(arg0: string, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -536,12 +398,6 @@ export interface SponsorPassSFT extends BaseContract {
   };
 
   estimateGas: {
-    DIAMOND(overrides?: CallOverrides): Promise<BigNumber>;
-
-    GOLD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    SILVER(overrides?: CallOverrides): Promise<BigNumber>;
-
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -561,13 +417,15 @@ export interface SponsorPassSFT extends BaseContract {
     ): Promise<BigNumber>;
 
     mint(
-      _id: BigNumberish,
-      _to: string,
-      projectId: string,
+      _minter: string,
+      _badgeId: string,
+      _projectId: string,
+      _pathwayId: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    projByWallet(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     safeBatchTransferFrom(
       from: string,
@@ -589,46 +447,17 @@ export interface SponsorPassSFT extends BaseContract {
 
     setApprovalForAll(
       operator: string,
-      approved: boolean,
+      status: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setStakeAmounts(
-      _tokenId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    stakeAmounts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    updateLevel(
-      _id: BigNumberish,
-      _from: string,
-      projectId: string,
-      newLevel: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    walletByProj(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    DIAMOND(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    GOLD(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    SILVER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -648,15 +477,14 @@ export interface SponsorPassSFT extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     mint(
-      _id: BigNumberish,
-      _to: string,
-      projectId: string,
+      _minter: string,
+      _badgeId: string,
+      _projectId: string,
+      _pathwayId: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    projByWallet(
-      arg0: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     safeBatchTransferFrom(
@@ -679,41 +507,12 @@ export interface SponsorPassSFT extends BaseContract {
 
     setApprovalForAll(
       operator: string,
-      approved: boolean,
+      status: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setStakeAmounts(
-      _tokenId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    stakeAmounts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     supportsInterface(
       interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    updateLevel(
-      _id: BigNumberish,
-      _from: string,
-      projectId: string,
-      newLevel: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    uri(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    walletByProj(
-      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

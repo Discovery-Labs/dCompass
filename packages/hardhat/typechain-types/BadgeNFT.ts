@@ -9,6 +9,7 @@ import {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -20,20 +21,37 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface BadgeNFTInterface extends utils.Interface {
   contractName: "BadgeNFT";
   functions: {
+    "addBadgeCreationReward(string,address,bool,uint256)": FunctionFragment;
+    "adventurerAddress(string)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "badgeMinted(string)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "claimBadgeRewards(string,bool,address,bytes32,bytes32,uint8,bool)": FunctionFragment;
+    "claimRejectionRefund(string,bool,address)": FunctionFragment;
+    "createBadge(string,string,uint256,bool,address,bool,uint256)": FunctionFragment;
     "createToken(string,string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
+    "currentNumUsersRewardPerBadgeERC20(string,address)": FunctionFragment;
+    "currentNumUsersRewardPerBadgeNative(string)": FunctionFragment;
+    "fee()": FunctionFragment;
+    "getAppDiamond()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
+    "getContributors(string)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "name()": FunctionFragment;
+    "nativeRefundClaimed(string)": FunctionFragment;
+    "nativeRewards(string)": FunctionFragment;
+    "nonces(string,address)": FunctionFragment;
+    "numUsersRewardPerBadge(string)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
-    "projectIdforCourse(string)": FunctionFragment;
+    "pathwayIdforBadge(string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "reviewerVotes(string,address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
+    "setAdventureFactory(address)": FunctionFragment;
+    "setAppDiamond(address)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setNumberOfUsersRewarded(string,uint256,bytes32,bytes32,uint8)": FunctionFragment;
     "status(string)": FunctionFragment;
     "statusStrings(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -44,17 +62,56 @@ export interface BadgeNFTInterface extends utils.Interface {
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "userRewardedForBadgeNative(string,address)": FunctionFragment;
     "voteForApproval(address[],string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
+    "voteForRejection(string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
     "votes(string)": FunctionFragment;
+    "votesReject(string)": FunctionFragment;
     "walletOfOwner(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "addBadgeCreationReward",
+    values: [string, string, boolean, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adventurerAddress",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "approve",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "badgeMinted", values: [string]): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "claimBadgeRewards",
+    values: [
+      string,
+      boolean,
+      string,
+      BytesLike,
+      BytesLike,
+      BigNumberish,
+      boolean
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "claimRejectionRefund",
+    values: [string, boolean, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createBadge",
+    values: [
+      string,
+      string,
+      BigNumberish,
+      boolean,
+      string,
+      boolean,
+      BigNumberish
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "createToken",
     values: [
@@ -68,21 +125,54 @@ export interface BadgeNFTInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "currentNumUsersRewardPerBadgeERC20",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentNumUsersRewardPerBadgeNative",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "fee", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getAppDiamond",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getContributors",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "nativeRefundClaimed",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nativeRewards",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nonces",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "numUsersRewardPerBadge",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "projectIdforCourse",
+    functionFragment: "pathwayIdforBadge",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -98,8 +188,20 @@ export interface BadgeNFTInterface extends utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setAdventureFactory",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAppDiamond",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setNumberOfUsersRewarded",
+    values: [string, BigNumberish, BytesLike, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "status", values: [string]): string;
   encodeFunctionData(
@@ -136,6 +238,10 @@ export interface BadgeNFTInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "userRewardedForBadgeNative",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "voteForApproval",
     values: [
       string[],
@@ -147,12 +253,32 @@ export interface BadgeNFTInterface extends utils.Interface {
       BigNumberish
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "voteForRejection",
+    values: [
+      string,
+      string,
+      [BytesLike, BytesLike],
+      [BytesLike, BytesLike],
+      [BigNumberish, BigNumberish],
+      BigNumberish
+    ]
+  ): string;
   encodeFunctionData(functionFragment: "votes", values: [string]): string;
+  encodeFunctionData(functionFragment: "votesReject", values: [string]): string;
   encodeFunctionData(
     functionFragment: "walletOfOwner",
     values: [string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addBadgeCreationReward",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "adventurerAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "badgeMinted",
@@ -160,7 +286,32 @@ export interface BadgeNFTInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "claimBadgeRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "claimRejectionRefund",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createBadge",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "createToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentNumUsersRewardPerBadgeERC20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentNumUsersRewardPerBadgeNative",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getAppDiamond",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -168,14 +319,31 @@ export interface BadgeNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getContributors",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "nativeRefundClaimed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "nativeRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "numUsersRewardPerBadge",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "projectIdforCourse",
+    functionFragment: "pathwayIdforBadge",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -191,7 +359,19 @@ export interface BadgeNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setAdventureFactory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAppDiamond",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setNumberOfUsersRewarded",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "status", data: BytesLike): Result;
@@ -226,10 +406,22 @@ export interface BadgeNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "userRewardedForBadgeNative",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "voteForApproval",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "voteForRejection",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "votes", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "votesReject",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "walletOfOwner",
     data: BytesLike
@@ -329,6 +521,19 @@ export interface BadgeNFT extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addBadgeCreationReward(
+      _badgeId: string,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    adventurerAddress(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -339,10 +544,39 @@ export interface BadgeNFT extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    claimBadgeRewards(
+      _badgeId: string,
+      native: boolean,
+      _ERC20Address: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
+      claimReward: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    claimRejectionRefund(
+      _badgeId: string,
+      native: boolean,
+      _ERC20Address: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    createBadge(
+      _badgeId: string,
+      _pathwayId: string,
+      numUsersRewarded: BigNumberish,
+      callRewards: boolean,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     createToken(
       _tokenURI: string,
       _badgeId: string,
-      _projectId: string,
+      _pathwayId: string,
       r: [BytesLike, BytesLike],
       s: [BytesLike, BytesLike],
       v: [BigNumberish, BigNumberish],
@@ -350,10 +584,30 @@ export interface BadgeNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    currentNumUsersRewardPerBadgeERC20(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    currentNumUsersRewardPerBadgeNative(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    fee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getAppDiamond(overrides?: CallOverrides): Promise<[string]>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    getContributors(
+      _pathwayId: string,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
 
     isApprovedForAll(
       owner: string,
@@ -363,6 +617,27 @@ export interface BadgeNFT extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
+    nativeRefundClaimed(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    nativeRewards(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    nonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    numUsersRewardPerBadge(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     ownerOf(
@@ -370,7 +645,7 @@ export interface BadgeNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    projectIdforCourse(
+    pathwayIdforBadge(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[string]>;
@@ -400,9 +675,28 @@ export interface BadgeNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setAdventureFactory(
+      newFactory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setAppDiamond(
+      newAppDiamond: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setNumberOfUsersRewarded(
+      _badgeId: string,
+      newNumber: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -450,10 +744,26 @@ export interface BadgeNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    userRewardedForBadgeNative(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     voteForApproval(
       _contributors: string[],
       _badgeId: string,
-      _projectId: string,
+      _pathwayId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    voteForRejection(
+      _badgeId: string,
+      _pathwayId: string,
       r: [BytesLike, BytesLike],
       s: [BytesLike, BytesLike],
       v: [BigNumberish, BigNumberish],
@@ -463,11 +773,23 @@ export interface BadgeNFT extends BaseContract {
 
     votes(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    votesReject(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
     walletOfOwner(
       _owner: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
   };
+
+  addBadgeCreationReward(
+    _badgeId: string,
+    _ERC20Address: string,
+    useNative: boolean,
+    amount: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  adventurerAddress(arg0: string, overrides?: CallOverrides): Promise<string>;
 
   approve(
     to: string,
@@ -479,10 +801,39 @@ export interface BadgeNFT extends BaseContract {
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  claimBadgeRewards(
+    _badgeId: string,
+    native: boolean,
+    _ERC20Address: string,
+    r: BytesLike,
+    s: BytesLike,
+    v: BigNumberish,
+    claimReward: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  claimRejectionRefund(
+    _badgeId: string,
+    native: boolean,
+    _ERC20Address: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  createBadge(
+    _badgeId: string,
+    _pathwayId: string,
+    numUsersRewarded: BigNumberish,
+    callRewards: boolean,
+    _ERC20Address: string,
+    useNative: boolean,
+    amount: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   createToken(
     _tokenURI: string,
     _badgeId: string,
-    _projectId: string,
+    _pathwayId: string,
     r: [BytesLike, BytesLike],
     s: [BytesLike, BytesLike],
     v: [BigNumberish, BigNumberish],
@@ -490,10 +841,30 @@ export interface BadgeNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  currentNumUsersRewardPerBadgeERC20(
+    arg0: string,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  currentNumUsersRewardPerBadgeNative(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  fee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getAppDiamond(overrides?: CallOverrides): Promise<string>;
+
   getApproved(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  getContributors(
+    _pathwayId: string,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
 
   isApprovedForAll(
     owner: string,
@@ -503,11 +874,29 @@ export interface BadgeNFT extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
+  nativeRefundClaimed(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  nativeRewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  nonces(
+    arg0: string,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  numUsersRewardPerBadge(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-  projectIdforCourse(arg0: string, overrides?: CallOverrides): Promise<string>;
+  pathwayIdforBadge(arg0: string, overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -534,9 +923,28 @@ export interface BadgeNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setAdventureFactory(
+    newFactory: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setAppDiamond(
+    newAppDiamond: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setApprovalForAll(
     operator: string,
     approved: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setNumberOfUsersRewarded(
+    _badgeId: string,
+    newNumber: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    v: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -578,10 +986,26 @@ export interface BadgeNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  userRewardedForBadgeNative(
+    arg0: string,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   voteForApproval(
     _contributors: string[],
     _badgeId: string,
-    _projectId: string,
+    _pathwayId: string,
+    r: [BytesLike, BytesLike],
+    s: [BytesLike, BytesLike],
+    v: [BigNumberish, BigNumberish],
+    votesNeeded: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  voteForRejection(
+    _badgeId: string,
+    _pathwayId: string,
     r: [BytesLike, BytesLike],
     s: [BytesLike, BytesLike],
     v: [BigNumberish, BigNumberish],
@@ -591,12 +1015,24 @@ export interface BadgeNFT extends BaseContract {
 
   votes(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  votesReject(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
   walletOfOwner(
     _owner: string,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
   callStatic: {
+    addBadgeCreationReward(
+      _badgeId: string,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    adventurerAddress(arg0: string, overrides?: CallOverrides): Promise<string>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -607,10 +1043,39 @@ export interface BadgeNFT extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    claimBadgeRewards(
+      _badgeId: string,
+      native: boolean,
+      _ERC20Address: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
+      claimReward: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    claimRejectionRefund(
+      _badgeId: string,
+      native: boolean,
+      _ERC20Address: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    createBadge(
+      _badgeId: string,
+      _pathwayId: string,
+      numUsersRewarded: BigNumberish,
+      callRewards: boolean,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     createToken(
       _tokenURI: string,
       _badgeId: string,
-      _projectId: string,
+      _pathwayId: string,
       r: [BytesLike, BytesLike],
       s: [BytesLike, BytesLike],
       v: [BigNumberish, BigNumberish],
@@ -618,10 +1083,30 @@ export interface BadgeNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    currentNumUsersRewardPerBadgeERC20(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentNumUsersRewardPerBadgeNative(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getAppDiamond(overrides?: CallOverrides): Promise<string>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getContributors(
+      _pathwayId: string,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     isApprovedForAll(
       owner: string,
@@ -631,14 +1116,29 @@ export interface BadgeNFT extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
+    nativeRefundClaimed(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    nativeRewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    nonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    numUsersRewardPerBadge(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-    projectIdforCourse(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    pathwayIdforBadge(arg0: string, overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -663,9 +1163,28 @@ export interface BadgeNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setAdventureFactory(
+      newFactory: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAppDiamond(
+      newAppDiamond: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setNumberOfUsersRewarded(
+      _badgeId: string,
+      newNumber: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -710,10 +1229,26 @@ export interface BadgeNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    userRewardedForBadgeNative(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     voteForApproval(
       _contributors: string[],
       _badgeId: string,
-      _projectId: string,
+      _pathwayId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    voteForRejection(
+      _badgeId: string,
+      _pathwayId: string,
       r: [BytesLike, BytesLike],
       s: [BytesLike, BytesLike],
       v: [BigNumberish, BigNumberish],
@@ -722,6 +1257,8 @@ export interface BadgeNFT extends BaseContract {
     ): Promise<void>;
 
     votes(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    votesReject(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     walletOfOwner(
       _owner: string,
@@ -794,6 +1331,19 @@ export interface BadgeNFT extends BaseContract {
   };
 
   estimateGas: {
+    addBadgeCreationReward(
+      _badgeId: string,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    adventurerAddress(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -804,10 +1354,39 @@ export interface BadgeNFT extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    claimBadgeRewards(
+      _badgeId: string,
+      native: boolean,
+      _ERC20Address: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
+      claimReward: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    claimRejectionRefund(
+      _badgeId: string,
+      native: boolean,
+      _ERC20Address: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    createBadge(
+      _badgeId: string,
+      _pathwayId: string,
+      numUsersRewarded: BigNumberish,
+      callRewards: boolean,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     createToken(
       _tokenURI: string,
       _badgeId: string,
-      _projectId: string,
+      _pathwayId: string,
       r: [BytesLike, BytesLike],
       s: [BytesLike, BytesLike],
       v: [BigNumberish, BigNumberish],
@@ -815,8 +1394,28 @@ export interface BadgeNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    currentNumUsersRewardPerBadgeERC20(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentNumUsersRewardPerBadgeNative(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getAppDiamond(overrides?: CallOverrides): Promise<BigNumber>;
+
     getApproved(
       tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getContributors(
+      _pathwayId: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -828,6 +1427,24 @@ export interface BadgeNFT extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
+    nativeRefundClaimed(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    nativeRewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    nonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    numUsersRewardPerBadge(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     ownerOf(
@@ -835,7 +1452,7 @@ export interface BadgeNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    projectIdforCourse(
+    pathwayIdforBadge(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -865,9 +1482,28 @@ export interface BadgeNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setAdventureFactory(
+      newFactory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setAppDiamond(
+      newAppDiamond: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setNumberOfUsersRewarded(
+      _badgeId: string,
+      newNumber: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -915,10 +1551,26 @@ export interface BadgeNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    userRewardedForBadgeNative(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     voteForApproval(
       _contributors: string[],
       _badgeId: string,
-      _projectId: string,
+      _pathwayId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    voteForRejection(
+      _badgeId: string,
+      _pathwayId: string,
       r: [BytesLike, BytesLike],
       s: [BytesLike, BytesLike],
       v: [BigNumberish, BigNumberish],
@@ -928,6 +1580,8 @@ export interface BadgeNFT extends BaseContract {
 
     votes(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    votesReject(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     walletOfOwner(
       _owner: string,
       overrides?: CallOverrides
@@ -935,6 +1589,19 @@ export interface BadgeNFT extends BaseContract {
   };
 
   populateTransaction: {
+    addBadgeCreationReward(
+      _badgeId: string,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    adventurerAddress(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -951,10 +1618,39 @@ export interface BadgeNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    claimBadgeRewards(
+      _badgeId: string,
+      native: boolean,
+      _ERC20Address: string,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
+      claimReward: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    claimRejectionRefund(
+      _badgeId: string,
+      native: boolean,
+      _ERC20Address: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createBadge(
+      _badgeId: string,
+      _pathwayId: string,
+      numUsersRewarded: BigNumberish,
+      callRewards: boolean,
+      _ERC20Address: string,
+      useNative: boolean,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     createToken(
       _tokenURI: string,
       _badgeId: string,
-      _projectId: string,
+      _pathwayId: string,
       r: [BytesLike, BytesLike],
       s: [BytesLike, BytesLike],
       v: [BigNumberish, BigNumberish],
@@ -962,8 +1658,28 @@ export interface BadgeNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    currentNumUsersRewardPerBadgeERC20(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentNumUsersRewardPerBadgeNative(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    fee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getAppDiamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getApproved(
       tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getContributors(
+      _pathwayId: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -975,6 +1691,27 @@ export interface BadgeNFT extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    nativeRefundClaimed(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    nativeRewards(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    nonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    numUsersRewardPerBadge(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ownerOf(
@@ -982,7 +1719,7 @@ export interface BadgeNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    projectIdforCourse(
+    pathwayIdforBadge(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1012,9 +1749,28 @@ export interface BadgeNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setAdventureFactory(
+      newFactory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAppDiamond(
+      newAppDiamond: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setNumberOfUsersRewarded(
+      _badgeId: string,
+      newNumber: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1065,10 +1821,26 @@ export interface BadgeNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    userRewardedForBadgeNative(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     voteForApproval(
       _contributors: string[],
       _badgeId: string,
-      _projectId: string,
+      _pathwayId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    voteForRejection(
+      _badgeId: string,
+      _pathwayId: string,
       r: [BytesLike, BytesLike],
       s: [BytesLike, BytesLike],
       v: [BigNumberish, BigNumberish],
@@ -1077,6 +1849,11 @@ export interface BadgeNFT extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     votes(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    votesReject(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
