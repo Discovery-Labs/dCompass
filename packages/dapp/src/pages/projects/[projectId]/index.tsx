@@ -246,25 +246,13 @@ function ProjectPage({
       <Tabs w="full">
         <HStack justifyContent="space-between">
           <TabList>
-            <Tab>{t("about")}</Tab>
             <Tab>{t("pathways")}</Tab>
             <Tab>{t("guilds")}</Tab>
+            <Tab>{t("about")}</Tab>
           </TabList>
         </HStack>
 
         <TabPanels>
-          {/* About */}
-          <TabPanel px="0">
-            <VStack w="full" align="flex-start">
-              <ReactMarkdown
-                components={ChakraUIRenderer(projectMarkdownTheme)}
-                skipHtml
-              >
-                {description}
-              </ReactMarkdown>
-            </VStack>
-          </TabPanel>
-
           {/* Pathways */}
           <TabPanel px="0">
             <Tabs w="full" variant="unstyled">
@@ -329,6 +317,18 @@ function ProjectPage({
                 </CardMedia>
               ))}
             </SimpleGrid>
+          </TabPanel>
+
+          {/* About */}
+          <TabPanel px="0">
+            <VStack w="full" align="flex-start">
+              <ReactMarkdown
+                components={ChakraUIRenderer(projectMarkdownTheme)}
+                skipHtml
+              >
+                {description}
+              </ReactMarkdown>
+            </VStack>
           </TabPanel>
         </TabPanels>
       </Tabs>

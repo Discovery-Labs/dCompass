@@ -104,7 +104,7 @@ export const getServerSideProps: GetServerSideProps<
         projectId,
         createdBy: {
           did: questCreatorDID,
-          name: questCreatorBasicProfile?.name,
+          name: questCreatorBasicProfile?.name || "",
         },
         ...(await serverSideTranslations(locale, ["common"])),
       },
