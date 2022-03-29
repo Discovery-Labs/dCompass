@@ -1,19 +1,25 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { Where } from '@textile/hub';
 import { NotFoundException } from '@nestjs/common';
+import ABIS from '@discovery-dao/hardhat/abis.json';
 
 import { UseThreadDBClient } from '../../../core/utils/types';
 import { Quest } from '../Quest.entity';
+import { verifyNFTInfo } from '../../../core/utils/security/verify';
 import { ApproveQuestInput } from '../dto/ApproveQuest.input';
 import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
 import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
 import { ethers } from 'ethers';
 import { Squad } from '../../Squads/Squad.entity';
 import { ForbiddenError } from 'apollo-server-express';
+import { AppService } from '../../../app.service';
 
 @Resolver(() => Quest)
 export class ApproveQuestResolver {
-  constructor(private readonly threadDBService: ThreadDBService) {}
+  constructor(
+    private readonly threadDBService: ThreadDBService,
+    public readonly appService: AppService,
+  ) {}
   @Mutation(() => Quest, {
     nullable: true,
     description: 'Approve a new Quest in dCompass',
@@ -21,7 +27,7 @@ export class ApproveQuestResolver {
   })
   async approveQuest(
     @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
-    @Args('input') { id, questApproverSignature }: ApproveQuestInput,
+    @Args('input') { id, questApproverSignature, chainId }: ApproveQuestInput,
   ): Promise<Quest | null | undefined> {
     const [foundQuest] = await this.threadDBService.query({
       collectionName: 'Quest',
@@ -86,54 +92,52 @@ export class ApproveQuestResolver {
     });
 
     // TODO: Verify metadata et al
-    // const chaindIdStr = chainId.toString();
-    // if (!Object.keys(ABIS).includes(chaindIdStr)) {
-    //   throw new Error('Unsupported Network');
-    // }
+    const chaindIdStr = chainId.toString();
+    if (!Object.keys(ABIS).includes(chaindIdStr)) {
+      throw new Error('Unsupported Network');
+    }
 
-    // const verifyContract = this.appService.getContract(chaindIdStr, 'Verify');
-    // const pathwayContract = this.appService.getContract(
-    //   chaindIdStr,
-    //   'PathwayNFT',
-    // );
+    const verifyContract = this.appService.getContract(chaindIdStr, 'Verify');
+    const badgeNFTContract = this.appService.getContract(
+      chaindIdStr,
+      'BadgeNFT',
+    );
 
-    // const [metadataNonceId, thresholdNonceId] = await Promise.all([
-    //   verifyContract.noncesParentIdChildId(
-    //     projectStreamId,
-    //     foundPathway.streamId,
-    //   ),
-    //   verifyContract.thresholdNoncesById(foundPathway.streamId),
-    // ]);
+    const [metadataNonceId, thresholdNonceId] = await Promise.all([
+      verifyContract.noncesParentIdChildId(
+        foundPathway.streamId,
+        quest.streamId,
+      ),
+      verifyContract.thresholdNoncesById(quest.streamId),
+    ]);
 
     // console.log({ pathwayId: foundPathway.streamId });
-    // const [metadataVerify, tresholdVerify] = await Promise.all([
-    //   verifyNFTInfo({
-    //     contractAddress: pathwayContract.address,
-    //     nonceId: metadataNonceId,
-    //     objectId: foundPathway.streamId,
-    //     senderAddress: decodedAddress,
-    //     verifyContract: verifyContract.address,
-    //   }),
-    //   verifyNFTInfo({
-    //     contractAddress: pathwayContract.address,
-    //     nonceId: thresholdNonceId,
-    //     objectId: foundPathway.streamId,
-    //     senderAddress: decodedAddress,
-    //     verifyContract: verifyContract.address,
-    //     votesNeeded: 1,
-    //   }),
-    // ]);
+    const [metadataVerify, tresholdVerify] = await Promise.all([
+      verifyNFTInfo({
+        contractAddress: badgeNFTContract.address,
+        nonceId: metadataNonceId,
+        objectId: quest.streamId,
+        senderAddress: decodedAddress,
+        verifyContract: verifyContract.address,
+      }),
+      verifyNFTInfo({
+        contractAddress: badgeNFTContract.address,
+        nonceId: thresholdNonceId,
+        objectId: quest.streamId,
+        senderAddress: decodedAddress,
+        verifyContract: verifyContract.address,
+        votesNeeded: 1,
+      }),
+    ]);
 
-    // return {
-    //   ...foundPathway,
-    //   id,
-    //   projectStreamId: foundProject.streamId,
-    //   expandedServerSignatures: [
-    //     { r: metadataVerify.r, s: metadataVerify.s, v: metadataVerify.v },
-    //     { r: tresholdVerify.r, s: tresholdVerify.s, v: tresholdVerify.v },
-    //   ],
-    // };
-
-    return null;
+    return {
+      ...quest,
+      id: quest._id,
+      pathwayStreamId: foundPathway.streamId,
+      expandedServerSignatures: [
+        { r: metadataVerify.r, s: metadataVerify.s, v: metadataVerify.v },
+        { r: tresholdVerify.r, s: tresholdVerify.s, v: tresholdVerify.v },
+      ],
+    };
   }
 }

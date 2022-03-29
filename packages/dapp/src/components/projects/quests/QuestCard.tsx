@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { LockIcon } from "@chakra-ui/icons";
+import { CheckIcon, CloseIcon, LockIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Button,
@@ -14,26 +14,30 @@ import {
   VStack,
   Box,
   Divider,
+  TagLabel,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FiUserCheck } from "react-icons/fi";
 import { GiSwordwoman, GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { streamUrlToId } from "../../../core/helpers";
 import useCustomColor from "../../../core/hooks/useCustomColor";
 import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
-import { APPROVE_QUEST_MUTATION } from "../../../graphql/quests";
+import {
+  APPROVE_QUEST_MUTATION,
+  VERIFY_QUEST_MUTATION,
+} from "../../../graphql/quests";
 import Card from "components/custom/Card";
 
 type Quest = {
   id: string;
+  streamId: string;
   image: string;
   completed: string;
   projectId: string;
@@ -55,20 +59,43 @@ const unlocked = true;
 function QuestCard({
   quest,
   projectContributors,
+  pathwayStreamId,
 }: {
   quest: Quest;
   projectContributors: string[];
+  pathwayStreamId: string;
 }) {
   const router = useRouter();
   const questCardMarkdownTheme = useCardMarkdownTheme();
   const { getRewardCurrency } = useTokenList();
+  const [status, setStatus] = useState<string>();
 
   const { getTextColor, getColoredText, getBgColor } = useCustomColor();
-  const { library } = useWeb3React();
-  const { account } = useContext(Web3Context);
+  const { chainId, library } = useWeb3React();
+  const { account, contracts } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION, {
     refetchQueries: "all",
   });
+
+  const [verifyQuestMutation] = useMutation(VERIFY_QUEST_MUTATION, {
+    refetchQueries: "all",
+  });
+
+  useEffect(() => {
+    console.log({ streamId: quest.streamId });
+    async function init() {
+      if (contracts && quest.streamId) {
+        const statusInt = await contracts.BadgeNFT.status(quest.streamId);
+        console.log({ statusInt });
+        const isMinted = await contracts.BadgeNFT.badgeMinted(quest.streamId);
+        const statusString = await contracts.BadgeNFT.statusStrings(statusInt);
+        setStatus(isMinted ? "MINTED" : statusString);
+      }
+      null;
+    }
+    init();
+  }, [contracts, quest.streamId]);
+
   const isContributor =
     projectContributors && account && projectContributors.includes(account);
 
@@ -86,14 +113,98 @@ function QuestCard({
       JSON.stringify(signatureInput),
       account,
     ]);
-    return approveQuestMutation({
+    const { data } = await approveQuestMutation({
       variables: {
         input: {
           id: quest.id,
           questApproverSignature: signature.result,
+          chainId,
         },
       },
     });
+    const [metadataVerifySignature, thresholdVerifySignature] =
+      data.approveQuest.expandedServerSignatures;
+
+    await contracts.BadgeNFT.voteForApproval(
+      projectContributors,
+      quest.streamId,
+      pathwayStreamId,
+      [metadataVerifySignature.r, thresholdVerifySignature.r],
+      [metadataVerifySignature.s, thresholdVerifySignature.s],
+      [metadataVerifySignature.v, thresholdVerifySignature.v],
+      1
+    );
+
+    // get return values or events
+    // const receipt = await voteForApprovalTx.wait(1);
+    // console.log({ receipt });
+    const statusInt = await contracts.BadgeNFT.status(quest.streamId);
+    const statusString = await contracts.BadgeNFT.statusStrings(statusInt);
+    console.log({ statusString });
+    setStatus(statusString);
+  };
+
+  const handleCreateToken = async () => {
+    if (account && chainId) {
+      const formData = new FormData();
+      const ogFile = await fetch(`https://ipfs.io/ipfs/${quest.image}`);
+      const questImage = await ogFile.blob();
+      formData.append("image", questImage);
+      formData.append(
+        "metadata",
+        JSON.stringify({
+          ...quest,
+        })
+      );
+
+      const nftCidRes = await fetch("/api/quest-nft-storage", {
+        method: "POST",
+        body: formData,
+      });
+
+      const signatureInput = {
+        id: quest.id,
+        pathwayId: quest.pathwayId,
+      };
+      const signature = await library.provider.send("personal_sign", [
+        JSON.stringify(signatureInput),
+        account,
+      ]);
+
+      const { data } = await verifyQuestMutation({
+        variables: {
+          input: {
+            id: quest.id,
+            questMinterSignature: signature.result,
+            chainId,
+          },
+        },
+      });
+
+      const [metadataVerifySignature, thresholdVerifySignature] =
+        data.verifyQuest.expandedServerSignatures;
+
+      const { url } = await nftCidRes.json();
+      await contracts.BadgeNFT.createToken(
+        url,
+        quest.streamId,
+        pathwayStreamId,
+        [metadataVerifySignature.r, thresholdVerifySignature.r],
+        [metadataVerifySignature.s, thresholdVerifySignature.s],
+        [metadataVerifySignature.v, thresholdVerifySignature.v],
+        1
+      );
+
+      // get return values or events
+      // const receipt = await createTokenTx.wait(1);
+      // console.log({ receipt });
+      const isMinted = await contracts.BadgeNFT.badgeMinted(quest.streamId);
+      if (isMinted) {
+        setStatus("MINTED");
+      }
+    }
+    // TODO: user feedback
+    return null;
   };
 
   const LockedScreen = () => {
@@ -117,7 +228,13 @@ function QuestCard({
   };
 
   return (
-    <Card position="relative" h="xl" layerStyle="no-border-hover3" spacing="6">
+    <Card
+      position="relative"
+      h="xl"
+      layerStyle="no-border-hover3"
+      spacing="6"
+      py="4"
+    >
       {!unlocked && <LockedScreen />}
 
       <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"} w="full">
@@ -237,37 +354,94 @@ function QuestCard({
         </VStack>
 
         <Flex w="full" justify="space-between" pt="4">
-          {quest.isPending && isContributor && (
-            <>
-              <Button
+          {isContributor && status !== "MINTED" && (
+            <VStack w="full" align="left">
+              <Tag
                 variant="outline"
-                fontSize="md"
-                onClick={() => openQuest(quest.id)}
+                w="fit-content"
+                colorScheme={
+                  status === "APPROVED" || status === "MINTED"
+                    ? "green"
+                    : "orange"
+                }
+                size="sm"
               >
-                Details
-              </Button>
-              <Button fontSize="md" onClick={handleApproveQuest}>
-                Approve
-              </Button>
-            </>
+                <TagLabel>{status}</TagLabel>
+              </Tag>
+              {status && (status === "PENDING" || status === "NONEXISTENT") && (
+                <HStack w="full" justifyContent="space-between">
+                  <Button
+                    colorScheme="accentDark"
+                    onClick={handleApproveQuest}
+                    leftIcon={<CheckIcon />}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    ml="5"
+                    colorScheme="secondary"
+                    leftIcon={<CloseIcon />}
+                  >
+                    Reject
+                  </Button>
+                </HStack>
+              )}
+              {status && status === "APPROVED" && (
+                <HStack>
+                  <Button onClick={handleCreateToken} leftIcon={<CheckIcon />}>
+                    Create Token
+                  </Button>
+                </HStack>
+              )}
+            </VStack>
           )}
-          {!quest.isPending && (
+          {!isContributor && status !== "MINTED" && (
+            <VStack w="full" layerStyle="outline-card">
+              <Text>Under review</Text>
+            </VStack>
+          )}
+          {status == "MINTED" && (
             <>
-              <Button
-                leftIcon={<GiSwordwoman />}
-                fontSize="md"
-                onClick={() => openQuest(quest.id)}
-              >
-                Start
-              </Button>
-              <Button
-                fontSize="md"
-                onClick={() => console.log("Claim Reward")}
-                variant="outline"
-                leftIcon={<RiHandCoinFill />}
-              >
-                Claim
-              </Button>
+              {/* <Tooltip
+                label={`0% - 0/${pathway.quests?.length || 0} quests completed`}
+                hasArrow
+                placement="top"
+              > */}
+              {/* <HStack w="full">
+                  <Progress
+                    w="full"
+                    size="md"
+                    rounded="md"
+                    value={0}
+                    border={`solid 1px ${getAccentColor}`}
+                    hasStripe
+                    colorScheme="accentDark"
+                    bgColor={getBgColor}
+                  />
+                </HStack> */}
+              {/* </Tooltip> */}
+
+              <Flex w="full" justify="space-between">
+                <Button
+                  leftIcon={<GiSwordwoman />}
+                  fontSize="md"
+                  onClick={() => openQuest(quest.id)}
+                >
+                  Start
+                </Button>
+
+                {!quest.isPending && (
+                  <Button
+                    fontSize="md"
+                    variant="outline"
+                    leftIcon={<RiHandCoinFill />}
+                    disabled
+                    onClick={() => console.log("Claim Reward")}
+                  >
+                    Claim
+                  </Button>
+                )}
+              </Flex>
             </>
           )}
         </Flex>

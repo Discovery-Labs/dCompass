@@ -147,6 +147,7 @@ function PathwayPage({
       <QuestCard
         key={quest.id}
         quest={quest}
+        pathwayStreamId={data.getAllQuestsByPathwayId.streamId}
         projectContributors={
           projectRes.getProjectById.squads.flatMap(
             ({ members }: { members: string[] }) => members

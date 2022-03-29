@@ -110,14 +110,15 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const { library, chainId } = useWeb3React();
   const { self, account, contracts } = useContext(Web3Context);
   const { data, loading, error } = useQuery(GET_APP_DID);
-  const { data: pathwayData, loading: pathwayLoading, error: pathwayError } = useQuery(
-    GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
-    {
-      variables: {
-        pathwayId: router.query.pathwayId,
-      },
-    }
-  );
+  const {
+    data: pathwayData,
+    loading: pathwayLoading,
+    error: pathwayError,
+  } = useQuery(GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY, {
+    variables: {
+      pathwayId: router.query.pathwayId,
+    },
+  });
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
     refetchQueries: "all",
   });
@@ -131,7 +132,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     reset,
     handleSubmit,
     setError,
-    formState: { errors, },
+    formState: { errors },
   } = useFormContext();
 
   const getSelectedTokenContract = (token: string) => {
@@ -161,18 +162,17 @@ const CreateQuestForm: React.FunctionComponent = () => {
     }
   }, [getValues]);
 
-
   const nativeToken = useMemo(() => {
     const isMatic = chainId === 80001 || chainId === 137;
     const token = isMatic
       ? {
-        label: "MATIC",
-        value: "MATIC",
-      }
+          label: "MATIC",
+          value: "MATIC",
+        }
       : {
-        label: "ETH",
-        value: "ETH",
-      };
+          label: "ETH",
+          value: "ETH",
+        };
     setValue("rewardCurrency", token);
     return { token, isMatic };
   }, [chainId, setValue]);
@@ -199,7 +199,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     router.back();
   }
 
-
   async function approveTokenAllowance(
     token: string,
     maxApproval = "1000000000000000000000000000000"
@@ -215,7 +214,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     );
     // await res.wait(1);
     return tokenInfos;
-  };
+  }
 
   async function onSubmit(values: Record<string, any>) {
     console.log("submitted", values);
@@ -293,44 +292,44 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const finalValues =
       questType === "quiz"
         ? {
-          ...values,
-          questions: await Promise.all(
-            values.questions.map(
-              async ({
-                question,
-                options,
-                answer,
-              }: QuestionFormItemType) => ({
-                question,
-                choices: options.map((option) => option.value),
-                answer: JSON.stringify(
-                  await self.client.ceramic.did?.createDagJWE(
-                    answer.map((a) => a.value),
-                    [
-                      // logged-in user,
-                      self.id,
-                      // backend ceramic did
-                      appDid,
-                    ]
-                  )
-                ),
-              })
-            )
-          ),
-          image: cids[values.name],
-          rewardCurrency: values.rewardCurrency.value,
-          rewardAmount: parseFloat(values.rewardAmount),
-          rewardUserCap: parseInt(values.rewardUserCap, 10),
-          pathwayId: router.query.pathwayId,
-        }
+            ...values,
+            questions: await Promise.all(
+              values.questions.map(
+                async ({
+                  question,
+                  options,
+                  answer,
+                }: QuestionFormItemType) => ({
+                  question,
+                  choices: options.map((option) => option.value),
+                  answer: JSON.stringify(
+                    await self.client.ceramic.did?.createDagJWE(
+                      answer.map((a) => a.value),
+                      [
+                        // logged-in user,
+                        self.id,
+                        // backend ceramic did
+                        appDid,
+                      ]
+                    )
+                  ),
+                })
+              )
+            ),
+            image: cids[values.name],
+            rewardCurrency: values.rewardCurrency.value,
+            rewardAmount: parseFloat(values.rewardAmount),
+            rewardUserCap: parseInt(values.rewardUserCap, 10),
+            pathwayId: router.query.pathwayId,
+          }
         : {
-          ...values,
-          rewardCurrency: values.rewardCurrency.value,
-          image: cids[values.name],
-          rewardAmount: parseFloat(values.rewardAmount),
-          rewardUserCap: parseInt(values.rewardUserCap, 10),
-          pathwayId: router.query.pathwayId,
-        };
+            ...values,
+            rewardCurrency: values.rewardCurrency.value,
+            image: cids[values.name],
+            rewardAmount: parseFloat(values.rewardAmount),
+            rewardUserCap: parseInt(values.rewardUserCap, 10),
+            pathwayId: router.query.pathwayId,
+          };
 
     const questDoc = await self.client.dataModel.createTile(
       "Quest",
@@ -349,21 +348,19 @@ const CreateQuestForm: React.FunctionComponent = () => {
     ]);
 
     if (isNativeToken) {
-      const createQuestOnChainTx =
-        await contracts.BadgeNFT.createBadge(
-          questDoc.id.toUrl(),
-          pathwayData.getAllQuestsByPathwayId.streamId,
-          parseInt(values.rewardUserCap, 10),
-          isRewardProvider,
-          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-          account,
-          true,
-          (rewardAmnt * 1e18).toString(),
-          {
-            value: (totalToPay * 1e18).toString(),
-          }
-        );
-      // await createQuestOnChainTx.wait(1);
+      await contracts.BadgeNFT.createBadge(
+        questDoc.id.toUrl(),
+        pathwayData.getAllQuestsByPathwayId.streamId,
+        parseInt(values.rewardUserCap, 10),
+        isRewardProvider,
+        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+        account,
+        true,
+        (rewardAmnt * 1e18).toString(),
+        {
+          value: (totalToPay * 1e18).toString(),
+        }
+      );
     } else {
       const tokenDetails = await approveTokenAllowance(
         values.rewardCurrency.value,
@@ -373,19 +370,16 @@ const CreateQuestForm: React.FunctionComponent = () => {
         rewardAmnt.toString(),
         tokenDetails.decimals
       );
-      const createQuestOnChainTx =
-        await contracts.pathwayNFTContract.createPathway(
-          questDoc.id.toUrl(),
-          pathwayData.getAllQuestsByPathwayId.streamId,
-          parseInt(values.rewardUserCap, 10),
-          isRewardProvider,
-          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-          values.rewardCurrency.value.split(":")[1],
-          false,
-          rewardAmount
-        );
-
-      // await createQuestOnChainTx.wait(1);
+      await contracts.BadgeNFT.createBadge(
+        questDoc.id.toUrl(),
+        pathwayData.getAllQuestsByPathwayId.streamId,
+        parseInt(values.rewardUserCap, 10),
+        isRewardProvider,
+        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+        values.rewardCurrency.value.split(":")[1],
+        false,
+        rewardAmount
+      );
     }
 
     const createQuestMutationVariables = {
@@ -434,7 +428,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
       <Alert status="error">
         <AlertIcon />
         <AlertTitle mr={2}>Network error</AlertTitle>
-        <AlertDescription>{error?.message || pathwayError?.message}</AlertDescription>
+        <AlertDescription>
+          {error?.message || pathwayError?.message}
+        </AlertDescription>
       </Alert>
     );
 

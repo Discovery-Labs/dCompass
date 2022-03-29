@@ -39,7 +39,6 @@ import SnapshotVoterForm from "../../../../../../components/projects/quests/snap
 import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
 import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
 import { ceramicCoreFactory } from "../../../../../../core/ceramic";
-import { streamIdToUrl, streamUrlToId } from "../../../../../../core/helpers";
 import useCustomColor from "../../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../../core/hooks/useTokenList";
@@ -66,12 +65,7 @@ export const getServerSideProps: GetServerSideProps<
   const questId = ctx.params?.questId ?? null;
   const pathwayId = ctx.params?.pathwayId ?? null;
   const projectId = ctx.params?.projectId ?? null;
-  console.log({
-    cond: !pathwayId || !projectId || !questId,
-    pathwayId,
-    projectId,
-    questId,
-  });
+
   if (!pathwayId || !projectId || !questId) {
     return {
       redirect: { destination: "/", permanent: true },
@@ -242,7 +236,7 @@ function QuestPage({
 
             {/* 2 Tab */}
             <TabPanel px="0">
-              {completedBy.includes(self?.id) ? (
+              {completedBy && completedBy.includes(self?.id) ? (
                 <Text>Quest already completed!</Text>
               ) : (
                 <Box>

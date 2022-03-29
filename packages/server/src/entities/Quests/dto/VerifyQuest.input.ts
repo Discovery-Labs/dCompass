@@ -2,7 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
 
 @InputType()
-export class ApproveQuestInput {
+export class VerifyQuestInput {
   @Field()
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
@@ -13,7 +13,7 @@ export class ApproveQuestInput {
   @IsString({ message: 'wrong.type' })
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  questApproverSignature: string;
+  questMinterSignature: string;
 
   @Field()
   namespace?: string;

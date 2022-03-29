@@ -17,7 +17,9 @@ input ApproveProjectInput {
 }
 
 input ApproveQuestInput {
+  chainId: Int!
   id: String!
+  namespace: String
   questApproverSignature: String!
 }
 
@@ -71,6 +73,7 @@ type GithubContributorQuest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   githubOrgId: String!
   id: String!
   image: String!
@@ -124,6 +127,9 @@ type Mutation {
 
   """Verify a new Pathway right before minting in dCompass"""
   verifyPathway(input: VerifyPathwayInput!): Pathway
+
+  """Verify a new Quest right before minting in dCompass"""
+  verifyQuest(input: VerifyQuestInput!): Quest
 }
 
 type NFTOwnerQuest {
@@ -134,6 +140,7 @@ type NFTOwnerQuest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
@@ -258,6 +265,7 @@ type Quest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
@@ -291,6 +299,7 @@ type QuizQuest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
@@ -320,6 +329,7 @@ type SnapshotVoterQuest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
@@ -366,4 +376,11 @@ input VerifyPathwayInput {
   id: String!
   namespace: String
   pathwayMinterSignature: String!
+}
+
+input VerifyQuestInput {
+  chainId: Int!
+  id: String!
+  namespace: String
+  questMinterSignature: String!
 }

@@ -72,6 +72,29 @@ export const APPROVE_QUEST_MUTATION = gql`
       pathwayId
       image
       isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
+    }
+  }
+`;
+
+export const VERIFY_QUEST_MUTATION = gql`
+  mutation VerifyQuest($input: VerifyQuestInput!) {
+    verifyQuest(input: $input) {
+      id
+      name
+      description
+      pathwayId
+      image
+      isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
 `;
@@ -92,6 +115,7 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
       projectId
       quests {
         id
+        streamId
         name
         description
         pathwayId

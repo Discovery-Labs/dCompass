@@ -1,5 +1,6 @@
 import { ObjectType, Field, Float, Int } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
+import { ExpandedServerSignature } from '../../core/utils/security/ExpandedServerSignature';
 import { Pathway } from '../Pathways/Pathway.entity';
 
 export type CeramicStreamId = string;
@@ -43,7 +44,7 @@ export abstract class Quest extends BaseEntity {
 
   @Field()
   image: string;
-  // TODO: use this instead of image
-  // @Field(() => [QuestNFT])
-  // nfts?: QuestNFT[];
+
+  @Field(() => [ExpandedServerSignature])
+  expandedServerSignatures?: ExpandedServerSignature[];
 }

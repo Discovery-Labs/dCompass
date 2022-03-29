@@ -73,6 +73,7 @@ function PathwayCard({
         );
         setStatus(isMinted ? "MINTED" : statusString);
       }
+      null;
     }
     init();
   }, [contracts, pathway.streamId]);
@@ -120,7 +121,9 @@ function PathwayCard({
       // get return values or events
       const receipt = await voteForApprovalTx.wait(1);
       console.log({ receipt });
-      const statusInt = await contracts.pathwayNFTContract.status(pathway.id);
+      const statusInt = await contracts.pathwayNFTContract.status(
+        pathway.streamId
+      );
       const statusString = await contracts.pathwayNFTContract.statusStrings(
         statusInt
       );
