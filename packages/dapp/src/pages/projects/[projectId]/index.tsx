@@ -115,7 +115,7 @@ function ProjectPage({
   const projectMarkdownTheme = usePageMarkdownTheme();
 
   const { t } = useTranslation("common");
-  const { getTextColor, getColoredText } = useCustomColor();
+  const { accentColorScheme, getTextColor, getColoredText } = useCustomColor();
   const { account, isReviewer } = useContext(Web3Context);
   console.log({ isReviewer });
   const { data, loading, error } = useQuery(
@@ -165,7 +165,7 @@ function ProjectPage({
         ]}
       />
       <Flex w="full" pt="8">
-        <VStack w="full" align="start" spacing="8">
+        <HStack w="full" align="start" spacing="8">
           <Image
             alt="logo image"
             rounded="full"
@@ -174,22 +174,26 @@ function ProjectPage({
             w={200}
             h={200}
           />
-          <Stack direction="row">
-            {tags.map((tag: Tag) => (
-              <Badge key={tag.id} fontSize="lg" colorScheme={tag.color}>
-                {tag.label}
-              </Badge>
-            ))}
-          </Stack>
-          <VStack w="full" align="start">
+          <VStack w="full" h="full" align="start" justify="center">
+            <Stack direction="row">
+              {tags.map((tag: Tag) => (
+                <Badge key={tag.id} fontSize="lg" colorScheme={tag.color}>
+                  {tag.label}
+                </Badge>
+              ))}
+            </Stack>
             <Heading as="h1" size="3xl" pl="4" color={getTextColor}>
               {name}
             </Heading>
           </VStack>
-        </VStack>
+        </HStack>
         <Spacer />
-        <VStack align="flex-end">
-          <Button leftIcon={<MdPersonAddAlt1 />} onClick={onOpen}>
+        <HStack align="flex-start">
+          <Button
+            colorScheme={accentColorScheme}
+            leftIcon={<MdPersonAddAlt1 />}
+            onClick={onOpen}
+          >
             Apply
           </Button>
           <Modal onClose={onClose} isOpen={isOpen} size="4xl" isCentered>
@@ -214,25 +218,11 @@ function ProjectPage({
               </Button>
             </NextLink>
           )}
-        </VStack>
+        </HStack>
       </Flex>
 
-      <Flex w="full" direction="column" py="4">
-        <HStack justifyContent="space-between">
-          <Flex align="center" maxW="full">
-            {createdBy && <Blockies seed={createdBy} className="blockies" />}
-            <VStack align="flex-start" ml="2">
-              <Text color={getColoredText} textStyle="small" isTruncated>
-                {t("creation-date")} {new Date(createdAt).toLocaleString()}
-              </Text>
-              <Text fontSize="sm" isTruncated>
-                {t("by")}{" "}
-                <NextLink href={`/badges/${createdBy}/`} passHref>
-                  <Link>{createdBy}</Link>
-                </NextLink>
-              </Text>
-            </VStack>
-          </Flex>
+      <HStack w="full" align="start">
+        <Flex direction="column" py="4">
           <SocialLinks
             website={website}
             discord={discord}
@@ -240,8 +230,8 @@ function ProjectPage({
             github={github}
             gitbook={gitbook}
           />
-        </HStack>
-      </Flex>
+        </Flex>
+      </HStack>
 
       <Tabs w="full">
         <HStack justifyContent="space-between">
@@ -328,6 +318,22 @@ function ProjectPage({
               >
                 {description}
               </ReactMarkdown>
+              <Flex align="center" maxW="full">
+                {createdBy && (
+                  <Blockies seed={createdBy} className="blockies" />
+                )}
+                <VStack align="flex-start" ml="2">
+                  <Text color={getColoredText} textStyle="small" isTruncated>
+                    {t("creation-date")} {new Date(createdAt).toLocaleString()}
+                  </Text>
+                  <Text fontSize="sm" isTruncated>
+                    {t("by")}{" "}
+                    <NextLink href={`/badges/${createdBy}/`} passHref>
+                      <Link>{createdBy}</Link>
+                    </NextLink>
+                  </Text>
+                </VStack>
+              </Flex>
             </VStack>
           </TabPanel>
         </TabPanels>

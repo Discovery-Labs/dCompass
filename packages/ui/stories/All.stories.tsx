@@ -310,6 +310,26 @@ export const All = () => {
           </TabPanels>
         </Tabs>
 
+        <Tabs variant="unstyled">
+          <TabList>
+            <Tab>One</Tab>
+            <Tab>Two</Tab>
+            <Tab>Three</Tab>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel>
+              <p>one!</p>
+            </TabPanel>
+            <TabPanel>
+              <p>two!</p>
+            </TabPanel>
+            <TabPanel>
+              <p>three!</p>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+
         <Tabs variant="line">
           <TabList>
             <Tab>One</Tab>

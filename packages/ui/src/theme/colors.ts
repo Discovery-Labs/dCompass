@@ -62,7 +62,7 @@ const extendedColors: DeepPartial<
   ExtendedColors = {
   // Basic
   neutralDarkest: '#0F0A1E',
-  neutralDarker: '#18112C',
+  neutralDarker: '#220D55',
   neutralDark: '#513B91',
   neutralLightest: '#EFEDF5',
   neutralLighter: '#fff',
@@ -109,7 +109,7 @@ const extendedColors: DeepPartial<
     200: '#5BF1CD', // aqualight
     300: '#02E2AC', // aqua
     400: '#11BC92', // aquadark
-    500: '#02E2AC',
+    500: '#00DEA5',
     600: '#02af86',
     700: '#019672',
     800: '#017d5f',
@@ -121,7 +121,7 @@ const extendedColors: DeepPartial<
     200: '#5BF1CD', // aqualight
     300: '#02E2AC', // aqua
     400: '#11BC92', // aquadark
-    500: '#02E2AC',
+    500: '#00DEA5',
     600: '#02af86',
     700: '#019672',
     800: '#017d5f',
