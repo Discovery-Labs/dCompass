@@ -298,7 +298,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         return newItems;
     }
 
-    function claimBadgeRewards(string memory _badgeId, bool native, address _ERC20Address, bytes32 r, bytes32 s, uint8 v, bool claimReward) external {
+    function claimBadgeRewards(string memory _badgeId, bool native, address _ERC20Address, bytes32 r, bytes32 s, uint8 v, bool claimReward, string memory _tokenURI) external {
         uint amount;
         if(claimReward){
             if(native){
@@ -328,7 +328,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
                 currentNumUsersRewardPerBadgeERC20[_badgeId][_ERC20Address]++;
             }
         }
-        _mintAdventurerBadge(_msgSender(), _badgeId);
+        _mintAdventurerBadge(_msgSender(), _badgeId, _tokenURI);
     }
 
     function walletOfOwner(address _owner) public view returns (uint256[] memory)
@@ -341,14 +341,14 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     return tokenIds;
   }
 
-  function _mintAdventurerBadge(address _to, string memory _badgeId) internal {
+  function _mintAdventurerBadge(address _to, string memory _badgeId, string memory _tokenURI) internal {
       address adventurerBadgeAddress = adventurerAddress[_badgeId];
       require(adventurerBadgeAddress != address(0), "invalid badge address");
       (bool success, bytes memory data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("balanceOf(address)")), _msgSender()));
       require(success);
       uint256 balance = abi.decode(data, (uint256));
       if(balance == 0){
-          (success, data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("mint(address,uint256)")), _msgSender(), 1));
+          (success, data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("mint(address,uint256,string)")), _msgSender(), 1, _tokenURI));
           require(success);
           (success, data) = adventureFactory.call(abi.encodeWithSelector(bytes4(keccak256("setUserInfo(address,string)")), _msgSender(), _badgeId));
           require(success);

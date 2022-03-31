@@ -47,7 +47,7 @@ contract AdventurerNFT is IAdventurerNFT, IAdventureMetadata, ERC721URIStorage, 
         return string(abi.encodePacked(baseSymbol, "-", objectId));
     }
 
-    function mint(address _to, uint256 count) external returns (uint256 newTokenId){
+    function mint(address _to, uint256 count, string memory _tokenURI) external returns (uint256 newTokenId){
         bool success;
         bytes memory data;
         address senderCheck;
@@ -68,7 +68,7 @@ contract AdventurerNFT is IAdventurerNFT, IAdventureMetadata, ERC721URIStorage, 
         _tokenIds.increment();
         newTokenId = _tokenIds.current();
         _mint(_to, newTokenId);
-        //tokenURI?
+        _setTokenURI(newTokenId, _tokenURI);
     } 
 
     function _beforeTokenTransfer(

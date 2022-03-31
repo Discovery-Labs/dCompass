@@ -280,7 +280,7 @@ describe("BadgeNFT", function() {
       expect(await badgeNFT.currentNumUsersRewardPerBadgeNative("firstBadgeProject")).to.be.equal(0);
       expect(await badgeNFT.userRewardedForBadgeNative("firstBadgeProject", `${addrs[2].address}`)).to.be.false;
 
-      await badgeNFT.connect(addrs[2]).claimBadgeRewards("firstBadgeProject", true, `${addr1.address}`, sigClaim.r, sigClaim.s, sigClaim.v, true);
+      await badgeNFT.connect(addrs[2]).claimBadgeRewards("firstBadgeProject", true, `${addr1.address}`, sigClaim.r, sigClaim.s, sigClaim.v, true, "adventurer_URI");
       balance = await ethers.provider.getBalance(addrs[2].address);
       console.log(balance.toString());
       balanceAfter = await ethers.provider.getBalance(badgeNFT.address);
