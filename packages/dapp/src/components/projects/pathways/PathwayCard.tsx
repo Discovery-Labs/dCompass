@@ -2,7 +2,6 @@
 import { useMutation } from "@apollo/client";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
-  Avatar,
   Button,
   Flex,
   Heading,
@@ -13,7 +12,6 @@ import {
   HStack,
   TagLabel,
   Progress,
-  Stack,
   Tooltip,
   Box,
 } from "@chakra-ui/react";
@@ -112,7 +110,7 @@ function PathwayCard({
 
       const [metadataVerifySignature, thresholdVerifySignature] =
         data.approvePathway.expandedServerSignatures;
-      console.log({ pwayId: pathway.streamId, pId: pathway.projectStreamId });
+
       const voteForApprovalTx =
         await contracts.pathwayNFTContract.voteForApproval(
           projectContributors,

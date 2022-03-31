@@ -41,14 +41,12 @@ export class ApprovePathwayResolver {
       threadId: latestThreadId,
       projectId,
     });
-    console.log({ foundProject });
     const projectStreamId = foundProject.streamId;
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({ id: id, projectId }),
       pathwayApproverSignature,
     );
     // TODO: Keep track of address & network to avoid impersonation
-    console.log({ decodedAddress });
     const projectContributors = foundProject.squads
       ? foundProject.squads.flatMap((squad: Squad) =>
           squad.members.map((m) => m.toLowerCase()),
@@ -64,11 +62,11 @@ export class ApprovePathwayResolver {
     const updatedProject = {
       _id: projectId,
       ...foundProject,
-      pathways: [...new Set(existingPathways), id],
+      pathways: [...new Set([...existingPathways, id])],
       pendingPathways: [
         ...new Set(
           foundProject.pendingPathways.filter(
-            (pathwayId: string) => pathwayId !== id,
+            (pathwayId: string) => pathwayId !== foundPathway.id,
           ),
         ),
       ],
@@ -92,6 +90,8 @@ export class ApprovePathwayResolver {
       'PathwayNFT',
     );
 
+    console.log({ projectStreamId, pwayId: foundPathway.streamId });
+
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
       verifyContract.noncesParentIdChildId(
         projectStreamId,
@@ -100,7 +100,11 @@ export class ApprovePathwayResolver {
       verifyContract.thresholdNoncesById(foundPathway.streamId),
     ]);
 
-    console.log({ pathwayId: foundPathway.streamId });
+    console.log({
+      pathwayAdr: pathwayContract.address,
+      objectId: foundPathway.streamId,
+      verifyAdr: verifyContract.address,
+    });
     const [metadataVerify, tresholdVerify] = await Promise.all([
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
