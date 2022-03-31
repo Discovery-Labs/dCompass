@@ -25,7 +25,8 @@
     "test": "hardhat test --network hardhat",
     "compile": "hardhat compile",
     "accounts": "hardhat accounts",
-    "faucet": "hardhat --network localhost faucet"
+    "faucet": "hardhat --network localhost faucet",
+    "etherscan-verify": "hardhat etherscan-verify"
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.4.0",

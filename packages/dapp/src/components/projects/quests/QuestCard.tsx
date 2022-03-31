@@ -134,8 +134,8 @@ function QuestCard({
     });
     const [metadataVerifySignature, thresholdVerifySignature] =
       data.approveQuest.expandedServerSignatures;
-
-    await contracts.BadgeNFT.voteForApproval(
+    console.log({ bId: quest.streamId, pId: pathwayStreamId });
+    const voteForApprovalTx = await contracts.BadgeNFT.voteForApproval(
       projectContributors,
       quest.streamId,
       pathwayStreamId,
@@ -146,8 +146,8 @@ function QuestCard({
     );
 
     // get return values or events
-    // const receipt = await voteForApprovalTx.wait(1);
-    // console.log({ receipt });
+    const receipt = await voteForApprovalTx.wait(1);
+    console.log({ receipt });
     const statusInt = await contracts.BadgeNFT.status(quest.streamId);
     const statusString = await contracts.BadgeNFT.statusStrings(statusInt);
     console.log({ statusString });
@@ -195,7 +195,7 @@ function QuestCard({
         data.verifyQuest.expandedServerSignatures;
 
       const { url } = await nftCidRes.json();
-      await contracts.BadgeNFT.createToken(
+      const createTokenTx = await contracts.BadgeNFT.createToken(
         url,
         quest.streamId,
         pathwayStreamId,
@@ -206,8 +206,8 @@ function QuestCard({
       );
 
       // get return values or events
-      // const receipt = await createTokenTx.wait(1);
-      // console.log({ receipt });
+      const receipt = await createTokenTx.wait(1);
+      console.log({ receipt });
       const isMinted = await contracts.BadgeNFT.badgeMinted(quest.streamId);
       if (isMinted) {
         setStatus("MINTED");
