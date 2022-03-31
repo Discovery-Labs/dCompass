@@ -71,13 +71,13 @@ export class VerifyQuestResolver {
     if (!projectContributors.includes(decodedAddress)) {
       throw new ForbiddenException('Unauthorized');
     }
-    const chaindIdStr = chainId.toString();
-    if (!Object.keys(ABIS).includes(chaindIdStr)) {
+    const chainIdStr = chainId.toString();
+    if (!Object.keys(ABIS).includes(chainIdStr)) {
       throw new Error('Unsupported Network');
     }
 
-    const verifyContract = this.appService.getContract(chaindIdStr, 'Verify');
-    const questContract = this.appService.getContract(chaindIdStr, 'BadgeNFT');
+    const verifyContract = this.appService.getContract(chainIdStr, 'Verify');
+    const questContract = this.appService.getContract(chainIdStr, 'BadgeNFT');
 
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
       verifyContract.noncesParentIdChildId(pathwayStreamId, quest.streamId),

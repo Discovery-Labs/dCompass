@@ -15,6 +15,7 @@ import {
   Box,
   Divider,
   TagLabel,
+  useToast,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
@@ -31,6 +32,7 @@ import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
 import {
   APPROVE_QUEST_MUTATION,
+  CLAIM_QUEST_REWARDS_MUTATION,
   VERIFY_QUEST_MUTATION,
 } from "../../../graphql/quests";
 import Card from "components/custom/Card";
@@ -39,7 +41,7 @@ type Quest = {
   id: string;
   streamId: string;
   image: string;
-  completed: string;
+  completedBy: string[];
   projectId: string;
   pathwayId: string;
   owner: string;
@@ -65,6 +67,7 @@ function QuestCard({
   projectContributors: string[];
   pathwayStreamId: string;
 }) {
+  const toast = useToast();
   const router = useRouter();
   const questCardMarkdownTheme = useCardMarkdownTheme();
   const { getRewardCurrency } = useTokenList();
@@ -72,10 +75,17 @@ function QuestCard({
 
   const { getTextColor, getColoredText, getBgColor } = useCustomColor();
   const { chainId, library } = useWeb3React();
-  const { account, contracts } = useContext(Web3Context);
+  const { account, contracts, self } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION, {
     refetchQueries: "all",
   });
+
+  const [claimQuestRewardsMutation] = useMutation(
+    CLAIM_QUEST_REWARDS_MUTATION,
+    {
+      refetchQueries: "all",
+    }
+  );
 
   const [verifyQuestMutation] = useMutation(VERIFY_QUEST_MUTATION, {
     refetchQueries: "all",
@@ -207,6 +217,53 @@ function QuestCard({
     return null;
   };
 
+  const handleClaimRewards = async () => {
+    const signatureInput = {
+      id: quest.id,
+      pathwayId: quest.pathwayId,
+    };
+    const signature = await library.provider.send("personal_sign", [
+      JSON.stringify(signatureInput),
+      account,
+    ]);
+    const { data } = await claimQuestRewardsMutation({
+      variables: {
+        input: {
+          questId: quest.id,
+          did: self.id,
+          questAdventurerSignature: signature.result,
+          chainId,
+        },
+      },
+    });
+
+    const [, tokenAddressOrSymbol] = quest.rewardCurrency.split(":");
+    const isNativeToken = tokenAddressOrSymbol ? false : true;
+
+    const [metadataVerify] = data.claimQuestRewards.expandedServerSignatures;
+
+    console.log({ metadataVerify });
+    const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
+      quest.streamId,
+      isNativeToken,
+      isNativeToken ? account : tokenAddressOrSymbol,
+      metadataVerify.r,
+      metadataVerify.s,
+      metadataVerify.v,
+      true
+    );
+    await claimRewardsTx.wait(1);
+    return toast({
+      title: "Congratulations!",
+      description: `Rewards claimed successfully!`,
+      status: "success",
+      position: "top-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
+  };
+
   const LockedScreen = () => {
     return (
       <Box
@@ -226,7 +283,7 @@ function QuestCard({
       </Box>
     );
   };
-
+  const isCompleted = (quest.completedBy || []).includes(self?.id);
   return (
     <Card
       position="relative"
@@ -252,7 +309,9 @@ function QuestCard({
 
           <Spacer />
           <Flex align="end" direction="column" w="full">
-            <Tag variant="subtle">{quest.completed || "COMPLETED"}</Tag>
+            <Tag variant="subtle">
+              {isCompleted ? "COMPLETED" : "UNCOMPLETED"}
+            </Tag>
             <Tag my="2">
               {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
             </Tag>
@@ -435,8 +494,8 @@ function QuestCard({
                     fontSize="md"
                     variant="outline"
                     leftIcon={<RiHandCoinFill />}
-                    disabled
-                    onClick={() => console.log("Claim Reward")}
+                    disabled={!isCompleted}
+                    onClick={handleClaimRewards}
                   >
                     Claim
                   </Button>

@@ -23,6 +23,14 @@ input ApproveQuestInput {
   questApproverSignature: String!
 }
 
+input ClaimQuestRewardsInput {
+  chainId: Int!
+  did: String!
+  namespace: String
+  questAdventurerSignature: String!
+  questId: String!
+}
+
 input CreatePathwayInput {
   id: String!
   pathwayCreatorSignature: String!
@@ -101,6 +109,9 @@ type Mutation {
   """Approve a new Quest in dCompass"""
   approveQuest(input: ApproveQuestInput!): Quest
 
+  """Verify a new Quest right before minting in dCompass"""
+  claimQuestRewards(input: ClaimQuestRewardsInput!): Quest
+
   """Create a new Github Contributor Quest in dCompass"""
   createGithubContributorQuest(input: CreateQuestInput!): GithubContributorQuest
 
@@ -123,7 +134,7 @@ type Mutation {
   editProject(input: EditProjectInput!): Project
 
   """Submits quest answers"""
-  submitQuestAnswers(input: QuestAnswersSubmitionInput!): Boolean!
+  submitQuestAnswers(input: QuestAnswersSubmitionInput!): SubmitQuestAnswersOutput!
 
   """Verify a new Pathway right before minting in dCompass"""
   verifyPathway(input: VerifyPathwayInput!): Pathway
@@ -283,13 +294,16 @@ type Quest {
 }
 
 input QuestAnswersSubmitionInput {
+  chainId: Int!
   did: String!
+  namespace: String
+  questAdventurerSignature: String!
   questId: String!
   questionAnswers: [QuestQuestionAnswerInput!]!
 }
 
 input QuestQuestionAnswerInput {
-  answer: String!
+  answer: [String!]!
   question: String!
 }
 
@@ -353,6 +367,30 @@ type Squad {
   image: String
   members: [String!]!
   name: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+}
+
+type SubmitQuestAnswersOutput {
+  completedBy: [String!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+  description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
+  id: String!
+  image: String!
+  isPending: Boolean
+  isSuccess: Boolean!
+  name: String!
+  pathway: Pathway!
+  pathwayId: String!
+  questType: String!
+  rewardAmount: Int!
+  rewardCurrency: String!
+  rewardUserCap: Int!
+  streamId: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!

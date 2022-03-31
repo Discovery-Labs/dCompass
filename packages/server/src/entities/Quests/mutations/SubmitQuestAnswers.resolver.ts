@@ -1,19 +1,26 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { ForbiddenError } from 'apollo-server-express';
 import { Where } from '@textile/hub';
+import ABIS from '@discovery-dao/hardhat/abis.json';
 
 import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
 import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
 import { UseCeramicClient, UseThreadDBClient } from '../../../core/utils/types';
 import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
 import { QuestAnswersSubmitionInput } from '../dto/QuestAnswersSubmition.input';
-import { NotFoundException } from '@nestjs/common';
-// import { Question } from '../dto/Question';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { SubmitQuestAnswersOutput } from '../dto/SubmitQuestAnswers.output';
+import { AppService } from '../../../app.service';
+import { verifyNFTInfo } from '../../../core/utils/security/verify';
+import { ethers } from 'ethers';
 
-@Resolver(() => Boolean)
+@Resolver(() => SubmitQuestAnswersOutput)
 export class SubmitQuestAnswersResolver {
-  constructor(private readonly threadDBService: ThreadDBService) {}
-  @Mutation(() => Boolean, {
+  constructor(
+    private readonly threadDBService: ThreadDBService,
+    public readonly appService: AppService,
+  ) {}
+  @Mutation(() => SubmitQuestAnswersOutput, {
     nullable: false,
     description: 'Submits quest answers',
     name: 'submitQuestAnswers',
@@ -22,7 +29,7 @@ export class SubmitQuestAnswersResolver {
     @UseCeramic() { ceramicClient }: UseCeramicClient,
     @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('input') answerSubmition: QuestAnswersSubmitionInput,
-  ): Promise<boolean> {
+  ): Promise<SubmitQuestAnswersOutput> {
     const [foundQuest] = await this.threadDBService.query({
       collectionName: 'Quest',
       dbClient,
@@ -32,7 +39,20 @@ export class SubmitQuestAnswersResolver {
     if (!foundQuest) {
       throw new NotFoundException('Quest not found');
     }
+
     const { _id, ...quest } = foundQuest as any;
+
+    const decodedAddress = ethers.utils.verifyMessage(
+      JSON.stringify({
+        id: answerSubmition.questId,
+        pathwayId: quest.pathwayId,
+      }),
+      answerSubmition.questAdventurerSignature,
+    );
+
+    if (!decodedAddress) {
+      throw new ForbiddenException('Unauthorized');
+    }
     console.log({ quest });
     const decryptedQuestionAnswers = await Promise.all(
       quest.questions.map(
@@ -48,10 +68,8 @@ export class SubmitQuestAnswersResolver {
             return false;
           }
 
-          // TODO: change the radio button on the front-end to send an array for answers
-          const answers = [submittedAnswer];
           const isCorrect = Object.values(decryptedAnswers).every((answer) =>
-            answers.includes(answer),
+            submittedAnswer.includes(answer),
           );
           return isCorrect;
         },
@@ -85,7 +103,39 @@ export class SubmitQuestAnswersResolver {
           },
         ],
       });
+      const chainIdStr = answerSubmition.chainId.toString();
+      if (!Object.keys(ABIS).includes(chainIdStr)) {
+        throw new Error('Unsupported Network');
+      }
+      const pathway = await this.threadDBService.getPathwayById({
+        dbClient,
+        threadId: latestThreadId,
+        pathwayId: quest.pathwayId,
+      });
+      const verifyContract = this.appService.getContract(chainIdStr, 'Verify');
+      const questContract = this.appService.getContract(chainIdStr, 'BadgeNFT');
+      const metadataNonceId = await verifyContract.noncesParentIdChildId(
+        pathway.streamId,
+        quest.streamId,
+      );
+      const { r, s, v } = await verifyNFTInfo({
+        contractAddress: questContract.address,
+        nonceId: metadataNonceId,
+        objectId: quest.streamId,
+        senderAddress: decodedAddress,
+        verifyContract: verifyContract.address,
+      });
+      return {
+        isSuccess,
+        id: _id,
+        ...quest,
+        expandedServerSignatures: [{ r, s, v }],
+      };
     }
-    return isSuccess;
+    return {
+      isSuccess,
+      id: _id,
+      ...quest,
+    };
   }
 }

@@ -5,7 +5,12 @@ import {
   AlertIcon,
   AlertTitle,
   Progress,
-  Heading, Button, Flex, useToast, Link, Stack
+  Heading,
+  Button,
+  Flex,
+  useToast,
+  Link,
+  Stack,
 } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { useWeb3React } from "@web3-react/core";

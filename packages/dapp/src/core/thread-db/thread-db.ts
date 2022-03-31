@@ -64,22 +64,6 @@ export const getAuthorizedUserClient = async (
   return client;
 };
 
-export const getAuthorizedDevClient = async (identity: Identity) => {
-  // Check for user group keys
-  if (!process.env.THREAD_DB_KEY || !process.env.THREAD_DB_SECRET) {
-    throw new Error(
-      "Environment variables THREAD_DB_KEY & THREAD_DB_SECRET missing."
-    );
-  }
-  const auth = {
-    key: process.env.THREAD_DB_KEY,
-    secret: process.env.THREAD_DB_SECRET,
-  };
-  const client = await Client.withKeyInfo(auth);
-  await client.getToken(identity);
-  return client;
-};
-
 export const getAPISig = async (seconds = 300) => {
   // Check for user group secret
   if (!process.env.THREAD_DB_USER_GROUP_SECRET) {

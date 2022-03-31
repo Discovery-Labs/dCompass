@@ -37,10 +37,7 @@ import { Web3Context } from "../../../contexts/Web3Provider";
 import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
 import {
-  CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION,
-  CREATE_NFT_OWNER_QUEST_MUTATION,
   CREATE_QUIZ_QUEST_MUTATION,
-  CREATE_SNAPSHOT_VOTER_QUEST_MUTATION,
   GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
 } from "../../../graphql/quests";
 import ImageDropzone from "../../custom/ImageDropzone";
@@ -212,7 +209,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       contracts.BadgeNFT.address,
       newAllowance
     );
-    // await res.wait(1);
+    await res.wait(1);
     return tokenInfos;
   }
 
@@ -348,7 +345,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     ]);
 
     if (isNativeToken) {
-      await contracts.BadgeNFT.createBadge(
+      const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
         parseInt(values.rewardUserCap, 10),
@@ -361,6 +358,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           value: (totalToPay * 1e18).toString(),
         }
       );
+      await createQuestOnChainTx.wait(1);
     } else {
       const tokenDetails = await approveTokenAllowance(
         values.rewardCurrency.value,
@@ -370,7 +368,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         rewardAmnt.toString(),
         tokenDetails.decimals
       );
-      await contracts.BadgeNFT.createBadge(
+      const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
         parseInt(values.rewardUserCap, 10),
@@ -380,6 +378,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         false,
         rewardAmount
       );
+      await createQuestOnChainTx.wait(1);
     }
 
     const createQuestMutationVariables = {

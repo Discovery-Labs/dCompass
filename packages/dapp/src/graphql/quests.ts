@@ -125,6 +125,7 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
         rewardAmount
         rewardUserCap
         isPending
+        completedBy
       }
     }
   }
@@ -143,6 +144,35 @@ export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
 
 export const SUBMIT_QUEST_ANSWERS_MUTATION = gql`
   mutation SubmitQuestAnswers($input: QuestAnswersSubmitionInput!) {
-    submitQuestAnswers(input: $input)
+    submitQuestAnswers(input: $input) {
+      id
+      isSuccess
+      streamId
+      name
+      rewardCurrency
+      completedBy
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
+    }
+  }
+`;
+
+export const CLAIM_QUEST_REWARDS_MUTATION = gql`
+  mutation ClaimQuestRewards($input: ClaimQuestRewardsInput!) {
+    claimQuestRewards(input: $input) {
+      id
+      streamId
+      name
+      rewardCurrency
+      completedBy
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
+    }
   }
 `;

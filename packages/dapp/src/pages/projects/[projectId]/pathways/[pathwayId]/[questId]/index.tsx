@@ -244,6 +244,7 @@ function QuestPage({
                     <QuizForm
                       questions={questions}
                       questId={id}
+                      pathwayId={pathwayId}
                       successCallback={() => handleTabsChange(2)}
                     />
                   )}

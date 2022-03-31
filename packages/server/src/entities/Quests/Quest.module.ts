@@ -4,6 +4,7 @@ import { AppService } from '../../app.service';
 import { RedisModule } from '../../core/resources/Redis/Redis.module';
 import { ThreadDBService } from '../../services/thread-db/thread-db.service';
 import { ApproveQuestResolver } from './mutations/ApproveQuest.resolver';
+import { ClaimQuestRewardsResolver } from './mutations/ClaimQuestRewards.resolver';
 import { CreateGithubContributorQuestResolver } from './mutations/CreateGithubContributorQuest.resolver';
 import { CreateNFTOwnerQuestResolver } from './mutations/CreateNFTOwnerQuest.resolver';
 import { CreateQuizQuestResolver } from './mutations/CreateQuizQuest.resolver';
@@ -32,6 +33,7 @@ import { GetQuizQuestByIdResolver } from './queries/GetQuizQuestById.resolver';
     SubmitQuestAnswersResolver,
     ThreadDBService,
     AppService,
+    ClaimQuestRewardsResolver,
     // CreateQuestResolver,
     // GetQuestByIdResolver,
   ],
