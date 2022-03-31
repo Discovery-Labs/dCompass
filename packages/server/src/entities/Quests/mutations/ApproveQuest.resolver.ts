@@ -91,7 +91,6 @@ export class ApproveQuestResolver {
       values: [updatedPathway],
     });
 
-    // TODO: Verify metadata et al
     const chaindIdStr = chainId.toString();
     if (!Object.keys(ABIS).includes(chaindIdStr)) {
       throw new Error('Unsupported Network');
@@ -102,7 +101,7 @@ export class ApproveQuestResolver {
       chaindIdStr,
       'BadgeNFT',
     );
-
+    console.log({ pId: foundPathway.streamId, qId: quest.streamId });
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
       verifyContract.noncesParentIdChildId(
         foundPathway.streamId,
@@ -110,7 +109,7 @@ export class ApproveQuestResolver {
       ),
       verifyContract.thresholdNoncesById(quest.streamId),
     ]);
-
+    console.log({ bNFTAdr: badgeNFTContract.address });
     // console.log({ pathwayId: foundPathway.streamId });
     const [metadataVerify, tresholdVerify] = await Promise.all([
       verifyNFTInfo({
