@@ -172,7 +172,7 @@ const variantSoftRounded: PartsStyleFunction<typeof parts> = (props) => {
       borderRadius: borderRadius,
       fontWeight: 'semibold',
       margin: "2px",
-      color: mode(colors.neutralDark, colors.neutralDark)(props),
+      color: mode(`${c}.500`, `${c}.500`)(props),
       _hover: {
         color: mode(colors.neutralLightest, colors.neutralLightest)(props),
         bg: mode(`${c}.300`, `${c}.300`)(props),
@@ -210,11 +210,12 @@ const variantUnstyled: PartsStyleFunction<typeof parts> = (props) => {
   const { colorScheme: c } = props;
   return {
     tab: {
+      color: mode(`${c}.600`, `${c}.300`)(props),
       _selected: {
-        color: mode(`${c}.600`, `${c}.300`)(props),
+        color: mode(colors.neutralLightest, colors.neutralLightest)(props),
         fontWeight: 'bold',
         borderBottomWidth: '2px',
-        borderBottomColor: mode(`${c}.600`, `${c}.300`)(props),
+        borderBottomColor: mode(colors.neutralLightest, colors.neutralLightest)(props),
       },
     },
   };

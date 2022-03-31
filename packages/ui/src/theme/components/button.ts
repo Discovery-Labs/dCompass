@@ -66,7 +66,7 @@ const variantOutline: SystemStyleFunction = (props) => {
   const borderColor = mode(`gray.200`, `whiteAlpha.300`)(props);
   return {
     border: '1px solid',
-    borderColor: c === 'gray' ? borderColor : 'currentColor',
+    borderColor: c === 'gray' ? borderColor : `${c}.300`,
     ...variantGhost(props),
   };
 };
@@ -89,9 +89,14 @@ const variantSolid: SystemStyleFunction = (props) => {
     };
   }
 
+  let textColor = mode(colors.neutralLightest, colors.neutralLightest)(props);
+  if (c === 'accentLight' || c === 'accentDark') {
+    textColor = mode(colors.neutralDarkest, colors.neutralDarkest)(props);
+  }
+
   return {
     bg: mode(`${c}.300`, `${c}.300`)(props),
-    color: mode(colors.neutralLightest, colors.neutralLightest)(props),
+    color: textColor,
     _hover: {
       bg: mode(`${c}.400`, `${c}.400`)(props),
       _disabled: {

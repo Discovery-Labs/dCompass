@@ -1,11 +1,7 @@
 import { Box, Button, useBoolean } from "@chakra-ui/react";
 import useCustomColor from "core/hooks/useCustomColor";
-import dynamic from "next/dynamic";
-
-const MarkdownPreview = dynamic(() => import("@uiw/react-markdown-preview"), {
-  ssr: false,
-});
-
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import ReactMarkdown from "react-markdown";
 interface CodeEditorPreviewProps {
   code: string;
 }
@@ -13,7 +9,7 @@ interface CodeEditorPreviewProps {
 function CodeEditorPreview(props: CodeEditorPreviewProps) {
   const { code } = props;
   const [isPreview, setIsPreview] = useBoolean();
-  const { codeEditorPreviewScheme, getBgColor } = useCustomColor();
+  const { getBorderColor, getBgColor } = useCustomColor();
   return (
     <>
       {code && (
@@ -30,12 +26,14 @@ function CodeEditorPreview(props: CodeEditorPreviewProps) {
 
       {code && isPreview && (
         <Box
-          border={`8px solid ${getBgColor}`}
+          bgColor={getBgColor}
+          border={`1px solid ${getBorderColor}`}
           borderRadius="4px"
-          data-color-mode={codeEditorPreviewScheme}
+          padding="4"
         >
-          <div className="wmde-markdown-var"></div>
-          <MarkdownPreview source={code} />
+          <ReactMarkdown components={ChakraUIRenderer()} skipHtml>
+            {code}
+          </ReactMarkdown>
         </Box>
       )}
     </>

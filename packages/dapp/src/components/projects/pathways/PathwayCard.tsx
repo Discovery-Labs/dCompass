@@ -46,8 +46,14 @@ function PathwayCard({
 }) {
   const { getRewardCurrency } = useTokenList();
   const pathwayCardMarkdownTheme = useCardMarkdownTheme();
-  const { getTextColor, getBgColor, getAccentColor, getOverBgColor } =
-    useCustomColor();
+  const {
+    getPrimaryColor,
+    getColoredText,
+    getTextColor,
+    getBgColor,
+    getAccentColor,
+    getOverBgColor,
+  } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
@@ -202,14 +208,18 @@ function PathwayCard({
   return (
     <Card h="xl">
       <HStack>
-        <Tag>{pathway.difficulty}</Tag>
-        <Tag variant="outline">0/{pathway.rewardUserCap} Claimed</Tag>
+        <Tag p="2" variant="solid">
+          0/{pathway.rewardUserCap} Claimed
+        </Tag>
         {/* Max reward supply is not essential for who want to complete the quest. */}
         {/* <Tag variant="outline">
           {pathway.rewardAmount} {getRewardCurrency(pathway.rewardCurrency)}
         </Tag> */}
       </HStack>
-      <Flex w="full">
+      <Flex direction="column" w="full">
+        <Text pb="1" textStyle="small" color={getPrimaryColor}>
+          {pathway.difficulty}
+        </Text>
         <Tooltip label={pathway.title} hasArrow placement="top">
           <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
             {pathway.title}
@@ -231,50 +241,15 @@ function PathwayCard({
         </Box>
       </VStack>
       <VStack w="full" align="start">
-        <Text as="h2" fontSize="2xl" color={getTextColor}>
+        <Text as="h2" fontSize="2xl" color={getAccentColor}>
           Rewards
         </Text>
-        <HStack align="start">
-          <Stack
-            layerStyle="outline-hover3"
-            py={1}
-            px={4}
-            m={0}
-            justifyContent="space-around"
-            direction="row"
-            spacing={4}
-            align="center"
-          >
-            <Avatar size="md" src={`https://ipfs.io/ipfs/${pathway.image}`} />
-            <Text color="purple.500" fontWeight="bold">
-              NFT
-            </Text>
-          </Stack>
-        </HStack>
-        <Stack
-          layerStyle="outline-hover3"
-          py={1}
-          px={4}
-          m={0}
-          justifyContent="space-around"
-          direction="row"
-          spacing={4}
-          align="center"
-        >
-          <Flex
-            align="center"
-            justify="center"
-            fontFamily="heading"
-            fontWeight="bold"
-            bg="violet.100"
-            color="purple.500"
-          >
-            <Text fontWeight="bold">
-              {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
-              {getRewardCurrency(pathway.rewardCurrency)}
-            </Text>
-          </Flex>
-        </Stack>
+        {/* <Avatar size="md" src={`https://ipfs.io/ipfs/${pathway.image}`} /> */}
+        <Text color={getColoredText}>NFT</Text>
+        <Text color={getColoredText}>
+          {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
+          {getRewardCurrency(pathway.rewardCurrency)}
+        </Text>
       </VStack>
 
       <Spacer />

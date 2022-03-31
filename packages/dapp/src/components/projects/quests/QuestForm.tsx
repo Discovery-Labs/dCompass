@@ -129,7 +129,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     reset,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { isSubmitting, errors },
   } = useFormContext();
 
   const getSelectedTokenContract = (token: string) => {
@@ -605,7 +605,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
         <Button colorScheme="secondary" type="button" onClick={() => reset()}>
           Reset Quest Form
         </Button>
-        <Button type="submit">Submit</Button>
+        <Button isLoading={isSubmitting} type="submit">
+          Submit
+        </Button>
       </Flex>
     </Stack>
   );
