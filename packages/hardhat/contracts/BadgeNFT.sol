@@ -14,6 +14,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./RandomNumberConsumer.sol";
 import "./Verify.sol";
+import "hardhat/console.sol";
 
 contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     using Counters for Counters.Counter;
@@ -44,6 +45,14 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
 
     mapping (string => mapping ( address => uint)) public currentNumUsersRewardPerBadgeERC20;// current number of users already claimed reward per badge per ERC20 Address
     mapping (string => address) public adventurerAddress;//address of adventurer NFT
+
+    //local adventure mappings
+    //_badgeID => version => minterAddress => boolean
+    mapping (string => mapping(uint => mapping(address => bool))) internal mintTrackerByBadgeIdVersionMinter;
+    //_badgeID => version => addresses of all minters...only used for getter when necessary
+    mapping (string => mapping(uint => address[])) internal allMintersPerBadgeAndVersion;
+    //_badgeID => version => tokenIds of all minters...only used for getter when necessary
+    mapping (string => mapping(uint => uint[])) internal allTokenIdsPerBadgeAndVersion;
 
     //pathwayId => ERC20Address => senderAddress => bool
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForBadgeERC20;//has user received funds for this badge in ERC20Token Address
@@ -292,13 +301,13 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             );
         }
         
-        _createAdventurerNFT(_badgeId, _pathwayId);
+        //_createAdventurerNFT(_badgeId, _pathwayId);
 
         badgeMinted[_badgeId] = true;
         return newItems;
     }
 
-    function claimBadgeRewards(string memory _badgeId, bool native, address _ERC20Address, bytes32 r, bytes32 s, uint8 v, bool claimReward, string memory _tokenURI) external {
+    function claimBadgeRewards(string memory _badgeId, bool native, address _ERC20Address, bytes32 r, bytes32 s, uint8 v, bool claimReward, string memory _tokenURI, uint256 version) external {
         uint amount;
         if(claimReward){
             if(native){
@@ -314,7 +323,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
                 require(amount > 0);
             }
         }
-        _verify(_msgSender(), _badgeId, 0, r, s, v);
+        _verify(_msgSender(), _badgeId, version, r, s, v);
         if(claimReward){
             if(native){
                 (bool success, ) = payable(_msgSender()).call{value : amount}("");
@@ -328,7 +337,9 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
                 currentNumUsersRewardPerBadgeERC20[_badgeId][_ERC20Address]++;
             }
         }
-        _mintAdventurerBadge(_msgSender(), _badgeId, _tokenURI);
+
+        _localAdventureMint(_msgSender(), _badgeId, _tokenURI, version);
+        //_mintAdventurerBadge(_msgSender(), _badgeId, _tokenURI);
     }
 
     function walletOfOwner(address _owner) public view returns (uint256[] memory)
@@ -353,6 +364,20 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
           (success, data) = adventureFactory.call(abi.encodeWithSelector(bytes4(keccak256("setUserInfo(address,string)")), _msgSender(), _badgeId));
           require(success);
       }
+  }
+
+  function _localAdventureMint(address _to, string memory _badgeId, string memory _tokenURI, uint256 version) internal {
+      if(mintTrackerByBadgeIdVersionMinter[_badgeId][version][_to]){
+          return;
+      }
+      uint256 newItemId;
+      _tokenIds.increment();
+      newItemId = _tokenIds.current();
+      _mint(_msgSender(), newItemId);
+      _setTokenURI(newItemId, _tokenURI);
+      allMintersPerBadgeAndVersion[_badgeId][version].push(_to);
+      allTokenIdsPerBadgeAndVersion[_badgeId][version].push(newItemId);
+      mintTrackerByBadgeIdVersionMinter[_badgeId][version][_to] = true;
   }
 
   function _createAdventurerNFT(string memory _badgeId, string memory _pathwayId) internal {
@@ -393,12 +418,20 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         return true;
   }
 
-    function getContributors(string memory _pathwayId) external view returns(address[] memory){
-        return contributors[_pathwayId];
+    function getContributors(string memory _badgeId) external view returns(address[] memory){
+        return contributors[_badgeId];
     }
 
     function getAppDiamond() external view returns(address){
         return appDiamond;
+    }
+
+    function getAllAddrsByBadgeIDVersion(string memory _badgeId, uint256 version) external view returns (address[] memory){
+        return allMintersPerBadgeAndVersion[_badgeId][version];
+    }
+
+    function getAllTokenIdsByBadgeIDVersion(string memory _badgeId, uint256 version) external view returns (uint256[] memory){
+        return allTokenIdsPerBadgeAndVersion[_badgeId][version];
     }
 
     function setAppDiamond(address newAppDiamond) external onlyOwner {
