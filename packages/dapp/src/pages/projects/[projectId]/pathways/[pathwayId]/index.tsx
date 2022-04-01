@@ -188,13 +188,61 @@ function PathwayPage({
         <Tabs w="full">
           <HStack justifyContent="space-between">
             <TabList>
+              <Tab>Quests</Tab>
               <Tab>Guide</Tab>
               <Tab>Details &amp; rewards</Tab>
-              <Tab>Quests</Tab>
             </TabList>
           </HStack>
 
           <TabPanels>
+            {/* Quests */}
+            <TabPanel px="0">
+              <Tabs w="full" variant="unstyled">
+                <HStack justifyContent="space-between">
+                  <TabList>
+                    <Tab>{t("all-quests")}</Tab>
+                    <Tab>{t("pending-quests")}</Tab>
+                    <Tab>{t("completed-quests")}</Tab>
+                  </TabList>
+                  {isOwner && (
+                    <NextLink
+                      href={`/projects/${projectId}/pathways/${id}/add-quest`}
+                      passHref
+                    >
+                      <Button leftIcon={<PlusSquareIcon />}>
+                        {t("add-quest")}
+                      </Button>
+                    </NextLink>
+                  )}
+                </HStack>
+
+                <TabPanels>
+                  <TabPanel>
+                    <SimpleGrid columns={[1, 2]} spacing={10}>
+                      {renderQuests(
+                        data.getAllQuestsByPathwayId.quests.filter(
+                          (quest: any) => !quest.isPending
+                        )
+                      )}
+                    </SimpleGrid>
+                  </TabPanel>
+                  <TabPanel>
+                    <SimpleGrid columns={[1, 2]} spacing={10}>
+                      {renderQuests(
+                        data.getAllQuestsByPathwayId.quests.filter(
+                          (quest: any) => quest.isPending
+                        )
+                      )}
+                    </SimpleGrid>
+                  </TabPanel>
+                  <TabPanel>
+                    <SimpleGrid columns={[1, 2]} spacing={10} />
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </TabPanel>
+
+            {/* Guide */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
@@ -206,6 +254,7 @@ function PathwayPage({
               </VStack>
             </TabPanel>
 
+            {/* Details */}
             <TabPanel px="0">
               <HStack w="full" align="left" justifyContent="space-between">
                 <VStack align="left">
@@ -395,51 +444,6 @@ function PathwayPage({
                   </VStack>
                 </CardMedia>
               </HStack>
-            </TabPanel>
-            <TabPanel px="0">
-              <Tabs w="full" variant="unstyled">
-                <HStack justifyContent="space-between">
-                  <TabList>
-                    <Tab>{t("all-quests")}</Tab>
-                    <Tab>{t("pending-quests")}</Tab>
-                    <Tab>{t("completed-quests")}</Tab>
-                  </TabList>
-                  {isOwner && (
-                    <NextLink
-                      href={`/projects/${projectId}/pathways/${id}/add-quest`}
-                      passHref
-                    >
-                      <Button leftIcon={<PlusSquareIcon />}>
-                        {t("add-quest")}
-                      </Button>
-                    </NextLink>
-                  )}
-                </HStack>
-
-                <TabPanels>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10}>
-                      {renderQuests(
-                        data.getAllQuestsByPathwayId.quests.filter(
-                          (quest: any) => !quest.isPending
-                        )
-                      )}
-                    </SimpleGrid>
-                  </TabPanel>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10}>
-                      {renderQuests(
-                        data.getAllQuestsByPathwayId.quests.filter(
-                          (quest: any) => quest.isPending
-                        )
-                      )}
-                    </SimpleGrid>
-                  </TabPanel>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10} />
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
             </TabPanel>
           </TabPanels>
         </Tabs>

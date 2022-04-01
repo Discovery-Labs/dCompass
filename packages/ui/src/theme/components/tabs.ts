@@ -212,10 +212,10 @@ const variantUnstyled: PartsStyleFunction<typeof parts> = (props) => {
     tab: {
       color: mode(`${c}.600`, `${c}.300`)(props),
       _selected: {
-        color: mode(colors.neutralLightest, colors.neutralLightest)(props),
+        color: mode(colors.neutralDarkest, colors.neutralLightest)(props),
         fontWeight: 'bold',
         borderBottomWidth: '2px',
-        borderBottomColor: mode(colors.neutralLightest, colors.neutralLightest)(props),
+        borderBottomColor: mode(colors.neutralDarkest, colors.neutralLightest)(props),
       },
     },
   };

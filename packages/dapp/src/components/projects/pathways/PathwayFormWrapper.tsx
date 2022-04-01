@@ -4,30 +4,24 @@ import {
   AlertDescription,
   AlertIcon,
   AlertTitle,
-  Progress,
-  Heading,
   Button,
   Flex,
-  useToast,
-  Link,
+  Heading,
+  Progress,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { useWeb3React } from "@web3-react/core";
-import useCustomColor from "core/hooks/useCustomColor";
 import { Contract, ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { useFormContext } from "react-hook-form";
-
 import { Web3Context } from "../../../contexts/Web3Provider";
-
 import useTokenList from "../../../core/hooks/useTokenList";
 import {
   CREATE_PATHWAY_MUTATION,
   GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
 } from "../../../graphql/pathways";
-
 import PathwayForm from "./PathwayForm";
 
 const pathwaysDefaultValues = {
@@ -35,7 +29,6 @@ const pathwaysDefaultValues = {
 };
 
 function PathwayFormWrapper() {
-  const { getPrimaryColor, getTextColor } = useCustomColor();
   const toast = useToast();
   const router = useRouter();
   const { library, chainId } = useWeb3React();
@@ -281,15 +274,6 @@ function PathwayFormWrapper() {
     );
   return (
     <>
-      <Link
-        textStyle={"small"}
-        color={getTextColor}
-        _hover={{ color: getPrimaryColor, textDecoration: "none" }}
-        onClick={() => router.back()}
-      >
-        <ChevronLeftIcon w={6} h={6} />
-        Back to Project
-      </Link>
       <Heading>Add Pathway</Heading>
       <PathwayForm />
 
