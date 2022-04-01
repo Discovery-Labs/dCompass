@@ -5,7 +5,6 @@ import {
   AlertIcon,
   AlertTitle,
   Button,
-  Divider,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -600,8 +599,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       </VStack>
 
       {questDetails[questType]}
-      <Divider bg="none" py="5" />
-      <Flex w="full" justify="space-between">
+      <Flex w="full" pt="8" justify="space-between">
         <Button colorScheme="secondary" type="button" onClick={() => reset()}>
           Reset Quest Form
         </Button>

@@ -151,7 +151,20 @@ function QuestCard({
     const statusInt = await contracts.BadgeNFT.status(quest.streamId);
     const statusString = await contracts.BadgeNFT.statusStrings(statusInt);
     console.log({ statusString });
-    setStatus(statusString);
+    switch (statusString) {
+      case "NONEXISTENT":
+        setStatus("NONEXISTENT");
+        break;
+      case "PENDING":
+        setStatus("PENDING");
+        break;
+      case "DENIED":
+        setStatus("DENIED");
+        break;
+      case "APPROVED":
+        setStatus("APPROVED");
+        break;
+    }
   };
 
   const handleCreateToken = async () => {

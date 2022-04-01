@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Button, Flex, Stack, Link } from "@chakra-ui/react";
+import { Button, Flex, Stack, Link, Box } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
@@ -22,7 +22,6 @@ import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
 import { isAddress } from "ethers/lib/utils";
 
-import { ethers } from "ethers";
 import NextLink from "next/link";
 import useCustomColor from "core/hooks/useCustomColor";
 
@@ -241,7 +240,7 @@ function CreateProjectStepper() {
     <NotConnectedWrapper>
       <FormProvider {...methods}>
         <CenteredFrame>
-          <Card h="full" w={activeStep === 2 ? "fit-content" : "2xl"}>
+          <Box py="1">
             <NextLink href={"/"} passHref>
               <Link
                 textStyle={"small"}
@@ -252,6 +251,8 @@ function CreateProjectStepper() {
                 Back to projects
               </Link>
             </NextLink>
+          </Box>
+          <Card h="full" w={activeStep === 2 ? "fit-content" : "2xl"}>
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
               <Steps
                 w="full"
