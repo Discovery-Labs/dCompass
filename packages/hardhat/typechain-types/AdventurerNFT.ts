@@ -27,7 +27,7 @@ export interface AdventurerNFTInterface extends utils.Interface {
     "initialize(string,bool,string)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "isPathway()": FunctionFragment;
-    "mint(address,uint256)": FunctionFragment;
+    "mint(address,uint256,string)": FunctionFragment;
     "name()": FunctionFragment;
     "objectId()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
@@ -64,7 +64,7 @@ export interface AdventurerNFTInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "isPathway", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [string, BigNumberish]
+    values: [string, BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "objectId", values?: undefined): string;
@@ -249,6 +249,7 @@ export interface AdventurerNFT extends BaseContract {
     mint(
       _to: string,
       count: BigNumberish,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -350,6 +351,7 @@ export interface AdventurerNFT extends BaseContract {
   mint(
     _to: string,
     count: BigNumberish,
+    _tokenURI: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -445,6 +447,7 @@ export interface AdventurerNFT extends BaseContract {
     mint(
       _to: string,
       count: BigNumberish,
+      _tokenURI: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -576,6 +579,7 @@ export interface AdventurerNFT extends BaseContract {
     mint(
       _to: string,
       count: BigNumberish,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -681,6 +685,7 @@ export interface AdventurerNFT extends BaseContract {
     mint(
       _to: string,
       count: BigNumberish,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

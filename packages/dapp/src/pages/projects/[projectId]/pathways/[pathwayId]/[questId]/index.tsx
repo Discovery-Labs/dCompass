@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { EditIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -18,6 +18,7 @@ import {
   Tag,
   Progress,
   Box,
+  useToast,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { GetServerSideProps } from "next";
@@ -28,7 +29,7 @@ import { useContext, useState } from "react";
 import Blockies from "react-blockies";
 import { BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
-import { RiSwordLine } from "react-icons/ri";
+import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 
 import CardMedia from "../../../../../../components/custom/CardMedia";
@@ -46,9 +47,13 @@ import { PROJECT_BY_ID_QUERY } from "../../../../../../graphql/projects";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
-import { GET_QUIZ_QUEST_BY_ID_QUERY } from "../../../../../../graphql/quests";
+import {
+  CLAIM_QUEST_REWARDS_MUTATION,
+  GET_QUIZ_QUEST_BY_ID_QUERY,
+} from "../../../../../../graphql/quests";
 import { initializeApollo } from "../../../../../../../lib/apolloClient";
 import QuestCompletedByList from "../../../../../../components/projects/quests/QuestCompletedByList";
+import { useWeb3React } from "@web3-react/core";
 
 type Props = {
   projectId: string | null;
@@ -138,13 +143,15 @@ function QuestPage({
   amount,
   chainId: tokenChainId,
   namespace,
+  streamId,
 }: any) {
   const [tabIndex, setTabIndex] = useState(0);
   const { t } = useTranslation("common");
   const { getRewardCurrency } = useTokenList();
   const questMarkdownTheme = usePageMarkdownTheme();
-
-  const { account, self } = useContext(Web3Context);
+  const toast = useToast();
+  const { account, self, contracts } = useContext(Web3Context);
+  const { library, chainId } = useWeb3React();
   const { getTextColor, getColoredText } = useCustomColor();
 
   const { data, loading, error } = useQuery(GET_PATHWAY_BY_ID_QUERY, {
@@ -152,6 +159,13 @@ function QuestPage({
       pathwayId,
     },
   });
+  const [claimQuestRewardsMutation] = useMutation(
+    CLAIM_QUEST_REWARDS_MUTATION,
+    {
+      refetchQueries: "all",
+    }
+  );
+
   const {
     data: projectRes,
     loading: projectLoading,
@@ -166,7 +180,94 @@ function QuestPage({
     setTabIndex(index);
   };
 
+  const handleClaimRewards = async () => {
+    const signatureInput = {
+      id: id,
+      pathwayId: pathwayId,
+    };
+    const signature = await library.provider.send("personal_sign", [
+      JSON.stringify(signatureInput),
+      account,
+    ]);
+
+    const formData = new FormData();
+    const ogFile = await fetch(`https://ipfs.io/ipfs/${image}`);
+    const questImage = await ogFile.blob();
+    formData.append("image", questImage);
+    formData.append(
+      "metadata",
+      JSON.stringify({
+        id,
+        name,
+        description,
+        image,
+        createdAt,
+        rewardAmount,
+        rewardCurrency,
+        rewardUserCap,
+        type,
+        pathwayId,
+        projectId,
+        questions,
+        proposalId,
+        githubOrgId,
+        createdBy,
+        collectionContractAddress,
+        tokenContractAddress,
+        amount,
+        chainId,
+        namespace,
+      })
+    );
+
+    const nftCidRes = await fetch("/api/quest-nft-storage", {
+      method: "POST",
+      body: formData,
+    });
+    const { url } = await nftCidRes.json();
+
+    const { data } = await claimQuestRewardsMutation({
+      variables: {
+        input: {
+          questId: id,
+          did: self.id,
+          questAdventurerSignature: signature.result,
+          chainId,
+        },
+      },
+    });
+
+    const [, tokenAddressOrSymbol] = rewardCurrency.split(":");
+    const isNativeToken = tokenAddressOrSymbol ? false : true;
+
+    const [metadataVerify] = data.claimQuestRewards.expandedServerSignatures;
+
+    console.log({ metadataVerify });
+    const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
+      streamId,
+      isNativeToken,
+      isNativeToken ? account : tokenAddressOrSymbol,
+      metadataVerify.r,
+      metadataVerify.s,
+      metadataVerify.v,
+      true,
+      url
+    );
+    await claimRewardsTx.wait(1);
+    return toast({
+      title: "Congratulations!",
+      description: `Rewards claimed successfully!`,
+      status: "success",
+      position: "top-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
+  };
+
   const isOwner = createdBy === account;
+  const isCompleted = (completedBy || []).includes(self?.id);
+
   if (loading || projectLoading)
     return (
       <Stack pt="30" px="8">
@@ -320,10 +421,10 @@ function QuestPage({
                       color={getTextColor}
                       textTransform="uppercase"
                     >
-                      Rewards
+                      Total Rewards
                     </Text>
                     <Tag variant="outline" size="lg">
-                      {rewardAmount}
+                      {rewardAmount} {getRewardCurrency(rewardCurrency)}
                     </Tag>
                   </HStack>
                 </VStack>
@@ -363,7 +464,7 @@ function QuestPage({
 
               <HStack w="full" align="left" pt="2">
                 <CardMedia
-                  h="xs"
+                  h="sm"
                   src={`https://ipfs.io/ipfs/${image}`}
                   imageHeight="160px"
                 >
@@ -432,6 +533,18 @@ function QuestPage({
                       </Flex>
                     </Stack>
                   </VStack>
+                  <HStack w="full">
+                    <Button
+                      w="full"
+                      fontSize="md"
+                      variant="outline"
+                      leftIcon={<RiHandCoinFill />}
+                      disabled={!isCompleted}
+                      onClick={handleClaimRewards}
+                    >
+                      Claim rewards
+                    </Button>
+                  </HStack>
                 </CardMedia>
               </HStack>
             </TabPanel>

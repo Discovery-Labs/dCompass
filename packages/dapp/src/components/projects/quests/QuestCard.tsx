@@ -226,6 +226,24 @@ function QuestCard({
       JSON.stringify(signatureInput),
       account,
     ]);
+
+    const formData = new FormData();
+    const ogFile = await fetch(`https://ipfs.io/ipfs/${quest.image}`);
+    const questImage = await ogFile.blob();
+    formData.append("image", questImage);
+    formData.append(
+      "metadata",
+      JSON.stringify({
+        ...quest,
+      })
+    );
+
+    const nftCidRes = await fetch("/api/quest-nft-storage", {
+      method: "POST",
+      body: formData,
+    });
+    const { url } = await nftCidRes.json();
+
     const { data } = await claimQuestRewardsMutation({
       variables: {
         input: {
@@ -250,7 +268,8 @@ function QuestCard({
       metadataVerify.r,
       metadataVerify.s,
       metadataVerify.v,
-      true
+      true,
+      url
     );
     await claimRewardsTx.wait(1);
     return toast({

@@ -779,7 +779,7 @@
       "chainId": "4",
       "contracts": {
         "AdventurerBadgeFactory": {
-          "address": "0x114f37B983a34FEF88317c7948ABC8eD40bABfb5",
+          "address": "0x49C604429598B93B170eaDCE23146fec643E4121",
           "abi": [
             {
               "inputs": [
@@ -1143,7 +1143,7 @@
           ]
         },
         "AdventurerNFT": {
-          "address": "0x039f3BE9De07e86D3A860bBa6EfbAE9D7E96b501",
+          "address": "0x278F58B815E11ccC2895Ae08802dA52d653ACE6a",
           "abi": [
             {
               "inputs": [],
@@ -1365,6 +1365,11 @@
                   "internalType": "uint256",
                   "name": "count",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "string",
+                  "name": "_tokenURI",
+                  "type": "string"
                 }
               ],
               "name": "mint",
@@ -1638,7 +1643,7 @@
           ]
         },
         "AppDiamond": {
-          "address": "0xf4EdEb7c7e9822baFBae9a13E34E0EC5e80559AC",
+          "address": "0x94b8eF8E708Dc1132bd0e93A57D1572605eC22c2",
           "abi": [
             {
               "inputs": [
@@ -2061,7 +2066,7 @@
           ]
         },
         "BadgeNFT": {
-          "address": "0x6D6B9092dC68495cA37B9B921397c4eC22DC7DbE",
+          "address": "0x8B12BeC8c90bf038D3ffac21796928C1c89e2Cce",
           "abi": [
             {
               "inputs": [
@@ -2379,6 +2384,11 @@
                   "internalType": "bool",
                   "name": "claimReward",
                   "type": "bool"
+                },
+                {
+                  "internalType": "string",
+                  "name": "_tokenURI",
+                  "type": "string"
                 }
               ],
               "name": "claimBadgeRewards",
@@ -3286,7 +3296,7 @@
           ]
         },
         "PathwayNFT": {
-          "address": "0x0927F73e5aE7534C80ef026aFDD81e7d7C1d1Ec7",
+          "address": "0x859730c1e82ef01427f3a86Adf6AF89C6Df3C9F6",
           "abi": [
             {
               "inputs": [
@@ -6152,7 +6162,7 @@
           ]
         },
         "Verify": {
-          "address": "0x18047D7595C1B62ccAf8c78ba46f15470Feb5968",
+          "address": "0x40f40fb4d93D1133B8df8f87B6d48c2932559415",
           "abi": [
             {
               "inputs": [

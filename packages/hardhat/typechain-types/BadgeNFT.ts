@@ -26,7 +26,7 @@ export interface BadgeNFTInterface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "badgeMinted(string)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "claimBadgeRewards(string,bool,address,bytes32,bytes32,uint8,bool)": FunctionFragment;
+    "claimBadgeRewards(string,bool,address,bytes32,bytes32,uint8,bool,string)": FunctionFragment;
     "claimRejectionRefund(string,bool,address)": FunctionFragment;
     "createBadge(string,string,uint256,bool,address,bool,uint256)": FunctionFragment;
     "createToken(string,string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
@@ -93,7 +93,8 @@ export interface BadgeNFTInterface extends utils.Interface {
       BytesLike,
       BytesLike,
       BigNumberish,
-      boolean
+      boolean,
+      string
     ]
   ): string;
   encodeFunctionData(
@@ -552,6 +553,7 @@ export interface BadgeNFT extends BaseContract {
       s: BytesLike,
       v: BigNumberish,
       claimReward: boolean,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -809,6 +811,7 @@ export interface BadgeNFT extends BaseContract {
     s: BytesLike,
     v: BigNumberish,
     claimReward: boolean,
+    _tokenURI: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1051,6 +1054,7 @@ export interface BadgeNFT extends BaseContract {
       s: BytesLike,
       v: BigNumberish,
       claimReward: boolean,
+      _tokenURI: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1362,6 +1366,7 @@ export interface BadgeNFT extends BaseContract {
       s: BytesLike,
       v: BigNumberish,
       claimReward: boolean,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1626,6 +1631,7 @@ export interface BadgeNFT extends BaseContract {
       s: BytesLike,
       v: BigNumberish,
       claimReward: boolean,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
