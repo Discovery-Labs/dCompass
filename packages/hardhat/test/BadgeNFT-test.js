@@ -293,6 +293,7 @@ describe("BadgeNFT", function() {
       const adventureId = nftTokens[0];
       expect(nftAddrs.length).to.be.equal(1);
       expect(await badgeNFT.ownerOf(adventureId)).to.be.equal(addrs[2].address);
+      expect(await badgeNFT.tokenURI(adventureId)).to.be.equal("adventurer_URI");
       //test that adventurer factory worked and minted an NFT in the clone
       // const addressAdventureNFT = await adventurerNFTFactory.getNFTAddrs("firstBadgeProject");
       // console.log(addressAdventureNFT);
