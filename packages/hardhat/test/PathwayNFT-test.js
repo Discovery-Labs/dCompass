@@ -213,6 +213,8 @@ describe("PathwayNFT", function() {
       v[1]=sig.v;
       console.log(`${r} \n ${s} \n ${v}`)
 
+      const contributors = await pathwayNFT.getContributors("firstCourseProject");
+
       await pathwayNFT.connect(addr1).createToken("test_URI_String", "firstCourseProject", "firstTestProject", r, s, v, 2);
 
       let tokenURI;
