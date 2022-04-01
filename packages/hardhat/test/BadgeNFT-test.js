@@ -31,7 +31,7 @@ const verifyClaimInfo = async function(objParams){
   let wallet = new ethers.Wallet(signingKey);
   let hashMsg;
 
-  hashMsg = ethers.utils.solidityKeccak256(["address", "address", "uint256", "uint256", "uint256", "string"], [objParams.account, objParams.contract, objParams.chainId, objParams.payload, objParams.nonce, objParams.badgeId]);
+  hashMsg = ethers.utils.solidityKeccak256(["address", "address", "uint256", "uint256", "uint256", "string"], [objParams.account, objParams.contract, objParams.chainId, objParams.nonce, objParams.payload, objParams.badgeId]);
 
   let messageHashBytes = ethers.utils.arrayify(hashMsg);
   let flatSig = await wallet.signMessage(messageHashBytes);
@@ -266,8 +266,8 @@ describe("BadgeNFT", function() {
       verifyClaimParams['account'] = `${addrs[2].address}`;
       verifyClaimParams['contract'] = `${badgeNFT.address}`;
       verifyClaimParams['chainId'] = 1337;
-      verifyClaimParams['payload'] = 0;
       verifyClaimParams['nonce'] = badgeNonce;
+      verifyClaimParams['payload'] = 1;
       verifyClaimParams['badgeId'] = "firstBadgeProject";
 
       let sigClaim = await verifyClaimInfo(verifyClaimParams);
@@ -280,7 +280,7 @@ describe("BadgeNFT", function() {
       expect(await badgeNFT.currentNumUsersRewardPerBadgeNative("firstBadgeProject")).to.be.equal(0);
       expect(await badgeNFT.userRewardedForBadgeNative("firstBadgeProject", `${addrs[2].address}`)).to.be.false;
 
-      await badgeNFT.connect(addrs[2]).claimBadgeRewards("firstBadgeProject", true, `${addr1.address}`, sigClaim.r, sigClaim.s, sigClaim.v, true, "adventurer_URI");
+      await badgeNFT.connect(addrs[2]).claimBadgeRewards("firstBadgeProject", true, `${addr1.address}`, sigClaim.r, sigClaim.s, sigClaim.v, true, "adventurer_URI", 1);
       balance = await ethers.provider.getBalance(addrs[2].address);
       console.log(balance.toString());
       balanceAfter = await ethers.provider.getBalance(badgeNFT.address);
@@ -288,12 +288,19 @@ describe("BadgeNFT", function() {
       expect(await badgeNFT.currentNumUsersRewardPerBadgeNative("firstBadgeProject")).to.be.equal(1);
       expect(await badgeNFT.userRewardedForBadgeNative("firstBadgeProject", `${addrs[2].address}`)).to.be.true;
 
+      const nftAddrs = await badgeNFT.getAllAddrsByBadgeIDVersion("firstBadgeProject", 1);
+      const nftTokens = await badgeNFT.getAllTokenIdsByBadgeIDVersion("firstBadgeProject", 1);
+      const adventureId = nftTokens[0];
+      expect(nftAddrs.length).to.be.equal(1);
+      expect(await badgeNFT.ownerOf(adventureId)).to.be.equal(addrs[2].address);
       //test that adventurer factory worked and minted an NFT in the clone
-      const addressAdventureNFT = await adventurerNFTFactory.getNFTAddrs("firstBadgeProject");
-      console.log(addressAdventureNFT);
-      expect(await adventurerNFTFactory.allAddrsLength()).to.be.equal(1);
-      const adventureNFTInstance = adventureNFTImpl.attach(`${addressAdventureNFT}`);
-      expect(await adventureNFTInstance.ownerOf(1)).to.be.equal(`${addrs[2].address}`);
+      // const addressAdventureNFT = await adventurerNFTFactory.getNFTAddrs("firstBadgeProject");
+      // console.log(addressAdventureNFT);
+      // expect(await adventurerNFTFactory.allAddrsLength()).to.be.equal(1);
+      // const adventureNFTInstance = adventureNFTImpl.attach(`${addressAdventureNFT}`);
+      // expect(await adventureNFTInstance.ownerOf(1)).to.be.equal(`${addrs[2].address}`);
+
+
     })
   })
   

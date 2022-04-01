@@ -24,8 +24,11 @@ const { INFURA_ID, DEPLOYER_PRIVATE_KEY } = process.env;
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "localhost",
+  defaultNetwork: "hardhat",
   networks: {
+    hardhat: {
+      chainId: 1337
+    },
     localhost: {
       url: "http://localhost:8545",
       // accounts: [DEPLOYER_PRIVATE_KEY],

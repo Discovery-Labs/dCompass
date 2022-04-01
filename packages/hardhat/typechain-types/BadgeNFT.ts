@@ -26,13 +26,15 @@ export interface BadgeNFTInterface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "badgeMinted(string)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "claimBadgeRewards(string,bool,address,bytes32,bytes32,uint8,bool,string)": FunctionFragment;
+    "claimBadgeRewards(string,bool,address,bytes32,bytes32,uint8,bool,string,uint256)": FunctionFragment;
     "claimRejectionRefund(string,bool,address)": FunctionFragment;
     "createBadge(string,string,uint256,bool,address,bool,uint256)": FunctionFragment;
     "createToken(string,string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
     "currentNumUsersRewardPerBadgeERC20(string,address)": FunctionFragment;
     "currentNumUsersRewardPerBadgeNative(string)": FunctionFragment;
     "fee()": FunctionFragment;
+    "getAllAddrsByBadgeIDVersion(string,uint256)": FunctionFragment;
+    "getAllTokenIdsByBadgeIDVersion(string,uint256)": FunctionFragment;
     "getAppDiamond()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getContributors(string)": FunctionFragment;
@@ -94,7 +96,8 @@ export interface BadgeNFTInterface extends utils.Interface {
       BytesLike,
       BigNumberish,
       boolean,
-      string
+      string,
+      BigNumberish
     ]
   ): string;
   encodeFunctionData(
@@ -134,6 +137,14 @@ export interface BadgeNFTInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "fee", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getAllAddrsByBadgeIDVersion",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllTokenIdsByBadgeIDVersion",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "getAppDiamond",
     values?: undefined
@@ -311,6 +322,14 @@ export interface BadgeNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllAddrsByBadgeIDVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllTokenIdsByBadgeIDVersion",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getAppDiamond",
     data: BytesLike
@@ -554,6 +573,7 @@ export interface BadgeNFT extends BaseContract {
       v: BigNumberish,
       claimReward: boolean,
       _tokenURI: string,
+      version: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -599,6 +619,18 @@ export interface BadgeNFT extends BaseContract {
 
     fee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getAllAddrsByBadgeIDVersion(
+      _badgeId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
+    getAllTokenIdsByBadgeIDVersion(
+      _badgeId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getAppDiamond(overrides?: CallOverrides): Promise<[string]>;
 
     getApproved(
@@ -607,7 +639,7 @@ export interface BadgeNFT extends BaseContract {
     ): Promise<[string]>;
 
     getContributors(
-      _pathwayId: string,
+      _badgeId: string,
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
@@ -812,6 +844,7 @@ export interface BadgeNFT extends BaseContract {
     v: BigNumberish,
     claimReward: boolean,
     _tokenURI: string,
+    version: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -857,6 +890,18 @@ export interface BadgeNFT extends BaseContract {
 
   fee(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getAllAddrsByBadgeIDVersion(
+    _badgeId: string,
+    version: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
+  getAllTokenIdsByBadgeIDVersion(
+    _badgeId: string,
+    version: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getAppDiamond(overrides?: CallOverrides): Promise<string>;
 
   getApproved(
@@ -865,7 +910,7 @@ export interface BadgeNFT extends BaseContract {
   ): Promise<string>;
 
   getContributors(
-    _pathwayId: string,
+    _badgeId: string,
     overrides?: CallOverrides
   ): Promise<string[]>;
 
@@ -1055,6 +1100,7 @@ export interface BadgeNFT extends BaseContract {
       v: BigNumberish,
       claimReward: boolean,
       _tokenURI: string,
+      version: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1100,6 +1146,18 @@ export interface BadgeNFT extends BaseContract {
 
     fee(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getAllAddrsByBadgeIDVersion(
+      _badgeId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
+    getAllTokenIdsByBadgeIDVersion(
+      _badgeId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
     getAppDiamond(overrides?: CallOverrides): Promise<string>;
 
     getApproved(
@@ -1108,7 +1166,7 @@ export interface BadgeNFT extends BaseContract {
     ): Promise<string>;
 
     getContributors(
-      _pathwayId: string,
+      _badgeId: string,
       overrides?: CallOverrides
     ): Promise<string[]>;
 
@@ -1367,6 +1425,7 @@ export interface BadgeNFT extends BaseContract {
       v: BigNumberish,
       claimReward: boolean,
       _tokenURI: string,
+      version: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1412,6 +1471,18 @@ export interface BadgeNFT extends BaseContract {
 
     fee(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getAllAddrsByBadgeIDVersion(
+      _badgeId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAllTokenIdsByBadgeIDVersion(
+      _badgeId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getAppDiamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     getApproved(
@@ -1420,7 +1491,7 @@ export interface BadgeNFT extends BaseContract {
     ): Promise<BigNumber>;
 
     getContributors(
-      _pathwayId: string,
+      _badgeId: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1632,6 +1703,7 @@ export interface BadgeNFT extends BaseContract {
       v: BigNumberish,
       claimReward: boolean,
       _tokenURI: string,
+      version: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1677,6 +1749,18 @@ export interface BadgeNFT extends BaseContract {
 
     fee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getAllAddrsByBadgeIDVersion(
+      _badgeId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAllTokenIdsByBadgeIDVersion(
+      _badgeId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getAppDiamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getApproved(
@@ -1685,7 +1769,7 @@ export interface BadgeNFT extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getContributors(
-      _pathwayId: string,
+      _badgeId: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
