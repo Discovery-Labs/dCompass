@@ -5,6 +5,7 @@ import fonts from './fonts';
 import layerStyles from './layer-styles';
 import styles from './styles';
 import textStyles from './text-styles';
+import semanticTokens from './semantic-tokens';
 import { colorScheme } from './default-props';
 
 const config = {
@@ -21,6 +22,7 @@ export const customTheme = extendTheme(
     styles,
     layerStyles,
     textStyles,
+    semanticTokens,
   },
   withDefaultColorScheme({ colorScheme: colorScheme })
 );

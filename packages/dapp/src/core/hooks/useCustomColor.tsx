@@ -42,16 +42,16 @@ function useCustomColor() {
   );
 
   return {
-    getPrimaryColor,
+    getBgColor,
     getOverBgColor,
+    getBorderColor,
+    getPrimaryColor,
     getAccentColor,
+    getTextColor,
     getColoredText,
     accentColorScheme,
     codeEditorScheme,
     codeEditorPreviewScheme,
-    getTextColor,
-    getBgColor,
-    getBorderColor,
   };
 }
 
