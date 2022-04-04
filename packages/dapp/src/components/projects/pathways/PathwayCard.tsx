@@ -319,7 +319,7 @@ function PathwayCard({
               fontSize="md"
               onClick={() => openPathway()}
             >
-              {pathway.quests?.length || 0} Quests
+              Explore
             </Button>
 
             {!pathway.isPending && (

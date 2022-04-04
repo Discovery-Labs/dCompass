@@ -584,7 +584,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             <Alert roundedBottom="lg" w="full" status="info">
               <AlertIcon />
               <Text fontSize="md">
-                A user that claims the pathway rewards will receive{" "}
+                A user that claims the quest rewards will receive{" "}
               </Text>
               <Tag>
                 {rewardPerUser}{" "}

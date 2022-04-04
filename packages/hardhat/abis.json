@@ -779,7 +779,7 @@
       "chainId": "4",
       "contracts": {
         "AdventurerBadgeFactory": {
-          "address": "0x49C604429598B93B170eaDCE23146fec643E4121",
+          "address": "0xF95e7e7424CFC2875ccd7F72981Da9FB8e058C14",
           "abi": [
             {
               "inputs": [
@@ -2066,7 +2066,7 @@
           ]
         },
         "BadgeNFT": {
-          "address": "0x8B12BeC8c90bf038D3ffac21796928C1c89e2Cce",
+          "address": "0xAd66EcCb5dc5a9D00A820FCf898fa72061539d52",
           "abi": [
             {
               "inputs": [
@@ -2389,6 +2389,11 @@
                   "internalType": "string",
                   "name": "_tokenURI",
                   "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "version",
+                  "type": "uint256"
                 }
               ],
               "name": "claimBadgeRewards",
@@ -2568,6 +2573,54 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "_badgeId",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "version",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getAllAddrsByBadgeIDVersion",
+              "outputs": [
+                {
+                  "internalType": "address[]",
+                  "name": "",
+                  "type": "address[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "_badgeId",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "version",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getAllTokenIdsByBadgeIDVersion",
+              "outputs": [
+                {
+                  "internalType": "uint256[]",
+                  "name": "",
+                  "type": "uint256[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "getAppDiamond",
               "outputs": [
@@ -2603,7 +2656,7 @@
               "inputs": [
                 {
                   "internalType": "string",
-                  "name": "_pathwayId",
+                  "name": "_badgeId",
                   "type": "string"
                 }
               ],

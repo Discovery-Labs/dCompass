@@ -25,7 +25,7 @@ import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import Blockies from "react-blockies";
 import { BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
@@ -251,7 +251,8 @@ function QuestPage({
       metadataVerify.s,
       metadataVerify.v,
       true,
-      url
+      url,
+      0
     );
     await claimRewardsTx.wait(1);
     return toast({
@@ -266,7 +267,10 @@ function QuestPage({
   };
 
   const isOwner = createdBy === account;
-  const isCompleted = (completedBy || []).includes(self?.id);
+  const isCompleted = useCallback(
+    () => (completedBy || []).includes(self?.id),
+    [completedBy, self?.id]
+  );
 
   if (loading || projectLoading)
     return (
@@ -539,7 +543,7 @@ function QuestPage({
                       fontSize="md"
                       variant="outline"
                       leftIcon={<RiHandCoinFill />}
-                      disabled={!isCompleted}
+                      disabled={!isCompleted()}
                       onClick={handleClaimRewards}
                     >
                       Claim rewards

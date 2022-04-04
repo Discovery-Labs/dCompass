@@ -127,6 +127,12 @@ function ProjectPage({
     }
   );
   const isOwner = createdBy === account;
+  const isProjectContributor = squads
+    .flatMap(({ members }: { members: string[] }) => members)
+    .includes(account);
+  const canEdit = isProjectContributor || isOwner || isReviewer;
+  const canReviewPathways = isProjectContributor || isOwner;
+
   if (loading)
     return (
       <Stack pt="30" px="8">
@@ -211,7 +217,7 @@ function ProjectPage({
               </ModalBody>
             </ModalContent>
           </Modal>
-          {isOwner && (
+          {canEdit && (
             <NextLink href={`/projects/${id}/edit-project/`} passHref>
               <Button variant="outline" leftIcon={<EditIcon />}>
                 Edit Project
@@ -249,10 +255,10 @@ function ProjectPage({
               <HStack justifyContent="space-between">
                 <TabList>
                   <Tab>{t("all-pathways")}</Tab>
-                  {isReviewer && <Tab>{t("pending-pathways")}</Tab>}
+                  {canReviewPathways && <Tab>{t("pending-pathways")}</Tab>}
                   <Tab>{t("my-pathways")}</Tab>
                 </TabList>
-                {isOwner && (
+                {
                   <NextLink
                     href={`/projects/${id}/pathways/add-pathway/`}
                     passHref
@@ -261,7 +267,7 @@ function ProjectPage({
                       {t("add-pathway")}
                     </Button>
                   </NextLink>
-                )}
+                }
               </HStack>
 
               <TabPanels>
@@ -270,7 +276,7 @@ function ProjectPage({
                     {renderPathways(data.getAllPathwaysByProjectId.pathways)}
                   </SimpleGrid>
                 </TabPanel>
-                {isReviewer && (
+                {canReviewPathways && (
                   <TabPanel>
                     <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
                       {renderPathways(
