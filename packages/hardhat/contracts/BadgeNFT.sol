@@ -41,10 +41,9 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (string => mapping(address => bool)) erc20RefundClaimed;//pathway erc20 refund claimed
     mapping (string => uint) public numUsersRewardPerBadge;//number of users rewarded per badge
     mapping (string => uint) public currentNumUsersRewardPerBadgeNative;//current number of users already claimed native reward per badge
-    mapping (string => mapping(address => uint)) public nonces;//nonce for certain verify functions per address per badgeId
-
     mapping (string => mapping ( address => uint)) public currentNumUsersRewardPerBadgeERC20;// current number of users already claimed reward per badge per ERC20 Address
-    mapping (string => address) public adventurerAddress;//address of adventurer NFT
+    mapping (string => mapping(address => uint)) public nonces;//nonce for certain verify functions per address per badgeId
+    mapping (string => address) public adventurerAddress;//address of adventurer NFT per badge Id
 
     //local adventure mappings
     //_badgeID => version => minterAddress => boolean
