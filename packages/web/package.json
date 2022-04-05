@@ -23,6 +23,7 @@
     "@chakra-ui/icons": "^1.0.15",
     "@chakra-ui/layout": "^1.4.9",
     "@chakra-ui/react": "^1.8.1",
+    "@discovery-dao/ui": "^0.0.14",
     "@emotion/cache": "^11.4.0",
     "@emotion/react": "^11.4.1",
     "@emotion/server": "^11.4.0",
@@ -39,7 +40,8 @@
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.16.0",
     "react-hot-toast": "^2.1.1",
-    "react-icons": "^4.2.0"
+    "react-icons": "^4.2.0",
+    "tsdx": "^0.14.1"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^13.1.0",
