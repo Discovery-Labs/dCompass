@@ -61,59 +61,6 @@ export const getUserThreadClient = (auth: UserAuth, did: string) => {
   return client;
 };
 
-// export const getAuthorizedUserClient = async (identity: PrivateKey) => {
-//   // Check for user group keys
-//   if (!process.env.THREAD_DB_USER_GROUP_KEY) {
-//     throw new Error('Environment variables THREAD_DB_USER_GROUP_KEY missing.');
-//   }
-
-//   // TODO: Call api
-//   const apiSig = await getAPISig();
-
-//   if (!apiSig) {
-//     throw new Error('Error API signature');
-//   }
-
-//   const userAuth = {
-//     ...apiSig,
-//     key: process.env.THREAD_DB_USER_GROUP_KEY,
-//     // token: token,
-//   } as UserAuth;
-
-//   const client = Client.withUserAuth(userAuth);
-//   return client;
-// };
-
-// export const getAuthorizedClient = async (publicKey: string) => {
-//   // Check for user group keys
-//   if (!process.env.THREAD_DB_KEY || !process.env.THREAD_DB_SECRET) {
-//     throw new Error(
-//       'Environment variables THREAD_DB_KEY & THREAD_DB_SECRET missing.',
-//     );
-//   }
-//   const auth = {
-//     key: process.env.THREAD_DB_KEY,
-//     secret: process.env.THREAD_DB_SECRET,
-//   };
-//   const client = await Client.withKeyInfo(auth);
-//   // await client.getToken(identity);
-//   return client;
-// };
-// export const getAuthorizedDevClient = async (identity: Identity) => {
-//   // Check for user group keys
-//   if (!process.env.THREAD_DB_KEY || !process.env.THREAD_DB_SECRET) {
-//     throw new Error(
-//       'Environment variables THREAD_DB_KEY & THREAD_DB_SECRET missing.',
-//     );
-//   }
-//   const auth = {
-//     key: process.env.THREAD_DB_KEY,
-//     secret: process.env.THREAD_DB_SECRET,
-//   };
-//   const client = await Client.withKeyInfo(auth);
-//   return client;
-// };
-
 export const getAPISig = async (seconds = 300) => {
   // Check for user group secret
   if (!process.env.THREAD_DB_USER_GROUP_SECRET) {
