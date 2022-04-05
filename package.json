@@ -17,12 +17,5 @@
     "dapp:dev": "yarn workspace @discovery-dao/dapp dev",
     "web:dev": "yarn workspace @discovery-dao/web dev",
     "api:dev": "yarn workspace @discovery-dao/server dev"
-  },
-  "dependencies": {
-    "@chainlink/contracts": "^0.2.2",
-    "@openzeppelin/contracts": "^4.3.2",
-    "bs58": "^4.0.1",
-    "cids": "^1.1.9",
-    "web3": "^1.6.0"
   }
 }
