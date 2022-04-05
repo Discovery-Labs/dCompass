@@ -1,26 +1,25 @@
 import {
   Avatar,
+  Box,
+  Button,
   Heading,
   HStack,
+  Icon,
+  Link,
   Text,
   VStack,
-  Button,
-  Box,
-  Link,
-  Icon,
 } from "@chakra-ui/react";
 import {
   SkillGroupDataType,
   SkillProvider,
-  SkillThemeType,
   SkillTree,
   SkillTreeGroup,
   SkillType,
 } from "@discovery-dao/tree";
 import { Web3Context } from "contexts/Web3Provider";
 import useCustomColor from "core/hooks/useCustomColor";
-import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useContext } from "react";
 import { SiGithub, SiTwitter } from "react-icons/si";
 
 const gitcoinPath: SkillType[] = [
@@ -243,14 +242,8 @@ function Profile() {
     ],
   };
   const { account } = useContext(Web3Context);
-  const {
-    getOverBgColor,
-    getBorderColor,
-    getPrimaryColor,
-    getTextColor,
-    getBgColor,
-    getColoredText,
-  } = useCustomColor();
+  const { getOverBgColor, getBorderColor, getPrimaryColor, getTextColor } =
+    useCustomColor();
 
   const treeTheme = {
     // : SkillThemeType

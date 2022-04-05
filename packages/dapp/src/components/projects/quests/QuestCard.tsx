@@ -2,38 +2,36 @@ import { useMutation } from "@apollo/client";
 import { CheckIcon, CloseIcon, LockIcon } from "@chakra-ui/icons";
 import {
   Avatar,
+  Box,
   Button,
+  Divider,
   Flex,
   Heading,
-  Spacer,
-  Text,
-  Tag,
   HStack,
-  Stack,
   Icon,
-  VStack,
-  Box,
-  Divider,
-  TagLabel,
-  useToast,
   Modal,
-  ModalOverlay,
+  ModalBody,
   ModalContent,
   ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  ModalOverlay,
+  Spacer,
+  Stack,
+  Tag,
+  TagLabel,
+  Text,
   useDisclosure,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import Card from "components/custom/Card";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { FiUserCheck } from "react-icons/fi";
 import { GiSwordwoman, GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
-
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useCustomColor from "../../../core/hooks/useCustomColor";
 import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
@@ -43,7 +41,6 @@ import {
   CLAIM_QUEST_REWARDS_MUTATION,
   VERIFY_QUEST_MUTATION,
 } from "../../../graphql/quests";
-import Card from "components/custom/Card";
 
 type Quest = {
   id: string;
@@ -107,11 +104,9 @@ function QuestCard({
 }) {
   const toast = useToast();
   const router = useRouter();
-  const questCardMarkdownTheme = useCardMarkdownTheme();
   const { getRewardCurrency } = useTokenList();
   const [status, setStatus] = useState<string>();
 
-  const { getTextColor, getColoredText, getBgColor } = useCustomColor();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { chainId, library } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);

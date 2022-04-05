@@ -115,7 +115,7 @@ function ProjectPage({
   const projectMarkdownTheme = usePageMarkdownTheme();
 
   const { t } = useTranslation("common");
-  const { accentColorScheme, getTextColor, getColoredText } = useCustomColor();
+  const { accentColorScheme } = useCustomColor();
   const { account, isReviewer } = useContext(Web3Context);
   console.log({ isReviewer });
   const { data, loading, error } = useQuery(

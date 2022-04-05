@@ -1,27 +1,31 @@
 import { useQuery } from "@apollo/client";
 import { EditIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import {
+  Avatar,
   Button,
   Flex,
   Heading,
+  HStack,
+  Icon,
+  Progress,
   SimpleGrid,
   Spacer,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
-  HStack,
-  VStack,
-  Avatar,
-  Icon,
-  Stack,
   Tag,
+  Text,
   Tooltip,
-  Progress,
+  VStack,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import Container from "components/layout/Container";
+import { Web3Context } from "contexts/Web3Provider";
+import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
+import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -32,7 +36,6 @@ import { BsBarChartFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { GoTasklist } from "react-icons/go";
 import ReactMarkdown from "react-markdown";
-
 import { initializeApollo } from "../../../../../../lib/apolloClient";
 import CardMedia from "../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../components/layout/BreadcrumbItems";
@@ -41,10 +44,6 @@ import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../core/hooks/useTokenList";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
-import Container from "components/layout/Container";
-import { Web3Context } from "contexts/Web3Provider";
-import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
-import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
 
 type Props = {
   projectId: string | null;

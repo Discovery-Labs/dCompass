@@ -1,26 +1,21 @@
 import { ViewIcon } from "@chakra-ui/icons";
 import {
-  HStack,
+  Badge,
   Button,
   Flex,
-  Text,
-  Stack,
-  Badge,
+  Heading,
+  HStack,
   Icon,
   Link,
-  Heading,
-  VStack,
   Spacer,
+  Stack,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { BsGlobe } from "react-icons/bs";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
-import ReactMarkdown from "react-markdown";
-
-import useCustomColor from "../../core/hooks/useCustomColor";
-import { useCardMarkdownTheme } from "../../core/hooks/useMarkdownTheme";
 import { Project } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
 
@@ -32,8 +27,6 @@ const ProjectCard = ({
   isReviewMode?: boolean;
 }) => {
   const { t } = useTranslation("common");
-  const { getTextColor, getOverBgColor } = useCustomColor();
-  const projectCardMarkdownTheme = useCardMarkdownTheme();
 
   const router = useRouter();
 

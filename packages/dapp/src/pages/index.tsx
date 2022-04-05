@@ -29,13 +29,11 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useContext, useEffect, useState } from "react";
-
 import Container from "../components/layout/Container";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import ProjectCard from "../components/projects/ProjectCard";
 import { Web3Context } from "../contexts/Web3Provider";
 import { projectTagsOptions } from "../core/constants/project-tags";
-import useCustomColor from "../core/hooks/useCustomColor";
 import { Project, Tag } from "../core/types";
 import { ALL_PROJECTS_QUERY } from "../graphql/projects";
 import { ALL_TAGS_QUERY } from "../graphql/tags";
@@ -53,7 +51,6 @@ const fuseOptions = {
 // eslint-disable-next-line complexity
 function Projects() {
   const { t } = useTranslation("common");
-  const { getTextColor } = useCustomColor();
   const {
     data: tagsData,
     loading: loadingTags,

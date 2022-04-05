@@ -1,31 +1,30 @@
 import {
   Avatar,
+  Box,
+  Button,
   Heading,
   HStack,
-  Text,
-  VStack,
-  Button,
-  Box,
-  Link,
   Icon,
-  useClipboard,
   IconButton,
+  Link,
+  Text,
+  useClipboard,
+  VStack,
 } from "@chakra-ui/react";
 import {
   SkillGroupDataType,
   SkillProvider,
-  SkillThemeType,
   SkillTree,
   SkillTreeGroup,
   SkillType,
 } from "@discovery-dao/tree";
 import { Web3Context } from "contexts/Web3Provider";
 import useCustomColor from "core/hooks/useCustomColor";
-import { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { SiGithub, SiTwitter } from "react-icons/si";
 import { useResolveEnsName } from "core/hooks/useResolveEnsName";
+import { useRouter } from "next/router";
+import { useContext } from "react";
 import { MdCheckCircle, MdContentCopy } from "react-icons/md";
+import { SiGithub, SiTwitter } from "react-icons/si";
 
 const gitcoinPath: SkillType[] = [
   {

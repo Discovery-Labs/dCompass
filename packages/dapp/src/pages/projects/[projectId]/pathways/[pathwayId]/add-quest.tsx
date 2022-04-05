@@ -15,7 +15,7 @@ export const questDefaultValues = {
 };
 
 function AddQuestForm() {
-  const { getPrimaryColor, getTextColor } = useCustomColor();
+  const { getPrimaryColor } = useCustomColor();
   const router = useRouter();
   const methods = useForm({
     defaultValues: questDefaultValues,

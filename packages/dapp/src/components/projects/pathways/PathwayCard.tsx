@@ -7,6 +7,11 @@ import {
   Flex,
   Heading,
   HStack,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Progress,
   Spacer,
   Tag,
@@ -15,13 +20,6 @@ import {
   Tooltip,
   useDisclosure,
   VStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 // import { ethers } from "ethers";
@@ -82,14 +80,7 @@ function PathwayCard({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getRewardCurrency } = useTokenList();
-  const {
-    getPrimaryColor,
-    getColoredText,
-    getTextColor,
-    getBgColor,
-    getAccentColor,
-    getOverBgColor,
-  } = useCustomColor();
+  const { getPrimaryColor, getAccentColor } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });

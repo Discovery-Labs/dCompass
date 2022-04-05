@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
 
 function AddPathwayStepper() {
-  const { getPrimaryColor, getTextColor } = useCustomColor();
+  const { getPrimaryColor } = useCustomColor();
   const router = useRouter();
 
   const methods = useForm({
