@@ -35,9 +35,9 @@ const LanguageButton = () => {
             <MenuItem onClick={() => changeLocale("en")}>
               <Text>{t("english")}</Text>
             </MenuItem>
-            <MenuItem onClick={() => changeLocale("it")}>
+            {/* <MenuItem onClick={() => changeLocale("it")}>
               <Text>{t("italian")}</Text>
-            </MenuItem>
+            </MenuItem> */}
           </MenuList>
         </CheckboxGroup>
       </Menu>
