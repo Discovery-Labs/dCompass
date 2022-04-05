@@ -2366,6 +2366,17 @@
     rxjs "^7.2.0"
     semver "^7.3.5"
 
+"@discovery-dao/tree@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@discovery-dao/tree/-/tree-0.0.1.tgz#07979656d32cdb5c338f0042ea5f2f5ee87c10dc"
+  integrity sha512-wq0FMygIVl8H6HT6KzcLHCAC7BlOn3ACP9n/p59yv3Mj5xpXRgqDnyAYz61gBDefa4EvTwCXNsiB2Az+3nfzfQ==
+  dependencies:
+    "@tippy.js/react" "^3.1.1"
+    lodash "^4.17.15"
+    lodash-es "^4.17.15"
+    styled-components "5.0.1"
+    uuid "^7.0.1"
+
 "@discovery-dao/ui@^0.0.13":
   version "0.0.13"
   resolved "https://registry.yarnpkg.com/@discovery-dao/ui/-/ui-0.0.13.tgz#4ce8d64a355d3b27728d11c9cd51292ce915336b"
