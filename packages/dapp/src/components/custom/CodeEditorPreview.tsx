@@ -26,7 +26,7 @@ function CodeEditorPreview(props: CodeEditorPreviewProps) {
 
       {code && isPreview && (
         <Box
-          bgColor={getBgColor}
+          bgColor="bg"
           border={`1px solid ${getBorderColor}`}
           borderRadius="4px"
           padding="4"

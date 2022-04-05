@@ -314,7 +314,7 @@ function AccountProfile() {
           <Avatar
             border={`4px solid ${getPrimaryColor}`}
             padding="1"
-            bgColor={getBgColor}
+            bgColor="bg"
             size="2xl"
             name="Profile Image"
             src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"

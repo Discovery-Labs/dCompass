@@ -298,7 +298,7 @@ function PathwayPage({
                           border={`solid 1px ${getAccentColor}`}
                           hasStripe
                           colorScheme="accentDark"
-                          bgColor={getBgColor}
+                          bgColor="bg"
                         />
                       </HStack>
                     </VStack>

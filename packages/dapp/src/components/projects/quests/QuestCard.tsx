@@ -340,7 +340,7 @@ function QuestCard({
       <Box
         zIndex="overlay"
         borderRadius="8"
-        bgColor={getBgColor}
+        bgColor="bg"
         position="absolute"
         top="0"
         right="0"
@@ -546,7 +546,7 @@ function QuestCard({
                     border={`solid 1px ${getAccentColor}`}
                     hasStripe
                     colorScheme="accentDark"
-                    bgColor={getBgColor}
+                    bgColor="bg"
                   />
                 </HStack> */}
               {/* </Tooltip> */}
