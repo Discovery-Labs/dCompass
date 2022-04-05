@@ -191,6 +191,12 @@ function ProjectPage({
             <Heading as="h1" size="3xl" pl="4" color={getTextColor}>
               {name}
             </Heading>
+
+            {/* Short description */}
+            <Text color="text-weak">
+              Sunt nulla non pariatur aliquip adipisicing enim labore
+              exercitation culpa enim.
+            </Text>
           </VStack>
         </HStack>
         <Spacer />

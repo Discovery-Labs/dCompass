@@ -77,8 +77,8 @@ const CreateProjectForm = () => {
           {...register("name", {
             required: REQUIRED_FIELD_LABEL,
             maxLength: {
-              value: 150,
-              message: "Maximum length should be 150",
+              value: 80,
+              message: "Maximum length should be 80",
             },
           })}
         />
@@ -87,8 +87,25 @@ const CreateProjectForm = () => {
         </FormErrorMessage>
       </FormControl>
 
+      <FormControl isInvalid={errors.short}>
+        <FormLabel htmlFor="short">Short Description</FormLabel>
+        <Input
+          placeholder="Short description"
+          {...register("short", {
+            required: REQUIRED_FIELD_LABEL,
+            maxLength: {
+              value: 180,
+              message: "Maximum length should be 180",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.short && errors.short.message}
+        </FormErrorMessage>
+      </FormControl>
+
       <FormControl isInvalid={errors.description}>
-        <FormLabel htmlFor="description">Description</FormLabel>
+        <FormLabel htmlFor="description">Markdown Description</FormLabel>
         <CodeEditor
           value={code}
           language="markdown"

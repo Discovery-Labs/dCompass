@@ -2372,21 +2372,6 @@
     styled-components "5.0.1"
     uuid "^7.0.1"
 
-"@discovery-dao/ui@^0.0.13":
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@discovery-dao/ui/-/ui-0.0.13.tgz#4ce8d64a355d3b27728d11c9cd51292ce915336b"
-  integrity sha512-J3/1N684bKl2kJGa2X5fn2pAiSa0Vkx7UlbJxucv9ldXHTArsyKcRtgFEVZH6ysWSTBNkvViypO+6hV01itfwA==
-  dependencies:
-    "@chakra-ui/icons" "^1.0.16"
-    "@chakra-ui/react" "^1.8.1"
-    "@emotion/react" "^11"
-    "@emotion/styled" "^11"
-    "@fontsource/inter" "^4.5.1"
-    chakra-ui-steps "^1.6.1"
-    framer-motion "^5"
-    react-icons "^4.3.1"
-    storybook-addon-performance "^0.16.1"
-
 "@discoveryjs/json-ext@^0.5.3", "@discoveryjs/json-ext@^0.5.5":
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
