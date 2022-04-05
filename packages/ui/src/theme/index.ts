@@ -6,6 +6,7 @@ import layerStyles from './layer-styles';
 import styles from './styles';
 import textStyles from './text-styles';
 import semanticTokens from './semantic-tokens';
+import breakpoints from './breakpoints';
 import { colorScheme } from './default-props';
 
 const config = {
@@ -23,6 +24,7 @@ export const customTheme = extendTheme(
     layerStyles,
     textStyles,
     semanticTokens,
+    breakpoints,
   },
   withDefaultColorScheme({ colorScheme: colorScheme })
 );
