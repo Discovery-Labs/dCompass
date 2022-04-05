@@ -13,6 +13,7 @@ function CardMedia({ children, src, imageHeight = "160px", ...others }: any) {
         // p="0"
         // spacing="3"
         align="start"
+        role="group"
         {...others}
       >
         <Box w="full" position="relative">
@@ -25,6 +26,10 @@ function CardMedia({ children, src, imageHeight = "160px", ...others }: any) {
               src={src}
               objectFit="cover"
               filter="blur(80px)"
+              transition="filter 0.3s"
+              _groupHover={{
+                filter: "blur(50px)",
+              }}
             />
           </Box>
           <Box w="full" position="static">
