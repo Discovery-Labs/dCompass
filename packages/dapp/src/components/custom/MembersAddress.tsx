@@ -33,12 +33,7 @@ function MembersAddress(props: MembersAddressProps) {
     <>
       <HStack onClick={onOpen} cursor="pointer">
         <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
-        <Heading
-          as="h4"
-          size="md"
-          textTransform="uppercase"
-          color={getTextColor}
-        >
+        <Heading as="h4" size="md" textTransform="uppercase" color="text">
           {squad.members.length} {t("member")}
           {squad.members.length > 1 ? "s" : ""}
         </Heading>

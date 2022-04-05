@@ -300,7 +300,7 @@ function ReviewProjectPage({
         <VStack w="full" align="flex-start" ml="2">
           <VStack align="flex-start">
             {createdBy && <Blockies seed={createdBy} className="blockies" />}
-            <Text color={getColoredText} textStyle="small" isTruncated>
+            <Text color="text-weak" textStyle="small" isTruncated>
               {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
             <Text fontSize="sm" isTruncated>

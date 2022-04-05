@@ -111,7 +111,7 @@ function Address({
           <ModalCloseButton />
           <ModalBody>
             {type === "me" && "Connected with Metamask"}
-            <Text textStyle="small" color={getColoredText}>
+            <Text textStyle="small" color="text-weak">
               You can copy the address or view it on explorer
             </Text>
             <HStack

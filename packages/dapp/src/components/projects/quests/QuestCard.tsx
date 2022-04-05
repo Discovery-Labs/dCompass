@@ -349,7 +349,7 @@ function QuestCard({
         opacity="0.6"
       >
         <Flex height="full" align="center" justify="center">
-          <LockIcon w={32} h={32} color={getColoredText} />
+          <LockIcon w={32} h={32} color="text-weak" />
         </Flex>
       </Box>
     );

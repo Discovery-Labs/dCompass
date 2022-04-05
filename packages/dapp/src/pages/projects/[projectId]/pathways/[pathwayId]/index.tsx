@@ -182,7 +182,7 @@ function PathwayPage({
       />
 
       <VStack align="left" w="full">
-        <Heading as="h1" size="2xl" color={getTextColor} py="4">
+        <Heading as="h1" size="2xl" color="text" py="4">
           {title}
         </Heading>
         <Tabs w="full">
@@ -263,7 +263,7 @@ function PathwayPage({
                     <Text
                       fontWeight="bold"
                       fontSize="xl"
-                      color={getTextColor}
+                      color="text"
                       textTransform="uppercase"
                     >
                       Difficulty
@@ -285,7 +285,7 @@ function PathwayPage({
                         <Text
                           fontWeight="bold"
                           fontSize="xl"
-                          color={getTextColor}
+                          color="text"
                           textTransform="uppercase"
                         >
                           Progress
@@ -309,7 +309,7 @@ function PathwayPage({
                       <Text
                         fontWeight="bold"
                         fontSize="xl"
-                        color={getTextColor}
+                        color="text"
                         textTransform="uppercase"
                       >
                         Claimed
@@ -324,7 +324,7 @@ function PathwayPage({
                     <Text
                       fontWeight="bold"
                       fontSize="xl"
-                      color={getTextColor}
+                      color="text"
                       textTransform="uppercase"
                     >
                       Rewards
@@ -344,7 +344,7 @@ function PathwayPage({
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color={getColoredText} textStyle="small" isTruncated>
+                    <Text color="text-weak" textStyle="small" isTruncated>
                       {t("creation-date")}{" "}
                       {new Date(createdAt).toLocaleString()}
                     </Text>
@@ -419,7 +419,7 @@ function PathwayPage({
                         fontWeight="bold"
                         fontSize={{ base: "sm", md: "lg" }}
                         bg="violet.100"
-                        color={getTextColor}
+                        color="text"
                         rounded="full"
                         position="relative"
                         _before={{

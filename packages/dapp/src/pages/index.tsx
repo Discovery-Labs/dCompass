@@ -190,7 +190,7 @@ function Projects() {
   return (
     <Container>
       <Flex w="full">
-        <Heading as="h1" size="2xl" color={getTextColor}>
+        <Heading as="h1" size="2xl" color="text">
           {t("projects")}
         </Heading>
         <Spacer />

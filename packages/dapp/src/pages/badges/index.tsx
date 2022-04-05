@@ -90,7 +90,7 @@ function Badges() {
                 </HStack>
 
                 <VStack>
-                  <Text color={getTextColor} fontSize="sm">
+                  <Text color="text" fontSize="sm">
                     Followers 124632 Following 145
                   </Text>
 
@@ -108,7 +108,7 @@ function Badges() {
             <UserNFTs />
           </Stack>
           {/* <Flex w="full">
-            <Text as="h1" textStyle="h1" color={getTextColor}>
+            <Text as="h1" textStyle="h1" color="text">
               Badges
             </Text>
             <Box pt="8">

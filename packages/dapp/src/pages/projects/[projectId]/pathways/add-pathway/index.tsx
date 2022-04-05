@@ -25,7 +25,7 @@ function AddPathwayStepper() {
         <CenteredFrame>
           <Link
             textStyle={"small"}
-            color={getTextColor}
+            color="text"
             _hover={{ color: getPrimaryColor, textDecoration: "none" }}
             onClick={() => router.back()}
           >

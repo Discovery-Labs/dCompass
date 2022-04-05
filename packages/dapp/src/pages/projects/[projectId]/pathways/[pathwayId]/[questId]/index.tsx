@@ -313,8 +313,8 @@ function QuestPage({
       />
 
       <VStack align="left" w="full">
-        <Heading as="h1" size="2xl" color={getColoredText} py="4">
-          {name} <Icon as={RiSwordLine} color={getColoredText} />
+        <Heading as="h1" size="2xl" color="text-weak" py="4">
+          {name} <Icon as={RiSwordLine} color="text-weak" />
         </Heading>
         <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">
@@ -392,7 +392,7 @@ function QuestPage({
                     <Text
                       fontWeight="bold"
                       fontSize="xl"
-                      color={getTextColor}
+                      color="text"
                       textTransform="uppercase"
                     >
                       Quest type
@@ -407,7 +407,7 @@ function QuestPage({
                       <Text
                         fontWeight="bold"
                         fontSize="xl"
-                        color={getTextColor}
+                        color="text"
                         textTransform="uppercase"
                       >
                         Claimed
@@ -422,7 +422,7 @@ function QuestPage({
                     <Text
                       fontWeight="bold"
                       fontSize="xl"
-                      color={getTextColor}
+                      color="text"
                       textTransform="uppercase"
                     >
                       Total Rewards
@@ -442,7 +442,7 @@ function QuestPage({
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color={getColoredText} textStyle="small" isTruncated>
+                    <Text color="text-weak" textStyle="small" isTruncated>
                       {t("creation-date")}{" "}
                       {new Date(createdAt || Date.now()).toLocaleString()}
                     </Text>
@@ -514,7 +514,7 @@ function QuestPage({
                         fontWeight="bold"
                         fontSize={{ base: "sm", md: "lg" }}
                         bg="violet.100"
-                        color={getTextColor}
+                        color="text"
                         rounded="full"
                         position="relative"
                         _before={{

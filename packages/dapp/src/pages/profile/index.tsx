@@ -301,10 +301,10 @@ function Profile() {
         <Text textStyle="h2" fontWeight="bold">
           Satoshi Nakamoto
         </Text>
-        <Text color={getColoredText}>
+        <Text color="text-weak">
           Web3 Developer. Blockchain enthusiast. Shadowy Super Coder.{" "}
         </Text>
-        <Link color={getColoredText} textStyle="small">
+        <Link color="text-weak" textStyle="small">
           https://shadowysupercoder.xyz
         </Link>
         <HStack py="2" spacing={4}>

@@ -244,7 +244,7 @@ function CreateProjectStepper() {
             <NextLink href={"/"} passHref>
               <Link
                 textStyle={"small"}
-                color={getTextColor}
+                color="text"
                 _hover={{ color: getPrimaryColor, textDecoration: "none" }}
               >
                 <ChevronLeftIcon w={6} h={6} />
