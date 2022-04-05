@@ -4,7 +4,7 @@ function Card(props: StackProps) {
   const { children, ...others } = props;
   return (
     <VStack
-      layerStyle="solid-card"
+      layerStyle="solid-hover2"
       h="lg"
       borderRadius="base"
       spacing="4"

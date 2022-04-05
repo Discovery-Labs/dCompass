@@ -16,6 +16,14 @@ import {
   Divider,
   TagLabel,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
@@ -58,6 +66,36 @@ type Quest = {
 };
 const unlocked = true;
 
+const ModalDetails = ({ quest }: { quest: Quest }) => {
+  const { getTextColor, getOverBgColor } = useCustomColor();
+  const pathwayCardMarkdownTheme = useCardMarkdownTheme();
+
+  return (
+    <>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{quest.name}</ModalHeader>
+        <ModalBody>
+          <VStack w="full" align="flex-start">
+            <Box
+              bgGradient={`linear(0deg, ${getOverBgColor} 10%, ${getTextColor} 60%, ${getTextColor})`}
+              bgClip="text"
+            >
+              <ReactMarkdown
+                className="card-markdown"
+                components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
+                skipHtml
+              >
+                {quest.description}
+              </ReactMarkdown>
+            </Box>
+          </VStack>
+        </ModalBody>
+      </ModalContent>
+    </>
+  );
+};
+
 function QuestCard({
   quest,
   projectContributors,
@@ -74,6 +112,7 @@ function QuestCard({
   const [status, setStatus] = useState<string>();
 
   const { getTextColor, getColoredText, getBgColor } = useCustomColor();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { chainId, library } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION, {
@@ -317,13 +356,7 @@ function QuestCard({
   };
   const isCompleted = (quest.completedBy || []).includes(self?.id);
   return (
-    <Card
-      position="relative"
-      h="xl"
-      layerStyle="no-border-hover3"
-      spacing="6"
-      py="4"
-    >
+    <Card position="relative" h="xl" spacing="6" py="4">
       {!unlocked && <LockedScreen />}
 
       <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"} w="full">
@@ -333,7 +366,7 @@ function QuestCard({
             as="h2"
             w="full"
             fontSize="2xl"
-            color={getTextColor}
+            color="text"
             textTransform="uppercase"
           >
             {quest.name}
@@ -349,15 +382,21 @@ function QuestCard({
             </Tag>
           </Flex>
         </Flex>
-        <VStack w="full" align="flex-start" h="160px">
-          <ReactMarkdown
-            className="card-markdown-quest-card"
-            components={ChakraUIRenderer(questCardMarkdownTheme)}
-            skipHtml
-          >
-            {quest.description}
-          </ReactMarkdown>
+        <VStack w="full" align="flex-start" onClick={onOpen}>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalDetails quest={quest} />
+          </Modal>
+          {/* Short Description  */}
+          <Text color="text-weak" noOfLines={3}>
+            Short Description Short Description Short Description Short
+            Description Short Description Short Description Short Description
+            Short Description Short Description Short Description Short
+            Description Short Description Short Description Short Description
+            Short Description
+          </Text>
+          <Text>See more</Text>
         </VStack>
+
         <Divider />
 
         <VStack w="full" align="left" pt="2">
@@ -367,7 +406,7 @@ function QuestCard({
               <Text
                 fontWeight="bold"
                 fontSize="xl"
-                color={getTextColor}
+                color="text"
                 textTransform="uppercase"
               >
                 Quest type
@@ -382,7 +421,7 @@ function QuestCard({
               <Text
                 fontWeight="bold"
                 fontSize="xl"
-                color={getTextColor}
+                color="text"
                 textTransform="uppercase"
               >
                 Claimed
@@ -397,7 +436,7 @@ function QuestCard({
               <Text
                 fontWeight="bold"
                 fontSize="xl"
-                color={getTextColor}
+                color="text"
                 textTransform="uppercase"
               >
                 Rewards
