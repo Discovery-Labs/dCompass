@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsString, IsDefined, IsNotEmpty, IsArray } from 'class-validator';
 import { QuestQuestionAnswerInput } from './QuestQuestionAnswer.input';
 
@@ -21,4 +21,16 @@ export class QuestAnswersSubmitionInput {
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
   questionAnswers: QuestQuestionAnswerInput[];
+
+  @Field()
+  namespace?: string;
+
+  @Field(() => Int)
+  chainId: number;
+
+  @Field()
+  @IsString({ message: 'wrong.type' })
+  @IsDefined({ message: 'not.defined' })
+  @IsNotEmpty({ message: 'not.empty' })
+  questAdventurerSignature: string;
 }

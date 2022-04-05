@@ -8,8 +8,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Verify is Ownable {
     //using ECDSA for bytes32;
 
-    mapping(string => mapping(string => uint256)) public noncesParentIdChildId; //nonce for each parentId and childid (e.g. projectId and  courseId or CourseId and questId)
+    mapping(string => mapping(string => uint256)) public noncesParentIdChildId; //nonce for each parentId and childId (e.g. projectId and  courseId or CourseId and questId)
     mapping(string => uint256) public thresholdNoncesById; //nonce for each parentId Threshold (e.g. projectId for course and Course Id for quest)
+    mapping(string => uint256) public deployNoncesById; //nonce for each projectId deploy of a diamond
     address public serverAddress;
     mapping(address => bool) public approvers;
 
@@ -100,6 +101,38 @@ contract Verify is Ownable {
         );
         require(signer == serverAddress, "SIGNER MUST BE SERVER");
         thresholdNoncesById[_objectId]++;
+        return signer == serverAddress;
+    }
+
+    function deployDiamondVerify(
+        address _senderAddress,
+        string memory _projectId,
+        bytes32 r,
+        bytes32 s,
+        uint8 v
+    ) public returns (bool) {
+        bytes32 hashRecover = keccak256(
+            abi.encodePacked(
+                deployNoncesById[_projectId],
+                _senderAddress,
+                _msgSender(),
+                address(this),
+                _projectId
+            )
+        );
+        address signer = ecrecover(
+            keccak256(
+                abi.encodePacked(
+                    "\x19Ethereum Signed Message:\n32",
+                    hashRecover
+                )
+            ),
+            v,
+            r,
+            s
+        );
+        require(signer == serverAddress, "SIGNER MUST BE SERVER");
+        deployNoncesById[_projectId]++;
         return signer == serverAddress;
     }
 

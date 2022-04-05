@@ -1,83 +1,57 @@
+import { NotFoundException } from '@nestjs/common';
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { schemaAliases } from '../../../core/constants/idx';
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
-// import { PathwayItem } from '../../Pathways/mutations/CreatePathway.resolver';
-// import { QuestItem } from '../../Quests/mutations/CreateQuest.resolver';
+import { Where } from '@textile/hub';
+
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseThreadDBClient } from '../../../core/utils/types';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
+import { Tag } from '../../Tags/Tag.entity';
+
 import { Project } from '../Project.entity';
 
 @Resolver(() => Project)
 export class GetProjectByIdResolver {
+  constructor(private readonly threadDBService: ThreadDBService) {}
+
   @Query(() => Project, {
     nullable: true,
-    description: 'Gets a project by its Stream ID',
+    description: 'Gets a project by its document ID',
     name: 'getProjectById',
   })
   async getProjectById(
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('projectId') projectId: string,
   ): Promise<Project | null | undefined> {
-    const allProjects = await ceramicClient.dataStore.get(
-      schemaAliases.APP_PROJECTS_ALIAS,
-    );
-    const projects = allProjects.projects ?? [];
-    const ogProject = await ceramicClient.ceramic.loadStream(projectId);
-    const additionalFields = projects.find(
-      ({ id }: { id: string }) => id === projectId,
-    );
-    const projectTags = await ceramicClient.ceramic.multiQuery(
-      ogProject.content.tags.map((tag: { id: string }) => ({
-        streamId: tag.id,
-      })),
-    );
-    if (!ogProject || !additionalFields) {
-      return null;
+    console.log({ projectId });
+    const [foundProjects, allTags] = await Promise.all([
+      this.threadDBService.query({
+        collectionName: 'Project',
+        dbClient,
+        threadId: latestThreadId,
+        query: new Where('_id').eq(projectId),
+      }),
+      this.threadDBService.query({
+        collectionName: 'Tag',
+        threadId: latestThreadId,
+        dbClient,
+      }),
+    ]);
+
+    if (!foundProjects || foundProjects.length === 0) {
+      throw new NotFoundException('Project not found');
     }
-    // const projectPathways = record.state.next?.content.pathways;
-    // console.log(projectPathways);
-    // if (projectPathways && projectPathways.length > 0) {
-    //   const allPathways = await Promise.all(
-    //     projectPathways.map(async (pathway: PathwayItem) => {
-    //       const fullPathway = await ceramicClient.ceramic.loadStream(pathway.id);
-    //       const fullPathwayQuests = fullPathway.state.next?.content.quests;
-    //       if (!fullPathwayQuests) {
-    //         return {
-    //           id: pathway.id,
-    //           ...fullPathway.state.content,
-    //         };
-    //       }
-    //       const fullQuests = await Promise.all(
-    //         fullPathwayQuests.map(async (quest: QuestItem) => {
-    //           const fullQuest = await ceramicClient.ceramic.loadStream(
-    //             quest.id,
-    //           );
-    //           return {
-    //             id: quest.id,
-    //             ...fullQuest.state.content,
-    //           };
-    //         }),
-    //       );
-    //       return {
-    //         id: pathway.id,
-    //         ...fullPathway.state.content,
-    //         quests: fullQuests,
-    //       };
-    //     }),
-    //   );
-    //   return {
-    //     id: projectId,
-    //     ...record.state.content,
-    //     pathways: allPathways,
-    //   };
-    // }
+    console.log({ isFound: foundProjects });
+    const [project] = foundProjects as any[];
+    const { _id, _mod, ...rest } = project;
+    console.log({ project });
     return {
-      id: projectId,
-      ...ogProject.state.content,
-      ...additionalFields,
-      tags: Object.entries(projectTags).map(([streamId, document]) => ({
-        id: streamId,
-        ...document.content,
-      })),
-    };
+      id: _id,
+      ...rest,
+      tags: allTags
+        .map((t: any) => ({ id: t._id, ...t }))
+        .filter((tag: any) =>
+          project.tags.map((pjTag: Tag) => pjTag.id).includes(tag.id),
+        ),
+    } as Project;
   }
 }

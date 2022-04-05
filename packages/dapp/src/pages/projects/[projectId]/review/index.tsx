@@ -15,6 +15,10 @@ import {
   Icon,
   SimpleGrid,
   Image,
+  Box,
+  Input,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
@@ -43,6 +47,11 @@ import {
   APPROVE_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
+import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+import ProjectInfo from "components/custom/review/ProjectInfo";
+import AddProjectContributor from "components/custom/review/AddProjectContributor";
+import { SiTwitter, SiDiscord, SiGithub, SiGitbook } from "react-icons/si";
+import { BsGlobe } from "react-icons/bs";
 
 type Props = {
   projectId: string | null;
@@ -63,7 +72,7 @@ export const getServerSideProps: GetServerSideProps<
     const { data } = await client.query({
       query: PROJECT_BY_ID_QUERY,
       variables: {
-        projectId: `ceramic://${id}`,
+        projectId: id,
       },
     });
 
@@ -83,6 +92,7 @@ export const getServerSideProps: GetServerSideProps<
 
 function ReviewProjectPage({
   id,
+  streamId,
   tokenUris,
   logo,
   name,
@@ -98,48 +108,66 @@ function ReviewProjectPage({
   gitbook,
 }: any) {
   const { t } = useTranslation("common");
-  const { defaultMainnetDAIToken } = useTokenList();
   const { isReviewer, contracts } = useContext(Web3Context);
   const { chainId, account, library } = useWeb3React();
   const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
+  const [hasVoted, setHasVoted] = useState(false);
+  const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
   const { getColoredText } = useCustomColor();
   const projectMarkdownTheme = usePageMarkdownTheme();
 
+  const isPendingOrNonExistent =
+    status === "PENDING" || status === "NONEXISTENT";
+
   useEffect(() => {
     async function init() {
-      if (contracts && id) {
-        const statusInt = await contracts.projectNFTContract.status(id);
-        const isMinted = await contracts.projectNFTContract.projectMinted(id);
-        const statusString = await contracts.projectNFTContract.statusStrings(
-          statusInt
-        );
-        setStatus(isMinted ? "MINTED" : statusString);
+      if (contracts) {
+        setProjectNFTContract(contracts.projectNFTContract);
       }
     }
     init();
-  }, [contracts, id]);
+  }, [contracts, projectNFTContract]);
+
+  useEffect(() => {
+    async function init() {
+      if (projectNFTContract && streamId && account) {
+        const statusInt = await projectNFTContract.status(streamId);
+        const isMinted = await projectNFTContract.projectMinted(streamId);
+        const statusString = await projectNFTContract.statusStrings(statusInt);
+        setStatus(isMinted ? "MINTED" : statusString);
+
+        const hasVoted = await projectNFTContract.reviewerVotes(
+          streamId,
+          account
+        );
+        setHasVoted(hasVoted);
+      }
+    }
+    init();
+  }, [projectNFTContract, streamId, account]);
 
   const handleApproveProject = async () => {
-    if (chainId && account) {
-      const contributors = squads.flatMap(
-        ({ members }: { members: string[] }) => members
-      );
-      const voteForApprovalTx =
-        await contracts.projectNFTContract.voteForApproval(
-          contributors,
-          [defaultMainnetDAIToken.address],
-          10,
-          id
+    if (projectNFTContract && chainId && account && isPendingOrNonExistent) {
+      try {
+        const contributors = squads.flatMap(
+          ({ members }: { members: string[] }) => members
         );
-      // get return values or events
-      await voteForApprovalTx.wait(1);
-      const statusInt = await contracts.projectNFTContract.status(id);
-      const statusString = await contracts.projectNFTContract.statusStrings(
-        statusInt
-      );
+
+        const voteForApprovalTx = await projectNFTContract.voteForApproval(
+          contributors,
+          10,
+          streamId
+        );
+        // get return values or events
+        await voteForApprovalTx.wait(1);
+      } catch (e) {
+        console.log("Approve Failed:", e);
+      }
+      const statusInt = await projectNFTContract.status(streamId);
+      const statusString = await projectNFTContract.statusStrings(statusInt);
       setStatus(statusString);
       if (statusString === "APPROVED") {
         const mutationInput = {
@@ -164,6 +192,27 @@ function ReviewProjectPage({
     }
     return null;
   };
+  const handleRejectProject = async () => {
+    if (projectNFTContract && chainId && account && status === "PENDING") {
+      try {
+        const voteForRejectionTx = await projectNFTContract.voteForRejection(
+          streamId
+        );
+        // get return values or events
+        await voteForRejectionTx.wait(1);
+      } catch (e) {
+        console.log("Rejection Failed:", e);
+      }
+      const statusInt = await projectNFTContract.status(streamId);
+      const statusString = await projectNFTContract.statusStrings(statusInt);
+      setStatus(statusString);
+      if (statusString === "DENIED") {
+        // project Refund
+      }
+      return statusString;
+    }
+    return null;
+  };
   const handleCreateToken = async () => {
     if (chainId && account) {
       const cids = tokenUris.map(
@@ -173,21 +222,25 @@ function ReviewProjectPage({
       const createTokenTx = await contracts.projectNFTContract.createToken(
         firstParts,
         secondParts,
-        id
+        streamId
       );
       // get return values or events
       const receipt = await createTokenTx.wait(2);
-      const isMinted = await contracts.projectNFTContract.projectMinted(id);
+      const isMinted = await contracts.projectNFTContract.projectMinted(
+        streamId
+      );
       setStatus("MINTED");
       console.log({ receipt, isMinted });
     }
     return null;
   };
+
   return isReviewer ? (
     <Container>
       <Flex w="full">
         <HStack>
           <Image
+            alt="reviewer logo"
             rounded="full"
             src={`https://ipfs.io/ipfs/${logo}`}
             objectFit="cover"
@@ -201,12 +254,25 @@ function ReviewProjectPage({
 
         <Spacer />
         <VStack align="left">
-          {status && (status === "PENDING" || status === "NONEXISTENT") && (
+          <Text textStyle="small">
+            {hasVoted && status == "PENDING" ? "You have already voted" : ""}
+          </Text>
+          {status && isPendingOrNonExistent && (
             <HStack>
-              <Button onClick={handleApproveProject} leftIcon={<CheckIcon />}>
+              <Button
+                onClick={handleApproveProject}
+                leftIcon={<CheckIcon />}
+                disabled={!isPendingOrNonExistent || hasVoted}
+              >
                 {t("approve-project")}
               </Button>
-              <Button ml="5" colorScheme="secondary" leftIcon={<CloseIcon />}>
+              <Button
+                onClick={handleRejectProject}
+                ml="5"
+                colorScheme="secondary"
+                leftIcon={<CloseIcon />}
+                disabled={status !== "PENDING" || hasVoted}
+              >
                 {t("reject-project")}
               </Button>
             </HStack>
@@ -231,9 +297,9 @@ function ReviewProjectPage({
         </VStack>
       </Flex>
       <Flex w="full" direction="column" pt="4">
-        <Flex align="center" maxW="full">
-          {createdBy && <Blockies seed={createdBy} className="blockies" />}
-          <VStack align="flex-start" ml="2">
+        <VStack w="full" align="flex-start" ml="2">
+          <VStack align="flex-start">
+            {createdBy && <Blockies seed={createdBy} className="blockies" />}
             <Text color={getColoredText} textStyle="small" isTruncated>
               {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
@@ -241,27 +307,77 @@ function ReviewProjectPage({
               {t("by")} {createdBy}
             </Text>
           </VStack>
-        </Flex>
-        <Stack direction="row" pt="4">
-          {tags.map((tag: TagType) => (
-            <Badge key={tag.id} colorScheme={tag.color}>
-              {tag.label}
-            </Badge>
-          ))}
-        </Stack>
-        <SocialLinks
-          website={website}
-          discord={discord}
-          twitter={twitter}
-          github={github}
-          gitbook={gitbook}
-        />
-        <ReactMarkdown
-          components={ChakraUIRenderer(projectMarkdownTheme)}
-          skipHtml
-        >
-          {description}
-        </ReactMarkdown>
+
+          <Stack direction="row" pt="4">
+            {tags.map((tag: TagType) => (
+              <Badge key={tag.id} colorScheme={tag.color}>
+                {tag.label}
+              </Badge>
+            ))}
+          </Stack>
+
+          <ReactMarkdown
+            components={ChakraUIRenderer(projectMarkdownTheme)}
+            skipHtml
+          >
+            {description}
+          </ReactMarkdown>
+
+          {projectNFTContract && streamId && (
+            <>
+              <HStack
+                pt="4"
+                w="full"
+                align="start"
+                justify="space-between"
+                spacing={8}
+              >
+                <AddProjectContributor
+                  contract={projectNFTContract}
+                  id={streamId}
+                />
+                <Box layerStyle="outline-card">
+                  <ProjectInfo contract={projectNFTContract} id={streamId} />
+                </Box>
+              </HStack>
+            </>
+          )}
+        </VStack>
+
+        <VStack align="flex-start">
+          <Heading>Links</Heading>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={BsGlobe} />
+            </InputLeftElement>
+            <Input value={website} disabled />
+          </InputGroup>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={SiTwitter} />
+            </InputLeftElement>
+            <Input value={twitter} disabled />
+          </InputGroup>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={SiDiscord} />
+            </InputLeftElement>
+            <Input value={discord} disabled />
+          </InputGroup>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={SiGithub} />
+            </InputLeftElement>
+            <Input value={github} disabled />
+          </InputGroup>
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={SiGitbook} />
+            </InputLeftElement>
+            <Input value={gitbook} disabled />
+          </InputGroup>
+        </VStack>
+
         <Heading as="h3" size="lg" py="4">
           {squads.length} Squad{squads.length > 1 ? "s" : ""}
         </Heading>

@@ -1,101 +1,40 @@
-import React from "react";
 import {
+  AspectRatio,
   Box,
   Button,
-  Divider,
+  Flex,
   Heading,
-  HStack,
+  Image,
+  ListItem,
   SimpleGrid,
   Text,
-  VStack,
-  Image,
-  Link,
-  Flex,
-  List,
-  ListItem,
-  ListIcon,
-  OrderedList,
   UnorderedList,
-  AspectRatio,
+  VStack,
 } from "@chakra-ui/react";
-
-import useCustomColor from "hooks/useCustomColor";
-
 import { Circle } from "components/Circles/Circle";
-import Navbar from "components/layout/Navbar";
 import Footer from "components/layout/Footer";
-import FAQ from "components/Sections/FAQ";
-
 import Section from "components/layout/Section";
+import FAQ from "components/Sections/FAQ";
+import Hero from "components/Sections/Hero";
+import Members from "components/Sections/Members";
+import useCustomColor from "hooks/useCustomColor";
+import useThemeImage from "hooks/useThemeImage";
+import React from "react";
+import GitcoinFooter from '../components/layout/GitcoinFooter';
+
 const Home = () => {
-  const { getPrimaryColor } = useCustomColor();
+  const { getOverBgColor, getColoredText } = useCustomColor();
+  const { getBgDots } = useThemeImage();
+
   const APP_URL = "https://dcompass-staging.herokuapp.com/";
-  const DISCORD_URL = "https://discord.gg/MkfqU2bPhT";
 
   return (
     <Box mb={8} w="full">
-      <Section bgImage="url(/images/hero-bg.png)" bgSize="cover">
-        <Navbar />
-        <HStack py={["8", "16", "32"]}>
-          {/* <SimpleGrid
-            columns={{
-              base: 1,
-              sm: 1,
-              md: 2,
-            }}
-          > */}
-          <VStack align="left" w="full">
-            <Flex>
-              <Box flex="1">
-                <Heading pt="10" fontSize="6xl" maxW={500}>
-                  A gamified and community driven
-                  <Box layerStyle="gradient-text">Web3 learning platform.</Box>
-                </Heading>
-                <HStack py="12" justifyContent="start" spacing="8">
-                  <Button
-                    p="5"
-                    aria-label="Launch App"
-                    onClick={() => window.open(APP_URL)}
-                    layerStyle="gradient-bg"
-                    _hover={{
-                      transform: "scale(1.05)",
-                    }}
-                    transition="all 0.3"
-                    transitionTimingFunction={"spring(1 100 10 10)"}
-                  >
-                    Enter App
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    p="5"
-                    aria-label="Learn More"
-                    onClick={() => window.open(DISCORD_URL)}
-                    _hover={{
-                      transform: "scale(1.05)",
-                    }}
-                    transition="all 0.3"
-                    transitionTimingFunction={"spring(1 100 10 10)"}
-                  >
-                    Learn more
-                  </Button>
-                </HStack>
-              </Box>
-            </Flex>
-          </VStack>
-          {/* <Image
-              rounded="3xl"
-              boxShadow="dark-lg"
-              alt="skill-tree"
-              src="/dCompass-skill-tree.png"
-            />
-          </SimpleGrid> */}
-        </HStack>
-      </Section>
+      <Hero />
 
       <Section>
-        <VStack mt="16" spacing="4" align="left">
-          <Heading pb="8" layerStyle="gradient-text">
+        <VStack my={["0", "8"]} spacing="4" align="left">
+          <Heading pb="8" inlineSize="fit-content" layerStyle="gradient-text">
             Watch the video
           </Heading>
           <AspectRatio ratio={16 / 9}>
@@ -109,10 +48,16 @@ const Home = () => {
       </Section>
 
       <Section>
-        <VStack mt="16" spacing="4" align="left">
-          <Heading pb="8" layerStyle="gradient-text">
+        <VStack w="full" my="8" spacing="4" align="left">
+          <Heading pb="8" inlineSize="fit-content" layerStyle="gradient-text">
             How it Works
           </Heading>
+          <Image
+            alignSelf="center"
+            maxW={["250px", "350px", "800px"]}
+            alt="icon"
+            src="./images/product.png"
+          />
           <SimpleGrid
             columns={{
               sm: 1,
@@ -132,7 +77,7 @@ const Home = () => {
                   text="1"
                 />
               </Box>
-              <Text>Browse a currated list of Web3 projects</Text>
+              <Text>Browse a curated list of Web3 projects</Text>
             </VStack>
             <VStack layerStyle="outline-hover2">
               <Box pb="4">
@@ -169,9 +114,9 @@ const Home = () => {
         </VStack>
       </Section>
 
-      <Section bgImage="url(/images/dots.png)" bgSize="contain">
-        <VStack mt="16" spacing="4" align="left">
-          <Heading pb="8" layerStyle="gradient-text">
+      <Section bgImage={getBgDots} bgSize="cover">
+        <VStack my="8" spacing="4" align="left">
+          <Heading pb="8" inlineSize="fit-content" layerStyle="gradient-text">
             Discover the future of the web
           </Heading>
           <SimpleGrid
@@ -181,52 +126,72 @@ const Home = () => {
             }}
             spacing={8}
           >
-            <VStack layerStyle="solid-hover2" opacity={0.8}>
+            <VStack
+              textAlign={["center", "center", "start"]}
+              layerStyle="solid-hover2"
+              opacity={0.8}
+            >
               <Image
-                boxSize="150px"
+                boxSize={["100px", "150px", "150px"]}
                 alt="icon"
                 src="./images/icon-features04.png"
               />
               <Text pt="8" textStyle="h2" fontWeight="bold">
                 CLIMB THE LEADERBOARD
               </Text>
-              <Text>Earn XPs and increase your ranking!</Text>
+              <Text color={getColoredText}>
+                Earn XPs and increase your ranking!
+              </Text>
             </VStack>
-            <VStack layerStyle="solid-hover2" opacity={0.8}>
+            <VStack
+              textAlign={["center", "center", "start"]}
+              layerStyle="solid-hover2"
+              opacity={0.8}
+            >
               <Image
-                boxSize="150px"
+                boxSize={["100px", "150px", "150px"]}
                 alt="icon"
                 src="./images/icon-features03.png"
               />
               <Text pt="8" textStyle="h2" fontWeight="bold">
                 EARN NFTS
               </Text>
-              <Text>Mint Quest & Badge NFTs with a random rarity</Text>
+              <Text color={getColoredText}>
+                Mint Quest & Badge NFTs with a random rarity
+              </Text>
             </VStack>
-            <VStack layerStyle="solid-hover2" opacity={0.8}>
+            <VStack
+              textAlign={["center", "center", "start"]}
+              layerStyle="solid-hover2"
+              opacity={0.8}
+            >
               <Image
-                boxSize="150px"
+                boxSize={["100px", "150px", "150px"]}
                 alt="icon"
                 src="./images/icon-features02.png"
               />
               <Text pt="8" textStyle="h2" fontWeight="bold">
                 SKILL TREE
               </Text>
-              <Text>
+              <Text color={getColoredText}>
                 Showcase your accomplishments in Web3 through your dynamic
                 profile.
               </Text>
             </VStack>
-            <VStack layerStyle="solid-hover2" opacity={0.8}>
+            <VStack
+              textAlign={["center", "center", "start"]}
+              layerStyle="solid-hover2"
+              opacity={0.8}
+            >
               <Image
-                boxSize="150px"
+                boxSize={["100px", "150px", "150px"]}
                 alt="icon"
                 src="./images/icon-features01.png"
               />
               <Text pt="8" textStyle="h2" fontWeight="bold">
                 EARN
               </Text>
-              <Text>
+              <Text color={getColoredText}>
                 Get rewarded by validating your learnings and actions. Get hired
                 in Web3.
               </Text>
@@ -235,12 +200,12 @@ const Home = () => {
         </VStack>
       </Section>
 
-      <Section>
-        <VStack mt="16" spacing="4" align="left">
-          <Heading pb="8" layerStyle="gradient-text">
+      <Section bg={getOverBgColor}>
+        <VStack my="8" spacing="4" align="left">
+          <Heading pb="8" inlineSize="fit-content">
             Our mission
           </Heading>
-          <Text>
+          <Text fontSize={["lg", "xl", "2xl"]} color={getColoredText}>
             dCompass’ primary mission will be to onboard, guide and educate
             users about the Gitcoin ecosystem, sustainable open source software
             & trustworthy Web3 protocols and tools, decentralization &
@@ -249,24 +214,26 @@ const Home = () => {
           <Text>
             We believe there are 3 main problems that need to be solved:
           </Text>
-          <UnorderedList>
-            <ListItem>
-              Aggregating ever-growing but scattered information
-            </ListItem>
-            <ListItem>
-              Retaining users and community members/contributors
-            </ListItem>
-            <ListItem>
-              DAO project management, contributor management, and intuitive
-              onboarding
-            </ListItem>
-          </UnorderedList>
+          <Box>
+            <UnorderedList>
+              <ListItem>
+                Aggregating ever-growing but scattered information
+              </ListItem>
+              <ListItem>
+                Retaining users and community members/contributors
+              </ListItem>
+              <ListItem>
+                DAO project management, contributor management, and intuitive
+                onboarding
+              </ListItem>
+            </UnorderedList>
+          </Box>
         </VStack>
       </Section>
 
       <Section>
         <VStack mt="16" spacing="4" align="left">
-          <Heading pb="8" layerStyle="gradient-text">
+          <Heading pb="8" inlineSize="fit-content" layerStyle="gradient-text">
             Our story
           </Heading>
           <Text>
@@ -275,11 +242,10 @@ const Home = () => {
             the finals in the HackFS Hackathon. Our next step is to build the
             best platform to onboard people and achieve our mission.
           </Text>
-          <Text>
-            We believe there are 3 main problems that need to be solved:
-          </Text>
         </VStack>
       </Section>
+
+      <Members />
 
       <FAQ />
 
@@ -302,7 +268,7 @@ const Home = () => {
       </Section>
 
       <Section>
-        <Footer />
+        <GitcoinFooter />
       </Section>
     </Box>
   );

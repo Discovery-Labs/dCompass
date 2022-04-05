@@ -2,10 +2,12 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import { ProjectDiamond } from "./ProjectDiamond.sol";
 
 contract AppDiamond is Ownable {
     address projectNFTAddr;//address that mints NFT after approval process to project
     address verifyAddr;//address that verifies deployments and updates
+    address pathwayNFTAddr;//address mints Pathway NFTs
     mapping (address => bool) public reviewers;//same ones who can approve projectNFT
     uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )
     uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation
@@ -18,8 +20,9 @@ contract AppDiamond is Ownable {
     mapping (string => mapping (uint => address[])) internal projectApprovedERC20sPerChain;//approved ERC20s per project per chain
     mapping (string => mapping (uint => mapping (address => bool))) public isProjectERC20ApprovedOnChainId;//check if this is an approved ERC20 for project
 
-    constructor(address _projectNFTAddr, address _verifyAddr, address _sponsorSFT, address _appSigningAddr){
+    constructor(address _projectNFTAddr, address _pathwayNFTAddr, address _verifyAddr, address _sponsorSFT, address _appSigningAddr){
         projectNFTAddr = _projectNFTAddr;
+        pathwayNFTAddr = _pathwayNFTAddr;
         verifyAddr = _verifyAddr;
         appSigningAddr = _appSigningAddr;
         sponsorSFT = _sponsorSFT;
@@ -37,11 +40,29 @@ contract AppDiamond is Ownable {
         projApproved[_projectId] = true;
     } 
       
-    function deployDiamond(string memory _projectId, bool appSign, address projectSigningAddr, bytes32 r, bytes32 s, uint8 v) external {
-        require(projectDiamondAddrs[_projectId] == address(0), "project had a diamond already");//for now immutable diamond
+    function deployDiamond(string memory _projectId, bool appSign, address projectSigningAddr, address _diamondCutFacet, bytes32 r, bytes32 s, uint8 v) external {
+        (bool success, bytes memory data) = projectNFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("reviewers(address)")), _msgSender()));
+        require(success, "unsuccessful call");
+        success = abi.decode(data, (bool));
+        require(success, "not approved app reviewer");
+        require(projectDiamondAddrs[_projectId] == address(0), "project had a diamond already");//for now immutable diamond could change later
         require(projApproved[_projectId], "project NFT not minted");
-        //call verify to make sure this is ok to deploy...
+        //call verify to make sure this is ok to deploy
+        (success, data) = verifyAddr.call(abi.encodeWithSelector(bytes4(keccak256("deployDiamondVerify(address,string,bytes32,bytes32,bytes32)")), 
+                _msgSender(),
+                _projectId,
+                r,
+                s,
+                v
+            ));
+        require(success, "unsuccessful call");
+        success = abi.decode(data, (bool));
+        require(success, "AppDiamond : not approved deploy");
+        
         //deploy diamond for project
+
+        ProjectDiamond p = new ProjectDiamond(owner(), _diamondCutFacet, appSign, projectSigningAddr, projectNFTAddr, pathwayNFTAddr, _projectId);
+        projectDiamondAddrs[_projectId] = address(p);
     }
 
     //impossible for now to take off approved ERC20 Addrs, but can add new ones to mapping

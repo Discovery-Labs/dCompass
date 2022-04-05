@@ -15,7 +15,9 @@ Ceramic is our main data store in conjunction with Filecoin & IPFS for file stor
 │ ├── web # Landing page https://www.dcompass.discovery-dao.xyz/
 │ ├── schemas # Ceramic and JSON schemas
 │ ├── dapp # Web3 app for the projects, quests, etc
-│ └── server # Will contain a centralised NodeJS server storing data on a Ceramic instance with a private key
+│ ├── hardhat # Contracts compiled & deployed using hardhat.js
+│ ├── ui # Our custom Chakra UI theme
+│ └── server # A NodeJS server storing data on a Ceramic instance with a private key
 └── ... config ...
 ```
 
@@ -27,6 +29,18 @@ Ceramic is our main data store in conjunction with Filecoin & IPFS for file stor
 - [Yarn](https://classic.yarnpkg.com/en/docs/install/)
 - [Git](https://git-scm.com/downloads)
 - Accounts and API keys for [NFT.storage](https://nft.storage/) and [WEB3.storage](https://web3.storage/)
+
+### Clone dCompass
+
+```sh
+$ git clone https://github.com/Discovery-Labs/dCompass.git
+```
+
+### install dependencies
+
+```sh
+$ cd dCompass && yarn install
+```
 
 ### Setup env
 
@@ -41,18 +55,6 @@ $ cp .example.env .env
 
 Go to https://web3.storage and set the value of WEB3STORAGE_TOKEN with your web3.storage API key.
 
-### Clone dCompass
-
-```sh
-$ git clone https://github.com/Discovery-Labs/dCompass.git
-```
-
-### install dependencies
-
-```sh
-$ cd dCompass && yarn install
-```
-
 ### 🏺‍ Publish your Ceramic schemas
 
 ```sh
@@ -62,8 +64,17 @@ $ yarn build
 
 ### 🛰 Run the backend
 
+At the root of the project, you can run
+
 ```sh
-$ cd packages/server && yarn start:dev
+$ yarn api:dev
+```
+
+or
+
+```bash
+$ cd packages/dapp
+$ yarn dev
 ```
 
 ### 👷‍ Build it!
@@ -97,6 +108,14 @@ $ yarn deploy --network mytestnet --reset
 
 **Start the 📱 dApp:**
 
+At the root of the project, you can run
+
+```bash
+$ yarn dapp:dev
+```
+
+or
+
 ```bash
 $ cd packages/dapp
 $ yarn dev
@@ -105,6 +124,14 @@ $ yarn dev
 **Start the 📱 landing page:**
 
 > (Optional, doesn't need anything else to run)
+
+At the root of the project, you can run
+
+```bash
+$ yarn web:dev
+```
+
+or
 
 ```sh
 $ cd packages/web

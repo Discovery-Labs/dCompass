@@ -259,7 +259,7 @@ const ProfileForm = ({
                   {errors.name && errors.name.message}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl w="full" align="left">
+              <FormControl w="full">
                 <FormLabel>Social Accounts</FormLabel>
                 {github ? (
                   <Link

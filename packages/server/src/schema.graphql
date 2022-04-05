@@ -16,15 +16,19 @@ input ApproveProjectInput {
   tokenUris: [String!]!
 }
 
-type ApproveProjectOutput {
+input ApproveQuestInput {
+  chainId: Int!
   id: String!
-  isFeatured: Boolean!
-  tokenUris: [String!]!
+  namespace: String
+  questApproverSignature: String!
 }
 
-input ApproveQuestInput {
-  id: String!
-  questApproverSignature: String!
+input ClaimQuestRewardsInput {
+  chainId: Int!
+  did: String!
+  namespace: String
+  questAdventurerSignature: String!
+  questId: String!
 }
 
 input CreatePathwayInput {
@@ -47,16 +51,6 @@ type CreateProjectOutput {
 input CreateQuestInput {
   id: String!
   questCreatorSignature: String!
-}
-
-input CreateTagInput {
-  color: String!
-  label: String!
-  value: String!
-}
-
-input CreateTagsInput {
-  tags: [CreateTagInput!]!
 }
 
 input EditProjectInput {
@@ -87,16 +81,19 @@ type GithubContributorQuest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   githubOrgId: String!
   id: String!
   image: String!
   isPending: Boolean
   name: String!
+  pathway: Pathway!
   pathwayId: String!
   questType: String!
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  streamId: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -107,10 +104,13 @@ type Mutation {
   approvePathway(input: ApprovePathwayInput!): Pathway
 
   """Approves a new Project in dCompass"""
-  approveProject(input: ApproveProjectInput!): [ApproveProjectOutput!]
+  approveProject(input: ApproveProjectInput!): Project
 
   """Approve a new Quest in dCompass"""
   approveQuest(input: ApproveQuestInput!): Quest
+
+  """Verify a new Quest right before minting in dCompass"""
+  claimQuestRewards(input: ClaimQuestRewardsInput!): Quest
 
   """Create a new Github Contributor Quest in dCompass"""
   createGithubContributorQuest(input: CreateQuestInput!): GithubContributorQuest
@@ -130,17 +130,17 @@ type Mutation {
   """Create a new Snapshot Voter Quest in dCompass"""
   createSnapshotVoterQuest(input: CreateQuestInput!): SnapshotVoterQuest
 
-  """Create a new Tag in Discovery"""
-  createTag(input: CreateTagInput!): Tag
-
-  """Creates multiple new Tags in Discovery"""
-  createTags(input: CreateTagsInput!): [Tag!]
-
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
 
+  """Submits quest answers"""
+  submitQuestAnswers(input: QuestAnswersSubmitionInput!): SubmitQuestAnswersOutput!
+
   """Verify a new Pathway right before minting in dCompass"""
   verifyPathway(input: VerifyPathwayInput!): Pathway
+
+  """Verify a new Quest right before minting in dCompass"""
+  verifyQuest(input: VerifyQuestInput!): Quest
 }
 
 type NFTOwnerQuest {
@@ -151,16 +151,19 @@ type NFTOwnerQuest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
   name: String!
   namespace: String!
+  pathway: Pathway!
   pathwayId: String!
   questType: String!
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  streamId: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -178,10 +181,12 @@ type Pathway {
   isPending: Boolean
   prerequisites: [String!]
   projectId: String!
+  projectStreamId: String!
   quests: [Quest!]
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  streamId: String!
   title: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -218,8 +223,10 @@ type Project {
   pathways: [Pathway!]
   peerProjects: [String!]
   pendingMembers: [String!]
+  pendingPathways: [Pathway!]
   repos: [String!]
   squads: [Squad!]!
+  streamId: String!
   tags: [Tag!]
   tokenUris: [String!]!
   twitter: String
@@ -239,22 +246,28 @@ input ProjectSquadsInput {
 
 type Query {
   """Gets all the pathways in dCompass"""
-  getAllPathwaysByProjectId(projectId: String!): [Pathway!]
+  getAllPathwaysByProjectId(projectId: String!): Project
 
   """Gets all the projects in dCompass"""
   getAllProjects: [Project!]
 
   """Gets all the quests in dCompass"""
-  getAllQuestsByPathwayId(pathwayId: String!): [Quest!]
+  getAllQuestsByPathwayId(pathwayId: String!): Pathway
 
   """Gets all the tags in Discovery"""
   getAllTags: [Tag!]
 
+  """Return the DID of the dCompass backend server"""
+  getAppDID: String
+
   """Gets a pathway by its Stream ID"""
   getPathwayById(pathwayId: String!): Pathway
 
-  """Gets a project by its Stream ID"""
+  """Gets a project by its document ID"""
   getProjectById(projectId: String!): Project
+
+  """Gets a quiz quest by its ID"""
+  getQuizQuestById(questId: String!): QuizQuest
 }
 
 type Quest {
@@ -263,18 +276,35 @@ type Quest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
   name: String!
+  pathway: Pathway!
   pathwayId: String!
   questType: String!
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  streamId: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
+}
+
+input QuestAnswersSubmitionInput {
+  chainId: Int!
+  did: String!
+  namespace: String
+  questAdventurerSignature: String!
+  questId: String!
+  questionAnswers: [QuestQuestionAnswerInput!]!
+}
+
+input QuestQuestionAnswerInput {
+  answer: [String!]!
+  question: String!
 }
 
 type QuizQuest {
@@ -283,16 +313,19 @@ type QuizQuest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
   name: String!
+  pathway: Pathway!
   pathwayId: String!
   questType: String!
   questions: [QuizQuestion!]!
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  streamId: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -310,16 +343,19 @@ type SnapshotVoterQuest {
   """Identifies the date and time when the object was created."""
   createdAt: String!
   description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
   name: String!
+  pathway: Pathway!
   pathwayId: String!
   proposalId: String!
   questType: String!
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  streamId: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -331,6 +367,30 @@ type Squad {
   image: String
   members: [String!]!
   name: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+}
+
+type SubmitQuestAnswersOutput {
+  completedBy: [String!]
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+  description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
+  id: String!
+  image: String!
+  isPending: Boolean
+  isSuccess: Boolean!
+  name: String!
+  pathway: Pathway!
+  pathwayId: String!
+  questType: String!
+  rewardAmount: Int!
+  rewardCurrency: String!
+  rewardUserCap: Int!
+  streamId: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -354,4 +414,11 @@ input VerifyPathwayInput {
   id: String!
   namespace: String
   pathwayMinterSignature: String!
+}
+
+input VerifyQuestInput {
+  chainId: Int!
+  id: String!
+  namespace: String
+  questMinterSignature: String!
 }

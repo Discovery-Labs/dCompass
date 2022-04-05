@@ -7,15 +7,8 @@ export declare const ContributorsSchema: {
         title: string;
         properties: {
             id: {
-                $ref: string;
+                type: string;
             };
-        };
-    };
-    definitions: {
-        CeramicStreamId: {
-            type: string;
-            pattern: string;
-            maxLength: number;
         };
     };
 };

@@ -1,6 +1,18 @@
 import { providers, utils } from "ethers";
 import { useState, useEffect } from "react";
 
+export const lookupEns = async (ens: string): Promise<string | null> => {
+  const infuraPovider = new providers.InfuraProvider(
+    1,
+    process.env.NEXT_PUBLIC_INFURA_ID
+  );
+  const reportedAddress = await infuraPovider.resolveName(ens);
+  if (reportedAddress && utils.isAddress(reportedAddress)) {
+    return reportedAddress;
+  }
+  return null;
+};
+
 /**
  * @internal
  *

@@ -62,6 +62,8 @@ function Projects() {
   const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
     fetchPolicy: "cache-and-network",
   });
+
+  console.log({ loadingTags, loading });
   const [filteredProjects, setFilteredProjects] = useState<Array<Project>>([]);
 
   const [searchedProjects, setSearchedProjects] = useState<
@@ -210,10 +212,10 @@ function Projects() {
             onChange={(e: Array<string>) => filterWithTags(e)}
             defaultValue={fiterTags}
           >
-            <MenuList>
+            <MenuList w="full">
               {tagsData.getAllTags.map(({ id, color, label }: Tag) => (
-                <MenuItem key={id}>
-                  <Checkbox colorScheme={color} value={id}>
+                <MenuItem w="full" key={id}>
+                  <Checkbox w="full" colorScheme={color} value={id}>
                     {label}
                   </Checkbox>
                 </MenuItem>
@@ -223,7 +225,7 @@ function Projects() {
         </Menu>
       </HStack>
 
-      <Tabs w="full" variant="line">
+      <Tabs w="full" variant="unstyled">
         <TabList>
           <Tab>{t("all-projects")}</Tab>
           <Tab>{t("my-projects")}</Tab>

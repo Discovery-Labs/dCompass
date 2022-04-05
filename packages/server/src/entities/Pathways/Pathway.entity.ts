@@ -41,10 +41,16 @@ export class Pathway extends BaseEntity {
   id: string;
 
   @Field()
+  streamId: string;
+
+  @Field()
   title: string;
 
   @Field()
   projectId: string;
+
+  @Field()
+  projectStreamId: string;
 
   @Field()
   image: string;

@@ -1,4 +1,10 @@
 /* Global Styling here */
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 .blockies {
   border-radius: 50%;
 }
@@ -17,7 +23,7 @@
 }
 
 .code-editor {
-  border: solid 1px #3d374e;
+  border: solid 1px #6f3ff5;
   border-radius: 5px;
   padding: 8px 0px;
   min-height: 80px;
@@ -32,6 +38,24 @@
 
 .code-editor:focus {
   border: solid 2px #8c65f7;
+}
+
+.code-editor-light {
+  border: solid 1px #6f3ff5;
+  border-radius: 5px;
+  padding: 8px 0px;
+  min-height: 80px;
+  line-height: 100%;
+  vertical-align: top;
+  font-family: "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace";
+}
+
+.code-editor-light:hover {
+  border: solid 1px #6f3ff5;
+}
+
+.code-editor-light:focus {
+  border: solid 2px #6f3ff5;
 }
 
 .w-tc-editor {

@@ -8,6 +8,7 @@ const baseStyle: SystemStyleFunction = (props) => {
   return {
     fontFamily: 'heading',
     fontWeight: 'bold',
+    textTransform: 'uppercase',
     color: getTextColor(props),
     _selection: {
       bg: getPrimaryColor(props),

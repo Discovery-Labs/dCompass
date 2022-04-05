@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 // import { useRouter } from "next/router";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import ControlledSelect from "../../../Inputs/ControlledSelect";
 
 import OptionsFieldArray from "./OptionsFieldArray";
 
@@ -17,8 +18,11 @@ export default function Questions({ control, register }: any) {
   // const router = useRouter();
 
   const {
+    watch,
     formState: { errors },
   } = useFormContext();
+
+  const currentValues = watch();
 
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
@@ -79,28 +83,31 @@ export default function Questions({ control, register }: any) {
               </FormErrorMessage>
             </FormControl>
 
-            <FormControl
-              isInvalid={errors.questions && errors.questions[index].answer}
-            >
-              <FormLabel htmlFor={`questions[${index}].answer`}>
-                Correct Answer
-              </FormLabel>
-              <Input
-                placeholder="Omega"
-                {...register(`questions[${index}].answer`, {
-                  required: "This is required",
-                  maxLength: {
-                    value: 150,
-                    message: "Maximum length should be 150",
-                  },
-                })}
-              />
-              <FormErrorMessage>
-                {errors.questions &&
-                  errors.questions[index].answer &&
-                  errors.questions[index].answer.message}
-              </FormErrorMessage>
-            </FormControl>
+            <ControlledSelect
+              control={control}
+              name={`questions[${index}].answer`}
+              label="Correct answer(s)"
+              isMulti
+              rules={{
+                required: "At least one correct answer must be set.",
+                minLength: {
+                  value: 1,
+                  message: "At least one correct answer must be set.",
+                },
+              }}
+              options={
+                currentValues.questions[index]?.options?.length > 0
+                  ? currentValues.questions[index].options.map(
+                      (opt: { value: string }) => ({
+                        label: opt.value,
+                        value: opt.value,
+                        colorScheme: "primary",
+                      })
+                    )
+                  : []
+              }
+            />
+
             <Divider bg="none" py="5" />
           </VStack>
         );

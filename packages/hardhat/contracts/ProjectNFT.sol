@@ -21,7 +21,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     mapping (address => bool) public reviewers;
     uint128 public multiSigThreshold; //gives minimum multisig percentage (30 = 30% )
     uint128 public numReviewers;//number of Reviewers. Needed for threshold calculation
-    address payable appWallet;//sign in a script and also withdraw slashed stakes
+    address payable public appWallet;//sign in a script and also withdraw slashed stakes
     address payable appDiamond;//address of the app level diamond
     address payable sponsorSFTAddr;//address of ERC-1155 that controls sponsor staking
     enum ProjectStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
@@ -76,12 +76,15 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
     }
     
     function voteForApproval(address[] memory _contributors, uint _threshold, string memory _projectId) public onlyReviewer{
-        require(status[_projectId] != ProjectStatus.DENIED && status[_projectId] != ProjectStatus.APPROVED, "finalized project");
+        require(
+            status[_projectId] == ProjectStatus.PENDING,
+            "status not pending"
+        );
         require(!reviewerVotes[_projectId][_msgSender()], "already voted for this project");
         require (projectWallets[_projectId] != address(0), "no project wallet");
         votes[_projectId]++;
         reviewerVotes[_projectId][_msgSender()] = true;
-        if(status[_projectId] == ProjectStatus.NONEXISTENT){
+        if(votes[_projectId] == 1){
             require(_contributors.length >0, "empty array");
             require(_threshold > 0 && _threshold <= 100, "invalid threshold");
             //rarities[_projectId] = _rarities;
@@ -94,9 +97,6 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
                 require(success, "transfer failed");
                 emit ProjectApproved(_projectId);
                 //approveMint(_projectId);
-            }
-            else{
-                status[_projectId] = ProjectStatus.PENDING;
             }
         }
         else{
@@ -164,19 +164,21 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
 
     function addProjectWallet(string memory _projectId, address _projectWallet, string memory level) external payable{
         require (projectWallets[_projectId] == address(0), "already project wallet");
+        require(status[_projectId] == ProjectStatus.NONEXISTENT);
         uint pendingSponsorLevel = sponsorLevels[level];
         require (pendingSponsorLevel > 0, "invalid sponsor stake");
         (bool success, bytes memory data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("stakeAmounts(uint256)")), pendingSponsorLevel));
         require(success);
         uint stakeAmount = abi.decode(data, (uint256)); 
         require (msg.value >= stakeAmount, "not enough staked");
-        (success, data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("isAddrOwner(address)")), _projectWallet));
+        /*(success, data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("isAddrOwner(address)")), _projectWallet));
         require(success);
         bool isActive = abi.decode(data, (bool));
-        require(!isActive, "address already linked with active project");
+        require(!isActive, "address already linked with active project");*/
         projectWallets[_projectId] = _projectWallet;
         stakePerProject[_projectId] = stakeAmount;
         sponsorLevel[_projectId] = pendingSponsorLevel;
+        status[_projectId]= ProjectStatus.PENDING;
         if(msg.value > stakeAmount){
             (success, ) = payable(_msgSender()).call{value : msg.value - stakeAmount}("");
             require(success, "failed refund");

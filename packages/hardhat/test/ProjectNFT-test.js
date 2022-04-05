@@ -21,12 +21,21 @@ describe("ProjectNFT", function() {
     VerifyFactory = await ethers.getContractFactory("Verify");
     verify = await VerifyFactory.deploy(`${process.env.SERVER_ADDRESS}`,[`${owner.address}`, `${addr1.address}`, `${addr2.address}`, `${addr3.address}`, `${addr4.address}`]);
     await verify.deployed();
+    RandomNumberConsumerFactory = await ethers.getContractFactory("RandomNumberConsumer");
+    rng = await RandomNumberConsumerFactory.deploy([`${owner.address}`, `${addr1.address}`, `${addr2.address}`, `${addr3.address}`, `${addr4.address}`]);
+    await rng.deployed();
+    PathwayFactory = await ethers.getContractFactory("PathwayNFT");
+    pathwayNFT = await PathwayFactory.deploy(`${rng.address}`, `${projectNFT.address}`, `${verify.address}`);
+    await pathwayNFT.deployed();
     SponsorSFTFactory = await ethers.getContractFactory("SponsorPassSFT");
     sponsorSFT = await SponsorSFTFactory.deploy([`0xde0b6b3a7640000`, `0x29a2241af62c0000`, `0x4563918244f40000`], `${projectNFT.address}`);
     await sponsorSFT.deployed();
     AppDiamondFactory = await ethers.getContractFactory("AppDiamond");
-    appDiamond = await AppDiamondFactory.deploy(`${projectNFT.address}`, `${verify.address}`, `${sponsorSFT.address}`,`${process.env.SERVER_ADDRESS}`);
+    appDiamond = await AppDiamondFactory.deploy(`${projectNFT.address}`, `${pathwayNFT.address}`, `${verify.address}`, `${sponsorSFT.address}`,`${process.env.SERVER_ADDRESS}`);
     await appDiamond.deployed();
+    const DiamondCutFacet = await ethers.getContractFactory('DiamondCutFacet')
+    const diamondCutFacet = await DiamondCutFacet.deploy()
+    await diamondCutFacet.deployed()
 })
 
   describe("Testing deployment and voting", function() {
@@ -133,7 +142,9 @@ describe("ProjectNFT", function() {
       expect(await projectNFT.projectWallets("firstTestProject")).to.be.equal(`${addr5.address}`);//addr5 is project wallet address
       expect(await sponsorSFT.balanceOf(`${addr5.address}` , 1)).to.be.equal(1);//SFT minted now
       expect(await sponsorSFT.balanceOf(`${addr4.address}` , 1)).to.be.equal(0);//addr4 not project wallet
-      await sponsorSFT.connect(addr5).safeTransferFrom(`${addr5.address}`, `${addr4.address}`, 1, 1, "0x");//transfer of sft and project wallet to addr4
+      const abiCoder = new ethers.utils.AbiCoder();
+      const encodedProject = abiCoder.encode(["string"], ["firstTestProject"]);
+      await sponsorSFT.connect(addr5).safeTransferFrom(`${addr5.address}`, `${addr4.address}`, 1, 1, encodedProject);//transfer of sft and project wallet to addr4
       expect(await projectNFT.projectWallets("firstTestProject")).to.be.equal(`${addr4.address}`);//addr4 is project wallet address
       expect(await sponsorSFT.balanceOf(`${addr5.address}` , 1)).to.be.equal(0);//addr5 transferred SFT to addr4
       expect(await sponsorSFT.balanceOf(`${addr4.address}` , 1)).to.be.equal(1);//addr4 now has 1 SFT

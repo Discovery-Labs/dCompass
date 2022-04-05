@@ -23,16 +23,12 @@ function FAQ() {
       <Box layerStyle="outline-card" p="0" w="full">
         <Accordion w="full" allowToggle>
           <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  <Text fontWeight="bold">
-                    When will dCompass be available ?
-                  </Text>
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                <Text fontWeight="bold">When will dCompass be available ?</Text>
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
             <AccordionPanel pb={4}>
               <Text color={getColoredText}>
                 We will release the alpha version soon.
@@ -41,14 +37,12 @@ function FAQ() {
           </AccordionItem>
 
           <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  <Text fontWeight="bold">What is the tech stack ?</Text>
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                <Text fontWeight="bold">What is the tech stack ?</Text>
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
             <AccordionPanel pb={4}>
               <Text color={getColoredText}>
                 We are using Next.js &amp; TypeScript for our front-end. We
@@ -59,16 +53,14 @@ function FAQ() {
           </AccordionItem>
 
           <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  <Text fontWeight="bold">
-                    Which blockhain will dCompass run on ?
-                  </Text>
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                <Text fontWeight="bold">
+                  Which blockhain will dCompass run on ?
+                </Text>
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
             <AccordionPanel pb={4}>
               <Text color={getColoredText}>
                 The dApp will be available on the Ethereum mainnet and Polygon
@@ -79,14 +71,12 @@ function FAQ() {
             </AccordionPanel>
           </AccordionItem>
           <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  <Text fontWeight="bold">Is dCompass open source ?</Text>
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                <Text fontWeight="bold">Is dCompass open source ?</Text>
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
             <AccordionPanel pb={4}>
               <Text color={getColoredText}>
                 Yes, it is! We are looking for super shadowy coders &amp;

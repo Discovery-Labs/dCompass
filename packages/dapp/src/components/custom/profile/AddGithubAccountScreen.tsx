@@ -146,7 +146,7 @@ function AddGitHubAccountScreen({
           </Box>
           <Box>
             {challengeLoading ? (
-              <Button disabled icon={<Spinner />} />
+              <Button disabled leftIcon={<Spinner />} />
             ) : (
               <Button disabled={verifyLoading} onClick={copyMessage}>
                 Copy

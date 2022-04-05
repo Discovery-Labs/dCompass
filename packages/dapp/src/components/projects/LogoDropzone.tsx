@@ -58,7 +58,7 @@ const LogoDropzone = ({
         boxSize="150px"
         src={file.preview}
       />
-      <Flex pl="4" d="column" v="full" alignSelf="center">
+      <Flex pl="4" d="column" w="full" alignSelf="center">
         <IconButton
           colorScheme="secondary"
           onClick={() => setFiles([])}
@@ -71,19 +71,21 @@ const LogoDropzone = ({
   ));
 
   useEffect(() => {
-    const logoValues = getValues("logo");
+    if (getValues) {
+      const logoValues = getValues("logo");
 
-    if (logoValues) {
-      const logoFiles = [];
-      logoFiles.push(logoValues[0]);
-      setFiles(
-        logoFiles.map((file: File) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
-      );
-      // console.log(logoFiles);
+      if (logoValues) {
+        const logoFiles = [];
+        logoFiles.push(logoValues[0]);
+        setFiles(
+          logoFiles.map((file: File) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file),
+            })
+          )
+        );
+        // console.log(logoFiles);
+      }
     }
   }, [getValues]);
 

@@ -21,7 +21,6 @@ export const QuizQuestSchema = {
           },
           answer: {
             type: "string",
-            maxLength: 200,
           },
           choices: {
             type: "array",

@@ -86,6 +86,7 @@ export const PROJECT_BY_ID_QUERY = gql`
   query GetProjectById($projectId: String!) {
     getProjectById(projectId: $projectId) {
       id
+      streamId
       name
       createdBy
       createdAt

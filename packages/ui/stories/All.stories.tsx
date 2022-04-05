@@ -128,6 +128,20 @@ export const All = () => {
         <Text as="h1" textStyle="h1" fontWeight="bold" color={titleColor}>
           Hello world with Text
         </Text>
+        <Box padding="8" bgColor="bg">
+          <Text color="text">Semantic Colors</Text>
+          <Text color="text-weak">Semantic Colors</Text>
+          <Text color="primary">Semantic Colors</Text>
+          <Text color="accent">Semantic Colors</Text>
+          <Box
+            padding="8"
+            borderWidth="2px"
+            borderColor="border"
+            bgColor="bg-medium"
+          >
+            <Text color="text">Semantic Colors</Text>
+          </Box>
+        </Box>
         <Title>Title</Title>
         <Divider />
         <HStack>
@@ -291,6 +305,26 @@ export const All = () => {
         </Button>
 
         <Tabs variant="soft-rounded">
+          <TabList>
+            <Tab>One</Tab>
+            <Tab>Two</Tab>
+            <Tab>Three</Tab>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel>
+              <p>one!</p>
+            </TabPanel>
+            <TabPanel>
+              <p>two!</p>
+            </TabPanel>
+            <TabPanel>
+              <p>three!</p>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+
+        <Tabs variant="unstyled">
           <TabList>
             <Tab>One</Tab>
             <Tab>Two</Tab>

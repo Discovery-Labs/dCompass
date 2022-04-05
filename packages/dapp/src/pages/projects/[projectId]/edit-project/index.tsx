@@ -1,24 +1,23 @@
 import { useMutation } from "@apollo/client";
-import { Flex, Button, Stack } from "@chakra-ui/react";
+import { Stack, Button } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
-import { Step, Steps, useSteps } from "chakra-ui-steps";
-import { GetServerSideProps } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useContext } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-
-import { initializeApollo } from "../../../../../lib/apolloClient";
-import {
-  EDIT_PROJECT_MUTATION,
-  PROJECT_BY_ID_QUERY,
-} from "../../../../graphql/projects";
 import Card from "components/custom/Card";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import CenteredFrame from "components/layout/CenteredFrame";
 import EditProjectForm from "components/projects/EditProjectForm";
 import SquadsForm from "components/projects/squads/SquadsForm";
 import { Web3Context } from "contexts/Web3Provider";
+import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useContext } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { initializeApollo } from "../../../../../lib/apolloClient";
+import {
+  EDIT_PROJECT_MUTATION,
+  PROJECT_BY_ID_QUERY,
+} from "../../../../graphql/projects";
+import CreateProjectWallet from "components/custom/CreateProjectWallet";
 
 type Props = {
   projectId: string | null;
@@ -58,17 +57,6 @@ export const getServerSideProps: GetServerSideProps<
   }
 };
 
-const EditProject = <EditProjectForm />;
-const EditSquads = <SquadsForm />;
-
-const steps = [
-  {
-    label: "Step 1",
-    content: EditProject,
-  },
-  { label: "Step 2", content: EditSquads },
-];
-
 type Project = {
   [x: string]: any;
   id?: string;
@@ -87,10 +75,6 @@ function EditProjectStepper(project: Project) {
 
   const [editProjectMutation] = useMutation(EDIT_PROJECT_MUTATION, {
     refetchQueries: "all",
-  });
-
-  const { nextStep, prevStep, activeStep } = useSteps({
-    initialStep: 0,
   });
 
   const {
@@ -184,47 +168,13 @@ function EditProjectStepper(project: Project) {
         <CenteredFrame>
           <Card h="full" w="2xl">
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
-              <Steps colorScheme="purple" activeStep={activeStep}>
-                {steps.map(({ label, content }) => (
-                  <Step label={label} key={label}>
-                    {content}
-                  </Step>
-                ))}
-              </Steps>
-              <Flex w="full" justify="center">
-                {activeStep > 0 && activeStep <= 1 && (
-                  <Button
-                    variant="outline"
-                    onClick={() => prevStep()}
-                    px="1.25rem"
-                    fontSize="md"
-                  >
-                    {t("prev")}
-                  </Button>
-                )}
-                {activeStep < 1 && (
-                  <Button
-                    ml="0.5rem"
-                    onClick={() => nextStep()}
-                    px="1.25rem"
-                    fontSize="md"
-                  >
-                    {t("next")}
-                  </Button>
-                )}
-                {activeStep === 1 && (
-                  <Button
-                    ml="0.5rem"
-                    colorScheme="aqua"
-                    isLoading={methods.formState.isSubmitting}
-                    type="submit"
-                    px="1.25rem"
-                    fontSize="md"
-                  >
-                    {t("submit")}
-                  </Button>
-                )}
-              </Flex>
+              {id && <CreateProjectWallet id={id} />}
+
+              <EditProjectForm />
+              <SquadsForm />
+              <Button isLoading={methods.formState.isSubmitting} type="submit">
+                {t("submit")}
+              </Button>
             </Stack>
           </Card>
         </CenteredFrame>

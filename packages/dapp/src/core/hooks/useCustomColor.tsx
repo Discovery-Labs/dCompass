@@ -20,6 +20,13 @@ function useCustomColor() {
   );
   const accentColorScheme = useColorModeValue("accentLight", "accentDark");
 
+  const codeEditorPreviewScheme = useColorModeValue("light", "dark");
+
+  const codeEditorScheme = useColorModeValue(
+    "code-editor-light",
+    "code-editor"
+  );
+
   const getTextColor = useColorModeValue(
     colors.neutralDarkest,
     colors.neutralLightest
@@ -29,14 +36,22 @@ function useCustomColor() {
     colors.neutralDarkest
   );
 
+  const getBorderColor = useColorModeValue(
+    colors.borderDark,
+    colors.borderLight
+  );
+
   return {
-    getPrimaryColor,
+    getBgColor,
     getOverBgColor,
+    getBorderColor,
+    getPrimaryColor,
     getAccentColor,
+    getTextColor,
     getColoredText,
     accentColorScheme,
-    getTextColor,
-    getBgColor,
+    codeEditorScheme,
+    codeEditorPreviewScheme,
   };
 }
 

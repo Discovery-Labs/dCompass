@@ -9,18 +9,17 @@ import useThemeColor from '../../hooks/useThemeColor';
 import { borderRadius, colorScheme } from '../default-props';
 
 const baseStyleList: SystemStyleFunction = (props) => {
-  const { getOverBgColor } = useThemeColor();
+  const { getBgColor, getBorderColor } = useThemeColor();
 
   return {
-    bg: getOverBgColor(props),
+    bg: getBgColor(props),
     boxShadow: mode('sm', 'dark-lg')(props),
     color: 'inherit',
     minW: '3xs',
-    // py: '2',
     p: '2',
     zIndex: 1,
     borderRadius: borderRadius,
-    borderColor: getOverBgColor(props),
+    borderColor: getBorderColor(props),
     borderWidth: '1px',
   };
 };
@@ -30,6 +29,7 @@ const baseStyleItem: SystemStyleFunction = (props) => {
   const { getPrimaryColor, getInverseTextColor } = useThemeColor();
 
   return {
+    my: '1',
     py: '0.4rem',
     px: '0.8rem',
     transitionProperty: 'background',

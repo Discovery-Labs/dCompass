@@ -3,6 +3,7 @@ const {ethers} = require("hardhat");
 const { smock } = require('@defi-wonderland/smock');
 const { BigNumber, Contract } = require("ethers");
 require('dotenv').config();
+const buildList = require("@uniswap/default-token-list");
 
 const verifyNFTInfo = async function(nonce, nonceId_Threshold, account, nftAddress, verifyAddress, stringId, threshold){
   const serverAddress =  process.env.SERVER_ADDRESS;
@@ -16,6 +17,22 @@ const verifyNFTInfo = async function(nonce, nonceId_Threshold, account, nftAddre
   else{
     hashMsg = ethers.utils.solidityKeccak256(["uint256", "address", "address", "address", "string"], [nonceId_Threshold, account, nftAddress, verifyAddress, stringId]);
   }
+  let messageHashBytes = ethers.utils.arrayify(hashMsg);
+  let flatSig = await wallet.signMessage(messageHashBytes);
+
+  let sig = ethers.utils.splitSignature(flatSig);
+
+  return sig;
+}
+
+const verifyClaimInfo = async function(objParams){
+  const serverAddress =  process.env.SERVER_ADDRESS;
+  const signingKey = process.env.SERVER_PRIVATE_KEY;
+  let wallet = new ethers.Wallet(signingKey);
+  let hashMsg;
+
+  hashMsg = ethers.utils.solidityKeccak256(["address", "address", "uint256", "string"], [objParams.account, objParams.contract, objParams.chainId, objParams.pathwayId]);
+
   let messageHashBytes = ethers.utils.arrayify(hashMsg);
   let flatSig = await wallet.signMessage(messageHashBytes);
 
@@ -56,8 +73,33 @@ describe("PathwayNFT", function() {
     sponsorSFT = await SponsorSFTFactory.deploy([`0xde0b6b3a7640000`, `0x29a2241af62c0000`, `0x4563918244f40000`], `${projectNFT.address}`);
     await sponsorSFT.deployed();
     AppDiamondFactory = await ethers.getContractFactory("AppDiamond");
-    appDiamond = await AppDiamondFactory.deploy(`${projectNFT.address}`, `${verify.address}`, `${sponsorSFT.address}`,`${process.env.SERVER_ADDRESS}`);
+    appDiamond = await AppDiamondFactory.deploy(`${projectNFT.address}`, `${pathwayNFT.address}`,`${verify.address}`, `${sponsorSFT.address}`,`${process.env.SERVER_ADDRESS}`);
     await appDiamond.deployed();
+    const DiamondCutFacet = await ethers.getContractFactory('DiamondCutFacet')
+    const diamondCutFacet = await DiamondCutFacet.deploy()
+    await diamondCutFacet.deployed()
+    await pathwayNFT.setAppDiamond(appDiamond.address);
+
+    const chainIds = [1,4,42,137,80001];
+    const chainAddrObj = {}
+    chainIds.forEach(value => {chainAddrObj[value] = []})
+    const tokens = buildList.tokens;
+    tokens.map((value, index) => {
+      if (chainIds.includes(value.chainId)){
+          chainAddrObj[value.chainId].push(value.address)
+      }
+    })
+
+    for (let i=0; i< chainIds.length; i++){
+      await appDiamond.addERC20PerChain(chainIds[i], chainAddrObj[chainIds[i]]);
+    }
+
+    let chainIdTest;
+    for (let i=0; i< chainIds.length; i++){
+      chainIdTest = await appDiamond.getERC20Addrs(chainIds[i]);
+      console.log(chainIdTest);
+      expect(chainIdTest).to.be.eql(chainAddrObj[chainIds[i]])
+    }
     
     //await rng.addContractToWhiteList(`${pathwayNFT.address}`);
     await projectNFT.connect(addr2).setAppDiamond(appDiamond.address);
@@ -104,6 +146,13 @@ describe("PathwayNFT", function() {
       expect(await pathwayNFT.votes("firstCourseProject")).to.be.equal(0);
       expect(await pathwayNFT.reviewerVotes("firstCourseProject", `${owner.address}`)).to.be.false;
 
+      //await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", false, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xff");
+      await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", 200, true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", {value : "0xff59ee833b30000"});
+      expect(await pathwayNFT.status("firstCourseProject")).to.be.equal(1);
+      nativeAmtTest = await pathwayNFT.nativeRewards("firstCourseProject");
+      expect(nativeAmtTest.toString()).to.be.equal('1000000000000000000');
+      await expect(pathwayNFT.addPathwayCreationReward("firstCourseProject", "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xde0b6b3a7640000")).to.be.revertedWith("ERC20 not approved");
+      
       //construct r,s, and v arrays
       let r = Array(2);
       let s = Array(2);
@@ -149,6 +198,52 @@ describe("PathwayNFT", function() {
       expect(await pathwayNFT.reviewerVotes("firstCourseProject", `${addr1.address}`)).to.be.true;
       //expect(await rng.objectRequests('0xd112541cfa18fb778c806d9631e966e2804abf8d12eaa09fe867f32989722056')).to.be.equal('firstCourseProject');
       //expect(await rng.numContributors('0xd112541cfa18fb778c806d9631e966e2804abf8d12eaa09fe867f32989722056')).to.be.equal(5);
+      
+      nonce = await verify.noncesParentIdChildId("firstTestProject", "firstCourseProject");
+      nonceById = await verify.thresholdNoncesById("firstCourseProject");
+      
+      //get signature for pathway create Token
+      sig = await verifyNFTInfo(0,nonce, `${addr1.address}`, `${pathwayNFT.address}`, `${verify.address}`, "firstCourseProject", false);
+      r[0]=sig.r;
+      s[0]=sig.s;
+      v[0]=sig.v;
+      sig = await verifyNFTInfo(nonceById, 2, `${addr1.address}`, `${pathwayNFT.address}`, `${verify.address}`, "firstCourseProject", true);
+      r[1]=sig.r;
+      s[1]=sig.s;
+      v[1]=sig.v;
+      console.log(`${r} \n ${s} \n ${v}`)
+
+      await pathwayNFT.connect(addr1).createToken("test_URI_String", "firstCourseProject", "firstTestProject", r, s, v, 2);
+
+      let tokenURI;
+      for(var i = 1 ; i<=contributors.length; i++){
+        tokenURI = await pathwayNFT.tokenURI(i);
+        console.log(tokenURI);//should match "test_URI_String"
+      }
+      
+      let verifyClaimParams = {};
+      verifyClaimParams['account'] = `${addrs[2].address}`;
+      verifyClaimParams['contract'] = `${pathwayNFT.address}`;
+      verifyClaimParams['chainId'] = 1337;
+      verifyClaimParams['pathwayId'] = "firstCourseProject";
+
+      let sigClaim = await verifyClaimInfo(verifyClaimParams);
+
+      balance = await ethers.provider.getBalance(addrs[2].address);
+      console.log(balance.toString());
+      balanceBefore = await ethers.provider.getBalance(pathwayNFT.address);
+
+      expect(await pathwayNFT.numUsersRewardPerPathway("firstCourseProject")).to.be.equal(200);
+      expect(await pathwayNFT.currentNumUsersRewardPerPathwayNative("firstCourseProject")).to.be.equal(0);
+      expect(await pathwayNFT.userRewardedForPathwayNative("firstCourseProject", `${addrs[2].address}`)).to.be.false;
+
+      await pathwayNFT.connect(addrs[2]).claimPathwayRewards("firstCourseProject", true, `${addr1.address}`, sigClaim.r, sigClaim.s, sigClaim.v);
+      balance = await ethers.provider.getBalance(addrs[2].address);
+      console.log(balance.toString());
+      balanceAfter = await ethers.provider.getBalance(pathwayNFT.address);
+      console.log(`Pathway Balance after is ${balanceAfter} but before was ${balanceBefore}`);
+      expect(await pathwayNFT.currentNumUsersRewardPerPathwayNative("firstCourseProject")).to.be.equal(1);
+      expect(await pathwayNFT.userRewardedForPathwayNative("firstCourseProject", `${addrs[2].address}`)).to.be.true;
     })
   })
   

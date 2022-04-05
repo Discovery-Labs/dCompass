@@ -10,6 +10,7 @@ import {
   Link,
   Heading,
   VStack,
+  Box,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useTranslation } from "next-i18next";
@@ -31,26 +32,24 @@ const ProjectCard = ({
   isReviewMode?: boolean;
 }) => {
   const { t } = useTranslation("common");
-  const { getTextColor } = useCustomColor();
+  const { getTextColor, getOverBgColor } = useCustomColor();
   const projectCardMarkdownTheme = useCardMarkdownTheme();
 
   const router = useRouter();
 
+  console.log({ pId: project.id });
+
   function openProject() {
     router.push(
       isReviewMode
-        ? `/projects/${project.id.split("://")[1]}/review`
-        : `/projects/${project.id.split("://")[1]}`
+        ? `/projects/${project.id}/review`
+        : `/projects/${project.id}`
     );
   }
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
 
   return (
     <CardMedia src={imgSrc} h="xl">
-      <Heading noOfLines={2} as="h2" size="lg" minH="75px" color={getTextColor}>
-        {project.name}
-      </Heading>
-
       <Stack direction="row">
         {project.tags.map((tag) => (
           <Badge key={tag.id} colorScheme={tag.color}>
@@ -59,14 +58,23 @@ const ProjectCard = ({
         ))}
       </Stack>
 
+      <Heading w="full" as="h2" size="lg" color={getTextColor} isTruncated>
+        {project.name}
+      </Heading>
+
       <VStack w="full" align="flex-start">
-        <ReactMarkdown
-          className="card-markdown"
-          components={ChakraUIRenderer(projectCardMarkdownTheme)}
-          skipHtml
+        <Box
+          bgGradient={`linear(0deg, ${getOverBgColor} 10%, ${getTextColor} 60%, ${getTextColor})`}
+          bgClip="text"
         >
-          {project.description}
-        </ReactMarkdown>
+          <ReactMarkdown
+            className="card-markdown"
+            components={ChakraUIRenderer(projectCardMarkdownTheme)}
+            skipHtml
+          >
+            {project.description}
+          </ReactMarkdown>
+        </Box>
       </VStack>
 
       <HStack spacing={7}>

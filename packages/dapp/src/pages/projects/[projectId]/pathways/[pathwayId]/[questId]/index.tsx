@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { EditIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -17,17 +17,19 @@ import {
   Stack,
   Tag,
   Progress,
+  Box,
+  useToast,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
-import { useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import Blockies from "react-blockies";
 import { BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
-import { RiSwordLine } from "react-icons/ri";
+import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 
 import CardMedia from "../../../../../../components/custom/CardMedia";
@@ -38,7 +40,6 @@ import SnapshotVoterForm from "../../../../../../components/projects/quests/snap
 import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
 import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
 import { ceramicCoreFactory } from "../../../../../../core/ceramic";
-import { streamIdToUrl, streamUrlToId } from "../../../../../../core/helpers";
 import useCustomColor from "../../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../../core/hooks/useTokenList";
@@ -46,6 +47,13 @@ import { PROJECT_BY_ID_QUERY } from "../../../../../../graphql/projects";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
+import {
+  CLAIM_QUEST_REWARDS_MUTATION,
+  GET_QUIZ_QUEST_BY_ID_QUERY,
+} from "../../../../../../graphql/quests";
+import { initializeApollo } from "../../../../../../../lib/apolloClient";
+import QuestCompletedByList from "../../../../../../components/projects/quests/QuestCompletedByList";
+import { useWeb3React } from "@web3-react/core";
 
 type Props = {
   projectId: string | null;
@@ -62,16 +70,32 @@ export const getServerSideProps: GetServerSideProps<
   const questId = ctx.params?.questId ?? null;
   const pathwayId = ctx.params?.pathwayId ?? null;
   const projectId = ctx.params?.projectId ?? null;
+
   if (!pathwayId || !projectId || !questId) {
     return {
       redirect: { destination: "/", permanent: true },
     };
   }
 
-  const core = ceramicCoreFactory();
-  // const client = initializeApollo();
+  const client = initializeApollo();
   try {
-    const questInfos = await core.ceramic.loadStream(questId);
+    // TODO: call backend
+    const { data } = await client.query({
+      query: GET_QUIZ_QUEST_BY_ID_QUERY,
+      variables: {
+        questId,
+      },
+    });
+
+    console.log({
+      streamId: data.getQuizQuestById.streamId,
+      data: data.getQuizQuestById,
+    });
+    const core = ceramicCoreFactory();
+
+    const questInfos = await core.ceramic.loadStream(
+      data.getQuizQuestById.streamId
+    );
     const questCreatorDID = questInfos.controllers[0];
     const questCreatorBasicProfile = await core.get(
       "basicProfile",
@@ -81,12 +105,13 @@ export const getServerSideProps: GetServerSideProps<
       props: {
         id: questId,
         ...questInfos.content,
-        ...(await serverSideTranslations(locale, ["common"])),
+        ...data.getQuizQuestById,
         projectId,
         createdBy: {
           did: questCreatorDID,
-          name: questCreatorBasicProfile?.name,
+          name: questCreatorBasicProfile?.name || "",
         },
+        ...(await serverSideTranslations(locale, ["common"])),
       },
     };
   } catch (error) {
@@ -102,6 +127,7 @@ function QuestPage({
   description,
   image,
   createdAt,
+  completedBy,
   rewardAmount,
   rewardCurrency,
   rewardUserCap,
@@ -117,12 +143,15 @@ function QuestPage({
   amount,
   chainId: tokenChainId,
   namespace,
+  streamId,
 }: any) {
+  const [tabIndex, setTabIndex] = useState(0);
   const { t } = useTranslation("common");
   const { getRewardCurrency } = useTokenList();
   const questMarkdownTheme = usePageMarkdownTheme();
-
-  const { account } = useContext(Web3Context);
+  const toast = useToast();
+  const { account, self, contracts } = useContext(Web3Context);
+  const { library, chainId } = useWeb3React();
   const { getTextColor, getColoredText } = useCustomColor();
 
   const { data, loading, error } = useQuery(GET_PATHWAY_BY_ID_QUERY, {
@@ -130,17 +159,119 @@ function QuestPage({
       pathwayId,
     },
   });
+  const [claimQuestRewardsMutation] = useMutation(
+    CLAIM_QUEST_REWARDS_MUTATION,
+    {
+      refetchQueries: "all",
+    }
+  );
+
   const {
     data: projectRes,
     loading: projectLoading,
     error: projectError,
   } = useQuery(PROJECT_BY_ID_QUERY, {
     variables: {
-      projectId: streamIdToUrl(projectId),
+      projectId,
     },
   });
 
+  const handleTabsChange = (index: number) => {
+    setTabIndex(index);
+  };
+
+  const handleClaimRewards = async () => {
+    const signatureInput = {
+      id: id,
+      pathwayId: pathwayId,
+    };
+    const signature = await library.provider.send("personal_sign", [
+      JSON.stringify(signatureInput),
+      account,
+    ]);
+
+    const formData = new FormData();
+    const ogFile = await fetch(`https://ipfs.io/ipfs/${image}`);
+    const questImage = await ogFile.blob();
+    formData.append("image", questImage);
+    formData.append(
+      "metadata",
+      JSON.stringify({
+        id,
+        name,
+        description,
+        image,
+        createdAt,
+        rewardAmount,
+        rewardCurrency,
+        rewardUserCap,
+        type,
+        pathwayId,
+        projectId,
+        questions,
+        proposalId,
+        githubOrgId,
+        createdBy,
+        collectionContractAddress,
+        tokenContractAddress,
+        amount,
+        chainId,
+        namespace,
+      })
+    );
+
+    const nftCidRes = await fetch("/api/quest-nft-storage", {
+      method: "POST",
+      body: formData,
+    });
+    const { url } = await nftCidRes.json();
+
+    const { data } = await claimQuestRewardsMutation({
+      variables: {
+        input: {
+          questId: id,
+          did: self.id,
+          questAdventurerSignature: signature.result,
+          chainId,
+        },
+      },
+    });
+
+    const [, tokenAddressOrSymbol] = rewardCurrency.split(":");
+    const isNativeToken = tokenAddressOrSymbol ? false : true;
+
+    const [metadataVerify] = data.claimQuestRewards.expandedServerSignatures;
+
+    console.log({ metadataVerify });
+    const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
+      streamId,
+      isNativeToken,
+      isNativeToken ? account : tokenAddressOrSymbol,
+      metadataVerify.r,
+      metadataVerify.s,
+      metadataVerify.v,
+      true,
+      url,
+      0
+    );
+    await claimRewardsTx.wait(1);
+    return toast({
+      title: "Congratulations!",
+      description: `Rewards claimed successfully!`,
+      status: "success",
+      position: "top-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
+  };
+
   const isOwner = createdBy === account;
+  const isCompleted = useCallback(
+    () => (completedBy || []).includes(self?.id),
+    [completedBy, self?.id]
+  );
+
   if (loading || projectLoading)
     return (
       <Stack pt="30" px="8">
@@ -163,23 +294,19 @@ function QuestPage({
           },
           {
             label: projectRes.getProjectById.name,
-            href: `/projects/${streamUrlToId(projectId)}`,
+            href: `/projects/${projectId}`,
           },
           {
             label: "Pathways",
-            href: `/projects/${streamUrlToId(projectId)}`,
+            href: `/projects/${projectId}`,
           },
           {
             label: data.getPathwayById.title,
-            href: `/projects/${streamUrlToId(
-              projectId
-            )}/pathways/${streamUrlToId(pathwayId)}/`,
+            href: `/projects/${projectId}/pathways/${pathwayId}/`,
           },
           {
             label: name,
-            href: `/projects/${streamUrlToId(
-              projectId
-            )}/pathways/${streamUrlToId(pathwayId)}/${streamUrlToId(id)}`,
+            href: `/projects/${projectId}/pathways/${pathwayId}/${id}`,
             isCurrentPage: true,
           },
         ]}
@@ -189,16 +316,18 @@ function QuestPage({
         <Heading as="h1" size="2xl" color={getColoredText} py="4">
           {name} <Icon as={RiSwordLine} color={getColoredText} />
         </Heading>
-        <Tabs w="full">
+        <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">
             <TabList>
               <Tab>Guide</Tab>
-              <Tab>Details &amp; rewards</Tab>
               <Tab>Play quest</Tab>
+              <Tab>Details &amp; rewards</Tab>
+              <Tab>Completed by</Tab>
             </TabList>
           </HStack>
 
           <TabPanels>
+            {/* 1 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
@@ -210,6 +339,51 @@ function QuestPage({
               </VStack>
             </TabPanel>
 
+            {/* 2 Tab */}
+            <TabPanel px="0">
+              {completedBy && completedBy.includes(self?.id) ? (
+                <Text>Quest already completed!</Text>
+              ) : (
+                <Box>
+                  {type?.value === "quiz" && (
+                    <QuizForm
+                      questions={questions}
+                      questId={id}
+                      pathwayId={pathwayId}
+                      successCallback={() => handleTabsChange(2)}
+                    />
+                  )}
+                  {type?.value === "snapshot-voter" && (
+                    <SnapshotVoterForm proposalId={proposalId} questId={id} />
+                  )}
+                  {type?.value === "github-contributor" && (
+                    <GithubContributorQuestForm
+                      githubOrgId={githubOrgId}
+                      questId={id}
+                    />
+                  )}
+                  {type?.value === "nft-owner" && (
+                    <ClaimNFTOwnerForm
+                      questId={id}
+                      contractAddress={collectionContractAddress}
+                      namespace={namespace || "eip155"}
+                      collectionChainId={tokenChainId}
+                    />
+                  )}
+                  {type?.value === "token-holder" && (
+                    <ClaimTokenHolderForm
+                      questId={id}
+                      amount={amount}
+                      contractAddress={tokenContractAddress}
+                      namespace={namespace || "eip155"}
+                      tokenChainId={tokenChainId}
+                    />
+                  )}
+                </Box>
+              )}
+            </TabPanel>
+
+            {/* 3 Tab */}
             <TabPanel px="0">
               <HStack w="full" align="left" justifyContent="space-between">
                 <VStack align="left">
@@ -251,10 +425,10 @@ function QuestPage({
                       color={getTextColor}
                       textTransform="uppercase"
                     >
-                      Rewards
+                      Total Rewards
                     </Text>
                     <Tag variant="outline" size="lg">
-                      {rewardAmount}
+                      {rewardAmount} {getRewardCurrency(rewardCurrency)}
                     </Tag>
                   </HStack>
                 </VStack>
@@ -272,17 +446,15 @@ function QuestPage({
                       {t("creation-date")}{" "}
                       {new Date(createdAt || Date.now()).toLocaleString()}
                     </Text>
-                    <Text fontSize="sm" isTruncated>
-                      {t("by")} {createdBy.name || createdBy.did}
-                    </Text>
+                    {createdBy && (
+                      <Text fontSize="sm" isTruncated>
+                        {t("by")} {createdBy.name || createdBy.did}
+                      </Text>
+                    )}
                     {isOwner && (
                       // TODO: edit quest form
                       <NextLink
-                        href={`/projects/${streamUrlToId(
-                          projectId
-                        )}/pathways/${streamUrlToId(pathwayId)}/${streamUrlToId(
-                          id
-                        )}/edit-quest`}
+                        href={`/projects/${projectId}/pathways/${pathwayId}/${id}/edit-quest`}
                         passHref
                       >
                         <Button leftIcon={<EditIcon />}>
@@ -296,7 +468,7 @@ function QuestPage({
 
               <HStack w="full" align="left" pt="2">
                 <CardMedia
-                  h="xs"
+                  h="sm"
                   src={`https://ipfs.io/ipfs/${image}`}
                   imageHeight="160px"
                 >
@@ -365,40 +537,29 @@ function QuestPage({
                       </Flex>
                     </Stack>
                   </VStack>
+                  <HStack w="full">
+                    <Button
+                      w="full"
+                      fontSize="md"
+                      variant="outline"
+                      leftIcon={<RiHandCoinFill />}
+                      disabled={!isCompleted()}
+                      onClick={handleClaimRewards}
+                    >
+                      Claim rewards
+                    </Button>
+                  </HStack>
                 </CardMedia>
               </HStack>
             </TabPanel>
+
+            {/* 3 Tab */}
             <TabPanel px="0">
-              {/* TODO: Make a wrapper component */}
-              {type?.value === "quiz" && (
-                <QuizForm questions={questions} questId={id} />
-              )}
-              {type?.value === "snapshot-voter" && (
-                <SnapshotVoterForm proposalId={proposalId} questId={id} />
-              )}
-              {type?.value === "github-contributor" && (
-                <GithubContributorQuestForm
-                  githubOrgId={githubOrgId}
-                  questId={id}
-                />
-              )}
-              {type?.value === "nft-owner" && (
-                <ClaimNFTOwnerForm
-                  questId={id}
-                  contractAddress={collectionContractAddress}
-                  namespace={namespace || "eip155"}
-                  collectionChainId={tokenChainId}
-                />
-              )}
-              {type?.value === "token-holder" && (
-                <ClaimTokenHolderForm
-                  questId={id}
-                  amount={amount}
-                  contractAddress={tokenContractAddress}
-                  namespace={namespace || "eip155"}
-                  tokenChainId={tokenChainId}
-                />
-              )}
+              <VStack w="full" align="flex-start">
+                {completedBy && (
+                  <QuestCompletedByList completedBy={completedBy} />
+                )}
+              </VStack>
             </TabPanel>
           </TabPanels>
         </Tabs>

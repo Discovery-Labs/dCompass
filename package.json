@@ -3,18 +3,20 @@
   "private": true,
   "license": "GPL-3.0-or-later",
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "lerna": "^4.0.0",
+    "webpack": "^5.69.1"
   },
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
     "bootstrap": "yarn install; lerna bootstrap;",
-    "start": "lerna run start --parallel",
+    "start": "lerna run dev --parallel",
     "chain": "yarn workspace @discovery-dao/hardhat chain",
     "deploy": "yarn workspace @discovery-dao/hardhat deploy",
-    "dev": "yarn workspace @discovery-dao/dapp dev",
-    "api:dev": "yarn workspace @discovery-dao/server start:dev"
+    "dapp:dev": "yarn workspace @discovery-dao/dapp dev",
+    "web:dev": "yarn workspace @discovery-dao/web dev",
+    "api:dev": "yarn workspace @discovery-dao/server dev"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.2.2",

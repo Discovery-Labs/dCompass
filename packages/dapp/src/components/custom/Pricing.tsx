@@ -12,10 +12,15 @@ import {
   useRadio,
   useRadioGroup,
   Center,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { FaCheckCircle } from "react-icons/fa";
+import { REQUIRED_FIELD_LABEL } from "../../core/constants";
 
 import useCustomColor from "../../core/hooks/useCustomColor";
 
@@ -53,33 +58,36 @@ function PriceWrapper(props: any) {
 
 export default function ThreeTierPricing() {
   const { getBgColor } = useCustomColor();
-  const { setValue } = useFormContext();
-  const [selectedPass, setSelectedPass] = useState("gold");
+  const {
+    setValue,
+    register,
+    formState: { errors },
+  } = useFormContext();
+  const [selectedPass, setSelectedPass] = useState("GOLD");
   function selectPlan(plan: string) {
+    setValue("sponsorTier", plan);
     setSelectedPass(plan);
-    setValue("sponsorTier", selectedPass);
   }
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "pricing",
-    defaultValue: "gold",
+    defaultValue: "GOLD",
     onChange: selectPlan,
   });
 
   const group = getRootProps();
-  const radioSilver = getRadioProps({ value: "silver" });
-  const radioGold = getRadioProps({ value: "gold" });
-  const radioDiamond = getRadioProps({ value: "diamond" });
+  const radioSilver = getRadioProps({ value: "SILVER" });
+  const radioGold = getRadioProps({ value: "GOLD" });
+  const radioDiamond = getRadioProps({ value: "DIAMOND" });
 
   return (
     <Box py={12}>
       <VStack spacing={2} textAlign="center">
         <Heading as="h1" fontSize="4xl">
-          Alpha Sponsor Pass
+          Project Sponsor Pass
         </Heading>
         <Text fontSize="lg" color="purple.500">
-          Start with a 3 month trial (period of the alpha) and support the
-          dCompass project.
+          Support dCompass and get your project displayed on the platform.
         </Text>
       </VStack>
       <Stack
@@ -90,7 +98,7 @@ export default function ThreeTierPricing() {
         py={10}
         {...group}
       >
-        <PriceWrapper key="silver" {...radioSilver}>
+        <PriceWrapper key="SILVER" {...radioSilver}>
           <Box py={4} px={12}>
             <Heading fontWeight="500" size="2xl" color="silver">
               Silver
@@ -122,7 +130,7 @@ export default function ThreeTierPricing() {
           </VStack>
         </PriceWrapper>
 
-        <PriceWrapper key="gold" {...radioGold}>
+        <PriceWrapper key="GOLD" {...radioGold}>
           <Box position="relative">
             <Box
               position="absolute"
@@ -144,7 +152,7 @@ export default function ThreeTierPricing() {
               </Text>
             </Box>
             <Box py={4} px={12}>
-              <Heading fontWeight="500" size="2xl" color="gold">
+              <Heading fontWeight="500" size="2xl" color="GOLD">
                 Gold
               </Heading>
               <HStack justifyContent="center">
@@ -174,7 +182,7 @@ export default function ThreeTierPricing() {
             </VStack>
           </Box>
         </PriceWrapper>
-        <PriceWrapper key="diamond" {...radioDiamond}>
+        <PriceWrapper key="DIAMOND" {...radioDiamond}>
           <Box py={4} px={12}>
             <Heading fontWeight="500" size="2xl" color="cyan">
               Diamond
@@ -195,12 +203,12 @@ export default function ThreeTierPricing() {
                 everything from Gold tier
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />
-                custom quest development
+                <ListIcon as={FaCheckCircle} color="accentDark.500" />1 custom
+                quest development
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />
-                custom content &amp; guide creation
+                <ListIcon as={FaCheckCircle} color="accentDark.500" />1 custom
+                pathway guide creation
               </ListItem>
             </List>
           </VStack>
@@ -211,10 +219,27 @@ export default function ThreeTierPricing() {
         <VStack>
           <HStack>
             <Text>Your selected pass is</Text>{" "}
-            <Text color={selectedPass === "diamond" ? "cyan" : selectedPass}>
+            <Text color={selectedPass === "DIAMOND" ? "cyan" : selectedPass}>
               {selectedPass}
             </Text>
           </HStack>
+          <FormControl isInvalid={errors.projectWallet}>
+            <FormLabel htmlFor="projectWallet">Project wallet</FormLabel>
+
+            <Input
+              placeholder="project Wallet"
+              {...register("projectWallet", {
+                required: REQUIRED_FIELD_LABEL,
+                maxLength: {
+                  value: 150,
+                  message: "Maximum length should be 150",
+                },
+              })}
+            />
+            <FormErrorMessage>
+              {errors.projectWallet && errors.projectWallet.message}
+            </FormErrorMessage>
+          </FormControl>
         </VStack>
       </Center>
     </Box>

@@ -12,10 +12,11 @@ import {
   TabPanels,
   Tabs,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 
 import Card from "../../../components/custom/Card";
 import NotReviewerCard from "../../../components/custom/NotReviewerCard";
@@ -25,14 +26,31 @@ import ProjectCard from "../../../components/projects/ProjectCard";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { Project } from "../../../core/types";
 import { ALL_PROJECTS_QUERY } from "../../../graphql/projects";
+import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+import AddReviewer from "components/custom/review/AddReviewer";
+import SetThreshold from "components/custom/review/SetThreshold";
+import ProjectNFTInfo from "components/custom/review/ProjectNFTInfo";
+import ProjectRefund from "components/custom/review/ProjectRefund";
 
 function ReviewProjects() {
   const { t } = useTranslation("common");
+  const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
+
   const { loading, error, data } = useQuery(ALL_PROJECTS_QUERY, {
     fetchPolicy: "cache-and-network",
   });
   console.log({ data });
-  const { isReviewer } = useContext(Web3Context);
+  const { isReviewer, contracts } = useContext(Web3Context);
+
+  useEffect(() => {
+    async function init() {
+      if (contracts) {
+        setProjectNFTContract(contracts.projectNFTContract);
+      }
+    }
+    init();
+  }, [contracts]);
+
   const renderProjects = (projects: Project[]) =>
     projects.map((project: Project) => (
       <ProjectCard isReviewMode key={project.name} project={project} />
@@ -53,6 +71,17 @@ function ReviewProjects() {
         <Heading>{t("review-projects")}</Heading>
         <Spacer />
       </Flex>
+
+      <VStack w="full" align="start">
+        {projectNFTContract && (
+          <>
+            <ProjectNFTInfo contract={projectNFTContract} />
+            <AddReviewer contract={projectNFTContract} />
+            <SetThreshold contract={projectNFTContract} />
+            <ProjectRefund contract={projectNFTContract} />
+          </>
+        )}
+      </VStack>
 
       <Tabs py="2rem" w="full">
         <TabList>

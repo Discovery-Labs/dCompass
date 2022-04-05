@@ -11,6 +11,9 @@ export class Project extends BaseEntity {
   id: string;
 
   @Field()
+  streamId: string;
+
+  @Field()
   name: string;
 
   @Field()
@@ -66,6 +69,9 @@ export class Project extends BaseEntity {
 
   @Field(() => [Pathway])
   pathways?: Pathway[];
+
+  @Field(() => [Pathway])
+  pendingPathways?: Pathway[];
 
   @Field(() => [Squad])
   squads: Squad[];

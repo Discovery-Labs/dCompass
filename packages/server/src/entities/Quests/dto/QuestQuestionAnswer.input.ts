@@ -9,9 +9,8 @@ export class QuestQuestionAnswerInput {
   @IsNotEmpty({ message: 'not.empty' })
   question: string;
 
-  @Field()
-  @IsString({ message: 'wrong.type' })
+  @Field(() => [String])
   @IsDefined({ message: 'not.defined' })
   @IsNotEmpty({ message: 'not.empty' })
-  answer: string;
+  answer: string[];
 }

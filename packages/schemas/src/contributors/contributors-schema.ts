@@ -1,21 +1,14 @@
 export const ContributorsSchema = {
   $schema: "http://json-schema.org/draft-07/schema#",
-  title: "Contributors",
+  title: "ContributorsList",
   type: "array",
   items: {
     type: "object",
     title: "ContributorItem",
     properties: {
       id: {
-        $ref: "#/definitions/CeramicStreamId",
+        type: "string",
       },
-    },
-  },
-  definitions: {
-    CeramicStreamId: {
-      type: "string",
-      pattern: "^ceramic://.+(\\\\?version=.+)?",
-      maxLength: 150,
     },
   },
 };

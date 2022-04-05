@@ -37,7 +37,6 @@ import { initializeApollo } from "../../../../../../lib/apolloClient";
 import CardMedia from "../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../components/layout/BreadcrumbItems";
 import QuestCard from "../../../../../components/projects/quests/QuestCard";
-import { streamUrlToId } from "../../../../../core/helpers";
 import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../core/hooks/useTokenList";
@@ -60,6 +59,7 @@ export const getServerSideProps: GetServerSideProps<
   const locale = ctx.locale || "en";
   const pathwayId = ctx.params?.pathwayId ?? null;
   const projectId = ctx.params?.projectId ?? null;
+  console.log({ pathwayId, projectId });
   if (!pathwayId || !projectId) {
     return {
       redirect: { destination: "/", permanent: true },
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps<
     const { data } = await client.query({
       query: GET_PATHWAY_BY_ID_QUERY,
       variables: {
-        pathwayId: `ceramic://${pathwayId}`,
+        pathwayId,
       },
     });
     console.log({ data });
@@ -82,6 +82,7 @@ export const getServerSideProps: GetServerSideProps<
       },
     };
   } catch (error) {
+    console.log({ error });
     return {
       redirect: { destination: "/404", permanent: true },
     };
@@ -146,6 +147,7 @@ function PathwayPage({
       <QuestCard
         key={quest.id}
         quest={quest}
+        pathwayStreamId={data.getAllQuestsByPathwayId.streamId}
         projectContributors={
           projectRes.getProjectById.squads.flatMap(
             ({ members }: { members: string[] }) => members
@@ -165,17 +167,15 @@ function PathwayPage({
           },
           {
             label: projectRes.getProjectById.name,
-            href: `/projects/${streamUrlToId(projectId)}`,
+            href: `/projects/${projectId}`,
           },
           {
             label: "Pathways",
-            href: `/projects/${streamUrlToId(projectId)}`,
+            href: `/projects/${projectId}`,
           },
           {
             label: title,
-            href: `/projects/${streamUrlToId(
-              projectId
-            )}/pathways/${streamUrlToId(id)}/`,
+            href: `/projects/${projectId}/pathways/${id}/`,
             isCurrentPage: true,
           },
         ]}
@@ -188,13 +188,61 @@ function PathwayPage({
         <Tabs w="full">
           <HStack justifyContent="space-between">
             <TabList>
+              <Tab>Quests</Tab>
               <Tab>Guide</Tab>
               <Tab>Details &amp; rewards</Tab>
-              <Tab>Quests</Tab>
             </TabList>
           </HStack>
 
           <TabPanels>
+            {/* Quests */}
+            <TabPanel px="0">
+              <Tabs w="full" variant="unstyled">
+                <HStack justifyContent="space-between">
+                  <TabList>
+                    <Tab>{t("all-quests")}</Tab>
+                    <Tab>{t("pending-quests")}</Tab>
+                    <Tab>{t("completed-quests")}</Tab>
+                  </TabList>
+                  {isOwner && (
+                    <NextLink
+                      href={`/projects/${projectId}/pathways/${id}/add-quest`}
+                      passHref
+                    >
+                      <Button leftIcon={<PlusSquareIcon />}>
+                        {t("add-quest")}
+                      </Button>
+                    </NextLink>
+                  )}
+                </HStack>
+
+                <TabPanels>
+                  <TabPanel>
+                    <SimpleGrid columns={[1, 2]} spacing={10}>
+                      {renderQuests(
+                        data.getAllQuestsByPathwayId.quests.filter(
+                          (quest: any) => !quest.isPending
+                        )
+                      )}
+                    </SimpleGrid>
+                  </TabPanel>
+                  <TabPanel>
+                    <SimpleGrid columns={[1, 2]} spacing={10}>
+                      {renderQuests(
+                        data.getAllQuestsByPathwayId.quests.filter(
+                          (quest: any) => quest.isPending
+                        )
+                      )}
+                    </SimpleGrid>
+                  </TabPanel>
+                  <TabPanel>
+                    <SimpleGrid columns={[1, 2]} spacing={10} />
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </TabPanel>
+
+            {/* Guide */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
@@ -206,6 +254,7 @@ function PathwayPage({
               </VStack>
             </TabPanel>
 
+            {/* Details */}
             <TabPanel px="0">
               <HStack w="full" align="left" justifyContent="space-between">
                 <VStack align="left">
@@ -305,9 +354,7 @@ function PathwayPage({
                     {isOwner && (
                       // TODO: edit pathway form
                       <NextLink
-                        href={`/projects/${streamUrlToId(
-                          projectId
-                        )}/pathways/${streamUrlToId(id)}/edit-pathway`}
+                        href={`/projects/${projectId}/pathways/${id}/edit-pathway`}
                         passHref
                       >
                         <Button leftIcon={<EditIcon />}>
@@ -397,53 +444,6 @@ function PathwayPage({
                   </VStack>
                 </CardMedia>
               </HStack>
-            </TabPanel>
-            <TabPanel px="0">
-              <Tabs w="full" variant="line">
-                <HStack justifyContent="space-between">
-                  <TabList>
-                    <Tab>{t("all-quests")}</Tab>
-                    <Tab>{t("pending-quests")}</Tab>
-                    <Tab>{t("completed-quests")}</Tab>
-                  </TabList>
-                  {isOwner && (
-                    <NextLink
-                      href={`/projects/${streamUrlToId(
-                        projectId
-                      )}/pathways/${streamUrlToId(id)}/add-quest`}
-                      passHref
-                    >
-                      <Button leftIcon={<PlusSquareIcon />}>
-                        {t("add-quest")}
-                      </Button>
-                    </NextLink>
-                  )}
-                </HStack>
-
-                <TabPanels>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10}>
-                      {renderQuests(
-                        data.getAllQuestsByPathwayId.filter(
-                          (quest: any) => !quest.isPending
-                        )
-                      )}
-                    </SimpleGrid>
-                  </TabPanel>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10}>
-                      {renderQuests(
-                        data.getAllQuestsByPathwayId.filter(
-                          (quest: any) => quest.isPending
-                        )
-                      )}
-                    </SimpleGrid>
-                  </TabPanel>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10} />
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
             </TabPanel>
           </TabPanels>
         </Tabs>

@@ -1,5 +1,6 @@
 import ABIS from "@discovery-dao/hardhat/abis.json";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
+// import { Client, ThreadID, Where } from "@textile/hub";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useWeb3React } from "@web3-react/core";
@@ -16,6 +17,13 @@ import { NETWORK_URLS } from "../core/connectors";
 import { ALL_SUPPORTED_CHAIN_IDS } from "../core/connectors/chains";
 import { useActiveWeb3React } from "../core/hooks/web3";
 import NETWORKS from "../core/networks";
+// import {
+//   getAuthorizedUserClient,
+//   getDBClient,
+//   getIdentity,
+//   getPrivateIdentity,
+//   sign,
+// } from "../core/thread-db/thread-db";
 
 import { initialState, Web3Context } from "./Web3Context";
 import { Web3Reducer } from "./Web3Reducer";
@@ -107,6 +115,20 @@ const Web3Provider = ({ children }: { children: any }) => {
     });
   };
 
+  // const setPrivateIdentity = (identity: null | any) => {
+  //   dispatch({
+  //     type: "SET_PRIVATE_IDENTITY",
+  //     payload: identity,
+  //   });
+  // };
+
+  // const setThreadDBAuthorizedClient = (client: null | Client) => {
+  //   dispatch({
+  //     type: "SET_THREAD_DB_AUTHORIZED_CLIENT",
+  //     payload: client,
+  //   });
+  // };
+
   useEffect(() => {
     const coreCeramic = ceramicCoreFactory();
     setCore(coreCeramic);
@@ -132,7 +154,22 @@ const Web3Provider = ({ children }: { children: any }) => {
             abis[strChainId][network.name].contracts.PathwayNFT.abi,
             signer
           );
-          setContracts({ projectNFTContract, pathwayNFTContract });
+          const SponsorPassSFT = new ethers.Contract(
+            abis[strChainId][network.name].contracts.SponsorPassSFT.address,
+            abis[strChainId][network.name].contracts.SponsorPassSFT.abi,
+            signer
+          );
+          const BadgeNFT = new ethers.Contract(
+            abis[strChainId][network.name].contracts.BadgeNFT.address,
+            abis[strChainId][network.name].contracts.BadgeNFT.abi,
+            signer
+          );
+          setContracts({
+            projectNFTContract,
+            pathwayNFTContract,
+            SponsorPassSFT,
+            BadgeNFT,
+          });
           const isValidReviewer = await projectNFTContract.reviewers(account);
           setIsReviewer(isValidReviewer);
         }
@@ -154,6 +191,12 @@ const Web3Provider = ({ children }: { children: any }) => {
           model: publishedModel,
         });
         setSelf(mySelf);
+        const identityLinkService = new IdentityLink(
+          process.env.NEXT_PUBLIC_CERAMIC_VERIFICATION_SERVER_URL ||
+            "https://verifications-clay.3boxlabs.com"
+        );
+        setIdentityLink(identityLinkService);
+
         // Get ens
         let ens = null;
         try {
@@ -205,7 +248,34 @@ const Web3Provider = ({ children }: { children: any }) => {
           abis[strChainId][network.name].contracts.PathwayNFT.abi,
           signer
         );
-        setContracts({ projectNFTContract, pathwayNFTContract });
+        const SponsorPassSFT = new ethers.Contract(
+          abis[strChainId][network.name].contracts.SponsorPassSFT.address,
+          abis[strChainId][network.name].contracts.SponsorPassSFT.abi,
+          signer
+        );
+        const AppDiamond = new ethers.Contract(
+          abis[strChainId][network.name].contracts.AppDiamond.address,
+          abis[strChainId][network.name].contracts.AppDiamond.abi,
+          signer
+        );
+        const BadgeNFT = new ethers.Contract(
+          abis[strChainId][network.name].contracts.BadgeNFT.address,
+          abis[strChainId][network.name].contracts.BadgeNFT.abi,
+          signer
+        );
+        const AdventurerNFT = new ethers.Contract(
+          abis[strChainId][network.name].contracts.AdventurerNFT.address,
+          abis[strChainId][network.name].contracts.AdventurerNFT.abi,
+          signer
+        );
+        setContracts({
+          projectNFTContract,
+          pathwayNFTContract,
+          SponsorPassSFT,
+          AppDiamond,
+          BadgeNFT,
+          AdventurerNFT,
+        });
         const isValidReviewer = await projectNFTContract.reviewers(
           connectedAccount
         );
@@ -230,7 +300,6 @@ const Web3Provider = ({ children }: { children: any }) => {
       connectNetwork: CERAMIC_TESTNET,
       model: publishedModel,
     });
-
     setSelf(mySelf);
 
     provider.on("chainChanged", () => {

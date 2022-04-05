@@ -19,6 +19,7 @@ export const APPROVE_PATHWAY_MUTATION = gql`
       difficulty
       image
       description
+      projectStreamId
       isPending
       expandedServerSignatures {
         r
@@ -36,6 +37,7 @@ export const VERIFY_PATHWAY_MUTATION = gql`
       title
       difficulty
       image
+      projectStreamId
       description
       isPending
       expandedServerSignatures {
@@ -51,17 +53,38 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
   query GetAllPathwaysByProjectId($projectId: String!) {
     getAllPathwaysByProjectId(projectId: $projectId) {
       id
-      title
-      description
-      image
-      difficulty
-      rewardCurrency
-      rewardAmount
-      rewardUserCap
-      isPending
-      projectId
-      quests {
+      streamId
+      pathways {
         id
+        streamId
+        title
+        description
+        image
+        difficulty
+        rewardCurrency
+        rewardAmount
+        rewardUserCap
+        isPending
+        projectId
+        quests {
+          id
+        }
+      }
+      pendingPathways {
+        id
+        streamId
+        title
+        description
+        image
+        difficulty
+        rewardCurrency
+        rewardAmount
+        rewardUserCap
+        isPending
+        projectId
+        quests {
+          id
+        }
       }
     }
   }
@@ -71,6 +94,7 @@ export const GET_PATHWAY_BY_ID_QUERY = gql`
   query GetPathwayById($pathwayId: String!) {
     getPathwayById(pathwayId: $pathwayId) {
       id
+      streamId
       title
       createdBy
       createdAt
@@ -84,7 +108,6 @@ export const GET_PATHWAY_BY_ID_QUERY = gql`
       prerequisites
       quests {
         id
-        name
       }
     }
   }

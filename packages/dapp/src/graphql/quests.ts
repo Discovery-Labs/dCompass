@@ -72,6 +72,29 @@ export const APPROVE_QUEST_MUTATION = gql`
       pathwayId
       image
       isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
+    }
+  }
+`;
+
+export const VERIFY_QUEST_MUTATION = gql`
+  mutation VerifyQuest($input: VerifyQuestInput!) {
+    verifyQuest(input: $input) {
+      id
+      name
+      description
+      pathwayId
+      image
+      isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
 `;
@@ -80,39 +103,76 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
   query GetAllQuestsByPathwayId($pathwayId: String!) {
     getAllQuestsByPathwayId(pathwayId: $pathwayId) {
       id
-      name
+      streamId
+      title
       description
-      pathwayId
-      questType
       image
+      difficulty
       rewardCurrency
       rewardAmount
       rewardUserCap
       isPending
+      projectId
+      quests {
+        id
+        streamId
+        name
+        description
+        pathwayId
+        questType
+        image
+        rewardCurrency
+        rewardAmount
+        rewardUserCap
+        isPending
+        completedBy
+      }
     }
   }
 `;
 
-export const GET_QUEST_BY_ID_QUERY = gql`
-  query GetQuestById($questId: String!) {
-    getQuestById(questId: $questId) {
+export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
+  query GetQuizQuestById($questId: String!) {
+    getQuizQuestById(questId: $questId) {
       id
+      streamId
       name
-      createdBy
-      createdAt
-      difficulty
-      description
-      rewardCurrency
-      rewardAmount
-      rewardUserCap
-      image
-      pathwayId
+      completedBy
     }
   }
 `;
 
 export const SUBMIT_QUEST_ANSWERS_MUTATION = gql`
   mutation SubmitQuestAnswers($input: QuestAnswersSubmitionInput!) {
-    submitQuestAnswers(input: $input)
+    submitQuestAnswers(input: $input) {
+      id
+      isSuccess
+      streamId
+      name
+      rewardCurrency
+      completedBy
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
+    }
+  }
+`;
+
+export const CLAIM_QUEST_REWARDS_MUTATION = gql`
+  mutation ClaimQuestRewards($input: ClaimQuestRewardsInput!) {
+    claimQuestRewards(input: $input) {
+      id
+      streamId
+      name
+      rewardCurrency
+      completedBy
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
+    }
   }
 `;

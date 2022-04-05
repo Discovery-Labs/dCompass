@@ -1,56 +1,41 @@
 import { Resolver, Query } from '@nestjs/graphql';
-import { schemaAliases } from '../../../core/constants/idx';
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseThreadDBClient } from '../../../core/utils/types';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
+import { Tag } from '../../Tags/Tag.entity';
 import { Project } from '../Project.entity';
 
 @Resolver(() => [Project])
 export class GetAllProjectsResolver {
+  constructor(private readonly threadDBService: ThreadDBService) {}
   @Query(() => [Project], {
     nullable: true,
     description: 'Gets all the projects in dCompass',
     name: 'getAllProjects',
   })
   async getAllProjects(
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
   ): Promise<Project[] | null | undefined> {
-    const allProjects = await ceramicClient.dataStore.get(
-      schemaAliases.APP_PROJECTS_ALIAS,
-    );
-
-    if (allProjects?.projects) {
-      const projectIds = allProjects?.projects.map(
-        ({ id }: { id: string }) => ({ streamId: id }),
-      );
-
-      const projectsWithDetails = await ceramicClient.ceramic.multiQuery(
-        projectIds,
-      );
-
-      const serializedProjects = await Promise.all(
-        Object.values(projectsWithDetails).map(async (stream) => {
-          const additionalFields = allProjects.projects.find(
-            ({ id }: { id: string }) => id === stream.id.toUrl(),
-          );
-          const projectTags = await ceramicClient.ceramic.multiQuery(
-            stream.content.tags.map((tag: { id: string }) => ({
-              streamId: tag.id,
-            })),
-          );
-          return {
-            id: stream.id.toUrl(),
-            ...stream.state.content,
-            ...additionalFields,
-            tags: Object.entries(projectTags).map(([streamId, document]) => ({
-              id: streamId,
-              ...document.content,
-            })),
-          };
-        }),
-      );
-      console.log({ serializedProjects });
-      return serializedProjects;
-    }
-    return undefined;
+    const [allProjects, allTags] = await Promise.all([
+      this.threadDBService.query({
+        collectionName: 'Project',
+        threadId: latestThreadId,
+        dbClient,
+      }),
+      this.threadDBService.query({
+        collectionName: 'Tag',
+        threadId: latestThreadId,
+        dbClient,
+      }),
+    ]);
+    return allProjects.map((project: any) => ({
+      id: project._id,
+      ...project,
+      tags: allTags
+        .map((t: any) => ({ id: t._id, ...t }))
+        .filter((tag: any) =>
+          project.tags.map((pjTag: Tag) => pjTag.id).includes(tag.id),
+        ),
+    })) as Project[];
   }
 }

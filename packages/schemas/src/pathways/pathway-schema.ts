@@ -5,6 +5,12 @@ export const PathwaySchema = {
     "A pathway covers a specific topic within a project or an ecosystem",
   type: "object",
   properties: {
+    _id: {
+      type: "string",
+    },
+    streamId: {
+      type: "string",
+    },
     createdAt: {
       type: "string",
       format: "date-time",
@@ -21,7 +27,7 @@ export const PathwaySchema = {
       maxLength: 100,
     },
     projectId: {
-      $ref: "#/definitions/CeramicStreamId",
+      type: "string",
     },
     image: {
       type: "string",
@@ -56,28 +62,16 @@ export const PathwaySchema = {
     },
     quests: {
       type: "array",
-      title: "Quests",
+      title: "quests",
       items: {
-        type: "object",
-        title: "QuestItem",
-        properties: {
-          id: {
-            $ref: "#/definitions/CeramicStreamId",
-          },
-        },
+        type: "string",
       },
     },
     pendingQuests: {
       type: "array",
-      title: "PendingQuests",
+      title: "pendingQuests",
       items: {
-        type: "object",
-        title: "PendingQuestItem",
-        properties: {
-          id: {
-            $ref: "#/definitions/CeramicStreamId",
-          },
-        },
+        type: "string",
       },
     },
   },

@@ -1,23 +1,18 @@
 export declare const schemas: {
     dCompass: {
-        Contributors: {
+        UserPrivateIdentity: {
             $schema: string;
             title: string;
             type: string;
-            items: {
-                type: string;
-                title: string;
-                properties: {
-                    id: {
-                        $ref: string;
-                    };
-                };
-            };
-            definitions: {
-                CeramicStreamId: {
+            properties: {
+                _id: {
                     type: string;
-                    pattern: string;
-                    maxLength: number;
+                };
+                privateIdentity: {
+                    type: string;
+                };
+                token: {
+                    type: string;
                 };
             };
         };
@@ -33,31 +28,11 @@ export declare const schemas: {
                         type: string;
                         title: string;
                         properties: {
-                            pendingPathways: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    $ref: string;
-                                };
-                            };
-                            pendingMembers: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    $ref: string;
-                                };
-                            };
-                            tokenUris: {
-                                type: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            isFeatured: {
+                            _id: {
                                 type: string;
                             };
-                            id: {
-                                $ref: string;
+                            streamId: {
+                                type: string;
                             };
                             name: {
                                 type: string;
@@ -105,7 +80,7 @@ export declare const schemas: {
                                 type: string;
                                 title: string;
                                 items: {
-                                    $ref: string;
+                                    type: string;
                                 };
                             };
                             members: {
@@ -114,6 +89,29 @@ export declare const schemas: {
                                 items: {
                                     $ref: string;
                                 };
+                            };
+                            pendingPathways: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            pendingMembers: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    $ref: string;
+                                };
+                            };
+                            tokenUris: {
+                                type: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            isFeatured: {
+                                type: string;
                             };
                             createdBy: {
                                 type: string;
@@ -140,8 +138,8 @@ export declare const schemas: {
                                     type: string;
                                     title: string;
                                     properties: {
-                                        id: {
-                                            $ref: string;
+                                        _id: {
+                                            type: string;
                                         };
                                     };
                                 };
@@ -167,12 +165,12 @@ export declare const schemas: {
                                 };
                             };
                             parentProjectId: {
-                                $ref: string;
+                                type: string;
                             };
                             childProjects: {
                                 type: string;
                                 items: {
-                                    $ref: string;
+                                    type: string;
                                 };
                             };
                         };
@@ -213,8 +211,11 @@ export declare const schemas: {
             title: string;
             type: string;
             properties: {
-                id: {
-                    $ref: string;
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
                 };
                 name: {
                     type: string;
@@ -262,7 +263,7 @@ export declare const schemas: {
                     type: string;
                     title: string;
                     items: {
-                        $ref: string;
+                        type: string;
                     };
                 };
                 members: {
@@ -271,6 +272,29 @@ export declare const schemas: {
                     items: {
                         $ref: string;
                     };
+                };
+                pendingPathways: {
+                    type: string;
+                    title: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                pendingMembers: {
+                    type: string;
+                    title: string;
+                    items: {
+                        $ref: string;
+                    };
+                };
+                tokenUris: {
+                    type: string;
+                    items: {
+                        type: string;
+                    };
+                };
+                isFeatured: {
+                    type: string;
                 };
                 createdBy: {
                     type: string;
@@ -297,8 +321,8 @@ export declare const schemas: {
                         type: string;
                         title: string;
                         properties: {
-                            id: {
-                                $ref: string;
+                            _id: {
+                                type: string;
                             };
                         };
                     };
@@ -324,12 +348,12 @@ export declare const schemas: {
                     };
                 };
                 parentProjectId: {
-                    $ref: string;
+                    type: string;
                 };
                 childProjects: {
                     type: string;
                     items: {
-                        $ref: string;
+                        type: string;
                     };
                 };
             };
@@ -400,17 +424,10 @@ export declare const schemas: {
                         title: string;
                         properties: {
                             id: {
-                                $ref: string;
+                                type: string;
                             };
                         };
                     };
-                };
-            };
-            definitions: {
-                CeramicStreamId: {
-                    type: string;
-                    pattern: string;
-                    maxLength: number;
                 };
             };
         };
@@ -420,6 +437,12 @@ export declare const schemas: {
             description: string;
             type: string;
             properties: {
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
+                };
                 createdAt: {
                     type: string;
                     format: string;
@@ -436,7 +459,7 @@ export declare const schemas: {
                     maxLength: number;
                 };
                 projectId: {
-                    $ref: string;
+                    type: string;
                 };
                 image: {
                     type: string;
@@ -474,12 +497,6 @@ export declare const schemas: {
                     title: string;
                     items: {
                         type: string;
-                        title: string;
-                        properties: {
-                            id: {
-                                $ref: string;
-                            };
-                        };
                     };
                 };
                 pendingQuests: {
@@ -487,12 +504,6 @@ export declare const schemas: {
                     title: string;
                     items: {
                         type: string;
-                        title: string;
-                        properties: {
-                            id: {
-                                $ref: string;
-                            };
-                        };
                     };
                 };
             };
@@ -516,8 +527,55 @@ export declare const schemas: {
                         type: string;
                         title: string;
                         properties: {
+                            _id: {
+                                type: string;
+                            };
+                            streamId: {
+                                type: string;
+                            };
+                            pathwayId: {
+                                type: string;
+                            };
+                            name: {
+                                type: string;
+                                title: string;
+                                maxLength: number;
+                            };
+                            description: {
+                                type: string;
+                            };
+                            completedBy: {
+                                type: string;
+                                title: string;
+                                items: {
+                                    type: string;
+                                };
+                            };
+                            createdAt: {
+                                type: string;
+                                format: string;
+                                maxLength: number;
+                            };
+                            updatedAt: {
+                                type: string;
+                                format: string;
+                                maxLength: number;
+                            };
+                            questType: {
+                                type: string;
+                                maxLength: number;
+                            };
+                            rewardAmount: {
+                                type: string;
+                            };
+                            rewardUserCap: {
+                                type: string;
+                            };
+                            rewardCurrency: {
+                                type: string;
+                            };
                             id: {
-                                $ref: string;
+                                type: string;
                             };
                         };
                     };
@@ -537,6 +595,15 @@ export declare const schemas: {
             description: string;
             type: string;
             properties: {
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
+                };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -544,9 +611,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -577,33 +641,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
             definitions: {
@@ -629,6 +666,15 @@ export declare const schemas: {
                     type: string;
                     maxLength: number;
                 };
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
+                };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -636,9 +682,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -669,33 +712,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };
@@ -716,6 +732,15 @@ export declare const schemas: {
                 chainId: {
                     type: string;
                 };
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
+                };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -723,9 +748,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -756,33 +778,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };
@@ -796,6 +791,15 @@ export declare const schemas: {
                     type: string;
                     maxLength: number;
                 };
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
+                };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -803,9 +807,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -836,33 +837,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };
@@ -879,6 +853,15 @@ export declare const schemas: {
                         maxLength: number;
                     };
                 };
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
+                };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -886,9 +869,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -919,33 +899,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };
@@ -969,7 +922,6 @@ export declare const schemas: {
                             };
                             answer: {
                                 type: string;
-                                maxLength: number;
                             };
                             choices: {
                                 type: string;
@@ -984,6 +936,15 @@ export declare const schemas: {
                         };
                     };
                 };
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
+                };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -991,9 +952,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -1024,33 +982,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };
@@ -1074,6 +1005,15 @@ export declare const schemas: {
                 chainId: {
                     type: string;
                 };
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
+                };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -1081,9 +1021,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -1114,33 +1051,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };
@@ -1157,6 +1067,15 @@ export declare const schemas: {
                         maxLength: number;
                     };
                 };
+                _id: {
+                    type: string;
+                };
+                streamId: {
+                    type: string;
+                };
+                pathwayId: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -1164,9 +1083,6 @@ export declare const schemas: {
                 };
                 description: {
                     type: string;
-                };
-                pathwayId: {
-                    $ref: string;
                 };
                 completedBy: {
                     type: string;
@@ -1197,33 +1113,6 @@ export declare const schemas: {
                 };
                 rewardCurrency: {
                     type: string;
-                };
-                nfts: {
-                    type: string;
-                    minItems: number;
-                    items: {
-                        type: string;
-                        properties: {
-                            claimedBy: {
-                                type: string;
-                                title: string;
-                                items: {
-                                    type: string;
-                                };
-                            };
-                            rarity: {
-                                type: string;
-                                enum: string[];
-                            };
-                            name: {
-                                type: string;
-                                maxLength: number;
-                            };
-                            url: {
-                                $ref: string;
-                            };
-                        };
-                    };
                 };
             };
         };
@@ -1254,6 +1143,9 @@ export declare const schemas: {
             description: string;
             type: string;
             properties: {
+                _id: {
+                    type: string;
+                };
                 createdAt: {
                     type: string;
                     format: string;

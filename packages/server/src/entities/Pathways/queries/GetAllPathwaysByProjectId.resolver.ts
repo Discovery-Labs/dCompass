@@ -1,138 +1,91 @@
 import { NotFoundException } from '@nestjs/common';
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { schemaAliases } from '../../../core/constants/idx';
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
+import { Where } from '@textile/hub';
+
+import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseThreadDBClient } from '../../../core/utils/types';
+import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
 import { Project } from '../../Projects/Project.entity';
 import { Pathway } from '../Pathway.entity';
 
-@Resolver(() => [Pathway])
+@Resolver(() => Project)
 export class GetAllPathwaysByProjectIdResolver {
-  @Query(() => [Pathway], {
+  constructor(private readonly threadDBService: ThreadDBService) {}
+
+  @Query(() => Project, {
     nullable: true,
     description: 'Gets all the pathways in dCompass',
     name: 'getAllPathwaysByProjectId',
   })
   async getAllPathwaysByProjectId(
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args('projectId') projectId: string,
-  ): Promise<Pathway[] | null> {
-    const allProjects = await ceramicClient.dataStore.get(
-      schemaAliases.APP_PROJECTS_ALIAS,
-    );
-    const projects = allProjects?.projects ?? [];
-    console.log(projects);
-    // Comparison between ceramic urls
-    // (eg: ceramic://some_stream_id === ceramic://another_stream_id)
-    const foundProject = projects.find(
-      (project: Project) => project.id === projectId,
-    );
-
-    if (!foundProject) {
-      throw new NotFoundException('Project not found??');
-    }
-    const pathwayIds = foundProject.pathways
-      ? foundProject.pathways.map((id: string) => ({
-          streamId: id,
-        }))
-      : [];
-
-    const pendingPathwayIds = foundProject.pendingPathways
-      ? foundProject.pendingPathways.map((id: string) => ({
-          streamId: id,
-        }))
-      : [];
-
-    const indexedPathways = await ceramicClient.dataStore.get(
-      schemaAliases.PATHWAYS_ALIAS,
-    );
-
-    const pathwaysWithAdditionalDetails = indexedPathways?.pathways ?? [];
-
-    const [pathwaysWithDetails, pendingPathwaysWithDetails] = await Promise.all(
-      [
-        ceramicClient.ceramic.multiQuery(pathwayIds),
-        ceramicClient.ceramic.multiQuery(pendingPathwayIds),
-      ],
-    );
-
-    const serializedPathways = Object.values(pathwaysWithDetails).map(
-      (stream) => {
-        const serverSidePathwayInfos = pathwaysWithAdditionalDetails.find(
-          (pathway: Pathway) => pathway.id === stream.id.toUrl(),
-        );
-        if (serverSidePathwayInfos) {
-          const quests =
-            serverSidePathwayInfos.quests &&
-            serverSidePathwayInfos.quests.length > 0
-              ? serverSidePathwayInfos.quests.map((questId: string) => ({
-                  id: questId,
-                }))
-              : [];
-
-          const pendingQuests =
-            serverSidePathwayInfos.pendingQuests &&
-            serverSidePathwayInfos.pendingQuests.length > 0
-              ? serverSidePathwayInfos.pendingQuests.map((questId: string) => ({
-                  id: questId,
-                }))
-              : [];
-          return {
-            id: stream.id.toUrl(),
-            ...stream.state.content,
-            ...serverSidePathwayInfos,
-            quests,
-            pendingQuests,
-            isPending: false,
-          };
-        }
-        return {
-          id: stream.id.toUrl(),
-          ...stream.state.content,
-          isPending: false,
-        };
-      },
-    );
-
-    const serializedPendingPathways = Object.values(
-      pendingPathwaysWithDetails,
-    ).map((stream) => {
-      const serverSidePathwayInfos = pathwaysWithAdditionalDetails.find(
-        (pathway: Pathway) => pathway.id === stream.id.toUrl(),
-      );
-      if (serverSidePathwayInfos) {
-        const quests =
-          serverSidePathwayInfos.quests &&
-          serverSidePathwayInfos.quests.length > 0
-            ? serverSidePathwayInfos.quests.map((questId: string) => ({
-                id: questId,
-              }))
-            : [];
-
-        const pendingQuests =
-          serverSidePathwayInfos.pendingQuests &&
-          serverSidePathwayInfos.pendingQuests.length > 0
-            ? serverSidePathwayInfos.pendingQuests.map((questId: string) => ({
-                id: questId,
-              }))
-            : [];
-        return {
-          id: stream.id.toUrl(),
-          ...stream.state.content,
-          ...serverSidePathwayInfos,
-          quests,
-          pendingQuests,
-          isPending: true,
-        };
-      }
-      return {
-        id: stream.id.toUrl(),
-        ...stream.state.content,
-        ...serverSidePathwayInfos,
-        isPending: true,
-      };
+  ): Promise<Project | null> {
+    const foundProject = await this.threadDBService.getProjectById({
+      dbClient,
+      threadId: latestThreadId,
+      projectId: projectId,
     });
 
-    return [...serializedPathways, ...serializedPendingPathways];
+    const pathwayIds = foundProject.pathways ? foundProject.pathways : [];
+
+    const pendingPathwayIds = foundProject.pendingPathways
+      ? foundProject.pendingPathways
+      : [];
+
+    const pathwaysWithDetails = await Promise.all(
+      pathwayIds.map(async (pathwayId: string) => {
+        const [foundPathway] = await this.threadDBService.query({
+          collectionName: 'Pathway',
+          dbClient,
+          threadId: latestThreadId,
+          query: new Where('_id').eq(pathwayId),
+        });
+        if (!foundPathway) {
+          throw new NotFoundException('Pathway not found by back-end');
+        }
+        const { _id, quests, ...pathway } = foundPathway as any;
+        return {
+          id: _id,
+          ...pathway,
+          quests: quests
+            ? quests.map((questId: string) => ({
+                id: questId,
+              }))
+            : [],
+        } as Pathway;
+      }),
+    );
+    const pendingPathwaysWithDetails = await Promise.all(
+      pendingPathwayIds.map(async (pathwayId: string) => {
+        const [foundPathway] = await this.threadDBService.query({
+          collectionName: 'Pathway',
+          dbClient,
+          threadId: latestThreadId,
+          query: new Where('_id').eq(pathwayId),
+        });
+        if (!foundPathway) {
+          throw new NotFoundException('Pathway not found by back-end');
+        }
+        const { _id, quests, ...pathway } = foundPathway as any;
+        return {
+          id: _id,
+          ...pathway,
+          quests: quests
+            ? quests.map((questId: string) => ({
+                id: questId,
+              }))
+            : [],
+        } as Pathway;
+      }),
+    );
+
+    // TODO: Query quests for each pathway
+
+    return {
+      ...foundProject,
+      pathways: pathwaysWithDetails,
+      pendingPathways: pendingPathwaysWithDetails,
+    };
   }
 }

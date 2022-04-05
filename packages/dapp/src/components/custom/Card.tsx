@@ -4,7 +4,7 @@ function Card(props: StackProps) {
   const { children, ...others } = props;
   return (
     <VStack
-      layerStyle="no-border-card"
+      layerStyle="solid-card"
       h="lg"
       borderRadius="base"
       spacing="4"

@@ -1,13 +1,16 @@
 import { ObjectType, Field, Float, Int } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
-// import { QuestNFT } from './dto/QuestNFT';
-// import { Pathway } from '../Pathways/Pathway.entity';
+import { ExpandedServerSignature } from '../../core/utils/security/ExpandedServerSignature';
+import { Pathway } from '../Pathways/Pathway.entity';
 
 export type CeramicStreamId = string;
 @ObjectType({ isAbstract: true })
 export abstract class Quest extends BaseEntity {
   @Field()
   id: string;
+
+  @Field()
+  streamId: string;
 
   @Field()
   name: string;
@@ -30,8 +33,8 @@ export abstract class Quest extends BaseEntity {
   @Field()
   pathwayId: CeramicStreamId;
 
-  // @Field(() => Pathway)
-  // pathway: Pathway;
+  @Field(() => Pathway)
+  pathway: Pathway;
 
   @Field(() => [String])
   completedBy?: CeramicStreamId[];
@@ -41,7 +44,7 @@ export abstract class Quest extends BaseEntity {
 
   @Field()
   image: string;
-  // TODO: use this instead of image
-  // @Field(() => [QuestNFT])
-  // nfts?: QuestNFT[];
+
+  @Field(() => [ExpandedServerSignature])
+  expandedServerSignatures?: ExpandedServerSignature[];
 }

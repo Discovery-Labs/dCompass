@@ -53,7 +53,7 @@ const SquadDropzone = ({
         boxSize="150px"
         src={file.preview}
       />
-      <Flex pl="4" d="column" v="full" alignSelf="center">
+      <Flex pl="4" d="column" w="full" alignSelf="center">
         <IconButton
           colorScheme="secondary"
           onClick={() => setFiles([])}
@@ -68,9 +68,10 @@ const SquadDropzone = ({
   useEffect(() => {
     const squadsImage = getValues(`squads[${nestIndex}].image`);
 
-    if (squadsImage) {
+    if (squadsImage && typeof squadsImage !== "string") {
       const logoFiles = [];
       logoFiles.push(squadsImage[0]);
+      // console.log("logoFiles", squadsImage);
       setFiles(
         logoFiles.map((file: File) =>
           Object.assign(file, {

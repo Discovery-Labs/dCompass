@@ -1,11 +1,12 @@
 import { useMutation } from "@apollo/client";
-import { Button, Flex, Stack } from "@chakra-ui/react";
+import { Button, Flex, Stack, Link, Box } from "@chakra-ui/react";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import ThreeTierPricing from "../../../components/custom/Pricing";
@@ -17,6 +18,12 @@ import { schemaAliases } from "../../../core/ceramic";
 import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 import Card from "components/custom/Card";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
+import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
+import { isAddress } from "ethers/lib/utils";
+
+import NextLink from "next/link";
+import useCustomColor from "core/hooks/useCustomColor";
 
 const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
@@ -33,10 +40,14 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
+  const { getPrimaryColor, getTextColor } = useCustomColor();
   const { t } = useTranslation("common");
   const router = useRouter();
   const { self } = useContext(Web3Context);
   const { account, library } = useWeb3React();
+  const { contracts } = useContext(Web3Context);
+  const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
+  const [sponsorPassSFT, setSponsorPassSFT] = useState<SponsorPassSFT>();
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -46,7 +57,9 @@ function CreateProjectStepper() {
   });
   const methods = useForm({
     defaultValues: {
+      name: null,
       logo: null,
+      description: null,
       squads: [
         {
           name: "Genesis",
@@ -59,12 +72,38 @@ function CreateProjectStepper() {
         label: string;
       }[],
       website: null,
+      discord: null,
+      gitbook: null,
+      github: null,
+      twitter: null,
+      sponsorTier: "GOLD" as "SILVER" | "GOLD" | "DIAMOND",
+      projectWallet: null as null | string,
     },
   });
+
+  useEffect(() => {
+    async function init() {
+      if (contracts) {
+        setProjectNFTContract(contracts.projectNFTContract);
+        setSponsorPassSFT(contracts.SponsorPassSFT);
+      }
+    }
+    init();
+  }, [contracts]);
 
   async function onSubmit() {
     const values = methods.getValues();
     console.log({ values });
+    if (!projectNFTContract) {
+      throw new Error("ProjectNFTContract not deployed on this network");
+    }
+    if (!sponsorPassSFT) {
+      throw new Error("SponsorPassSFT not deployed on this network");
+    }
+
+    if (!values.projectWallet || !isAddress(values.projectWallet)) {
+      throw new Error("Not a valid project wallet address");
+    }
 
     const formData = new FormData();
     if (values.logo) {
@@ -87,7 +126,7 @@ function CreateProjectStepper() {
       logo: cids.logo,
       website: `https://${values.website}`,
       createdBy: account,
-      tags: values.tags.map((tag) => ({ id: `ceramic://${tag.value}` })),
+      tags: values.tags.map((tag) => ({ id: tag.value })),
       squads: values.squads.map((squad) => {
         const members = squad.members.map(
           (member: any) => member.value
@@ -124,19 +163,6 @@ function CreateProjectStepper() {
 
     const { metadataCids } = await nftCidRes.json();
 
-    // Get user's existing projects
-    const existingProjects = await self.client.dataStore.get(PROJECTS_ALIAS);
-
-    // Index his new project
-    if (existingProjects && existingProjects.projects.length > 0) {
-      await self.client.dataStore.set(PROJECTS_ALIAS, {
-        projects: [...existingProjects.projects, projectId],
-      });
-    } else {
-      await self.client.dataStore.set(PROJECTS_ALIAS, {
-        projects: [projectId],
-      });
-    }
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: projectId,
@@ -144,6 +170,26 @@ function CreateProjectStepper() {
       }),
       account,
     ]);
+
+    const stakeAmountsIndex = {
+      SILVER: 1,
+      GOLD: 2,
+      DIAMOND: 3,
+    };
+
+    const stakeAmounts = await sponsorPassSFT.stakeAmounts(
+      stakeAmountsIndex[values.sponsorTier]
+    );
+
+    await projectNFTContract.addProjectWallet(
+      projectId,
+      values.projectWallet,
+      values.sponsorTier,
+      {
+        value: stakeAmounts,
+      }
+    );
+
     const allProjects = await createProjectMutation({
       variables: {
         input: {
@@ -157,13 +203,63 @@ function CreateProjectStepper() {
     return router.push("/");
   }
 
+  const nextStepWithValidation = async () => {
+    const { trigger } = methods;
+
+    let isValid = false;
+
+    switch (activeStep) {
+      case 0:
+        isValid = await trigger([
+          "name",
+          "logo",
+          "description",
+          "website",
+          "tags",
+          "discord",
+          "gitbook",
+          "github",
+          "twitter",
+        ]);
+        break;
+      case 1:
+        isValid = await trigger([
+          `squads.${0}.name`,
+          `squads.${0}.members.${0}`,
+          `squads.${0}.image`,
+        ]);
+        break;
+    }
+
+    if (isValid) {
+      nextStep();
+    }
+  };
+
   return (
     <NotConnectedWrapper>
       <FormProvider {...methods}>
         <CenteredFrame>
+          <Box py="1">
+            <NextLink href={"/"} passHref>
+              <Link
+                textStyle={"small"}
+                color={getTextColor}
+                _hover={{ color: getPrimaryColor, textDecoration: "none" }}
+              >
+                <ChevronLeftIcon w={6} h={6} />
+                Back to projects
+              </Link>
+            </NextLink>
+          </Box>
           <Card h="full" w={activeStep === 2 ? "fit-content" : "2xl"}>
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
-              <Steps colorScheme="purple" activeStep={activeStep}>
+              <Steps
+                w="full"
+                orientation="horizontal"
+                colorScheme="purple"
+                activeStep={activeStep}
+              >
                 {steps.map(({ label, content }) => (
                   <Step label={label} key={label}>
                     {content}
@@ -184,7 +280,7 @@ function CreateProjectStepper() {
                 {activeStep < 2 && (
                   <Button
                     ml="0.5rem"
-                    onClick={() => nextStep()}
+                    onClick={() => nextStepWithValidation()}
                     px="1.25rem"
                     fontSize="md"
                   >

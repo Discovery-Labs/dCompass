@@ -171,17 +171,23 @@ const variantSoftRounded: PartsStyleFunction<typeof parts> = (props) => {
     tab: {
       borderRadius: borderRadius,
       fontWeight: 'semibold',
-      color: 'ice',
+      margin: "2px",
+      color: mode(`${c}.500`, `${c}.500`)(props),
+      _hover: {
+        color: mode(colors.neutralLightest, colors.neutralLightest)(props),
+        bg: mode(`${c}.300`, `${c}.300`)(props),
+      },
       _selected: {
-        color: mode(colors.neutralLightest, colors.neutralDarkest)(props),
-        bg: mode(`${c}.500`, `${c}.200`)(props),
+        color: mode(colors.neutralLightest, colors.neutralLightest)(props),
+        bg: mode(`${c}.300`, `${c}.300`)(props),
       },
     },
     tablist: {
-      bg: mode(colors.neutralLighter, colors.neutralDarker)(props),
+      // bg: mode(colors.neutralLighter, colors.neutralDarker)(props),
       border: '1px solid',
+      padding: "2px",
       borderRadius: borderRadius,
-      borderColor: mode(colors.neutralLight, colors.neutralDark)(props),
+      borderColor: mode(colors.borderLight, colors.borderDark)(props),
     },
   };
 };
@@ -204,11 +210,12 @@ const variantUnstyled: PartsStyleFunction<typeof parts> = (props) => {
   const { colorScheme: c } = props;
   return {
     tab: {
+      color: mode(`${c}.600`, `${c}.300`)(props),
       _selected: {
-        color: mode(`${c}.600`, `${c}.300`)(props),
+        color: mode(colors.neutralDarkest, colors.neutralLightest)(props),
         fontWeight: 'bold',
         borderBottomWidth: '2px',
-        borderBottomColor: mode(`${c}.600`, `${c}.300`)(props),
+        borderBottomColor: mode(colors.neutralDarkest, colors.neutralLightest)(props),
       },
     },
   };
