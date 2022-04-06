@@ -7,6 +7,7 @@ export const CREATE_PATHWAY_MUTATION = gql`
       title
       difficulty
       description
+      slogan
     }
   }
 `;
@@ -19,6 +20,7 @@ export const APPROVE_PATHWAY_MUTATION = gql`
       difficulty
       image
       description
+      slogan
       projectStreamId
       isPending
       expandedServerSignatures {
@@ -39,6 +41,7 @@ export const VERIFY_PATHWAY_MUTATION = gql`
       image
       projectStreamId
       description
+      slogan
       isPending
       expandedServerSignatures {
         r
@@ -59,6 +62,7 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
         streamId
         title
         description
+        slogan
         image
         difficulty
         rewardCurrency
@@ -75,6 +79,7 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
         streamId
         title
         description
+        slogan
         image
         difficulty
         rewardCurrency
@@ -100,6 +105,7 @@ export const GET_PATHWAY_BY_ID_QUERY = gql`
       createdAt
       difficulty
       description
+      slogan
       rewardCurrency
       rewardAmount
       rewardUserCap

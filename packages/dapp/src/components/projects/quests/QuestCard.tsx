@@ -36,31 +36,13 @@ import { Web3Context } from "../../../contexts/Web3Provider";
 import useCustomColor from "../../../core/hooks/useCustomColor";
 import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
+import { Quest } from "../../../core/types";
 import {
   APPROVE_QUEST_MUTATION,
   CLAIM_QUEST_REWARDS_MUTATION,
   VERIFY_QUEST_MUTATION,
 } from "../../../graphql/quests";
 
-type Quest = {
-  id: string;
-  streamId: string;
-  image: string;
-  completedBy: string[];
-  projectId: string;
-  pathwayId: string;
-  owner: string;
-  name: string;
-  questType: string;
-  description: string;
-  isPending: string;
-  website: string;
-  network: string;
-  rewardAmount: string;
-  rewardUserCap: number;
-  rewardCurrency: string;
-  // unlocked: boolean;
-};
 const unlocked = true;
 
 const ModalDetails = ({ quest }: { quest: Quest }) => {
@@ -383,11 +365,7 @@ function QuestCard({
           </Modal>
           {/* Short Description  */}
           <Text color="text-weak" noOfLines={3}>
-            Short Description Short Description Short Description Short
-            Description Short Description Short Description Short Description
-            Short Description Short Description Short Description Short
-            Description Short Description Short Description Short Description
-            Short Description
+            {quest.slogan}
           </Text>
           <Text>See more</Text>
         </VStack>

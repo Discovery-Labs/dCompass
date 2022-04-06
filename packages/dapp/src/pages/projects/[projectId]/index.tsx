@@ -96,6 +96,7 @@ function ProjectPage({
   name,
   createdBy,
   description,
+  slogan,
   squads,
   logo,
   tags,
@@ -193,10 +194,7 @@ function ProjectPage({
             </Heading>
 
             {/* Short description */}
-            <Text color="text-weak">
-              Sunt nulla non pariatur aliquip adipisicing enim labore
-              exercitation culpa enim.
-            </Text>
+            <Text color="text-weak">{slogan}</Text>
           </VStack>
         </HStack>
         <Spacer />

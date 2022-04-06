@@ -19,6 +19,9 @@ export abstract class Quest extends BaseEntity {
   description: string;
 
   @Field()
+  slogan: string;
+
+  @Field()
   questType: string;
 
   @Field()

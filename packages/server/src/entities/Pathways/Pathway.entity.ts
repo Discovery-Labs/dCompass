@@ -59,6 +59,9 @@ export class Pathway extends BaseEntity {
   description: string;
 
   @Field()
+  slogan: string;
+
+  @Field()
   rewardCurrency: string;
 
   @Field(() => Float)

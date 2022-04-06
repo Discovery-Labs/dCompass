@@ -93,6 +93,7 @@ type GithubContributorQuest {
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  slogan: String!
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -163,6 +164,7 @@ type NFTOwnerQuest {
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  slogan: String!
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -186,6 +188,7 @@ type Pathway {
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  slogan: String!
   streamId: String!
   title: String!
 
@@ -225,6 +228,7 @@ type Project {
   pendingMembers: [String!]
   pendingPathways: [Pathway!]
   repos: [String!]
+  slogan: String!
   squads: [Squad!]!
   streamId: String!
   tags: [Tag!]
@@ -287,6 +291,7 @@ type Quest {
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  slogan: String!
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -325,6 +330,7 @@ type QuizQuest {
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  slogan: String!
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -355,6 +361,7 @@ type SnapshotVoterQuest {
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
+  slogan: String!
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -390,6 +397,7 @@ type SubmitQuestAnswersOutput {
   rewardAmount: Int!
   rewardCurrency: String!
   rewardUserCap: Int!
+  slogan: String!
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""

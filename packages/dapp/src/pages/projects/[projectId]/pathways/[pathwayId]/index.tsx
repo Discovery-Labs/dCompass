@@ -92,6 +92,7 @@ function PathwayPage({
   id,
   title,
   description,
+  slogan,
   image,
   quests = [],
   difficulty,
@@ -107,8 +108,7 @@ function PathwayPage({
   const pathwayMarkdownTheme = usePageMarkdownTheme();
 
   const { account } = useContext(Web3Context);
-  const { getTextColor, getColoredText, getBgColor, getAccentColor } =
-    useCustomColor();
+  const { getAccentColor } = useCustomColor();
 
   const { data, loading, error } = useQuery(
     GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
@@ -184,6 +184,7 @@ function PathwayPage({
         <Heading as="h1" size="2xl" color="text" py="4">
           {title}
         </Heading>
+        <Text color="text-weak">{slogan}</Text>
         <Tabs w="full">
           <HStack justifyContent="space-between">
             <TabList>

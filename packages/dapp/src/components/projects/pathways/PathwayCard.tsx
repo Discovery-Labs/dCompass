@@ -257,11 +257,7 @@ function PathwayCard({
           </Modal>
           {/* Short Description  */}
           <Text color="text-weak" noOfLines={3}>
-            Short Description Short Description Short Description Short
-            Description Short Description Short Description Short Description
-            Short Description Short Description Short Description Short
-            Description Short Description Short Description Short Description
-            Short Description
+            {pathway.slogan}
           </Text>
           <Text>See more</Text>
         </VStack>

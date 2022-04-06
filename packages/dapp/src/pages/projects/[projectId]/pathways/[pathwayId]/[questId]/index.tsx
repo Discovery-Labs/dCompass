@@ -123,6 +123,7 @@ function QuestPage({
   id,
   name,
   description,
+  slogan,
   image,
   createdAt,
   completedBy,
@@ -313,6 +314,8 @@ function QuestPage({
         <Heading as="h1" size="2xl" color="text-weak" py="4">
           {name} <Icon as={RiSwordLine} color="text-weak" />
         </Heading>
+        <Text color="text-weak">{slogan}</Text>
+
         <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">
             <TabList>

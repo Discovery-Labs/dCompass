@@ -6,6 +6,7 @@ export const CREATE_QUEST_MUTATION = gql`
       id
       name
       description
+      slogan
       pathwayId
       questType
     }
@@ -18,6 +19,7 @@ export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
       id
       name
       description
+      slogan
       pathwayId
       proposalId
     }
@@ -30,6 +32,7 @@ export const CREATE_NFT_OWNER_QUEST_MUTATION = gql`
       id
       name
       description
+      slogan
       pathwayId
       collectionContractAddress
     }
@@ -41,6 +44,7 @@ export const CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION = gql`
       id
       name
       description
+      slogan
       pathwayId
       githubOrgId
     }
@@ -53,6 +57,7 @@ export const CREATE_QUIZ_QUEST_MUTATION = gql`
       id
       name
       description
+      slogan
       pathwayId
       questions {
         question
@@ -69,6 +74,7 @@ export const APPROVE_QUEST_MUTATION = gql`
       id
       name
       description
+      slogan
       pathwayId
       image
       isPending
@@ -87,6 +93,7 @@ export const VERIFY_QUEST_MUTATION = gql`
       id
       name
       description
+      slogan
       pathwayId
       image
       isPending
@@ -106,6 +113,7 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
       streamId
       title
       description
+      slogan
       image
       difficulty
       rewardCurrency
@@ -118,6 +126,7 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
         streamId
         name
         description
+        slogan
         pathwayId
         questType
         image

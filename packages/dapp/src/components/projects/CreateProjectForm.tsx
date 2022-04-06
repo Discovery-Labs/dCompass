@@ -87,11 +87,11 @@ const CreateProjectForm = () => {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.short}>
-        <FormLabel htmlFor="short">Short Description</FormLabel>
+      <FormControl isInvalid={errors.slogan}>
+        <FormLabel htmlFor="slogan">Short Description</FormLabel>
         <Input
-          placeholder="Short description"
-          {...register("short", {
+          placeholder="Slogan"
+          {...register("slogan", {
             required: REQUIRED_FIELD_LABEL,
             maxLength: {
               value: 180,
@@ -100,7 +100,7 @@ const CreateProjectForm = () => {
           })}
         />
         <FormErrorMessage>
-          {errors.short && errors.short.message}
+          {errors.slogan && errors.slogan.message}
         </FormErrorMessage>
       </FormControl>
 

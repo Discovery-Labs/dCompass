@@ -47,6 +47,9 @@ export class Project extends BaseEntity {
   description: string;
 
   @Field()
+  slogan: string;
+
+  @Field()
   logo?: string;
 
   @Field(() => [String])

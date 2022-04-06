@@ -59,7 +59,7 @@ const ProjectCard = ({
         <VStack w="full" align="flex-start">
           {/* Short Description  */}
           <Text color="text-weak" noOfLines={5}>
-            Short Description
+            {project.slogan}
           </Text>
 
           {/* <Box

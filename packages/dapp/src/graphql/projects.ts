@@ -18,6 +18,7 @@ export const EDIT_PROJECT_MUTATION = gql`
       createdBy
       createdAt
       description
+      slogan
       website
       whitepaper
       tokenUris
@@ -58,6 +59,7 @@ export const ALL_PROJECTS_QUERY = gql`
       name
       createdBy
       description
+      slogan
       tokenUris
       website
       whitepaper
@@ -91,6 +93,7 @@ export const PROJECT_BY_ID_QUERY = gql`
       createdBy
       createdAt
       description
+      slogan
       tokenUris
       isFeatured
       website
