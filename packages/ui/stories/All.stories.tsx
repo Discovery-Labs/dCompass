@@ -1,11 +1,14 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { QButton, ButtonProps } from '../src/components/button';
-import { Title } from '../src/components/text';
 
 import { ColorModeToggleBar } from './ColorMode';
 
-import { AddIcon, HamburgerIcon } from '@chakra-ui/icons';
+import {
+  AddIcon,
+  HamburgerIcon,
+  SearchIcon,
+  ExternalLinkIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -83,13 +86,9 @@ import {
   Td,
   TableCaption,
 } from '@chakra-ui/react';
-import { SearchIcon, ExternalLinkIcon } from '@chakra-ui/icons';
-
-import useColor from './hooks/useColor';
 
 const meta: Meta = {
-  title: 'Components/All',
-  component: QButton,
+  title: 'All',
   argTypes: {
     text: {
       control: {
@@ -104,30 +103,49 @@ const meta: Meta = {
 export default meta;
 
 export const All = () => {
-  const toast = useToast();
-  const theme = useTheme();
-
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const { titleColor, textVioletColor, accentColorScheme } = useColor();
-
   const {
     isOpen: isOpenDrawer,
     onOpen: onOpenDrawer,
     onClose: onCloseDrawer,
   } = useDisclosure();
-  const btnRef = React.useRef();
-
+  const toast = useToast();
   return (
     <>
       <VStack>
         <ColorModeToggleBar />
 
-        {/* Use Text as designed to be responsive with textStyle which does not work on Heading */}
+        {/* Buttons Primary Variants */}
+        <HStack>
+          <Button onClick={() => console.log('hello')}>Hello</Button>
+          <Button variant="outline">Hello</Button>
+          <Button variant="ghost">Hello</Button>
+          <IconButton aria-label="Search database" icon={<SearchIcon />} />
+        </HStack>
+
+        {/* Buttons Secondary Variants */}
+        <HStack>
+          <Button colorScheme="secondary" onClick={() => console.log('hello')}>
+            Hello
+          </Button>
+          <Button colorScheme="secondary" variant="outline">
+            Hello
+          </Button>
+          <Button colorScheme="secondary" variant="ghost">
+            Hello
+          </Button>
+        </HStack>
+
+        {/* Buttons Custom Styles */}
+        <Button layerStyle="gradient-bg">Hello</Button>
+
+        {/* Heading and Text */}
         <Heading>Heading</Heading>
-        <Text as="h1" textStyle="h1" fontWeight="bold" color={titleColor}>
+        <Text as="h1" textStyle="h1" fontWeight="bold" color="primary">
           Hello world with Text
         </Text>
+
+        {/* Semantic Tokens */}
         <Box padding="8" bgColor="bg">
           <Text color="text">Semantic Colors</Text>
           <Text color="text-weak">Semantic Colors</Text>
@@ -142,55 +160,57 @@ export const All = () => {
             <Text color="text">Semantic Colors</Text>
           </Box>
         </Box>
-        <Title>Title</Title>
+
+        {/* Layer Styles */}
         <Divider />
         <HStack>
           <Box layerStyle="gradient-border">
             <Center boxSize="150px" layerStyle="solid-card">
-              <Text color={textVioletColor}>Accent Text in Card</Text>
+              <Text color="text-weak">Accent Text in Card</Text>
             </Center>
           </Box>
           <Center boxSize="150px" layerStyle="outline-card">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
           <Center boxSize="150px" layerStyle="no-border-card">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
         </HStack>
         <HStack>
           <Center boxSize="150px" layerStyle="solid-hover">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
           <Center boxSize="150px" layerStyle="outline-hover">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
           <Center boxSize="150px" layerStyle="no-border-hover">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
         </HStack>
         <HStack>
           <Center boxSize="150px" layerStyle="solid-hover2">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
           <Center boxSize="150px" layerStyle="outline-hover2">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
           <Center boxSize="150px" layerStyle="no-border-hover2">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
         </HStack>
         <HStack>
           <Center boxSize="150px" layerStyle="solid-hover3">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
           <Center boxSize="150px" layerStyle="outline-hover3">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
           <Center boxSize="150px" layerStyle="no-border-hover3">
-            <Text color={textVioletColor}>Accent Text in Card</Text>
+            <Text color="text-weak">Accent Text in Card</Text>
           </Center>
         </HStack>
 
+        {/* Text Styles */}
         <Text textStyle="h1">
           Lorem ipsum dolor sit amet,
           <Box as="span" layerStyle="gradient-text">
@@ -200,7 +220,7 @@ export const All = () => {
           sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
           dolore magna aliquyam erat, sed diam voluptua.
         </Text>
-        <Text textStyle="h2" color={textVioletColor}>
+        <Text textStyle="h2" color="text-weak">
           Lorem ipsum dolor sit amet, sadipscing elitr, sed diam nonumy eirmod
           tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
           voluptua.
@@ -210,7 +230,7 @@ export const All = () => {
           tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
           voluptua.
         </Text>
-        <Text textStyle="small" color={textVioletColor}>
+        <Text textStyle="small" color="text-weak">
           Lorem ipsum dolor sit amet, sadipscing elitr, sed diam nonumy eirmod
           tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
           voluptua.
@@ -219,30 +239,34 @@ export const All = () => {
           Lorem ipsum dolor sit amet, sadipscing elitr
         </Text>
 
-        <HStack>
-          <Button onClick={() => console.log(theme)}>Hello</Button>
-          <Button variant="outline">Hello</Button>
-          <Button variant="ghost">Hello</Button>
+        {/* Issue with framer-motion solved with next chakra-ui release 1.8.8 */}
+        {/* <Switch /> */}
+        {/* <Checkbox /> */}
 
-          <IconButton aria-label="Search database" icon={<SearchIcon />} />
+        {/* Tags */}
+        <HStack>
+          <Text>Tags</Text>
+          <Tag>hello</Tag>
+          <Tag colorScheme="blue">hello</Tag>
+          <Tag variant="solid" colorScheme="green">
+            hello
+          </Tag>
+          <Tag variant="outline" colorScheme="teal">
+            hello
+          </Tag>
+          <Tag variant="subtle" colorScheme="teal">
+            hello
+          </Tag>
         </HStack>
 
+        {/* Badges */}
         <HStack>
-          <Button
-            colorScheme={accentColorScheme}
-            onClick={() => console.log(theme)}
-          >
-            Hello
-          </Button>
-          <Button colorScheme={accentColorScheme} variant="outline">
-            Hello
-          </Button>
-          <Button colorScheme={accentColorScheme} variant="ghost">
-            Hello
-          </Button>
+          <Text>Badges</Text>
+          <Badge>hello</Badge>
+          <Badge colorScheme="teal">hello</Badge>
         </HStack>
-        <Button layerStyle="gradient-bg">Hello</Button>
 
+        {/* Drawer */}
         <Button onClick={onOpenDrawer}>Open Drawer</Button>
         <Drawer isOpen={isOpenDrawer} placement="left" onClose={onCloseDrawer}>
           <DrawerOverlay />
@@ -263,33 +287,7 @@ export const All = () => {
           </DrawerContent>
         </Drawer>
 
-        <Input />
-        <Select placeholder="Select option"></Select>
-        <Textarea placeholder="Select option"></Textarea>
-
-        <Switch />
-        {/* set to subtle default variant="subtle" colorScheme="cyan" */}
-        <HStack>
-          <Text>Tags</Text>
-          <Tag>hello</Tag>
-          <Tag colorScheme="blue">hello</Tag>
-          <Tag variant="solid" colorScheme="green">
-            hello
-          </Tag>
-          <Tag variant="outline" colorScheme="teal">
-            hello
-          </Tag>
-          <Tag variant="subtle" colorScheme="teal">
-            hello
-          </Tag>
-        </HStack>
-
-        <HStack>
-          <Text>Badges</Text>
-          <Badge>hello</Badge>
-          <Badge colorScheme="teal">hello</Badge>
-        </HStack>
-
+        {/* Toast */}
         <Button
           onClick={() =>
             toast({
@@ -304,6 +302,27 @@ export const All = () => {
           Show Toast
         </Button>
 
+        {/* Modal */}
+        <>
+          <Button onClick={onOpen}>Trigger modal</Button>
+
+          <Modal onClose={onClose} isOpen={isOpen}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Modal Title</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem
+                ipsum
+              </ModalBody>
+              <ModalFooter>
+                <Button onClick={onClose}>Close</Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </>
+
+        {/* Tabs */}
         <Tabs variant="soft-rounded">
           <TabList>
             <Tab>One</Tab>
@@ -364,12 +383,13 @@ export const All = () => {
           </TabPanels>
         </Tabs>
 
-        <Checkbox />
+        {/* Link */}
         <Link isExternal>
           Link <ExternalLinkIcon mx="2px" />
         </Link>
 
-        <Menu>
+        {/* Menu */}
+        {/* <Menu>
           <MenuButton
             as={IconButton}
             aria-label="Options"
@@ -388,27 +408,14 @@ export const All = () => {
               <MenuItemOption value="desc">Descending</MenuItemOption>
             </MenuOptionGroup>
           </MenuList>
-        </Menu>
+        </Menu> */}
 
-        <>
-          <Button onClick={onOpen}>Trigger modal</Button>
+        {/* Inputs */}
+        <Input />
+        <Select placeholder="Select option"></Select>
+        <Textarea placeholder="Select option"></Textarea>
 
-          <Modal onClose={onClose} isOpen={isOpen}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Modal Title</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem
-                ipsum
-              </ModalBody>
-              <ModalFooter>
-                <Button onClick={onClose}>Close</Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </>
-
+        {/* FormControls */}
         <FormControl id="email">
           <FormLabel>Email address</FormLabel>
           <Input type="email" />
@@ -462,6 +469,7 @@ export const All = () => {
           </NumberInput>
         </FormControl>
 
+        {/* Accordion */}
         <Box layerStyle="outline-card" p="0" w="full">
           <Accordion w="full" allowToggle>
             <AccordionItem>
@@ -500,6 +508,7 @@ export const All = () => {
           </Accordion>
         </Box>
 
+        {/* Tables */}
         <Table variant="simple">
           <TableCaption>Imperial to metric conversion factors</TableCaption>
           <Thead>
