@@ -115,7 +115,7 @@ function ProjectPage({
   const projectMarkdownTheme = usePageMarkdownTheme();
 
   const { t } = useTranslation("common");
-  const { accentColorScheme, getTextColor, getColoredText } = useCustomColor();
+  const { accentColorScheme } = useCustomColor();
   const { account, isReviewer } = useContext(Web3Context);
   console.log({ isReviewer });
   const { data, loading, error } = useQuery(
@@ -188,7 +188,7 @@ function ProjectPage({
                 </Badge>
               ))}
             </Stack>
-            <Heading as="h1" size="3xl" pl="4" color={getTextColor}>
+            <Heading as="h1" size="3xl" pl="4" color="text">
               {name}
             </Heading>
 
@@ -307,7 +307,7 @@ function ProjectPage({
                   h="fit-content"
                   src={`https://ipfs.io/ipfs/${squad.image}`}
                 >
-                  <Heading as="h3" size="lg" color={getTextColor}>
+                  <Heading as="h3" size="lg" color="text">
                     {squad.name}
                   </Heading>
                   <MembersAddress
@@ -335,7 +335,7 @@ function ProjectPage({
                   <Blockies seed={createdBy} className="blockies" />
                 )}
                 <VStack align="flex-start" ml="2">
-                  <Text color={getColoredText} textStyle="small" isTruncated>
+                  <Text color="text-weak" textStyle="small" isTruncated>
                     {t("creation-date")} {new Date(createdAt).toLocaleString()}
                   </Text>
                   <Text fontSize="sm" isTruncated>

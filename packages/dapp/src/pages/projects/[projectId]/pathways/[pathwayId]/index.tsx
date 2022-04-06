@@ -1,27 +1,31 @@
 import { useQuery } from "@apollo/client";
 import { EditIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import {
+  Avatar,
   Button,
   Flex,
   Heading,
+  HStack,
+  Icon,
+  Progress,
   SimpleGrid,
   Spacer,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
-  HStack,
-  VStack,
-  Avatar,
-  Icon,
-  Stack,
   Tag,
+  Text,
   Tooltip,
-  Progress,
+  VStack,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import Container from "components/layout/Container";
+import { Web3Context } from "contexts/Web3Provider";
+import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
+import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -32,7 +36,6 @@ import { BsBarChartFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { GoTasklist } from "react-icons/go";
 import ReactMarkdown from "react-markdown";
-
 import { initializeApollo } from "../../../../../../lib/apolloClient";
 import CardMedia from "../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../components/layout/BreadcrumbItems";
@@ -41,10 +44,6 @@ import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../core/hooks/useTokenList";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
-import Container from "components/layout/Container";
-import { Web3Context } from "contexts/Web3Provider";
-import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
-import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
 
 type Props = {
   projectId: string | null;
@@ -182,7 +181,7 @@ function PathwayPage({
       />
 
       <VStack align="left" w="full">
-        <Heading as="h1" size="2xl" color={getTextColor} py="4">
+        <Heading as="h1" size="2xl" color="text" py="4">
           {title}
         </Heading>
         <Tabs w="full">
@@ -263,7 +262,7 @@ function PathwayPage({
                     <Text
                       fontWeight="bold"
                       fontSize="xl"
-                      color={getTextColor}
+                      color="text"
                       textTransform="uppercase"
                     >
                       Difficulty
@@ -285,7 +284,7 @@ function PathwayPage({
                         <Text
                           fontWeight="bold"
                           fontSize="xl"
-                          color={getTextColor}
+                          color="text"
                           textTransform="uppercase"
                         >
                           Progress
@@ -298,7 +297,7 @@ function PathwayPage({
                           border={`solid 1px ${getAccentColor}`}
                           hasStripe
                           colorScheme="accentDark"
-                          bgColor={getBgColor}
+                          bgColor="bg"
                         />
                       </HStack>
                     </VStack>
@@ -309,7 +308,7 @@ function PathwayPage({
                       <Text
                         fontWeight="bold"
                         fontSize="xl"
-                        color={getTextColor}
+                        color="text"
                         textTransform="uppercase"
                       >
                         Claimed
@@ -324,7 +323,7 @@ function PathwayPage({
                     <Text
                       fontWeight="bold"
                       fontSize="xl"
-                      color={getTextColor}
+                      color="text"
                       textTransform="uppercase"
                     >
                       Rewards
@@ -344,7 +343,7 @@ function PathwayPage({
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color={getColoredText} textStyle="small" isTruncated>
+                    <Text color="text-weak" textStyle="small" isTruncated>
                       {t("creation-date")}{" "}
                       {new Date(createdAt).toLocaleString()}
                     </Text>
@@ -419,7 +418,7 @@ function PathwayPage({
                         fontWeight="bold"
                         fontSize={{ base: "sm", md: "lg" }}
                         bg="violet.100"
-                        color={getTextColor}
+                        color="text"
                         rounded="full"
                         position="relative"
                         _before={{

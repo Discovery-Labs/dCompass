@@ -1,57 +1,54 @@
 import { useMutation } from "@apollo/client";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
+  Badge,
+  Box,
   Button,
   Flex,
   Heading,
-  Spacer,
-  Text,
-  Tag,
-  TagLabel,
   HStack,
-  VStack,
-  Stack,
-  Badge,
   Icon,
-  SimpleGrid,
   Image,
-  Box,
   Input,
   InputGroup,
   InputLeftElement,
+  SimpleGrid,
+  Spacer,
+  Stack,
+  Tag,
+  TagLabel,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
+import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import AddProjectContributor from "components/custom/review/AddProjectContributor";
+import ProjectInfo from "components/custom/review/ProjectInfo";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
-import { BsPeople, BsPerson } from "react-icons/bs";
+import { BsGlobe, BsPeople, BsPerson } from "react-icons/bs";
+import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 import ReactMarkdown from "react-markdown";
-
 import { initializeApollo } from "../../../../../lib/apolloClient";
 import Card from "../../../../components/custom/Card";
 import CardMedia from "../../../../components/custom/CardMedia";
 import NotReviewerCard from "../../../../components/custom/NotReviewerCard";
-import SocialLinks from "../../../../components/custom/SocialLinks";
 import CenteredFrame from "../../../../components/layout/CenteredFrame";
 import Container from "../../../../components/layout/Container";
 import { Web3Context } from "../../../../contexts/Web3Provider";
 import { splitCIDS } from "../../../../core/helpers";
 import useCustomColor from "../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../core/hooks/useMarkdownTheme";
-import useTokenList from "../../../../core/hooks/useTokenList";
+// import useTokenList from "../../../../core/hooks/useTokenList";
 import { Tag as TagType } from "../../../../core/types";
 import {
   APPROVE_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
-import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
-import ProjectInfo from "components/custom/review/ProjectInfo";
-import AddProjectContributor from "components/custom/review/AddProjectContributor";
-import { SiTwitter, SiDiscord, SiGithub, SiGitbook } from "react-icons/si";
-import { BsGlobe } from "react-icons/bs";
 
 type Props = {
   projectId: string | null;
@@ -300,7 +297,7 @@ function ReviewProjectPage({
         <VStack w="full" align="flex-start" ml="2">
           <VStack align="flex-start">
             {createdBy && <Blockies seed={createdBy} className="blockies" />}
-            <Text color={getColoredText} textStyle="small" isTruncated>
+            <Text color="text-weak" textStyle="small" isTruncated>
               {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
             <Text fontSize="sm" isTruncated>

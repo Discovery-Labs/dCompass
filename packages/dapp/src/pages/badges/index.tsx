@@ -11,26 +11,23 @@ import {
   useClipboard,
   VStack,
 } from "@chakra-ui/react";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useContext } from "react";
-import Blockies from "react-blockies";
-import { MdCheckCircle, MdContentCopy } from "react-icons/md";
-
-import { Web3Context } from "../../contexts/Web3Provider";
 import Card from "components/custom/Card";
 import MembershipWrapper from "components/custom/MembershipWrapper";
 import UserNFTs from "components/custom/nft/UserNFTs";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import Container from "components/layout/Container";
-import useCustomColor from "core/hooks/useCustomColor";
 import { useResolveEnsName } from "core/hooks/useResolveEnsName";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useContext } from "react";
+import Blockies from "react-blockies";
+import { MdCheckCircle, MdContentCopy } from "react-icons/md";
+import { Web3Context } from "../../contexts/Web3Provider";
 
 function Badges() {
   const { account } = useContext(Web3Context);
   const address = account || "";
   const { ens } = useResolveEnsName(address);
   const { hasCopied, onCopy } = useClipboard(address);
-  const { getTextColor } = useCustomColor();
 
   if (!account) {
     return (
@@ -90,7 +87,7 @@ function Badges() {
                 </HStack>
 
                 <VStack>
-                  <Text color={getTextColor} fontSize="sm">
+                  <Text color="text" fontSize="sm">
                     Followers 124632 Following 145
                   </Text>
 
@@ -108,7 +105,7 @@ function Badges() {
             <UserNFTs />
           </Stack>
           {/* <Flex w="full">
-            <Text as="h1" textStyle="h1" color={getTextColor}>
+            <Text as="h1" textStyle="h1" color="text">
               Badges
             </Text>
             <Box pt="8">

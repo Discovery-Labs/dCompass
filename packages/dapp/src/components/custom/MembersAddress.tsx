@@ -11,10 +11,9 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { BsPeople, BsPerson } from "react-icons/bs";
 import MemberAddress from "components/custom/MemberAddress";
 import { useTranslation } from "next-i18next";
-import useCustomColor from "core/hooks/useCustomColor";
+import { BsPeople, BsPerson } from "react-icons/bs";
 
 interface MembersAddressProps {
   squad: any;
@@ -26,19 +25,13 @@ interface MembersAddressProps {
 function MembersAddress(props: MembersAddressProps) {
   const { squad } = props;
   const { t } = useTranslation("common");
-  const { getTextColor } = useCustomColor();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
       <HStack onClick={onOpen} cursor="pointer">
         <Icon as={squad.members.length > 1 ? BsPeople : BsPerson} />
-        <Heading
-          as="h4"
-          size="md"
-          textTransform="uppercase"
-          color={getTextColor}
-        >
+        <Heading as="h4" size="md" textTransform="uppercase" color="text">
           {squad.members.length} {t("member")}
           {squad.members.length > 1 ? "s" : ""}
         </Heading>

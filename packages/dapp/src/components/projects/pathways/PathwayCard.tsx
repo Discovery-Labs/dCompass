@@ -7,6 +7,11 @@ import {
   Flex,
   Heading,
   HStack,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Progress,
   Spacer,
   Tag,
@@ -15,13 +20,6 @@ import {
   Tooltip,
   useDisclosure,
   VStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 // import { ethers } from "ethers";
@@ -43,26 +41,32 @@ import {
 
 // import { PathwayNFT } from "@discovery-dao/hardhat/typechain-types/PathwayNFT";
 
-const ModalDetails = ({ pathway }: any) => {
+const ModalDetails = ({ pathway }: { pathway: Pathway }) => {
   const { getTextColor, getOverBgColor } = useCustomColor();
   const pathwayCardMarkdownTheme = useCardMarkdownTheme();
 
   return (
     <>
-      <VStack w="full" align="flex-start">
-        <Box
-          bgGradient={`linear(0deg, ${getOverBgColor} 10%, ${getTextColor} 60%, ${getTextColor})`}
-          bgClip="text"
-        >
-          <ReactMarkdown
-            className="card-markdown"
-            components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
-            skipHtml
-          >
-            {pathway.description}
-          </ReactMarkdown>
-        </Box>
-      </VStack>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{pathway.title}</ModalHeader>
+        <ModalBody>
+          <VStack w="full" align="flex-start">
+            <Box
+              bgGradient={`linear(0deg, ${getOverBgColor} 10%, ${getTextColor} 60%, ${getTextColor})`}
+              bgClip="text"
+            >
+              <ReactMarkdown
+                className="card-markdown"
+                components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
+                skipHtml
+              >
+                {pathway.description}
+              </ReactMarkdown>
+            </Box>
+          </VStack>
+        </ModalBody>
+      </ModalContent>
     </>
   );
 };
@@ -76,14 +80,7 @@ function PathwayCard({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getRewardCurrency } = useTokenList();
-  const {
-    getPrimaryColor,
-    getColoredText,
-    getTextColor,
-    getBgColor,
-    getAccentColor,
-    getOverBgColor,
-  } = useCustomColor();
+  const { getPrimaryColor, getAccentColor } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
@@ -249,36 +246,39 @@ function PathwayCard({
           {pathway.difficulty}
         </Text>
         <Tooltip label={pathway.title} hasArrow placement="top">
-          <Heading noOfLines={2} as="h2" fontSize="2xl" color={getTextColor}>
+          <Heading noOfLines={2} as="h2" fontSize="2xl" color="text">
             {pathway.title}
           </Heading>
         </Tooltip>
 
+        <VStack w="full" align="flex-start" onClick={onOpen}>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalDetails pathway={pathway} />
+          </Modal>
+          {/* Short Description  */}
+          <Text color="text-weak" noOfLines={3}>
+            Short Description Short Description Short Description Short
+            Description Short Description Short Description Short Description
+            Short Description Short Description Short Description Short
+            Description Short Description Short Description Short Description
+            Short Description
+          </Text>
+          <Text>See more</Text>
+        </VStack>
+      </Flex>
+
+      <Spacer />
+
+      <Flex direction="column" w="full">
         <Text as="h2" fontSize="2xl" color={getAccentColor}>
           Rewards
         </Text>
         {/* <Avatar size="md" src={`https://ipfs.io/ipfs/${pathway.image}`} /> */}
-        <Text color={getColoredText}>NFT</Text>
-        <Text color={getColoredText}>
-          {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
+        <Text color="text-weak">
+          NFT + {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
           {getRewardCurrency(pathway.rewardCurrency)}
         </Text>
-
-        <Box pt="4">
-          <Button onClick={onOpen}>Details</Button>
-        </Box>
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>{pathway.title}</ModalHeader>
-            <ModalBody>
-              <ModalDetails pathway={pathway} />
-            </ModalBody>
-          </ModalContent>
-        </Modal>
       </Flex>
-
-      <Spacer />
 
       {isContributor && status !== "MINTED" && (
         <VStack w="full" align="left">
@@ -336,7 +336,7 @@ function PathwayCard({
                 border={`solid 1px ${getAccentColor}`}
                 hasStripe
                 colorScheme="accentDark"
-                bgColor={getBgColor}
+                bgColor="bg"
               />
             </HStack>
           </Tooltip>

@@ -82,7 +82,7 @@ const Navbar = (props: any) => {
       top="0"
       bg={getOverBgColor}
       style={{ backdropFilter: "blur(10px)" }}
-      zIndex={1}
+      zIndex="sticky"
       {...props}
     >
       <Container display="flex" p="2" maxW="7xl">

@@ -1,6 +1,6 @@
 import { Box, Button, useBoolean } from "@chakra-ui/react";
-import useCustomColor from "core/hooks/useCustomColor";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import useCustomColor from "core/hooks/useCustomColor";
 import ReactMarkdown from "react-markdown";
 interface CodeEditorPreviewProps {
   code: string;
@@ -9,7 +9,7 @@ interface CodeEditorPreviewProps {
 function CodeEditorPreview(props: CodeEditorPreviewProps) {
   const { code } = props;
   const [isPreview, setIsPreview] = useBoolean();
-  const { getBorderColor, getBgColor } = useCustomColor();
+  const { getBorderColor } = useCustomColor();
   return (
     <>
       {code && (
@@ -26,7 +26,7 @@ function CodeEditorPreview(props: CodeEditorPreviewProps) {
 
       {code && isPreview && (
         <Box
-          bgColor={getBgColor}
+          bgColor="bg"
           border={`1px solid ${getBorderColor}`}
           borderRadius="4px"
           padding="4"

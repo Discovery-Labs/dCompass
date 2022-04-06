@@ -1,26 +1,25 @@
 import {
   Avatar,
+  Box,
+  Button,
   Heading,
   HStack,
+  Icon,
+  Link,
   Text,
   VStack,
-  Button,
-  Box,
-  Link,
-  Icon,
 } from "@chakra-ui/react";
 import {
   SkillGroupDataType,
   SkillProvider,
-  SkillThemeType,
   SkillTree,
   SkillTreeGroup,
   SkillType,
 } from "@discovery-dao/tree";
 import { Web3Context } from "contexts/Web3Provider";
 import useCustomColor from "core/hooks/useCustomColor";
-import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useContext } from "react";
 import { SiGithub, SiTwitter } from "react-icons/si";
 
 const gitcoinPath: SkillType[] = [
@@ -243,14 +242,8 @@ function Profile() {
     ],
   };
   const { account } = useContext(Web3Context);
-  const {
-    getOverBgColor,
-    getBorderColor,
-    getPrimaryColor,
-    getTextColor,
-    getBgColor,
-    getColoredText,
-  } = useCustomColor();
+  const { getOverBgColor, getBorderColor, getPrimaryColor, getTextColor } =
+    useCustomColor();
 
   const treeTheme = {
     // : SkillThemeType
@@ -292,7 +285,7 @@ function Profile() {
           <Avatar
             border={`4px solid ${getPrimaryColor}`}
             padding="1"
-            bgColor={getBgColor}
+            bgColor="bg"
             size="2xl"
             name="Profile Image"
             src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
@@ -301,10 +294,10 @@ function Profile() {
         <Text textStyle="h2" fontWeight="bold">
           Satoshi Nakamoto
         </Text>
-        <Text color={getColoredText}>
+        <Text color="text-weak">
           Web3 Developer. Blockchain enthusiast. Shadowy Super Coder.{" "}
         </Text>
-        <Link color={getColoredText} textStyle="small">
+        <Link color="text-weak" textStyle="small">
           https://shadowysupercoder.xyz
         </Link>
         <HStack py="2" spacing={4}>

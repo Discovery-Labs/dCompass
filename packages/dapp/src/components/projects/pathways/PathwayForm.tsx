@@ -130,14 +130,31 @@ export default function PathwayForm() {
             {...register(`title`, {
               required: REQUIRED_FIELD_LABEL,
               maxLength: {
-                value: 150,
-                message: "Maximum length should be 150",
+                value: 80,
+                message: "Maximum length should be 80",
               },
             })}
           />
         </HStack>
         <FormErrorMessage>
           {errors.title && errors.title.message}
+        </FormErrorMessage>
+      </FormControl>
+
+      <FormControl isInvalid={errors.short}>
+        <FormLabel htmlFor="short">Short Description</FormLabel>
+        <Input
+          placeholder="Short description"
+          {...register("short", {
+            required: REQUIRED_FIELD_LABEL,
+            maxLength: {
+              value: 180,
+              message: "Maximum length should be 180",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.short && errors.short.message}
         </FormErrorMessage>
       </FormControl>
 

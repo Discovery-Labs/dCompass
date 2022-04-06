@@ -1,26 +1,30 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { EditIcon } from "@chakra-ui/icons";
 import {
+  Avatar,
+  Box,
   Button,
   Flex,
   Heading,
+  HStack,
+  Icon,
+  Progress,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
-  HStack,
-  VStack,
-  Avatar,
-  Icon,
-  Stack,
   Tag,
-  Progress,
-  Box,
+  Text,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import Container from "components/layout/Container";
+import { Web3Context } from "contexts/Web3Provider";
+import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -31,29 +35,23 @@ import { BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
-
+import { initializeApollo } from "../../../../../../../lib/apolloClient";
 import CardMedia from "../../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../../components/layout/BreadcrumbItems";
 import GithubContributorQuestForm from "../../../../../../components/projects/quests/github/GithubContributorQuestForm";
+import QuestCompletedByList from "../../../../../../components/projects/quests/QuestCompletedByList";
 import QuizForm from "../../../../../../components/projects/quests/quizz/QuizForm";
 import SnapshotVoterForm from "../../../../../../components/projects/quests/snapshot/SnapshotVoterForm";
 import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
 import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
 import { ceramicCoreFactory } from "../../../../../../core/ceramic";
-import useCustomColor from "../../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../../core/hooks/useTokenList";
 import { PROJECT_BY_ID_QUERY } from "../../../../../../graphql/projects";
-import Container from "components/layout/Container";
-import { Web3Context } from "contexts/Web3Provider";
-import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
 import {
   CLAIM_QUEST_REWARDS_MUTATION,
   GET_QUIZ_QUEST_BY_ID_QUERY,
 } from "../../../../../../graphql/quests";
-import { initializeApollo } from "../../../../../../../lib/apolloClient";
-import QuestCompletedByList from "../../../../../../components/projects/quests/QuestCompletedByList";
-import { useWeb3React } from "@web3-react/core";
 
 type Props = {
   projectId: string | null;
@@ -152,7 +150,6 @@ function QuestPage({
   const toast = useToast();
   const { account, self, contracts } = useContext(Web3Context);
   const { library, chainId } = useWeb3React();
-  const { getTextColor, getColoredText } = useCustomColor();
 
   const { data, loading, error } = useQuery(GET_PATHWAY_BY_ID_QUERY, {
     variables: {
@@ -313,8 +310,8 @@ function QuestPage({
       />
 
       <VStack align="left" w="full">
-        <Heading as="h1" size="2xl" color={getColoredText} py="4">
-          {name} <Icon as={RiSwordLine} color={getColoredText} />
+        <Heading as="h1" size="2xl" color="text-weak" py="4">
+          {name} <Icon as={RiSwordLine} color="text-weak" />
         </Heading>
         <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">
@@ -392,7 +389,7 @@ function QuestPage({
                     <Text
                       fontWeight="bold"
                       fontSize="xl"
-                      color={getTextColor}
+                      color="text"
                       textTransform="uppercase"
                     >
                       Quest type
@@ -407,7 +404,7 @@ function QuestPage({
                       <Text
                         fontWeight="bold"
                         fontSize="xl"
-                        color={getTextColor}
+                        color="text"
                         textTransform="uppercase"
                       >
                         Claimed
@@ -422,7 +419,7 @@ function QuestPage({
                     <Text
                       fontWeight="bold"
                       fontSize="xl"
-                      color={getTextColor}
+                      color="text"
                       textTransform="uppercase"
                     >
                       Total Rewards
@@ -442,7 +439,7 @@ function QuestPage({
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color={getColoredText} textStyle="small" isTruncated>
+                    <Text color="text-weak" textStyle="small" isTruncated>
                       {t("creation-date")}{" "}
                       {new Date(createdAt || Date.now()).toLocaleString()}
                     </Text>
@@ -514,7 +511,7 @@ function QuestPage({
                         fontWeight="bold"
                         fontSize={{ base: "sm", md: "lg" }}
                         bg="violet.100"
-                        color={getTextColor}
+                        color="text"
                         rounded="full"
                         position="relative"
                         _before={{

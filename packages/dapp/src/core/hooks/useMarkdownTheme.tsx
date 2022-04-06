@@ -1,14 +1,12 @@
 import { Heading, HeadingProps, Text, TextProps } from "@chakra-ui/react";
-
 import useCustomColor from "./useCustomColor";
 
 export const useCardMarkdownTheme = () => {
-  const { getColoredText, getTextColor } = useCustomColor();
   return {
     h1: (props: HeadingProps) => {
       const { children } = props;
       return (
-        <Heading as="h1" size="xl" color={getColoredText}>
+        <Heading as="h1" size="xl" color="text-weak">
           {children}
         </Heading>
       );
@@ -16,7 +14,7 @@ export const useCardMarkdownTheme = () => {
     h2: (props: HeadingProps) => {
       const { children } = props;
       return (
-        <Heading as="h2" size="md" color={getColoredText}>
+        <Heading as="h2" size="md" color="text-weak">
           {children}
         </Heading>
       );
@@ -24,7 +22,7 @@ export const useCardMarkdownTheme = () => {
     h3: (props: HeadingProps) => {
       const { children } = props;
       return (
-        <Heading py="2" as="h3" size="md" color={getTextColor}>
+        <Heading py="2" as="h3" size="md" color="text">
           {children}
         </Heading>
       );
@@ -32,7 +30,7 @@ export const useCardMarkdownTheme = () => {
     h4: (props: HeadingProps) => {
       const { children } = props;
       return (
-        <Heading py="2" as="h4" size="md" color={getTextColor}>
+        <Heading py="2" as="h4" size="md" color="text">
           {children}
         </Heading>
       );
@@ -56,7 +54,7 @@ export const usePageMarkdownTheme = () => {
     h1: (props: HeadingProps) => {
       const { children } = props;
       return (
-        <Heading py="2" as="h1" size="xl" color={getColoredText}>
+        <Heading py="2" as="h1" size="xl" color="text-weak">
           {children}
         </Heading>
       );
@@ -64,7 +62,7 @@ export const usePageMarkdownTheme = () => {
     h2: (props: HeadingProps) => {
       const { children } = props;
       return (
-        <Heading py="2" as="h2" size="lg" color={getColoredText}>
+        <Heading py="2" as="h2" size="lg" color="text-weak">
           {children}
         </Heading>
       );

@@ -1,31 +1,29 @@
 import { useMutation } from "@apollo/client";
-import { Button, Flex, Stack, Link, Box } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { Box, Button, Flex, Link, Stack } from "@chakra-ui/react";
+import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
+import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
+import Card from "components/custom/Card";
+import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
+import useCustomColor from "core/hooks/useCustomColor";
+import { isAddress } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-
 import ThreeTierPricing from "../../../components/custom/Pricing";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { schemaAliases } from "../../../core/ceramic";
+// import { schemaAliases } from "../../../core/ceramic";
 import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
-import Card from "components/custom/Card";
-import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
-import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
-import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
-import { isAddress } from "ethers/lib/utils";
 
-import NextLink from "next/link";
-import useCustomColor from "core/hooks/useCustomColor";
-
-const { PROJECTS_ALIAS } = schemaAliases;
+// const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
 const CreateSquads = <SquadsForm />;
 const Pricing = <ThreeTierPricing />;
@@ -40,7 +38,7 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
-  const { getPrimaryColor, getTextColor } = useCustomColor();
+  const { getPrimaryColor } = useCustomColor();
   const { t } = useTranslation("common");
   const router = useRouter();
   const { self } = useContext(Web3Context);
@@ -244,7 +242,7 @@ function CreateProjectStepper() {
             <NextLink href={"/"} passHref>
               <Link
                 textStyle={"small"}
-                color={getTextColor}
+                color="text"
                 _hover={{ color: getPrimaryColor, textDecoration: "none" }}
               >
                 <ChevronLeftIcon w={6} h={6} />

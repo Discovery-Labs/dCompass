@@ -1,8 +1,8 @@
 import {
   Box,
+  Button,
   Flex,
   HStack,
-  Button,
   Icon,
   IconButton,
   Link,
@@ -16,15 +16,14 @@ import {
   SkeletonCircle,
   SkeletonText,
   Text,
-  useDisclosure,
   useClipboard,
+  useDisclosure,
 } from "@chakra-ui/react";
+import useCustomColor from "core/hooks/useCustomColor";
+import { useResolveEnsName } from "core/hooks/useResolveEnsName";
 import Blockies from "react-blockies";
 import { MdCheckCircle, MdContentCopy, MdExitToApp } from "react-icons/md";
 import { RiExternalLinkFill, RiHandCoinLine } from "react-icons/ri";
-
-import useCustomColor from "core/hooks/useCustomColor";
-import { useResolveEnsName } from "core/hooks/useResolveEnsName";
 
 const blockExplorerLink = (address: string, blockExplorer?: string) =>
   `${blockExplorer || "https://etherscan.io/"}${"address/"}${address}`;
@@ -111,7 +110,7 @@ function Address({
           <ModalCloseButton />
           <ModalBody>
             {type === "me" && "Connected with Metamask"}
-            <Text textStyle="small" color={getColoredText}>
+            <Text textStyle="small" color="text-weak">
               You can copy the address or view it on explorer
             </Text>
             <HStack
