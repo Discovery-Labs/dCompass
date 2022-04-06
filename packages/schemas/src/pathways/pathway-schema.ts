@@ -32,6 +32,9 @@ export const PathwaySchema = {
     image: {
       type: "string",
     },
+    slogan: {
+      type: "string",
+    },
     description: {
       type: "string",
     },

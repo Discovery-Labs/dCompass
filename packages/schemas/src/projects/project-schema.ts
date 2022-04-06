@@ -31,6 +31,9 @@ export const projectProperties = {
   description: {
     type: "string",
   },
+  slogan: {
+    type: "string",
+  },
   logo: {
     type: "string",
   },

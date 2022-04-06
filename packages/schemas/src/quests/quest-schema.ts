@@ -8,6 +8,9 @@ export const questBaseProperties = {
   pathwayId: {
     type: "string",
   },
+  slogan: {
+    type: "string",
+  },
   name: {
     type: "string",
     title: "name",

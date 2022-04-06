@@ -60,6 +60,9 @@ export declare const schemas: {
                             description: {
                                 type: string;
                             };
+                            slogan: {
+                                type: string;
+                            };
                             logo: {
                                 type: string;
                             };
@@ -241,6 +244,9 @@ export declare const schemas: {
                     type: string;
                 };
                 description: {
+                    type: string;
+                };
+                slogan: {
                     type: string;
                 };
                 logo: {
@@ -464,6 +470,9 @@ export declare const schemas: {
                 image: {
                     type: string;
                 };
+                slogan: {
+                    type: string;
+                };
                 description: {
                     type: string;
                 };
@@ -536,6 +545,9 @@ export declare const schemas: {
                             pathwayId: {
                                 type: string;
                             };
+                            slogan: {
+                                type: string;
+                            };
                             name: {
                                 type: string;
                                 title: string;
@@ -602,6 +614,9 @@ export declare const schemas: {
                     type: string;
                 };
                 pathwayId: {
+                    type: string;
+                };
+                slogan: {
                     type: string;
                 };
                 name: {
@@ -675,6 +690,9 @@ export declare const schemas: {
                 pathwayId: {
                     type: string;
                 };
+                slogan: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -741,6 +759,9 @@ export declare const schemas: {
                 pathwayId: {
                     type: string;
                 };
+                slogan: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -798,6 +819,9 @@ export declare const schemas: {
                     type: string;
                 };
                 pathwayId: {
+                    type: string;
+                };
+                slogan: {
                     type: string;
                 };
                 name: {
@@ -860,6 +884,9 @@ export declare const schemas: {
                     type: string;
                 };
                 pathwayId: {
+                    type: string;
+                };
+                slogan: {
                     type: string;
                 };
                 name: {
@@ -945,6 +972,9 @@ export declare const schemas: {
                 pathwayId: {
                     type: string;
                 };
+                slogan: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -1014,6 +1044,9 @@ export declare const schemas: {
                 pathwayId: {
                     type: string;
                 };
+                slogan: {
+                    type: string;
+                };
                 name: {
                     type: string;
                     title: string;
@@ -1074,6 +1107,9 @@ export declare const schemas: {
                     type: string;
                 };
                 pathwayId: {
+                    type: string;
+                };
+                slogan: {
                     type: string;
                 };
                 name: {
