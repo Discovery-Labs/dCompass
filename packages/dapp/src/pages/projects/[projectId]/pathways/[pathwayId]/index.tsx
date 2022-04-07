@@ -107,7 +107,7 @@ function PathwayPage({
   const { getRewardCurrency } = useTokenList();
   const pathwayMarkdownTheme = usePageMarkdownTheme();
 
-  const { account } = useContext(Web3Context);
+  const { account, isReviewer } = useContext(Web3Context);
   const { getAccentColor } = useCustomColor();
 
   const { data, loading, error } = useQuery(
@@ -129,6 +129,7 @@ function PathwayPage({
   });
 
   const isOwner = createdBy === account;
+
   if (loading || projectLoading)
     return (
       <Stack pt="30" px="8">
@@ -141,11 +142,19 @@ function PathwayPage({
   if (error || projectError)
     return `Loading error! ${error?.message || projectError?.message}`;
 
+  const isProjectContributor =
+    projectRes?.squads &&
+    projectRes.squads
+      .flatMap(({ members }: { members: string[] }) => members)
+      .includes(account);
+  const canEdit = isProjectContributor || isOwner;
+  const canReviewQuests = isProjectContributor || isOwner || isReviewer;
   const renderQuests = (questsToRender: Record<string, unknown>[]) => {
     return questsToRender.map((quest: any) => (
       <QuestCard
         key={quest.id}
         quest={quest}
+        canReviewQuests={canReviewQuests}
         pathwayStreamId={data.getAllQuestsByPathwayId.streamId}
         projectContributors={
           projectRes.getProjectById.squads.flatMap(
@@ -201,19 +210,27 @@ function PathwayPage({
                 <HStack justifyContent="space-between">
                   <TabList>
                     <Tab>{t("all-quests")}</Tab>
-                    <Tab>{t("pending-quests")}</Tab>
+                    {canReviewQuests && <Tab>{t("pending-quests")}</Tab>}
                     <Tab>{t("completed-quests")}</Tab>
                   </TabList>
-                  {isOwner && (
+                  {canEdit && (
                     <NextLink
-                      href={`/projects/${projectId}/pathways/${id}/add-quest`}
+                      href={`/projects/${projectId}/pathways/${id}/edit`}
                       passHref
                     >
-                      <Button leftIcon={<PlusSquareIcon />}>
-                        {t("add-quest")}
+                      <Button disabled leftIcon={<PlusSquareIcon />}>
+                        {t("edit-pathway")}
                       </Button>
                     </NextLink>
                   )}
+                  <NextLink
+                    href={`/projects/${projectId}/pathways/${id}/add-quest`}
+                    passHref
+                  >
+                    <Button leftIcon={<PlusSquareIcon />}>
+                      {t("add-quest")}
+                    </Button>
+                  </NextLink>
                 </HStack>
 
                 <TabPanels>
@@ -226,15 +243,17 @@ function PathwayPage({
                       )}
                     </SimpleGrid>
                   </TabPanel>
-                  <TabPanel>
-                    <SimpleGrid columns={[1, 2]} spacing={10}>
-                      {renderQuests(
-                        data.getAllQuestsByPathwayId.quests.filter(
-                          (quest: any) => quest.isPending
-                        )
-                      )}
-                    </SimpleGrid>
-                  </TabPanel>
+                  {canReviewQuests && (
+                    <TabPanel>
+                      <SimpleGrid columns={[1, 2]} spacing={10}>
+                        {renderQuests(
+                          data.getAllQuestsByPathwayId.quests.filter(
+                            (quest: any) => quest.isPending
+                          )
+                        )}
+                      </SimpleGrid>
+                    </TabPanel>
+                  )}
                   <TabPanel>
                     <SimpleGrid columns={[1, 2]} spacing={10} />
                   </TabPanel>

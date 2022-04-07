@@ -131,8 +131,8 @@ function ProjectPage({
   const isProjectContributor = squads
     .flatMap(({ members }: { members: string[] }) => members)
     .includes(account);
-  const canEdit = isProjectContributor || isOwner || isReviewer;
-  const canReviewPathways = isProjectContributor || isOwner;
+  const canEdit = isProjectContributor || isOwner;
+  const canReviewPathways = isProjectContributor || isOwner || isReviewer;
 
   if (loading)
     return (

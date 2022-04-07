@@ -779,7 +779,7 @@
       "chainId": "4",
       "contracts": {
         "AdventurerBadgeFactory": {
-          "address": "0xF95e7e7424CFC2875ccd7F72981Da9FB8e058C14",
+          "address": "0xa259968032De634cbAC139c8AB20be7CaB36f822",
           "abi": [
             {
               "inputs": [
@@ -1643,7 +1643,7 @@
           ]
         },
         "AppDiamond": {
-          "address": "0x94b8eF8E708Dc1132bd0e93A57D1572605eC22c2",
+          "address": "0xb43881F1f59DD24a9533d3665F423F6E2b4475dd",
           "abi": [
             {
               "inputs": [
@@ -2066,7 +2066,7 @@
           ]
         },
         "BadgeNFT": {
-          "address": "0xAd66EcCb5dc5a9D00A820FCf898fa72061539d52",
+          "address": "0x1678f8F2c53Be66D01d9F8DE67fc3f3BF03292d0",
           "abi": [
             {
               "inputs": [
@@ -2666,6 +2666,30 @@
                   "internalType": "address[]",
                   "name": "",
                   "type": "address[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "adventurer",
+                  "type": "address"
+                }
+              ],
+              "name": "getVersionsAndBadgeIDsByAdventurer",
+              "outputs": [
+                {
+                  "internalType": "uint256[]",
+                  "name": "versions",
+                  "type": "uint256[]"
+                },
+                {
+                  "internalType": "string",
+                  "name": "concatBadgeIds",
+                  "type": "string"
                 }
               ],
               "stateMutability": "view",
@@ -3349,7 +3373,7 @@
           ]
         },
         "PathwayNFT": {
-          "address": "0x859730c1e82ef01427f3a86Adf6AF89C6Df3C9F6",
+          "address": "0x1A0Dc4C2973B40B15e873a0EAf9eD5762C9e8Ca4",
           "abi": [
             {
               "inputs": [
@@ -3554,6 +3578,25 @@
             {
               "inputs": [
                 {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "name": "adventurerAddress",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
                   "internalType": "address",
                   "name": "to",
                   "type": "address"
@@ -3619,6 +3662,21 @@
                   "internalType": "uint8",
                   "name": "v",
                   "type": "uint8"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "claimReward",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "string",
+                  "name": "_tokenURI",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "version",
+                  "type": "uint256"
                 }
               ],
               "name": "claimPathwayRewards",
@@ -3798,6 +3856,54 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "_pathwayId",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "version",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getAllAddrsByPathwayIDVersion",
+              "outputs": [
+                {
+                  "internalType": "address[]",
+                  "name": "",
+                  "type": "address[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "_pathwayId",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "version",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getAllTokenIdsByPathwayIDVersion",
+              "outputs": [
+                {
+                  "internalType": "uint256[]",
+                  "name": "",
+                  "type": "uint256[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "getAppDiamond",
               "outputs": [
@@ -3843,6 +3949,30 @@
                   "internalType": "address[]",
                   "name": "",
                   "type": "address[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "adventurer",
+                  "type": "address"
+                }
+              ],
+              "name": "getVersionsAndPathwayIDsByAdventurer",
+              "outputs": [
+                {
+                  "internalType": "uint256[]",
+                  "name": "versions",
+                  "type": "uint256[]"
+                },
+                {
+                  "internalType": "string",
+                  "name": "concatPathwayIds",
+                  "type": "string"
                 }
               ],
               "stateMutability": "view",
@@ -3913,6 +4043,30 @@
                 }
               ],
               "name": "nativeRewards",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "name": "nonces",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -4098,6 +4252,19 @@
               "inputs": [
                 {
                   "internalType": "address",
+                  "name": "newFactory",
+                  "type": "address"
+                }
+              ],
+              "name": "setAdventureFactory",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
                   "name": "newAppDiamond",
                   "type": "address"
                 }
@@ -4121,6 +4288,39 @@
                 }
               ],
               "name": "setApprovalForAll",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "_pathwayId",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "newNumber",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "r",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "s",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "v",
+                  "type": "uint8"
+                }
+              ],
+              "name": "setNumberOfUsersRewarded",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -6215,7 +6415,7 @@
           ]
         },
         "Verify": {
-          "address": "0x40f40fb4d93D1133B8df8f87B6d48c2932559415",
+          "address": "0x001291926f58a4CaFDad77Ca3363AA210400EEfE",
           "abi": [
             {
               "inputs": [

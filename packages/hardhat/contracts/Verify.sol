@@ -65,7 +65,10 @@ contract Verify is Ownable {
             r,
             s
         );
-        require(signer == serverAddress, "SIGNER MUST BE SERVER");
+        require(
+            signer == serverAddress,
+            "SIGNER MUST BE SERVER in metaDataVerify"
+        );
         noncesParentIdChildId[_parentId][_objectId]++;
         return signer == serverAddress;
     }
@@ -99,7 +102,10 @@ contract Verify is Ownable {
             r,
             s
         );
-        require(signer == serverAddress, "SIGNER MUST BE SERVER");
+        require(
+            signer == serverAddress,
+            "SIGNER MUST BE SERVER in thresholdVerify"
+        );
         thresholdNoncesById[_objectId]++;
         return signer == serverAddress;
     }
@@ -131,7 +137,10 @@ contract Verify is Ownable {
             r,
             s
         );
-        require(signer == serverAddress, "SIGNER MUST BE SERVER");
+        require(
+            signer == serverAddress,
+            "SIGNER MUST BE SERVER in deployDiamondVerify"
+        );
         deployNoncesById[_projectId]++;
         return signer == serverAddress;
     }

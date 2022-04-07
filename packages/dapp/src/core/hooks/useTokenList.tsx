@@ -73,6 +73,7 @@ function useTokenList(): {
       if (foundToken?.symbol) {
         return foundToken?.symbol;
       }
+      return rewardCurrency;
     }
     return defaultToken.symbol;
   };

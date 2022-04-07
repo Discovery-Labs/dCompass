@@ -16,6 +16,7 @@ type VerifyAdventurerClaimInput = {
   verifyContract?: string;
   objectId: string;
   chainId: number;
+  version?: number;
 };
 
 export const verifyNFTInfo = async function ({
@@ -31,7 +32,13 @@ export const verifyNFTInfo = async function ({
     throw Error('Signing key missing');
   }
   const wallet = new ethers.Wallet(signingKey);
-
+  console.log(wallet, [
+    nonceId,
+    senderAddress,
+    contractAddress,
+    verifyContract,
+    objectId,
+  ]);
   let hashMsg = ethers.utils.solidityKeccak256(
     ['uint256', 'address', 'address', 'address', 'string'],
     [nonceId, senderAddress, contractAddress, verifyContract, objectId],
@@ -64,6 +71,7 @@ export const verifyAdventurerClaimInfo = async function ({
   contractAddress,
   objectId,
   chainId,
+  version = 0,
 }: VerifyAdventurerClaimInput) {
   const signingKey = process.env.PRIVATE_KEY;
   if (!signingKey) {
@@ -73,7 +81,7 @@ export const verifyAdventurerClaimInfo = async function ({
 
   const hashMsg = ethers.utils.solidityKeccak256(
     ['address', 'address', 'uint256', 'uint', 'uint256', 'string'],
-    [senderAddress, contractAddress, chainId, nonceId, 0, objectId],
+    [senderAddress, contractAddress, chainId, nonceId, version, objectId],
   );
 
   const messageHashBytes = ethers.utils.arrayify(hashMsg);

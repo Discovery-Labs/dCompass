@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { CheckIcon, CloseIcon, LockIcon } from "@chakra-ui/icons";
 import {
   Avatar,
@@ -40,6 +40,7 @@ import { Quest } from "../../../core/types";
 import {
   APPROVE_QUEST_MUTATION,
   CLAIM_QUEST_REWARDS_MUTATION,
+  GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
   VERIFY_QUEST_MUTATION,
 } from "../../../graphql/quests";
 
@@ -79,11 +80,15 @@ function QuestCard({
   quest,
   projectContributors,
   pathwayStreamId,
+  canReviewQuests,
 }: {
   quest: Quest;
+  canReviewQuests: boolean;
   projectContributors: string[];
   pathwayStreamId: string;
 }) {
+  const [isApproving, setIsApproving] = useState<boolean>(false);
+  const [isCreatingToken, setIsCreatingToken] = useState<boolean>(false);
   const toast = useToast();
   const router = useRouter();
   const { getRewardCurrency } = useTokenList();
@@ -92,9 +97,7 @@ function QuestCard({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { chainId, library } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);
-  const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION, {
-    refetchQueries: "all",
-  });
+  const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION);
 
   const [claimQuestRewardsMutation] = useMutation(
     CLAIM_QUEST_REWARDS_MUTATION,
@@ -102,10 +105,16 @@ function QuestCard({
       refetchQueries: "all",
     }
   );
+  const [getAllQuestsByPathwayId] = useLazyQuery(
+    GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
+    {
+      variables: {
+        pathwayId: quest.pathwayId,
+      },
+    }
+  );
 
-  const [verifyQuestMutation] = useMutation(VERIFY_QUEST_MUTATION, {
-    refetchQueries: "all",
-  });
+  const [verifyQuestMutation] = useMutation(VERIFY_QUEST_MUTATION);
 
   useEffect(() => {
     console.log({ streamId: quest.streamId });
@@ -122,15 +131,13 @@ function QuestCard({
     init();
   }, [contracts, quest.streamId]);
 
-  const isContributor =
-    projectContributors && account && projectContributors.includes(account);
-
   const openQuest = (questId: string) => {
     console.log(`${router.asPath}/${questId}`);
     return router.push(`${router.asPath}/${questId}`);
   };
 
   const handleApproveQuest = async () => {
+    setIsApproving(true);
     const signatureInput = {
       id: quest.id,
       pathwayId: quest.pathwayId,
@@ -181,9 +188,20 @@ function QuestCard({
         setStatus("APPROVED");
         break;
     }
+    setIsApproving(false);
+    return toast({
+      title: "Quest approved!",
+      description: `Approval vote submitted successfully!`,
+      status: "success",
+      position: "top-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
   };
 
   const handleCreateToken = async () => {
+    setIsCreatingToken(true);
     if (account && chainId) {
       const formData = new FormData();
       const ogFile = await fetch(`https://ipfs.io/ipfs/${quest.image}`);
@@ -242,8 +260,21 @@ function QuestCard({
         setStatus("MINTED");
       }
     }
-    // TODO: user feedback
-    return null;
+    await getAllQuestsByPathwayId({
+      variables: {
+        pathwayId: quest.pathwayId,
+      },
+    });
+    setIsCreatingToken(false);
+    return toast({
+      title: "Quest minted!",
+      description: `Quest minted and created successfully!`,
+      status: "success",
+      position: "top-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
   };
 
   const handleClaimRewards = async () => {
@@ -457,7 +488,7 @@ function QuestCard({
         </VStack>
 
         <Flex w="full" justify="space-between" pt="4">
-          {isContributor && status !== "MINTED" && (
+          {canReviewQuests && status !== "MINTED" && (
             <VStack w="full" align="left">
               <Tag
                 variant="outline"
@@ -476,6 +507,8 @@ function QuestCard({
                   <Button
                     colorScheme="accentDark"
                     onClick={handleApproveQuest}
+                    isLoading={isApproving}
+                    loadingText="Approving"
                     leftIcon={<CheckIcon />}
                   >
                     Approve
@@ -491,14 +524,19 @@ function QuestCard({
               )}
               {status && status === "APPROVED" && (
                 <HStack>
-                  <Button onClick={handleCreateToken} leftIcon={<CheckIcon />}>
+                  <Button
+                    onClick={handleCreateToken}
+                    isLoading={isCreatingToken}
+                    loadingText="Minting quest"
+                    leftIcon={<CheckIcon />}
+                  >
                     Create Token
                   </Button>
                 </HStack>
               )}
             </VStack>
           )}
-          {!isContributor && status !== "MINTED" && (
+          {!canReviewQuests && status !== "MINTED" && (
             <VStack w="full" layerStyle="outline-card">
               <Text>Under review</Text>
             </VStack>

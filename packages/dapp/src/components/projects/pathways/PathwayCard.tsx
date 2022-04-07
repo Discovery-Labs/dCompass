@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -19,6 +19,7 @@ import {
   Text,
   Tooltip,
   useDisclosure,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
@@ -36,6 +37,7 @@ import useTokenList from "../../../core/hooks/useTokenList";
 import { Pathway } from "../../../core/types";
 import {
   APPROVE_PATHWAY_MUTATION,
+  GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
   VERIFY_PATHWAY_MUTATION,
 } from "../../../graphql/pathways";
 
@@ -78,16 +80,23 @@ function PathwayCard({
   pathway: Pathway;
   projectContributors: string[];
 }) {
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getRewardCurrency } = useTokenList();
   const { getPrimaryColor, getAccentColor } = useCustomColor();
-  const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION, {
-    refetchQueries: "all",
-  });
-  const [verifyPathwayMutation] = useMutation(VERIFY_PATHWAY_MUTATION, {
-    refetchQueries: "all",
-  });
+  const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION);
+  const [verifyPathwayMutation] = useMutation(VERIFY_PATHWAY_MUTATION);
+  const [getAllPathwaysByProjectId] = useLazyQuery(
+    GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
+    {
+      variables: {
+        projectId: pathway.projectId,
+      },
+    }
+  );
   const [status, setStatus] = useState<string>();
+  const [isApproving, setIsApproving] = useState<boolean>(false);
+  const [isCreatingToken, setIsCreatingToken] = useState<boolean>(false);
   const { account, contracts } = useContext(Web3Context);
   const { chainId, library } = useWeb3React();
   const router = useRouter();
@@ -116,6 +125,7 @@ function PathwayCard({
   }
 
   const handleApprovePathway = async () => {
+    setIsApproving(true);
     if (chainId && account) {
       const signatureInput = {
         id: pathway.id,
@@ -158,14 +168,22 @@ function PathwayCard({
       );
       const statusString: string =
         await contracts.pathwayNFTContract.statusStrings(statusInt);
-      console.log({ statusString });
       setStatus(statusString);
     }
-    // TODO: user feedback
-    return null;
+    setIsApproving(false);
+    return toast({
+      title: "Pathway approved!",
+      description: `Approval vote submitted successfully!`,
+      status: "success",
+      position: "top-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
   };
 
   const handleCreateToken = async () => {
+    setIsCreatingToken(true);
     if (chainId && account) {
       const formData = new FormData();
       const ogFile = await fetch(`https://ipfs.io/ipfs/${pathway.image}`);
@@ -182,6 +200,7 @@ function PathwayCard({
         method: "POST",
         body: formData,
       });
+      const { url } = await nftCidRes.json();
 
       const signatureInput = {
         id: pathway.id,
@@ -201,11 +220,9 @@ function PathwayCard({
           },
         },
       });
-
       const [metadataVerifySignature, thresholdVerifySignature] =
         data.verifyPathway.expandedServerSignatures;
 
-      const { url } = await nftCidRes.json();
       const createTokenTx = await contracts.pathwayNFTContract.createToken(
         url,
         pathway.streamId,
@@ -218,6 +235,7 @@ function PathwayCard({
 
       // get return values or events
       const receipt = await createTokenTx.wait(1);
+      // TODO: receipt tx hash in the toast body
       console.log({ receipt });
       const isMinted = await contracts.pathwayNFTContract.pathwayMinted(
         pathway.id
@@ -226,8 +244,22 @@ function PathwayCard({
         setStatus("MINTED");
       }
     }
-    // TODO: user feedback
-    return null;
+    // refetch pathways
+    await getAllPathwaysByProjectId({
+      variables: {
+        projectId: pathway.projectId,
+      },
+    });
+    setIsCreatingToken(false);
+    return toast({
+      title: "Pathway minted!",
+      description: `Pathway minted and created successfully!`,
+      status: "success",
+      position: "top-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
   };
 
   return (
@@ -236,10 +268,6 @@ function PathwayCard({
         <Tag p="2" variant="solid">
           0/{pathway.rewardUserCap} Claimed
         </Tag>
-        {/* Max reward supply is not essential for who want to complete the quest. */}
-        {/* <Tag variant="outline">
-          {pathway.rewardAmount} {getRewardCurrency(pathway.rewardCurrency)}
-        </Tag> */}
       </HStack>
       <Flex direction="column" w="full">
         <Text pb="1" textStyle="small" color={getPrimaryColor}>
@@ -294,6 +322,8 @@ function PathwayCard({
                 colorScheme="accentDark"
                 onClick={handleApprovePathway}
                 leftIcon={<CheckIcon />}
+                isLoading={isApproving}
+                loadingText="Approving"
               >
                 Approve
               </Button>
@@ -304,7 +334,12 @@ function PathwayCard({
           )}
           {status && status === "APPROVED" && (
             <HStack>
-              <Button onClick={handleCreateToken} leftIcon={<CheckIcon />}>
+              <Button
+                onClick={handleCreateToken}
+                isLoading={isCreatingToken}
+                loadingText="Minting pathway"
+                leftIcon={<CheckIcon />}
+              >
                 Create Token
               </Button>
             </HStack>

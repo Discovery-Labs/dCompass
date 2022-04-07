@@ -59,17 +59,14 @@ export class ApprovePathwayResolver {
 
     const existingPathways = foundProject.pathways ?? [];
     // remove previously pending pathway and set it as approved
+
     const updatedProject = {
       _id: projectId,
       ...foundProject,
       pathways: [...new Set([...existingPathways, id])],
-      pendingPathways: [
-        ...new Set(
-          foundProject.pendingPathways.filter(
-            (pathwayId: string) => pathwayId !== foundPathway.id,
-          ),
-        ),
-      ],
+      pendingPathways: foundProject.pendingPathways.filter(
+        (pathwayId: string) => pathwayId !== id,
+      ),
     };
 
     await this.threadDBService.update({
@@ -90,8 +87,6 @@ export class ApprovePathwayResolver {
       'PathwayNFT',
     );
 
-    console.log({ projectStreamId, pwayId: foundPathway.streamId });
-
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
       verifyContract.noncesParentIdChildId(
         projectStreamId,
@@ -100,11 +95,6 @@ export class ApprovePathwayResolver {
       verifyContract.thresholdNoncesById(foundPathway.streamId),
     ]);
 
-    console.log({
-      pathwayAdr: pathwayContract.address,
-      objectId: foundPathway.streamId,
-      verifyAdr: verifyContract.address,
-    });
     const [metadataVerify, tresholdVerify] = await Promise.all([
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
@@ -126,7 +116,7 @@ export class ApprovePathwayResolver {
     return {
       ...foundPathway,
       id,
-      projectStreamId: foundProject.streamId,
+      projectStreamId,
       expandedServerSignatures: [
         { r: metadataVerify.r, s: metadataVerify.s, v: metadataVerify.v },
         { r: tresholdVerify.r, s: tresholdVerify.s, v: tresholdVerify.v },
