@@ -22,22 +22,27 @@ export interface PathwayNFTInterface extends utils.Interface {
   contractName: "PathwayNFT";
   functions: {
     "addPathwayCreationReward(string,address,bool,uint256)": FunctionFragment;
+    "adventurerAddress(string)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "claimPathwayRewards(string,bool,address,bytes32,bytes32,uint8)": FunctionFragment;
+    "claimPathwayRewards(string,bool,address,bytes32,bytes32,uint8,bool,string,uint256)": FunctionFragment;
     "claimRejectionRefund(string,bool,address)": FunctionFragment;
     "createPathway(string,string,uint256,bool,address,bool,uint256)": FunctionFragment;
     "createToken(string,string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
     "currentNumUsersRewardPerPathwayERC20(string,address)": FunctionFragment;
     "currentNumUsersRewardPerPathwayNative(string)": FunctionFragment;
     "fee()": FunctionFragment;
+    "getAllAddrsByPathwayIDVersion(string,uint256)": FunctionFragment;
+    "getAllTokenIdsByPathwayIDVersion(string,uint256)": FunctionFragment;
     "getAppDiamond()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getContributors(string)": FunctionFragment;
+    "getVersionsAndPathwayIDsByAdventurer(address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "name()": FunctionFragment;
     "nativeRefundClaimed(string)": FunctionFragment;
     "nativeRewards(string)": FunctionFragment;
+    "nonces(string,address)": FunctionFragment;
     "numUsersRewardPerPathway(string)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
@@ -46,8 +51,10 @@ export interface PathwayNFTInterface extends utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "reviewerVotes(string,address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
+    "setAdventureFactory(address)": FunctionFragment;
     "setAppDiamond(address)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setNumberOfUsersRewarded(string,uint256,bytes32,bytes32,uint8)": FunctionFragment;
     "status(string)": FunctionFragment;
     "statusStrings(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -71,13 +78,27 @@ export interface PathwayNFTInterface extends utils.Interface {
     values: [string, string, boolean, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "adventurerAddress",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "approve",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
     functionFragment: "claimPathwayRewards",
-    values: [string, boolean, string, BytesLike, BytesLike, BigNumberish]
+    values: [
+      string,
+      boolean,
+      string,
+      BytesLike,
+      BytesLike,
+      BigNumberish,
+      boolean,
+      string,
+      BigNumberish
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "claimRejectionRefund",
@@ -117,6 +138,14 @@ export interface PathwayNFTInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "fee", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "getAllAddrsByPathwayIDVersion",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllTokenIdsByPathwayIDVersion",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getAppDiamond",
     values?: undefined
   ): string;
@@ -126,6 +155,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getContributors",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getVersionsAndPathwayIDsByAdventurer",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -140,6 +173,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "nativeRewards",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nonces",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "numUsersRewardPerPathway",
@@ -171,12 +208,20 @@ export interface PathwayNFTInterface extends utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setAdventureFactory",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setAppDiamond",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setNumberOfUsersRewarded",
+    values: [string, BigNumberish, BytesLike, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "status", values: [string]): string;
   encodeFunctionData(
@@ -250,6 +295,10 @@ export interface PathwayNFTInterface extends utils.Interface {
     functionFragment: "addPathwayCreationReward",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "adventurerAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -278,6 +327,14 @@ export interface PathwayNFTInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getAllAddrsByPathwayIDVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllTokenIdsByPathwayIDVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getAppDiamond",
     data: BytesLike
   ): Result;
@@ -287,6 +344,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getContributors",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getVersionsAndPathwayIDsByAdventurer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -302,6 +363,7 @@ export interface PathwayNFTInterface extends utils.Interface {
     functionFragment: "nativeRewards",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "numUsersRewardPerPathway",
     data: BytesLike
@@ -329,11 +391,19 @@ export interface PathwayNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setAdventureFactory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setAppDiamond",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setNumberOfUsersRewarded",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "status", data: BytesLike): Result;
@@ -492,6 +562,11 @@ export interface PathwayNFT extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    adventurerAddress(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -507,6 +582,9 @@ export interface PathwayNFT extends BaseContract {
       r: BytesLike,
       s: BytesLike,
       v: BigNumberish,
+      claimReward: boolean,
+      _tokenURI: string,
+      version: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -552,6 +630,18 @@ export interface PathwayNFT extends BaseContract {
 
     fee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getAllAddrsByPathwayIDVersion(
+      _pathwayId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
+    getAllTokenIdsByPathwayIDVersion(
+      _pathwayId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getAppDiamond(overrides?: CallOverrides): Promise<[string]>;
 
     getApproved(
@@ -563,6 +653,16 @@ export interface PathwayNFT extends BaseContract {
       _pathwayId: string,
       overrides?: CallOverrides
     ): Promise<[string[]]>;
+
+    getVersionsAndPathwayIDsByAdventurer(
+      adventurer: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], string] & {
+        versions: BigNumber[];
+        concatPathwayIds: string;
+      }
+    >;
 
     isApprovedForAll(
       owner: string,
@@ -579,6 +679,12 @@ export interface PathwayNFT extends BaseContract {
 
     nativeRewards(
       arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    nonces(
+      arg0: string,
+      arg1: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -626,6 +732,11 @@ export interface PathwayNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setAdventureFactory(
+      newFactory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setAppDiamond(
       newAppDiamond: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -634,6 +745,15 @@ export interface PathwayNFT extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setNumberOfUsersRewarded(
+      _pathwayId: string,
+      newNumber: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -726,6 +846,8 @@ export interface PathwayNFT extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  adventurerAddress(arg0: string, overrides?: CallOverrides): Promise<string>;
+
   approve(
     to: string,
     tokenId: BigNumberish,
@@ -741,6 +863,9 @@ export interface PathwayNFT extends BaseContract {
     r: BytesLike,
     s: BytesLike,
     v: BigNumberish,
+    claimReward: boolean,
+    _tokenURI: string,
+    version: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -786,6 +911,18 @@ export interface PathwayNFT extends BaseContract {
 
   fee(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getAllAddrsByPathwayIDVersion(
+    _pathwayId: string,
+    version: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
+  getAllTokenIdsByPathwayIDVersion(
+    _pathwayId: string,
+    version: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getAppDiamond(overrides?: CallOverrides): Promise<string>;
 
   getApproved(
@@ -797,6 +934,13 @@ export interface PathwayNFT extends BaseContract {
     _pathwayId: string,
     overrides?: CallOverrides
   ): Promise<string[]>;
+
+  getVersionsAndPathwayIDsByAdventurer(
+    adventurer: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber[], string] & { versions: BigNumber[]; concatPathwayIds: string }
+  >;
 
   isApprovedForAll(
     owner: string,
@@ -812,6 +956,12 @@ export interface PathwayNFT extends BaseContract {
   ): Promise<boolean>;
 
   nativeRewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  nonces(
+    arg0: string,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   numUsersRewardPerPathway(
     arg0: string,
@@ -851,6 +1001,11 @@ export interface PathwayNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setAdventureFactory(
+    newFactory: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setAppDiamond(
     newAppDiamond: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -859,6 +1014,15 @@ export interface PathwayNFT extends BaseContract {
   setApprovalForAll(
     operator: string,
     approved: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setNumberOfUsersRewarded(
+    _pathwayId: string,
+    newNumber: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    v: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -945,6 +1109,8 @@ export interface PathwayNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    adventurerAddress(arg0: string, overrides?: CallOverrides): Promise<string>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -960,6 +1126,9 @@ export interface PathwayNFT extends BaseContract {
       r: BytesLike,
       s: BytesLike,
       v: BigNumberish,
+      claimReward: boolean,
+      _tokenURI: string,
+      version: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1005,6 +1174,18 @@ export interface PathwayNFT extends BaseContract {
 
     fee(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getAllAddrsByPathwayIDVersion(
+      _pathwayId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
+    getAllTokenIdsByPathwayIDVersion(
+      _pathwayId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
     getAppDiamond(overrides?: CallOverrides): Promise<string>;
 
     getApproved(
@@ -1016,6 +1197,16 @@ export interface PathwayNFT extends BaseContract {
       _pathwayId: string,
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    getVersionsAndPathwayIDsByAdventurer(
+      adventurer: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], string] & {
+        versions: BigNumber[];
+        concatPathwayIds: string;
+      }
+    >;
 
     isApprovedForAll(
       owner: string,
@@ -1031,6 +1222,12 @@ export interface PathwayNFT extends BaseContract {
     ): Promise<boolean>;
 
     nativeRewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    nonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     numUsersRewardPerPathway(
       arg0: string,
@@ -1071,6 +1268,11 @@ export interface PathwayNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setAdventureFactory(
+      newFactory: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setAppDiamond(
       newAppDiamond: string,
       overrides?: CallOverrides
@@ -1079,6 +1281,15 @@ export interface PathwayNFT extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setNumberOfUsersRewarded(
+      _pathwayId: string,
+      newNumber: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1235,6 +1446,11 @@ export interface PathwayNFT extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    adventurerAddress(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -1250,6 +1466,9 @@ export interface PathwayNFT extends BaseContract {
       r: BytesLike,
       s: BytesLike,
       v: BigNumberish,
+      claimReward: boolean,
+      _tokenURI: string,
+      version: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1295,6 +1514,18 @@ export interface PathwayNFT extends BaseContract {
 
     fee(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getAllAddrsByPathwayIDVersion(
+      _pathwayId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAllTokenIdsByPathwayIDVersion(
+      _pathwayId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getAppDiamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     getApproved(
@@ -1304,6 +1535,11 @@ export interface PathwayNFT extends BaseContract {
 
     getContributors(
       _pathwayId: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getVersionsAndPathwayIDsByAdventurer(
+      adventurer: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1321,6 +1557,12 @@ export interface PathwayNFT extends BaseContract {
     ): Promise<BigNumber>;
 
     nativeRewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    nonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     numUsersRewardPerPathway(
       arg0: string,
@@ -1366,6 +1608,11 @@ export interface PathwayNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setAdventureFactory(
+      newFactory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setAppDiamond(
       newAppDiamond: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1374,6 +1621,15 @@ export interface PathwayNFT extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setNumberOfUsersRewarded(
+      _pathwayId: string,
+      newNumber: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1467,6 +1723,11 @@ export interface PathwayNFT extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    adventurerAddress(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -1485,6 +1746,9 @@ export interface PathwayNFT extends BaseContract {
       r: BytesLike,
       s: BytesLike,
       v: BigNumberish,
+      claimReward: boolean,
+      _tokenURI: string,
+      version: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1530,6 +1794,18 @@ export interface PathwayNFT extends BaseContract {
 
     fee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getAllAddrsByPathwayIDVersion(
+      _pathwayId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAllTokenIdsByPathwayIDVersion(
+      _pathwayId: string,
+      version: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getAppDiamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getApproved(
@@ -1539,6 +1815,11 @@ export interface PathwayNFT extends BaseContract {
 
     getContributors(
       _pathwayId: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getVersionsAndPathwayIDsByAdventurer(
+      adventurer: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1557,6 +1838,12 @@ export interface PathwayNFT extends BaseContract {
 
     nativeRewards(
       arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    nonces(
+      arg0: string,
+      arg1: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1607,6 +1894,11 @@ export interface PathwayNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setAdventureFactory(
+      newFactory: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setAppDiamond(
       newAppDiamond: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1615,6 +1907,15 @@ export interface PathwayNFT extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setNumberOfUsersRewarded(
+      _pathwayId: string,
+      newNumber: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      v: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

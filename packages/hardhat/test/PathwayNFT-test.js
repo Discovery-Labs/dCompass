@@ -31,7 +31,7 @@ const verifyClaimInfo = async function(objParams){
   let wallet = new ethers.Wallet(signingKey);
   let hashMsg;
 
-  hashMsg = ethers.utils.solidityKeccak256(["address", "address", "uint256", "string"], [objParams.account, objParams.contract, objParams.chainId, objParams.pathwayId]);
+  hashMsg = ethers.utils.solidityKeccak256(["address", "address", "uint256", "uint256", "uint256", "string"], [objParams.account, objParams.contract, objParams.chainId,  objParams.nonce, objParams.payload, objParams.pathwayId]);
 
   let messageHashBytes = ethers.utils.arrayify(hashMsg);
   let flatSig = await wallet.signMessage(messageHashBytes);
@@ -224,9 +224,12 @@ describe("PathwayNFT", function() {
       }
       
       let verifyClaimParams = {};
+      let pathwayNonce = await pathwayNFT.nonces("firstCourseProject", addrs[2].address);
       verifyClaimParams['account'] = `${addrs[2].address}`;
       verifyClaimParams['contract'] = `${pathwayNFT.address}`;
       verifyClaimParams['chainId'] = 1337;
+      verifyClaimParams['nonce'] = pathwayNonce;
+      verifyClaimParams['payload'] = 1;
       verifyClaimParams['pathwayId'] = "firstCourseProject";
 
       let sigClaim = await verifyClaimInfo(verifyClaimParams);
@@ -239,13 +242,23 @@ describe("PathwayNFT", function() {
       expect(await pathwayNFT.currentNumUsersRewardPerPathwayNative("firstCourseProject")).to.be.equal(0);
       expect(await pathwayNFT.userRewardedForPathwayNative("firstCourseProject", `${addrs[2].address}`)).to.be.false;
 
-      await pathwayNFT.connect(addrs[2]).claimPathwayRewards("firstCourseProject", true, `${addr1.address}`, sigClaim.r, sigClaim.s, sigClaim.v);
+      await pathwayNFT.connect(addrs[2]).claimPathwayRewards("firstCourseProject", true, `${addr1.address}`, sigClaim.r, sigClaim.s, sigClaim.v, true, "adventurer_pathway_URI", 1);
       balance = await ethers.provider.getBalance(addrs[2].address);
       console.log(balance.toString());
       balanceAfter = await ethers.provider.getBalance(pathwayNFT.address);
       console.log(`Pathway Balance after is ${balanceAfter} but before was ${balanceBefore}`);
       expect(await pathwayNFT.currentNumUsersRewardPerPathwayNative("firstCourseProject")).to.be.equal(1);
       expect(await pathwayNFT.userRewardedForPathwayNative("firstCourseProject", `${addrs[2].address}`)).to.be.true;
+      
+      const nftAddrs = await pathwayNFT.getAllAddrsByPathwayIDVersion("firstCourseProject", 1);
+      const nftTokens = await pathwayNFT.getAllTokenIdsByPathwayIDVersion("firstCourseProject", 1);
+      const adventureId = nftTokens[0];
+      expect(nftAddrs.length).to.be.equal(1);
+      expect(await pathwayNFT.ownerOf(adventureId)).to.be.equal(addrs[2].address);
+      expect(await pathwayNFT.tokenURI(adventureId)).to.be.equal("adventurer_pathway_URI");
+      const versionAndId = await pathwayNFT.getVersionsAndPathwayIDsByAdventurer(addrs[2].address);
+      console.log(versionAndId);
+    
     })
   })
   

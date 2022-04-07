@@ -359,7 +359,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         _verify(_msgSender(), _pathwayId, version, r, s, v);
         if(claimReward){
             if(native){
-                (success, ) = payable(_msgSender()).call{value : amount}("");
+                (bool success, ) = payable(_msgSender()).call{value : amount}("");
                 require(success);
                 userRewardedForPathwayNative[_pathwayId][_msgSender()] = true;
                 currentNumUsersRewardPerPathwayNative[_pathwayId]++;
@@ -476,7 +476,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         uint256[] memory tempVersions = new uint256[](numTokensOwned);
         if(numTokensOwned ==0){
             versions = tempVersions;
-            concatBadgeIds= currString;
+            concatPathwayIds= currString;
         }
         uint index = 0;
         while(index < numTokensOwned -1){
