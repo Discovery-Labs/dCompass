@@ -24,6 +24,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     Verify verifyContract; //Verify contract instance
     address projectNFTAddress; // address for the projectNFTs
     address appDiamond;//address needed for checking valid erc20Addrs per chain
+    address adventureFactory;//address of the adventure factory
     mapping(uint256 => string) public statusStrings;
     mapping(string => bool) public pathwayMinted; // tracks if mint has been done
     mapping(string => address[]) internal contributors; //contributors to this pathway
@@ -40,7 +41,18 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     mapping (string => uint) public numUsersRewardPerPathway;//number of users rewarded per pathway
     mapping (string => uint) public currentNumUsersRewardPerPathwayNative;//current number of users already claimed native reward per pathway
     mapping (string => mapping ( address => uint)) public currentNumUsersRewardPerPathwayERC20;// currentnumber of users already claimed reward per pathway per ERC20 Address
-    
+    mapping (string => mapping(address => uint)) public nonces;//nonce for certain verify functions per address per projectId
+    mapping (string => address) public adventurerAddress;//address of adventurer NFT per pathway Id
+
+    //local adventure mappings
+    //_pathwayID => version => minterAddress => boolean
+    mapping (string => mapping(uint => mapping(address => bool))) internal mintTrackerByPathwayIdVersionMinter;
+    //_pathwayID => version => addresses of all minters...only used for getter when necessary
+    mapping (string => mapping(uint => address[])) internal allMintersPerPathwayAndVersion;
+    //_pathwayID => version => tokenIds of all minters...only used for getter when necessary
+    mapping (string => mapping(uint => uint[])) internal allTokenIdsPerPathwayAndVersion;
+    mapping (uint => TokenInfo) internal tokenInfoById;//will be used by getter
+
     //pathwayId => ERC20Address => senderAddress => bool
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForPathwayERC20;//has user received funds for this pathway in ERC20Token Address
     mapping (string => mapping(address => bool)) public userRewardedForPathwayNative;//has user received funds for this pathway in native token
@@ -51,6 +63,11 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         PENDING,
         DENIED,
         APPROVED
+    }
+
+    struct TokenInfo{
+        string pathwayId;
+        uint version;
     }
 
     event ReceiveCalled(address _caller, uint256 _value);
@@ -225,6 +242,12 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         }
     }
 
+    function setNumberOfUsersRewarded(string memory _pathwayId, uint256 newNumber, bytes32 r, bytes32 s, uint8 v) external {
+        require(newNumber > numUsersRewardPerPathway[_pathwayId] - 1, "PathwayNFT : invalid number");
+        _verify(_msgSender(), _pathwayId, newNumber, r, s, v);
+        numUsersRewardPerPathway[_pathwayId] = newNumber;
+    }
+
     function claimRejectionRefund(string memory _pathwayId, bool native, address _ERC20Address) external {
         require(status[_pathwayId] == PathwayStatus.DENIED, "incorrect pathway status");
         string memory _projectId = projectIdforPathway[_pathwayId];
@@ -317,25 +340,99 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         return newItems;
     }
 
-    function claimPathwayRewards(string memory _pathwayId, bool native, address _ERC20Address, bytes32 r, bytes32 s, uint8 v) external {
+    function claimPathwayRewards(string memory _pathwayId, bool native, address _ERC20Address, bytes32 r, bytes32 s, uint8 v, bool claimReward, string memory _tokenURI, uint256 version) external {
         uint amount;
-        if(native){
-            require(!userRewardedForPathwayNative[_pathwayId][_msgSender()]);
-            require(currentNumUsersRewardPerPathwayNative[_pathwayId] < numUsersRewardPerPathway[_pathwayId]);
-            amount = nativeRewards[_pathwayId] / numUsersRewardPerPathway[_pathwayId];
-            require(amount > 0);
+        if(claimReward){
+            if(native){
+                require(!userRewardedForPathwayNative[_pathwayId][_msgSender()]);
+                require(currentNumUsersRewardPerPathwayNative[_pathwayId] < numUsersRewardPerPathway[_pathwayId]);
+                amount = nativeRewards[_pathwayId] / numUsersRewardPerPathway[_pathwayId];
+                require(amount > 0);
+            }
+            else{
+                require(!userRewardedForPathwayERC20[_pathwayId][_ERC20Address][_msgSender()]);
+                require(currentNumUsersRewardPerPathwayERC20[_pathwayId][_ERC20Address] < numUsersRewardPerPathway[_pathwayId]);
+                amount = erc20Amounts[_pathwayId][_ERC20Address] / numUsersRewardPerPathway[_pathwayId];
+                require(amount > 0);
+            }
         }
-        else{
-            require(!userRewardedForPathwayERC20[_pathwayId][_ERC20Address][_msgSender()]);
-            require(currentNumUsersRewardPerPathwayERC20[_pathwayId][_ERC20Address] < numUsersRewardPerPathway[_pathwayId]);
-            amount = erc20Amounts[_pathwayId][_ERC20Address] / numUsersRewardPerPathway[_pathwayId];
-            require(amount > 0);
+        _verify(_msgSender(), _pathwayId, version, r, s, v);
+        if(claimReward){
+            if(native){
+                (bool success, ) = payable(_msgSender()).call{value : amount}("");
+                require(success);
+                userRewardedForPathwayNative[_pathwayId][_msgSender()] = true;
+                currentNumUsersRewardPerPathwayNative[_pathwayId]++;
+            }
+            else{
+                IERC20(_ERC20Address).transfer(_msgSender(), amount);
+                userRewardedForPathwayERC20[_pathwayId][_ERC20Address][_msgSender()] = true;
+                currentNumUsersRewardPerPathwayERC20[_pathwayId][_ERC20Address]++;
+            }
         }
-        bytes32 hashRecover = keccak256(
+        _localAdventureMint(_msgSender(), _pathwayId, _tokenURI, version);
+    }
+
+    function walletOfOwner(address _owner)
+        public
+        view
+        returns (uint256[] memory)
+    {
+        uint256 ownerTokenCount = balanceOf(_owner);
+        uint256[] memory tokenIds = new uint256[](ownerTokenCount);
+        for (uint256 i; i < ownerTokenCount; i++) {
+            tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
+        }
+        return tokenIds;
+    }
+
+    function _mintAdventurerBadge(address _to, string memory _pathwayId, string memory _tokenURI) internal {
+      address adventurerBadgeAddress = adventurerAddress[_pathwayId];
+      require(adventurerBadgeAddress != address(0), "invalid badge address");
+      (bool success, bytes memory data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("balanceOf(address)")), _msgSender()));
+      require(success);
+      uint256 balance = abi.decode(data, (uint256));
+      if(balance == 0){
+          (success, data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("mint(address,uint256,string)")), _msgSender(), 1, _tokenURI));
+          require(success);
+          (success, data) = adventureFactory.call(abi.encodeWithSelector(bytes4(keccak256("setUserInfo(address,string)")), _msgSender(), _pathwayId));
+          require(success);
+      }
+    }
+
+    function _localAdventureMint(address _to, string memory _pathwayId, string memory _tokenURI, uint256 version) internal {
+      if(mintTrackerByPathwayIdVersionMinter[_pathwayId][version][_to]){
+          return;
+      }
+      uint256 newItemId;
+      _tokenIds.increment();
+      newItemId = _tokenIds.current();
+      _mint(_msgSender(), newItemId);
+      _setTokenURI(newItemId, _tokenURI);
+      TokenInfo memory info = TokenInfo(_pathwayId, version);
+      tokenInfoById[newItemId] = info;
+      allMintersPerPathwayAndVersion[_pathwayId][version].push(_to);
+      allTokenIdsPerPathwayAndVersion[_pathwayId][version].push(newItemId);
+      mintTrackerByPathwayIdVersionMinter[_pathwayId][version][_to] = true;
+  }
+
+  function _createAdventurerNFT(string memory _pathwayId, string memory _projectId) internal {
+      (bool success , bytes memory data) = adventureFactory.call(abi.encodeWithSelector(bytes4(
+          keccak256("createNFTToken(string,bool,string)")
+      ), _pathwayId, true, _projectId));
+      require(success);
+      address newTokenAddr = abi.decode(data, (address));
+      adventurerAddress[_pathwayId] = newTokenAddr;
+  }
+
+    function _verify(address from, string memory _pathwayId, uint256 payload, bytes32 r, bytes32 s, uint8 v) internal returns (bool){
+      bytes32 hashRecover = keccak256(
             abi.encodePacked(
-                _msgSender(),
+                from,
                 address(this),
                 block.chainid,
+                nonces[_pathwayId][from],
+                payload,
                 _pathwayId
             )
         );
@@ -353,32 +450,9 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             r,
             s
         ), "Incorrect signer");
-        if(native){
-            (success, ) = payable(_msgSender()).call{value : amount}("");
-            require(success);
-            userRewardedForPathwayNative[_pathwayId][_msgSender()] = true;
-            currentNumUsersRewardPerPathwayNative[_pathwayId]++;
-        }
-        else{
-            IERC20(_ERC20Address).transfer(_msgSender(), amount);
-            userRewardedForPathwayERC20[_pathwayId][_ERC20Address][_msgSender()] = true;
-            currentNumUsersRewardPerPathwayERC20[_pathwayId][_ERC20Address]++;
-        }
-
-    }
-
-    function walletOfOwner(address _owner)
-        public
-        view
-        returns (uint256[] memory)
-    {
-        uint256 ownerTokenCount = balanceOf(_owner);
-        uint256[] memory tokenIds = new uint256[](ownerTokenCount);
-        for (uint256 i; i < ownerTokenCount; i++) {
-            tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
-        }
-        return tokenIds;
-    }
+        nonces[_pathwayId][from]++;
+        return true;
+  }
 
     function getContributors(string memory _pathwayId) external view returns(address[] memory){
         return contributors[_pathwayId];
@@ -388,8 +462,41 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         return appDiamond;
     }
 
+    function getAllAddrsByPathwayIDVersion(string memory _pathwayId, uint256 version) external view returns (address[] memory){
+        return allMintersPerPathwayAndVersion[_pathwayId][version];
+    }
+
+    function getAllTokenIdsByPathwayIDVersion(string memory _pathwayId, uint256 version) external view returns (uint256[] memory){
+        return allTokenIdsPerPathwayAndVersion[_pathwayId][version];
+    }
+
+    function getVersionsAndPathwayIDsByAdventurer(address adventurer) external view returns (uint256[] memory versions, string memory concatPathwayIds){
+        uint256 numTokensOwned = balanceOf(adventurer);
+        string memory currString = "";
+        uint256[] memory tempVersions = new uint256[](numTokensOwned);
+        if(numTokensOwned ==0){
+            versions = tempVersions;
+            concatPathwayIds= currString;
+        }
+        uint index = 0;
+        while(index < numTokensOwned -1){
+            TokenInfo memory info = tokenInfoById[tokenOfOwnerByIndex(adventurer, index)];
+            tempVersions[index] = info.version;
+            currString = string(abi.encodePacked(currString, info.pathwayId, "__"));
+            index++;
+        }
+        TokenInfo memory lastInfo = tokenInfoById[tokenOfOwnerByIndex(adventurer, index)];
+        tempVersions[index] = lastInfo.version;
+        concatPathwayIds = string(abi.encodePacked(currString, lastInfo.pathwayId));
+        versions = tempVersions;
+    }
+
     function setAppDiamond(address newAppDiamond) external onlyOwner {
         appDiamond = newAppDiamond;
+    }
+
+    function setAdventureFactory(address newFactory) external onlyOwner {
+        adventureFactory = newFactory;
     }
 
     function _beforeTokenTransfer(

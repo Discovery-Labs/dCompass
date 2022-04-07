@@ -1,4 +1,4 @@
-const { expect } = require("chai");
+const { expect, version } = require("chai");
 const {ethers} = require("hardhat");
 const { smock } = require('@defi-wonderland/smock');
 const { BigNumber, Contract } = require("ethers");
@@ -294,6 +294,8 @@ describe("BadgeNFT", function() {
       expect(nftAddrs.length).to.be.equal(1);
       expect(await badgeNFT.ownerOf(adventureId)).to.be.equal(addrs[2].address);
       expect(await badgeNFT.tokenURI(adventureId)).to.be.equal("adventurer_URI");
+      const versionAndId = await badgeNFT.getVersionsAndBadgeIDsByAdventurer(addrs[2].address);
+      console.log(versionAndId);
       //test that adventurer factory worked and minted an NFT in the clone
       // const addressAdventureNFT = await adventurerNFTFactory.getNFTAddrs("firstBadgeProject");
       // console.log(addressAdventureNFT);

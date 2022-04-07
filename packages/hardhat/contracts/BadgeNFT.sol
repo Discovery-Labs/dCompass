@@ -41,10 +41,9 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (string => mapping(address => bool)) erc20RefundClaimed;//pathway erc20 refund claimed
     mapping (string => uint) public numUsersRewardPerBadge;//number of users rewarded per badge
     mapping (string => uint) public currentNumUsersRewardPerBadgeNative;//current number of users already claimed native reward per badge
-    mapping (string => mapping(address => uint)) public nonces;//nonce for certain verify functions per address per badgeId
-
     mapping (string => mapping ( address => uint)) public currentNumUsersRewardPerBadgeERC20;// current number of users already claimed reward per badge per ERC20 Address
-    mapping (string => address) public adventurerAddress;//address of adventurer NFT
+    mapping (string => mapping(address => uint)) public nonces;//nonce for certain verify functions per address per badgeId
+    mapping (string => address) public adventurerAddress;//address of adventurer NFT per badge Id
 
     //local adventure mappings
     //_badgeID => version => minterAddress => boolean
@@ -53,6 +52,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (string => mapping(uint => address[])) internal allMintersPerBadgeAndVersion;
     //_badgeID => version => tokenIds of all minters...only used for getter when necessary
     mapping (string => mapping(uint => uint[])) internal allTokenIdsPerBadgeAndVersion;
+    mapping (uint => TokenInfo) internal tokenInfoById;//will be used by getter
 
     //pathwayId => ERC20Address => senderAddress => bool
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForBadgeERC20;//has user received funds for this badge in ERC20Token Address
@@ -60,6 +60,11 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     uint256 public fee = 1500; //number divided by 10000 for fee. for example 100 = 1%
 
     enum BadgeStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
+
+    struct TokenInfo{
+        string badgeId;
+        uint version;
+    }
 
     event ReceiveCalled(address _caller, uint _value);
     event BadgeApproved(string indexed _badgeId);
@@ -375,6 +380,8 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
       newItemId = _tokenIds.current();
       _mint(_msgSender(), newItemId);
       _setTokenURI(newItemId, _tokenURI);
+      TokenInfo memory info = TokenInfo(_badgeId, version);
+      tokenInfoById[newItemId] = info;
       allMintersPerBadgeAndVersion[_badgeId][version].push(_to);
       allTokenIdsPerBadgeAndVersion[_badgeId][version].push(newItemId);
       mintTrackerByBadgeIdVersionMinter[_badgeId][version][_to] = true;
@@ -432,6 +439,27 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
 
     function getAllTokenIdsByBadgeIDVersion(string memory _badgeId, uint256 version) external view returns (uint256[] memory){
         return allTokenIdsPerBadgeAndVersion[_badgeId][version];
+    }
+
+    function getVersionsAndBadgeIDsByAdventurer(address adventurer) external view returns (uint256[] memory versions, string memory concatBadgeIds){
+        uint256 numTokensOwned = balanceOf(adventurer);
+        string memory currString = "";
+        uint256[] memory tempVersions = new uint256[](numTokensOwned);
+        if(numTokensOwned ==0){
+            versions = tempVersions;
+            concatBadgeIds= currString;
+        }
+        uint index = 0;
+        while(index < numTokensOwned -1){
+            TokenInfo memory info = tokenInfoById[tokenOfOwnerByIndex(adventurer, index)];
+            tempVersions[index] = info.version;
+            currString = string(abi.encodePacked(currString, info.badgeId, "__"));
+            index++;
+        }
+        TokenInfo memory lastInfo = tokenInfoById[tokenOfOwnerByIndex(adventurer, index)];
+        tempVersions[index] = lastInfo.version;
+        concatBadgeIds = string(abi.encodePacked(currString, lastInfo.badgeId));
+        versions = tempVersions;
     }
 
     function setAppDiamond(address newAppDiamond) external onlyOwner {

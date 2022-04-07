@@ -38,6 +38,7 @@ export interface BadgeNFTInterface extends utils.Interface {
     "getAppDiamond()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getContributors(string)": FunctionFragment;
+    "getVersionsAndBadgeIDsByAdventurer(address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "name()": FunctionFragment;
     "nativeRefundClaimed(string)": FunctionFragment;
@@ -155,6 +156,10 @@ export interface BadgeNFTInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getContributors",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getVersionsAndBadgeIDsByAdventurer",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -340,6 +345,10 @@ export interface BadgeNFTInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getContributors",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getVersionsAndBadgeIDsByAdventurer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -643,6 +652,13 @@ export interface BadgeNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
+    getVersionsAndBadgeIDsByAdventurer(
+      adventurer: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], string] & { versions: BigNumber[]; concatBadgeIds: string }
+    >;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -914,6 +930,13 @@ export interface BadgeNFT extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string[]>;
 
+  getVersionsAndBadgeIDsByAdventurer(
+    adventurer: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber[], string] & { versions: BigNumber[]; concatBadgeIds: string }
+  >;
+
   isApprovedForAll(
     owner: string,
     operator: string,
@@ -1169,6 +1192,13 @@ export interface BadgeNFT extends BaseContract {
       _badgeId: string,
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    getVersionsAndBadgeIDsByAdventurer(
+      adventurer: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], string] & { versions: BigNumber[]; concatBadgeIds: string }
+    >;
 
     isApprovedForAll(
       owner: string,
@@ -1495,6 +1525,11 @@ export interface BadgeNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getVersionsAndBadgeIDsByAdventurer(
+      adventurer: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -1770,6 +1805,11 @@ export interface BadgeNFT extends BaseContract {
 
     getContributors(
       _badgeId: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getVersionsAndBadgeIDsByAdventurer(
+      adventurer: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
