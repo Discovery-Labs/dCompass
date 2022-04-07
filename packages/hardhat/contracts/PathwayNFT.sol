@@ -342,52 +342,35 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
 
     function claimPathwayRewards(string memory _pathwayId, bool native, address _ERC20Address, bytes32 r, bytes32 s, uint8 v, bool claimReward, string memory _tokenURI, uint256 version) external {
         uint amount;
-        if(native){
-            require(!userRewardedForPathwayNative[_pathwayId][_msgSender()]);
-            require(currentNumUsersRewardPerPathwayNative[_pathwayId] < numUsersRewardPerPathway[_pathwayId]);
-            amount = nativeRewards[_pathwayId] / numUsersRewardPerPathway[_pathwayId];
-            require(amount > 0);
+        if(claimReward){
+            if(native){
+                require(!userRewardedForPathwayNative[_pathwayId][_msgSender()]);
+                require(currentNumUsersRewardPerPathwayNative[_pathwayId] < numUsersRewardPerPathway[_pathwayId]);
+                amount = nativeRewards[_pathwayId] / numUsersRewardPerPathway[_pathwayId];
+                require(amount > 0);
+            }
+            else{
+                require(!userRewardedForPathwayERC20[_pathwayId][_ERC20Address][_msgSender()]);
+                require(currentNumUsersRewardPerPathwayERC20[_pathwayId][_ERC20Address] < numUsersRewardPerPathway[_pathwayId]);
+                amount = erc20Amounts[_pathwayId][_ERC20Address] / numUsersRewardPerPathway[_pathwayId];
+                require(amount > 0);
+            }
         }
-        else{
-            require(!userRewardedForPathwayERC20[_pathwayId][_ERC20Address][_msgSender()]);
-            require(currentNumUsersRewardPerPathwayERC20[_pathwayId][_ERC20Address] < numUsersRewardPerPathway[_pathwayId]);
-            amount = erc20Amounts[_pathwayId][_ERC20Address] / numUsersRewardPerPathway[_pathwayId];
-            require(amount > 0);
+        _verify(_msgSender(), _pathwayId, version, r, s, v);
+        if(claimReward){
+            if(native){
+                (success, ) = payable(_msgSender()).call{value : amount}("");
+                require(success);
+                userRewardedForPathwayNative[_pathwayId][_msgSender()] = true;
+                currentNumUsersRewardPerPathwayNative[_pathwayId]++;
+            }
+            else{
+                IERC20(_ERC20Address).transfer(_msgSender(), amount);
+                userRewardedForPathwayERC20[_pathwayId][_ERC20Address][_msgSender()] = true;
+                currentNumUsersRewardPerPathwayERC20[_pathwayId][_ERC20Address]++;
+            }
         }
-        bytes32 hashRecover = keccak256(
-            abi.encodePacked(
-                _msgSender(),
-                address(this),
-                block.chainid,
-                _pathwayId
-            )
-        );
-        (bool success, bytes memory data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("appSigningAddr()"))));
-        require(success);
-        address signer = abi.decode(data, (address));
-        require (signer == ecrecover(
-            keccak256(
-                abi.encodePacked(
-                    "\x19Ethereum Signed Message:\n32",
-                    hashRecover
-                )
-            ),
-            v,
-            r,
-            s
-        ), "Incorrect signer");
-        if(native){
-            (success, ) = payable(_msgSender()).call{value : amount}("");
-            require(success);
-            userRewardedForPathwayNative[_pathwayId][_msgSender()] = true;
-            currentNumUsersRewardPerPathwayNative[_pathwayId]++;
-        }
-        else{
-            IERC20(_ERC20Address).transfer(_msgSender(), amount);
-            userRewardedForPathwayERC20[_pathwayId][_ERC20Address][_msgSender()] = true;
-            currentNumUsersRewardPerPathwayERC20[_pathwayId][_ERC20Address]++;
-        }
-
+        _localAdventureMint(_msgSender(), _pathwayId, _tokenURI, version);
     }
 
     function walletOfOwner(address _owner)
