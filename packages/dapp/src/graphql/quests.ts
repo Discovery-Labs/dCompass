@@ -146,7 +146,25 @@ export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
       id
       streamId
       name
+      description
+      slogan
+      pathwayId
+      questType
+      image
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
+      isPending
       completedBy
+      createdBy {
+        did
+        name
+      }
+      questions {
+        question
+        choices
+        answer
+      }
     }
   }
 `;

@@ -53,6 +53,11 @@ input CreateQuestInput {
   questCreatorSignature: String!
 }
 
+type CreatedBy {
+  did: String!
+  name: String!
+}
+
 input EditProjectInput {
   color: String
   description: String
@@ -76,10 +81,12 @@ type ExpandedServerSignature {
 }
 
 type GithubContributorQuest {
+  chainId: Int!
   completedBy: [String!]
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
+  createdBy: CreatedBy!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   githubOrgId: String!
@@ -87,6 +94,7 @@ type GithubContributorQuest {
   image: String!
   isPending: Boolean
   name: String!
+  namespace: String
   pathway: Pathway!
   pathwayId: String!
   questType: String!
@@ -151,13 +159,14 @@ type NFTOwnerQuest {
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
+  createdBy: CreatedBy!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
   name: String!
-  namespace: String!
+  namespace: String
   pathway: Pathway!
   pathwayId: String!
   questType: String!
@@ -275,16 +284,19 @@ type Query {
 }
 
 type Quest {
+  chainId: Int!
   completedBy: [String!]
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
+  createdBy: CreatedBy!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
   name: String!
+  namespace: String
   pathway: Pathway!
   pathwayId: String!
   questType: String!
@@ -313,16 +325,19 @@ input QuestQuestionAnswerInput {
 }
 
 type QuizQuest {
+  chainId: Int!
   completedBy: [String!]
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
+  createdBy: CreatedBy!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
   name: String!
+  namespace: String
   pathway: Pathway!
   pathwayId: String!
   questType: String!
@@ -344,16 +359,19 @@ type QuizQuestion {
 }
 
 type SnapshotVoterQuest {
+  chainId: Int!
   completedBy: [String!]
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
+  createdBy: CreatedBy!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
   isPending: Boolean
   name: String!
+  namespace: String
   pathway: Pathway!
   pathwayId: String!
   proposalId: String!
@@ -380,10 +398,12 @@ type Squad {
 }
 
 type SubmitQuestAnswersOutput {
+  chainId: Int!
   completedBy: [String!]
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
+  createdBy: CreatedBy!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
@@ -391,6 +411,7 @@ type SubmitQuestAnswersOutput {
   isPending: Boolean
   isSuccess: Boolean!
   name: String!
+  namespace: String
   pathway: Pathway!
   pathwayId: String!
   questType: String!

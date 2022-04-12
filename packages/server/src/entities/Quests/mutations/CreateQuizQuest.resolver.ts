@@ -43,11 +43,7 @@ export class CreateQuizQuestResolver {
     const formattedAccounts = Object.keys(ownerAccounts).map(
       (account) => account.split('@')[0],
     );
-    console.log({
-      isValid: !formattedAccounts.includes(decodedAddress),
-      formattedAccounts,
-      decodedAddress,
-    });
+
     if (!formattedAccounts.includes(decodedAddress)) {
       throw new ForbiddenError('Unauthorized');
     }
@@ -72,7 +68,7 @@ export class CreateQuizQuestResolver {
     });
 
     const existingPendingQuests = pathwayDetails.pendingQuests ?? [];
-    await this.threadDBService.update({
+    const updatedPathway = await this.threadDBService.update({
       collectionName: 'Pathway',
       dbClient,
       threadId: latestThreadId,
@@ -84,6 +80,8 @@ export class CreateQuizQuestResolver {
         },
       ],
     });
+
+    console.log({ updatedPathway });
 
     return {
       id: newQuestId,

@@ -9,10 +9,4 @@ export class TokenHolderQuest extends Quest {
 
   @Field()
   tokenContractAddress: string;
-
-  @Field()
-  namespace: string;
-
-  @Field(() => Int)
-  chainId: number;
 }

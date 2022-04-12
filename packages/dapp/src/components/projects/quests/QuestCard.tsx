@@ -89,6 +89,8 @@ function QuestCard({
 }) {
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isCreatingToken, setIsCreatingToken] = useState<boolean>(false);
+  const [claimedBy, setClaimedBy] = useState<string[]>();
+
   const toast = useToast();
   const router = useRouter();
   const { getRewardCurrency } = useTokenList();
@@ -125,6 +127,14 @@ function QuestCard({
         const isMinted = await contracts.BadgeNFT.badgeMinted(quest.streamId);
         const statusString = await contracts.BadgeNFT.statusStrings(statusInt);
         setStatus(isMinted ? "MINTED" : statusString);
+        const claimedByAddresses =
+          await contracts.BadgeNFT.getAllAddrsByBadgeIDVersion(
+            quest.streamId,
+            0
+          );
+
+        console.log({ claimedByAddresses });
+        return setClaimedBy(claimedByAddresses);
       }
       null;
     }
@@ -193,7 +203,7 @@ function QuestCard({
       title: "Quest approved!",
       description: `Approval vote submitted successfully!`,
       status: "success",
-      position: "top-right",
+      position: "bottom-right",
       duration: 6000,
       isClosable: true,
       variant: "subtle",
@@ -270,73 +280,7 @@ function QuestCard({
       title: "Quest minted!",
       description: `Quest minted and created successfully!`,
       status: "success",
-      position: "top-right",
-      duration: 6000,
-      isClosable: true,
-      variant: "subtle",
-    });
-  };
-
-  const handleClaimRewards = async () => {
-    const signatureInput = {
-      id: quest.id,
-      pathwayId: quest.pathwayId,
-    };
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify(signatureInput),
-      account,
-    ]);
-
-    const formData = new FormData();
-    const ogFile = await fetch(`https://ipfs.io/ipfs/${quest.image}`);
-    const questImage = await ogFile.blob();
-    formData.append("image", questImage);
-    formData.append(
-      "metadata",
-      JSON.stringify({
-        ...quest,
-      })
-    );
-
-    const nftCidRes = await fetch("/api/quest-nft-storage", {
-      method: "POST",
-      body: formData,
-    });
-    const { url } = await nftCidRes.json();
-
-    const { data } = await claimQuestRewardsMutation({
-      variables: {
-        input: {
-          questId: quest.id,
-          did: self.id,
-          questAdventurerSignature: signature.result,
-          chainId,
-        },
-      },
-    });
-
-    const [, tokenAddressOrSymbol] = quest.rewardCurrency.split(":");
-    const isNativeToken = tokenAddressOrSymbol ? false : true;
-
-    const [metadataVerify] = data.claimQuestRewards.expandedServerSignatures;
-
-    console.log({ metadataVerify });
-    const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
-      quest.streamId,
-      isNativeToken,
-      isNativeToken ? account : tokenAddressOrSymbol,
-      metadataVerify.r,
-      metadataVerify.s,
-      metadataVerify.v,
-      true,
-      url
-    );
-    await claimRewardsTx.wait(1);
-    return toast({
-      title: "Congratulations!",
-      description: `Rewards claimed successfully!`,
-      status: "success",
-      position: "top-right",
+      position: "bottom-right",
       duration: 6000,
       isClosable: true,
       variant: "subtle",
@@ -363,6 +307,7 @@ function QuestCard({
     );
   };
   const isCompleted = (quest.completedBy || []).includes(self?.id);
+  const isClaimed = account && claimedBy?.includes(account);
   return (
     <Card position="relative" h="xl" spacing="6" py="4">
       {!unlocked && <LockedScreen />}
@@ -382,8 +327,15 @@ function QuestCard({
 
           <Spacer />
           <Flex align="end" direction="column" w="full">
-            <Tag variant="subtle">
-              {isCompleted ? "COMPLETED" : "UNCOMPLETED"}
+            <Tag
+              variant={isClaimed ? "outline" : "subtle"}
+              colorScheme={isClaimed || isCompleted ? "accentDark" : "purple"}
+            >
+              {isCompleted
+                ? isClaimed
+                  ? "CLAIMED"
+                  : "COMPLETED"
+                : "UNCOMPLETED"}
             </Tag>
             <Tag my="2">
               {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
@@ -431,7 +383,9 @@ function QuestCard({
                 Claimed
               </Text>
             </HStack>
-            <Tag variant="outline">0/{quest.rewardUserCap}</Tag>
+            <Tag variant="outline">
+              {claimedBy?.length || 0}/{quest.rewardUserCap}
+            </Tag>
           </HStack>
           <Divider />
           <HStack justifyContent="space-between">
@@ -564,24 +518,13 @@ function QuestCard({
 
               <Flex w="full" justify="space-between">
                 <Button
+                  w="full"
                   leftIcon={<GiSwordwoman />}
                   fontSize="md"
                   onClick={() => openQuest(quest.id)}
                 >
-                  Start
+                  Start quest
                 </Button>
-
-                {!quest.isPending && (
-                  <Button
-                    fontSize="md"
-                    variant="outline"
-                    leftIcon={<RiHandCoinFill />}
-                    disabled={!isCompleted}
-                    onClick={handleClaimRewards}
-                  >
-                    Claim
-                  </Button>
-                )}
               </Flex>
             </>
           )}

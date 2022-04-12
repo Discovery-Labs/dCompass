@@ -29,22 +29,20 @@ import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
-import { BsPeople } from "react-icons/bs";
+import { BsCheckCircleFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
-import { initializeApollo } from "../../../../../../../lib/apolloClient";
 import CardMedia from "../../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../../components/layout/BreadcrumbItems";
-import GithubContributorQuestForm from "../../../../../../components/projects/quests/github/GithubContributorQuestForm";
+// import GithubContributorQuestForm from "../../../../../../components/projects/quests/github/GithubContributorQuestForm";
 import QuestCompletedByList from "../../../../../../components/projects/quests/QuestCompletedByList";
 import QuizForm from "../../../../../../components/projects/quests/quizz/QuizForm";
-import SnapshotVoterForm from "../../../../../../components/projects/quests/snapshot/SnapshotVoterForm";
-import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
-import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
-import { ceramicCoreFactory } from "../../../../../../core/ceramic";
+// import SnapshotVoterForm from "../../../../../../components/projects/quests/snapshot/SnapshotVoterForm";
+// import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
+// import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
 import { usePageMarkdownTheme } from "../../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../../core/hooks/useTokenList";
 import { PROJECT_BY_ID_QUERY } from "../../../../../../graphql/projects";
@@ -69,100 +67,67 @@ export const getServerSideProps: GetServerSideProps<
   const pathwayId = ctx.params?.pathwayId ?? null;
   const projectId = ctx.params?.projectId ?? null;
 
-  if (!pathwayId || !projectId || !questId) {
-    return {
-      redirect: { destination: "/", permanent: true },
-    };
-  }
-
-  const client = initializeApollo();
-  try {
-    // TODO: call backend
-    const { data } = await client.query({
-      query: GET_QUIZ_QUEST_BY_ID_QUERY,
-      variables: {
-        questId,
-      },
-    });
-
-    console.log({
-      streamId: data.getQuizQuestById.streamId,
-      data: data.getQuizQuestById,
-    });
-    const core = ceramicCoreFactory();
-
-    const questInfos = await core.ceramic.loadStream(
-      data.getQuizQuestById.streamId
-    );
-    const questCreatorDID = questInfos.controllers[0];
-    const questCreatorBasicProfile = await core.get(
-      "basicProfile",
-      questCreatorDID
-    );
-    return {
-      props: {
-        id: questId,
-        ...questInfos.content,
-        ...data.getQuizQuestById,
-        projectId,
-        createdBy: {
-          did: questCreatorDID,
-          name: questCreatorBasicProfile?.name || "",
-        },
-        ...(await serverSideTranslations(locale, ["common"])),
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: { destination: "/404", permanent: true },
-    };
-  }
+  return {
+    props: {
+      questId,
+      pathwayId,
+      projectId,
+      locale,
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 };
 
-function QuestPage({
-  id,
-  name,
-  description,
-  slogan,
-  image,
-  createdAt,
-  completedBy,
-  rewardAmount,
-  rewardCurrency,
-  rewardUserCap,
-  type,
-  pathwayId,
-  projectId,
-  questions,
-  proposalId,
-  githubOrgId,
-  createdBy,
-  collectionContractAddress,
-  tokenContractAddress,
-  amount,
-  chainId: tokenChainId,
-  namespace,
-  streamId,
-}: any) {
+function QuestPage({ questId, pathwayId, projectId }: any) {
+  const {
+    data: quizData,
+    loading: quizLoading,
+    error: quizError,
+  } = useQuery(GET_QUIZ_QUEST_BY_ID_QUERY, {
+    variables: {
+      questId,
+    },
+  });
   const [tabIndex, setTabIndex] = useState(0);
+  const [claimedBy, setClaimedBy] = useState<string[]>();
+  const [isClaimed, setIsClaimed] = useState<boolean>(false);
+  const [isClaiming, setIsClaiming] = useState<boolean>(false);
+  const [rewardStatus, setRewardStatus] = useState<string>(() =>
+    isClaimed ? "Rewards claimed" : "Claim rewards"
+  );
   const { t } = useTranslation("common");
   const { getRewardCurrency } = useTokenList();
   const questMarkdownTheme = usePageMarkdownTheme();
   const toast = useToast();
   const { account, self, contracts } = useContext(Web3Context);
-  const { library, chainId } = useWeb3React();
+  const { library, chainId: currentChainId } = useWeb3React();
+
+  useEffect(() => {
+    async function getClaimedBy() {
+      if (contracts?.BadgeNFT && quizData?.getQuizQuestById?.streamId) {
+        const claimedByAddresses =
+          await contracts.BadgeNFT.getAllAddrsByBadgeIDVersion(
+            quizData.getQuizQuestById.streamId,
+            0
+          );
+        const currentUserHasClaimed = claimedByAddresses.includes(account);
+        console.log({ claimedByAddresses, currentUserHasClaimed });
+        setIsClaimed(currentUserHasClaimed);
+        setRewardStatus(
+          currentUserHasClaimed ? "Rewards claimed" : "Claim rewards"
+        );
+        return setClaimedBy(claimedByAddresses);
+      }
+    }
+    getClaimedBy();
+  }, [contracts, quizData?.getQuizQuestById, account]);
 
   const { data, loading, error } = useQuery(GET_PATHWAY_BY_ID_QUERY, {
     variables: {
       pathwayId,
     },
   });
-  const [claimQuestRewardsMutation] = useMutation(
-    CLAIM_QUEST_REWARDS_MUTATION,
-    {
-      refetchQueries: "all",
-    }
-  );
+  const [claimQuestRewardsMutation] = useMutation(CLAIM_QUEST_REWARDS_MUTATION);
 
   const {
     data: projectRes,
@@ -179,15 +144,39 @@ function QuestPage({
   };
 
   const handleClaimRewards = async () => {
+    setIsClaiming(true);
+    setRewardStatus("Claiming rewards");
     const signatureInput = {
-      id: id,
+      id: questId,
       pathwayId: pathwayId,
     };
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify(signatureInput),
       account,
     ]);
-
+    setRewardStatus("Signing claim");
+    const {
+      name,
+      streamId,
+      description,
+      image,
+      createdAt,
+      rewardAmount,
+      rewardCurrency,
+      rewardUserCap,
+      type,
+      projectId,
+      questions,
+      proposalId,
+      githubOrgId,
+      createdBy,
+      collectionContractAddress,
+      tokenContractAddress,
+      amount,
+      chainId,
+      namespace,
+    } = quizData?.getQuizQuestById;
+    setRewardStatus("Generating tokenURI");
     const formData = new FormData();
     const ogFile = await fetch(`https://ipfs.io/ipfs/${image}`);
     const questImage = await ogFile.blob();
@@ -195,7 +184,7 @@ function QuestPage({
     formData.append(
       "metadata",
       JSON.stringify({
-        id,
+        id: questId,
         name,
         description,
         image,
@@ -223,14 +212,15 @@ function QuestPage({
       body: formData,
     });
     const { url } = await nftCidRes.json();
+    setRewardStatus("Verifying claim");
 
     const { data } = await claimQuestRewardsMutation({
       variables: {
         input: {
-          questId: id,
+          questId,
           did: self.id,
           questAdventurerSignature: signature.result,
-          chainId,
+          chainId: currentChainId,
         },
       },
     });
@@ -239,8 +229,8 @@ function QuestPage({
     const isNativeToken = tokenAddressOrSymbol ? false : true;
 
     const [metadataVerify] = data.claimQuestRewards.expandedServerSignatures;
-
     console.log({ metadataVerify });
+    setRewardStatus("Claiming on-chain");
     const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
       streamId,
       isNativeToken,
@@ -253,24 +243,37 @@ function QuestPage({
       0
     );
     await claimRewardsTx.wait(1);
+
+    const claimedByAddresses =
+      await contracts.BadgeNFT.getAllAddrsByBadgeIDVersion(
+        quizData.getQuizQuestById.streamId,
+        0
+      );
+    const currentUserHasClaimed = claimedByAddresses.includes(account);
+    console.log({ claimedByAddresses, currentUserHasClaimed });
+    setIsClaimed(currentUserHasClaimed);
+    setRewardStatus(
+      currentUserHasClaimed ? "Rewards claimed" : "Claim rewards"
+    );
+    setClaimedBy(claimedByAddresses);
+    setIsClaiming(false);
     return toast({
       title: "Congratulations!",
       description: `Rewards claimed successfully!`,
       status: "success",
-      position: "top-right",
+      position: "bottom-right",
       duration: 6000,
       isClosable: true,
       variant: "subtle",
     });
   };
 
-  const isOwner = createdBy === account;
-  const isCompleted = useCallback(
-    () => (completedBy || []).includes(self?.id),
-    [completedBy, self?.id]
-  );
+  const isOwner = quizData?.getQuizQuestById.createdBy.did === self?.id;
+  const isCompleted = useCallback(() => {
+    return (quizData?.getQuizQuestById.completedBy || []).includes(self?.id);
+  }, [quizData?.getQuizQuestById.completedBy, self?.id]);
 
-  if (loading || projectLoading)
+  if (loading || projectLoading || quizLoading)
     return (
       <Stack pt="30" px="8">
         <Text textTransform="uppercase">
@@ -279,7 +282,7 @@ function QuestPage({
         <Progress size="xs" isIndeterminate />
       </Stack>
     );
-  if (error || projectError)
+  if (error || projectError || quizError)
     return `Loading error! ${error?.message || projectError?.message}`;
 
   return (
@@ -303,8 +306,8 @@ function QuestPage({
             href: `/projects/${projectId}/pathways/${pathwayId}/`,
           },
           {
-            label: name,
-            href: `/projects/${projectId}/pathways/${pathwayId}/${id}`,
+            label: quizData?.getQuizQuestById.name,
+            href: `/projects/${projectId}/pathways/${pathwayId}/${questId}`,
             isCurrentPage: true,
           },
         ]}
@@ -312,9 +315,10 @@ function QuestPage({
 
       <VStack align="left" w="full">
         <Heading as="h1" size="2xl" color="text-weak" py="4">
-          {name} <Icon as={RiSwordLine} color="text-weak" />
+          {quizData?.getQuizQuestById.name}{" "}
+          <Icon as={RiSwordLine} color="text-weak" />
         </Heading>
-        <Text color="text-weak">{slogan}</Text>
+        <Text color="text-weak">{quizData?.getQuizQuestById.slogan}</Text>
 
         <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">
@@ -334,35 +338,36 @@ function QuestPage({
                   components={ChakraUIRenderer(questMarkdownTheme)}
                   skipHtml
                 >
-                  {description}
+                  {quizData?.getQuizQuestById.description}
                 </ReactMarkdown>
               </VStack>
             </TabPanel>
 
             {/* 2 Tab */}
             <TabPanel px="0">
-              {completedBy && completedBy.includes(self?.id) ? (
+              {quizData?.getQuizQuestById.completedBy &&
+              quizData?.getQuizQuestById.completedBy.includes(self?.id) ? (
                 <Text>Quest already completed!</Text>
               ) : (
                 <Box>
-                  {type?.value === "quiz" && (
+                  {quizData?.getQuizQuestById.questType === "quiz" && (
                     <QuizForm
-                      questions={questions}
-                      questId={id}
+                      questions={quizData?.getQuizQuestById.questions}
+                      questId={questId}
                       pathwayId={pathwayId}
                       successCallback={() => handleTabsChange(2)}
                     />
                   )}
-                  {type?.value === "snapshot-voter" && (
+                  {/* {quizData?.getQuizQuestById.questType === "snapshot-voter" && (
                     <SnapshotVoterForm proposalId={proposalId} questId={id} />
                   )}
-                  {type?.value === "github-contributor" && (
+                  {quizData?.getQuizQuestById.questType === "github-contributor" && (
                     <GithubContributorQuestForm
                       githubOrgId={githubOrgId}
                       questId={id}
                     />
                   )}
-                  {type?.value === "nft-owner" && (
+                  {quizData?.getQuizQuestById.questType === "nft-owner" && (
                     <ClaimNFTOwnerForm
                       questId={id}
                       contractAddress={collectionContractAddress}
@@ -370,7 +375,7 @@ function QuestPage({
                       collectionChainId={tokenChainId}
                     />
                   )}
-                  {type?.value === "token-holder" && (
+                  {quizData?.getQuizQuestById.questType === "token-holder" && (
                     <ClaimTokenHolderForm
                       questId={id}
                       amount={amount}
@@ -378,7 +383,7 @@ function QuestPage({
                       namespace={namespace || "eip155"}
                       tokenChainId={tokenChainId}
                     />
-                  )}
+                  )} */}
                 </Box>
               )}
             </TabPanel>
@@ -398,7 +403,7 @@ function QuestPage({
                       Quest type
                     </Text>
                     <Tag variant="outline" size="lg">
-                      {type.label}
+                      {quizData?.getQuizQuestById.questType}
                     </Tag>
                   </HStack>
                   <HStack>
@@ -414,7 +419,8 @@ function QuestPage({
                       </Text>
                     </HStack>
                     <Tag variant="outline" size="lg">
-                      0/{rewardUserCap}
+                      {claimedBy?.length || 0}/
+                      {quizData?.getQuizQuestById.rewardUserCap}
                     </Tag>
                   </HStack>
                   <HStack w="full">
@@ -428,14 +434,20 @@ function QuestPage({
                       Total Rewards
                     </Text>
                     <Tag variant="outline" size="lg">
-                      {rewardAmount} {getRewardCurrency(rewardCurrency)}
+                      {quizData?.getQuizQuestById.rewardAmount}{" "}
+                      {getRewardCurrency(
+                        quizData?.getQuizQuestById.rewardCurrency
+                      )}
                     </Tag>
                   </HStack>
                 </VStack>
                 <Flex align="center" maxW="full" py="4">
-                  {createdBy && (
+                  {quizData?.getQuizQuestById.createdBy && (
                     <Blockies
-                      seed={createdBy.name || createdBy.did}
+                      seed={
+                        quizData?.getQuizQuestById.createdBy.name ||
+                        quizData?.getQuizQuestById.createdBy.did
+                      }
                       className="blockies"
                       size={7}
                       scale={10}
@@ -444,17 +456,21 @@ function QuestPage({
                   <VStack align="flex-start" mx="2">
                     <Text color="text-weak" textStyle="small" isTruncated>
                       {t("creation-date")}{" "}
-                      {new Date(createdAt || Date.now()).toLocaleString()}
+                      {new Date(
+                        quizData?.getQuizQuestById.createdAt || Date.now()
+                      ).toLocaleString()}
                     </Text>
-                    {createdBy && (
+                    {quizData?.getQuizQuestById.createdBy && (
                       <Text fontSize="sm" isTruncated>
-                        {t("by")} {createdBy.name || createdBy.did}
+                        {t("by")}{" "}
+                        {quizData?.getQuizQuestById.createdBy.name ||
+                          quizData?.getQuizQuestById.createdBy.did}
                       </Text>
                     )}
                     {isOwner && (
                       // TODO: edit quest form
                       <NextLink
-                        href={`/projects/${projectId}/pathways/${pathwayId}/${id}/edit-quest`}
+                        href={`/projects/${projectId}/pathways/${pathwayId}/${questId}/edit-quest`}
                         passHref
                       >
                         <Button leftIcon={<EditIcon />}>
@@ -469,7 +485,7 @@ function QuestPage({
               <HStack w="full" align="left" pt="2">
                 <CardMedia
                   h="sm"
-                  src={`https://ipfs.io/ipfs/${image}`}
+                  src={`https://ipfs.io/ipfs/${quizData?.getQuizQuestById.image}`}
                   imageHeight="160px"
                 >
                   <VStack w="full" align="left">
@@ -482,7 +498,7 @@ function QuestPage({
                     >
                       <Avatar
                         boxSize="4.5rem"
-                        src={`https://ipfs.io/ipfs/${image}`}
+                        src={`https://ipfs.io/ipfs/${quizData?.getQuizQuestById.image}`}
                         position="relative"
                         zIndex={2}
                         _before={{
@@ -531,8 +547,11 @@ function QuestPage({
                         }}
                       >
                         <Text fontSize="3xl" fontWeight="bold">
-                          {rewardAmount / rewardUserCap}{" "}
-                          {getRewardCurrency(rewardCurrency)}
+                          {quizData?.getQuizQuestById.rewardAmount /
+                            quizData?.getQuizQuestById.rewardUserCap}{" "}
+                          {getRewardCurrency(
+                            quizData?.getQuizQuestById.rewardCurrency
+                          )}
                         </Text>
                       </Flex>
                     </Stack>
@@ -541,12 +560,16 @@ function QuestPage({
                     <Button
                       w="full"
                       fontSize="md"
+                      disabled={isClaiming || !isCompleted() || isClaimed}
+                      loadingText={rewardStatus}
+                      isLoading={isClaiming}
                       variant="outline"
-                      leftIcon={<RiHandCoinFill />}
-                      disabled={!isCompleted()}
+                      leftIcon={
+                        isClaimed ? <BsCheckCircleFill /> : <RiHandCoinFill />
+                      }
                       onClick={handleClaimRewards}
                     >
-                      Claim rewards
+                      {rewardStatus}
                     </Button>
                   </HStack>
                 </CardMedia>
@@ -556,8 +579,12 @@ function QuestPage({
             {/* 3 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
-                {completedBy && (
-                  <QuestCompletedByList completedBy={completedBy} />
+                {quizData?.getQuizQuestById.completedBy && (
+                  <QuestCompletedByList
+                    streamId={quizData.getQuizQuestById.streamId}
+                    completedBy={quizData.getQuizQuestById.completedBy}
+                    claimedByAddrs={claimedBy}
+                  />
                 )}
               </VStack>
             </TabPanel>

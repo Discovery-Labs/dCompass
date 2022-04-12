@@ -101,6 +101,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const router = useRouter();
   const toast = useToast();
   const [code, setCode] = useState<string>();
+  const [submitStatus, setSubmitStatus] = useState<string>("Creating quest");
   const { codeEditorScheme } = useCustomColor();
   const { tokens } = useTokenList();
   const { library, chainId } = useWeb3React();
@@ -199,6 +200,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     token: string,
     maxApproval = "1000000000000000000000000000000"
   ) {
+    setSubmitStatus("Approving token allowance");
     const { tokenContract, tokenInfos } = getSelectedTokenContract(token);
     const newAllowance = ethers.utils.parseUnits(
       maxApproval,
@@ -209,6 +211,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       newAllowance
     );
     await res.wait(1);
+    setSubmitStatus("Token allowance approved!");
     return tokenInfos;
   }
 
@@ -221,6 +224,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
     const isNativeToken = tokenAddressOrSymbol ? false : true;
 
+    setSubmitStatus("Checking balance");
     let balance = 0;
     const rewardAmnt = parseFloat(values.rewardAmount);
     const feeAmount = (rewardAmnt * 15) / 100;
@@ -243,7 +247,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           title: "Insufficient funds",
           description: `You don't have enough funds to provide the quest rewards in this currency`,
           status: "error",
-          position: "top-right",
+          position: "bottom-right",
           duration: 6000,
           isClosable: true,
           variant: "subtle",
@@ -262,7 +266,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           title: "Insufficient funds",
           description: "You don't have enough funds to provide quest rewards",
           status: "error",
-          position: "top-right",
+          position: "bottom-right",
           duration: 6000,
           isClosable: true,
           variant: "subtle",
@@ -272,6 +276,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
         });
       }
     }
+
+    setSubmitStatus("Generating token URIs");
+
     const formData = new FormData();
     if (values.image) {
       formData.append(values.name, values.image[0]);
@@ -282,6 +289,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
     });
 
     const { cids } = await cidsRes.json();
+
+    setSubmitStatus("Creating quest");
 
     const appDid = data.getAppDID;
     console.log({ appDid });
@@ -335,6 +344,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       }
     );
 
+    setSubmitStatus("Signing quest creation");
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: questDoc.id.toUrl(),
@@ -344,6 +354,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     ]);
 
     if (isNativeToken) {
+      setSubmitStatus("Creating quest on-chain");
       const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
@@ -358,6 +369,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         }
       );
       await createQuestOnChainTx.wait(1);
+      setSubmitStatus("Quest created on-chain");
     } else {
       const tokenDetails = await approveTokenAllowance(
         values.rewardCurrency.value,
@@ -367,6 +379,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         rewardAmnt.toString(),
         tokenDetails.decimals
       );
+      setSubmitStatus("Creating quest on-chain");
       const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
@@ -378,6 +391,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         rewardAmount
       );
       await createQuestOnChainTx.wait(1);
+      setSubmitStatus("Quest created on-chain");
     }
 
     const createQuestMutationVariables = {
@@ -388,13 +402,14 @@ const CreateQuestForm: React.FunctionComponent = () => {
     };
 
     let result;
-
+    setSubmitStatus("Quest validation");
     if (questType === "quiz") {
       const { data } = await createQuizQuestMutation({
         variables: createQuestMutationVariables,
       });
       result = data.createQuizQuest;
     }
+    setSubmitStatus("Quest created!");
     // TODO: support different types of quest
     // if (questType === "snapshot-voter") {
     //   const { data } = await createSnapshotVoterQuest({
@@ -620,7 +635,11 @@ const CreateQuestForm: React.FunctionComponent = () => {
         <Button colorScheme="secondary" type="button" onClick={() => reset()}>
           Reset Quest Form
         </Button>
-        <Button isLoading={isSubmitting} type="submit">
+        <Button
+          isLoading={isSubmitting}
+          loadingText={submitStatus}
+          type="submit"
+        >
           Submit
         </Button>
       </Flex>

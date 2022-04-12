@@ -130,7 +130,7 @@ function PathwayPage({
 
   const isOwner = createdBy === account;
 
-  if (loading || projectLoading)
+  if (loading || projectLoading || !projectRes?.getProjectById)
     return (
       <Stack pt="30" px="8">
         <Text textTransform="uppercase">
@@ -141,13 +141,11 @@ function PathwayPage({
     );
   if (error || projectError)
     return `Loading error! ${error?.message || projectError?.message}`;
-
-  const isProjectContributor =
-    projectRes?.squads &&
-    projectRes.squads
-      .flatMap(({ members }: { members: string[] }) => members)
-      .includes(account);
+  const isProjectContributor = projectRes.getProjectById.squads
+    .flatMap(({ members }: { members: string[] }) => members)
+    .includes(account);
   const canEdit = isProjectContributor || isOwner;
+  console.log({ canEdit, isOwner, isProjectContributor });
   const canReviewQuests = isProjectContributor || isOwner || isReviewer;
   const renderQuests = (questsToRender: Record<string, unknown>[]) => {
     return questsToRender.map((quest: any) => (
@@ -193,7 +191,20 @@ function PathwayPage({
         <Heading as="h1" size="2xl" color="text" py="4">
           {title}
         </Heading>
-        <Text color="text-weak">{slogan}</Text>
+        <HStack w="full" justify="space-between">
+          <Text color="text-weak">{slogan}</Text>
+          {canEdit && (
+            <NextLink
+              href={`/projects/${projectId}/pathways/${id}/edit`}
+              passHref
+            >
+              {/** TODO: Edit pathway form or page **/}
+              <Button disabled leftIcon={<PlusSquareIcon />}>
+                {t("edit-pathway")}
+              </Button>
+            </NextLink>
+          )}
+        </HStack>
         <Tabs w="full">
           <HStack justifyContent="space-between">
             <TabList>
@@ -213,16 +224,7 @@ function PathwayPage({
                     {canReviewQuests && <Tab>{t("pending-quests")}</Tab>}
                     <Tab>{t("completed-quests")}</Tab>
                   </TabList>
-                  {canEdit && (
-                    <NextLink
-                      href={`/projects/${projectId}/pathways/${id}/edit`}
-                      passHref
-                    >
-                      <Button disabled leftIcon={<PlusSquareIcon />}>
-                        {t("edit-pathway")}
-                      </Button>
-                    </NextLink>
-                  )}
+
                   <NextLink
                     href={`/projects/${projectId}/pathways/${id}/add-quest`}
                     passHref

@@ -2,6 +2,7 @@ import { ObjectType, Field, Float, Int } from '@nestjs/graphql';
 import { BaseEntity } from '../../core/entities/BaseEntity';
 import { ExpandedServerSignature } from '../../core/utils/security/ExpandedServerSignature';
 import { Pathway } from '../Pathways/Pathway.entity';
+import { CreatedBy } from './dto/CreatedBy';
 
 export type CeramicStreamId = string;
 @ObjectType({ isAbstract: true })
@@ -24,6 +25,9 @@ export abstract class Quest extends BaseEntity {
   @Field()
   questType: string;
 
+  @Field(() => CreatedBy)
+  createdBy: CreatedBy;
+
   @Field()
   rewardCurrency: string;
 
@@ -44,6 +48,12 @@ export abstract class Quest extends BaseEntity {
 
   @Field(() => Boolean)
   isPending?: boolean;
+
+  @Field()
+  namespace?: string;
+
+  @Field(() => Int)
+  chainId: number;
 
   @Field()
   image: string;
