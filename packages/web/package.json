@@ -23,7 +23,7 @@
     "@chakra-ui/icons": "^1.0.15",
     "@chakra-ui/layout": "^1.4.9",
     "@chakra-ui/react": "^1.8.1",
-    "@discovery-dao/ui": "^0.0.14",
+    "@discovery-dao/ui": "^0.0.16",
     "@emotion/cache": "^11.4.0",
     "@emotion/react": "^11.4.1",
     "@emotion/server": "^11.4.0",
