@@ -8,6 +8,20 @@ const CheckboxButtons = ({ quiz, setQuestionAnswer }: any) => {
     onChange: (nextValue: string[]) => {
       console.log("answers", nextValue);
       setQuestionAnswer((currentState: any) => {
+        if (
+          currentState &&
+          currentState
+            .map((qa: any) => qa.question)
+            .some((qa: any) => qa.includes(quiz.question))
+        ) {
+          return [
+            ...currentState.filter((q: any) => q.question !== quiz.question),
+            {
+              question: quiz.question,
+              answer: nextValue,
+            },
+          ];
+        }
         return currentState
           ? [...currentState, { question: quiz.question, answer: nextValue }]
           : [{ question: quiz.question, answer: nextValue }];

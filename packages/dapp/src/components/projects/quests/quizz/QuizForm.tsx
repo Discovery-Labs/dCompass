@@ -17,7 +17,7 @@ function QuizForm({ questions, questId, pathwayId, successCallback }: any) {
   const { chainId, library } = useWeb3React();
 
   const [questionAnswers, setQuestionAnswer] =
-    useState<Array<Record<string, string>>>();
+    useState<Array<Record<string, string[]>>>();
   const [isLoading, setIsLoading] = useState(false);
   const [submitQuestAnswersMutation] = useMutation(
     SUBMIT_QUEST_ANSWERS_MUTATION,

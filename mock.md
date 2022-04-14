@@ -20,3 +20,19 @@ These are ordinary people, like you and I, who might donate $5-10 (or much more!
 ## 👩‍💻 Grantees
 
 These are early-stage builders - often open-source devs - who are seeking funding for their project
+
+## What is Quadratic funding?
+
+##### [Before diving in deeper, we suggest you to head over >>WTF IS QF?<< and play with the variables to understand the formula.](https://wtfisqf.com/?grant=&grant=&grant=&grant=&match=1000)
+
+> The quadratic funding mechanism (QF) is a concrete proposal for turning your small donations into something much larger. It requires a simple formula to achieve this goal.
+
+> Crowdfund individual donations towards open source projects (try to have the maximum of contributors, it's the number of participants that counts, not the amount of contribution). A match from governments, grant programs, or private philanthropists (offered by sponsors/donors for the grant's round fund).
+
+## Why is Quadratic funding powerful?
+
+The QF Mechanism measures the breadth of contributors, not the depth of contributions - which is a very democratic funding model.
+
+QF pushes power to the edges of the network!
+
+> Economist Glen Weyl has called QF the "optimal way to fund public goods that a broad base of the population cares about".
