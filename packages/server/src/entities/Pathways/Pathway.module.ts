@@ -10,6 +10,7 @@ import { GetPathwayByIdResolver } from './queries/GetPathwayById.resolver';
 import { AppService } from '../../app.service';
 import { VerifyPathwayResolver } from './mutations/VerifyPathway.resolver';
 import { ThreadDBService } from '../../services/thread-db/thread-db.service';
+import { ClaimPathwayRewardsResolver } from './mutations/ClaimPathwayRewards.resolver';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ThreadDBService } from '../../services/thread-db/thread-db.service';
     GetPathwayByIdResolver,
     GetAllPathwaysByProjectIdResolver,
     VerifyPathwayResolver,
+    ClaimPathwayRewardsResolver,
     AppService,
     ThreadDBService,
   ],

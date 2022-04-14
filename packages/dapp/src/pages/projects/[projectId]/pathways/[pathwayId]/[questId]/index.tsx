@@ -143,7 +143,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
     setTabIndex(index);
   };
 
-  const handleClaimRewards = async () => {
+  const handleClaimQuestRewards = async () => {
     setIsClaiming(true);
     setRewardStatus("Claiming rewards");
     const signatureInput = {
@@ -567,7 +567,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                       leftIcon={
                         isClaimed ? <BsCheckCircleFill /> : <RiHandCoinFill />
                       }
-                      onClick={handleClaimRewards}
+                      onClick={handleClaimQuestRewards}
                     >
                       {rewardStatus}
                     </Button>

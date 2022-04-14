@@ -30,7 +30,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { FiUserCheck } from "react-icons/fi";
 import { GiSwordwoman, GiTwoCoins } from "react-icons/gi";
-import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
+import { RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useCustomColor from "../../../core/hooks/useCustomColor";
@@ -39,7 +39,6 @@ import useTokenList from "../../../core/hooks/useTokenList";
 import { Quest } from "../../../core/types";
 import {
   APPROVE_QUEST_MUTATION,
-  CLAIM_QUEST_REWARDS_MUTATION,
   GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
   VERIFY_QUEST_MUTATION,
 } from "../../../graphql/quests";
@@ -101,12 +100,6 @@ function QuestCard({
   const { account, contracts, self } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION);
 
-  const [claimQuestRewardsMutation] = useMutation(
-    CLAIM_QUEST_REWARDS_MUTATION,
-    {
-      refetchQueries: "all",
-    }
-  );
   const [getAllQuestsByPathwayId] = useLazyQuery(
     GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
     {

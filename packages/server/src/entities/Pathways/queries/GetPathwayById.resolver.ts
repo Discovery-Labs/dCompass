@@ -28,14 +28,45 @@ export class GetPathwayByIdResolver {
     if (!foundPathway) {
       throw new NotFoundException('Pathway not found by back-end');
     }
-    const { _id, quests, ...pathway } = foundPathway as any;
+    const { _id, quests, pendingQuests, ...pathway } = foundPathway as any;
     return {
       id: _id,
       ...pathway,
       quests: quests
-        ? quests.map((questId: string) => ({
-            id: questId,
-          }))
+        ? await Promise.all([
+            ...quests.map(async (questId: string) => {
+              const {
+                _id: qId,
+                isPending,
+                ...quest
+              } = await this.threadDBService.getQuestById({
+                questId,
+                dbClient,
+                threadId: latestThreadId,
+              });
+              return {
+                ...quest,
+                id: questId,
+                isPending: false,
+              };
+            }),
+            ...pendingQuests.map(async (questId: string) => {
+              const {
+                _id: qId,
+                isPending,
+                ...quest
+              } = await this.threadDBService.getQuestById({
+                questId,
+                dbClient,
+                threadId: latestThreadId,
+              });
+              return {
+                ...quest,
+                id: questId,
+                isPending: true,
+              };
+            }),
+          ])
         : [],
     } as Pathway;
   }

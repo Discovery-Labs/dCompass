@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { EditIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import {
   Avatar,
@@ -19,22 +19,28 @@ import {
   Tag,
   Text,
   Tooltip,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
+import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
-import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
+import {
+  CLAIM_PATHWAY_REWARDS_MUTATION,
+  GET_PATHWAY_BY_ID_QUERY,
+} from "graphql/pathways";
 import { GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY } from "graphql/quests";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
-import { BsBarChartFill, BsPeople } from "react-icons/bs";
+import { BsBarChartFill, BsCheckCircleFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { GoTasklist } from "react-icons/go";
+import { RiHandCoinFill } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 import { initializeApollo } from "../../../../../../lib/apolloClient";
 import CardMedia from "../../../../../components/custom/CardMedia";
@@ -43,6 +49,7 @@ import QuestCard from "../../../../../components/projects/quests/QuestCard";
 import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../core/hooks/useTokenList";
+import { Quest } from "../../../../../core/types";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
 
 type Props = {
@@ -102,14 +109,29 @@ function PathwayPage({
   rewardUserCap,
   rewardCurrency,
   projectId,
+  streamId,
 }: any) {
   const { t } = useTranslation("common");
+  const toast = useToast();
+  const [pathwayProgress, setPathwayProgress] = useState<{
+    totalQuestCount: number;
+    completedQuestCount: number;
+    ratio: number;
+  }>();
+
+  const [claimedBy, setClaimedBy] = useState<string[]>();
+  const [isClaimed, setIsClaimed] = useState<boolean>(false);
+  const [isClaiming, setIsClaiming] = useState<boolean>(false);
+  const [rewardStatus, setRewardStatus] = useState<string>();
   const { getRewardCurrency } = useTokenList();
   const pathwayMarkdownTheme = usePageMarkdownTheme();
 
-  const { account, isReviewer } = useContext(Web3Context);
+  const { account, isReviewer, contracts, self } = useContext(Web3Context);
+  const { chainId, library } = useWeb3React();
   const { getAccentColor } = useCustomColor();
-
+  const [claimPathwayRewardsMutation] = useMutation(
+    CLAIM_PATHWAY_REWARDS_MUTATION
+  );
   const { data, loading, error } = useQuery(
     GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
     {
@@ -127,6 +149,133 @@ function PathwayPage({
       projectId,
     },
   });
+
+  useEffect(() => {
+    const totalQuestCount = quests.length;
+    const completedQuestCount = self?.id
+      ? quests.filter(
+          (q: Quest) => q.completedBy.includes(self.id) && !q.isPending
+        ).length
+      : 0;
+    const ratio = (completedQuestCount / totalQuestCount) * 100;
+
+    setPathwayProgress({
+      totalQuestCount,
+      completedQuestCount,
+      ratio,
+    });
+  }, [quests, self?.id]);
+
+  useEffect(() => {
+    async function init() {
+      if (contracts && streamId) {
+        const claimedByAddresses =
+          await contracts.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
+            streamId,
+            0
+          );
+        const currentUserHasClaimed = claimedByAddresses.includes(account);
+
+        setIsClaimed(currentUserHasClaimed);
+        setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
+        setClaimedBy(claimedByAddresses);
+      }
+      null;
+    }
+    init();
+  }, [contracts, streamId, account]);
+  const handleClaimPathwayRewards = async () => {
+    setIsClaiming(true);
+    setRewardStatus("Claiming rewards");
+    const signatureInput = {
+      id,
+      projectId,
+    };
+    setRewardStatus("Signing claim");
+    const signature = await library.provider.send("personal_sign", [
+      JSON.stringify(signatureInput),
+      account,
+    ]);
+
+    setRewardStatus("Generating tokenURI");
+    const formData = new FormData();
+    const ogFile = await fetch(`https://ipfs.io/ipfs/${image}`);
+    const questImage = await ogFile.blob();
+    formData.append("image", questImage);
+    formData.append(
+      "metadata",
+      JSON.stringify({
+        id,
+        title,
+        description,
+        slogan,
+        image,
+        quests,
+        difficulty,
+        createdBy,
+        createdAt,
+        rewardAmount,
+        rewardUserCap,
+        rewardCurrency,
+        projectId,
+      })
+    );
+
+    const nftCidRes = await fetch("/api/pathway-nft-storage", {
+      method: "POST",
+      body: formData,
+    });
+    const { url } = await nftCidRes.json();
+    setRewardStatus("Verifying claim");
+
+    const { data } = await claimPathwayRewardsMutation({
+      variables: {
+        input: {
+          pathwayId: id,
+          did: self.id,
+          questAdventurerSignature: signature.result,
+          chainId,
+        },
+      },
+    });
+
+    const [, tokenAddressOrSymbol] = rewardCurrency.split(":");
+    const isNativeToken = tokenAddressOrSymbol ? false : true;
+
+    const [metadataVerify] = data.claimPathwayRewards.expandedServerSignatures;
+    console.log({ metadataVerify });
+    setRewardStatus("Claiming on-chain");
+    const claimRewardsTx =
+      await contracts.pathwayNFTContract.claimPathwayRewards(
+        streamId,
+        isNativeToken,
+        isNativeToken ? account : tokenAddressOrSymbol,
+        metadataVerify.r,
+        metadataVerify.s,
+        metadataVerify.v,
+        true,
+        url,
+        0
+      );
+    await claimRewardsTx.wait(1);
+
+    const claimedByAddresses =
+      await contracts.PathwayNFT.getAllAddrsByPathwayIDVersion(streamId, 0);
+    const currentUserHasClaimed = claimedByAddresses.includes(account);
+    setIsClaimed(currentUserHasClaimed);
+    setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
+    setClaimedBy(claimedByAddresses);
+    setIsClaiming(false);
+    return toast({
+      title: "Congratulations!",
+      description: `Rewards claimed successfully!`,
+      status: "success",
+      position: "bottom-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
+  };
 
   const isOwner = createdBy === account;
 
@@ -295,7 +444,7 @@ function PathwayPage({
                     </Flex>
                   </HStack>
                   <Tooltip
-                    label="50% - 4/8 quests completed"
+                    label={`${pathwayProgress?.ratio}% - ${pathwayProgress?.completedQuestCount}/${pathwayProgress?.totalQuestCount} quests completed`}
                     hasArrow
                     fontWeight="extrabold"
                     placement="right"
@@ -315,7 +464,7 @@ function PathwayPage({
                           w="full"
                           size="md"
                           rounded="md"
-                          value={50}
+                          value={pathwayProgress?.ratio}
                           border={`solid 1px ${getAccentColor}`}
                           hasStripe
                           colorScheme="accentDark"
@@ -336,9 +485,11 @@ function PathwayPage({
                         Claimed
                       </Text>
                     </HStack>
-                    <Tag variant="outline" size="lg">
-                      0/{rewardUserCap}
-                    </Tag>
+                    <HStack>
+                      <Tag p="2" variant="solid">
+                        {claimedBy?.length || 0}/{rewardUserCap} Claimed
+                      </Tag>
+                    </HStack>
                   </HStack>
                   <HStack w="full">
                     <Icon as={GiTwoCoins} />
@@ -461,6 +612,27 @@ function PathwayPage({
                           {getRewardCurrency(rewardCurrency)}
                         </Text>
                       </Flex>
+                      <HStack w="40%">
+                        <Button
+                          w="full"
+                          fontSize="md"
+                          disabled={isClaiming || isClaimed}
+                          colorScheme={isClaimed ? "accentDark" : "primary"}
+                          loadingText={rewardStatus}
+                          isLoading={isClaiming}
+                          variant="outline"
+                          leftIcon={
+                            isClaimed ? (
+                              <BsCheckCircleFill />
+                            ) : (
+                              <RiHandCoinFill />
+                            )
+                          }
+                          onClick={handleClaimPathwayRewards}
+                        >
+                          {rewardStatus}
+                        </Button>
+                      </HStack>
                     </Stack>
                   </VStack>
                 </CardMedia>

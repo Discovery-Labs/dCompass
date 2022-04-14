@@ -1,5 +1,4 @@
 import { Heading, HeadingProps, Text, TextProps } from "@chakra-ui/react";
-import useCustomColor from "./useCustomColor";
 
 export const useCardMarkdownTheme = () => {
   return {
@@ -47,7 +46,6 @@ export const useCardMarkdownTheme = () => {
 };
 
 export const usePageMarkdownTheme = () => {
-  const { getColoredText } = useCustomColor();
   const cardMdTheme = useCardMarkdownTheme();
   return {
     ...cardMdTheme,

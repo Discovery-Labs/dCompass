@@ -1,7 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
-import Footer from "./Footer";
 import GitcoinFooter from "./GitcoinFooter";
 import Header from "./Header";
 

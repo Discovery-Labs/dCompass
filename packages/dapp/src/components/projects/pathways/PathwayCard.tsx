@@ -29,14 +29,16 @@ import Card from "components/custom/Card";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
+import { FaCheckCircle } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useCustomColor from "../../../core/hooks/useCustomColor";
 import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
-import { Pathway } from "../../../core/types";
+import { Pathway, Quest } from "../../../core/types";
 import {
   APPROVE_PATHWAY_MUTATION,
+  CLAIM_PATHWAY_REWARDS_MUTATION,
   GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
   VERIFY_PATHWAY_MUTATION,
 } from "../../../graphql/pathways";
@@ -80,12 +82,20 @@ function PathwayCard({
   pathway: Pathway;
   projectContributors: string[];
 }) {
+  const [pathwayProgress, setPathwayProgress] = useState<{
+    totalQuestCount: number;
+    completedQuestCount: number;
+    ratio: number;
+  }>();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getRewardCurrency } = useTokenList();
   const { getPrimaryColor, getAccentColor } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION);
   const [verifyPathwayMutation] = useMutation(VERIFY_PATHWAY_MUTATION);
+  const [claimPathwayRewardsMutation] = useMutation(
+    CLAIM_PATHWAY_REWARDS_MUTATION
+  );
   const [getAllPathwaysByProjectId] = useLazyQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
     {
@@ -97,10 +107,29 @@ function PathwayCard({
   const [status, setStatus] = useState<string>();
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isCreatingToken, setIsCreatingToken] = useState<boolean>(false);
-  const { account, contracts } = useContext(Web3Context);
+  const [claimedBy, setClaimedBy] = useState<string[]>();
+  const [isClaimed, setIsClaimed] = useState<boolean>(false);
+  const [isClaiming, setIsClaiming] = useState<boolean>(false);
+  const [rewardStatus, setRewardStatus] = useState<string>();
+  const { account, contracts, self } = useContext(Web3Context);
   const { chainId, library } = useWeb3React();
   const router = useRouter();
 
+  useEffect(() => {
+    const totalQuestCount = pathway.quests.length;
+    const completedQuestCount = self?.id
+      ? pathway.quests.filter(
+          (q: Quest) => q.completedBy.includes(self.id) && !q.isPending
+        ).length
+      : 0;
+    const ratio = (completedQuestCount / totalQuestCount) * 100;
+
+    setPathwayProgress({
+      totalQuestCount,
+      completedQuestCount,
+      ratio,
+    });
+  }, [pathway.quests, self?.id]);
   useEffect(() => {
     async function init() {
       if (contracts && pathway.streamId) {
@@ -113,11 +142,21 @@ function PathwayCard({
         const statusString: string =
           await contracts.pathwayNFTContract.statusStrings(statusInt);
         setStatus(isMinted ? "MINTED" : statusString);
+        const claimedByAddresses =
+          await contracts.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
+            pathway.streamId,
+            0
+          );
+        const currentUserHasClaimed = claimedByAddresses.includes(account);
+        console.log({ claimedByAddresses, currentUserHasClaimed });
+        setIsClaimed(currentUserHasClaimed);
+        setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
+        setClaimedBy(claimedByAddresses);
       }
       null;
     }
     init();
-  }, [contracts, pathway.streamId]);
+  }, [contracts, pathway.streamId, account]);
 
   const isContributor = account && projectContributors.includes(account);
   function openPathway() {
@@ -262,11 +301,90 @@ function PathwayCard({
     });
   };
 
+  const handleClaimPathwayRewards = async () => {
+    setIsClaiming(true);
+    setRewardStatus("Claiming rewards");
+    const signatureInput = {
+      id: pathway.id,
+      projectId: pathway.projectId,
+    };
+    setRewardStatus("Signing claim");
+    const signature = await library.provider.send("personal_sign", [
+      JSON.stringify(signatureInput),
+      account,
+    ]);
+
+    setRewardStatus("Generating tokenURI");
+    const formData = new FormData();
+    const ogFile = await fetch(`https://ipfs.io/ipfs/${pathway.image}`);
+    const questImage = await ogFile.blob();
+    formData.append("image", questImage);
+    formData.append("metadata", JSON.stringify(pathway));
+
+    const nftCidRes = await fetch("/api/pathway-nft-storage", {
+      method: "POST",
+      body: formData,
+    });
+    const { url } = await nftCidRes.json();
+    setRewardStatus("Verifying claim");
+
+    const { data } = await claimPathwayRewardsMutation({
+      variables: {
+        input: {
+          pathwayId: pathway.id,
+          did: self.id,
+          questAdventurerSignature: signature.result,
+          chainId,
+        },
+      },
+    });
+
+    const [, tokenAddressOrSymbol] = pathway.rewardCurrency.split(":");
+    const isNativeToken = tokenAddressOrSymbol ? false : true;
+
+    const [metadataVerify] = data.claimPathwayRewards.expandedServerSignatures;
+    console.log({ metadataVerify });
+    setRewardStatus("Claiming on-chain");
+    const claimRewardsTx =
+      await contracts.pathwayNFTContract.claimPathwayRewards(
+        pathway.streamId,
+        isNativeToken,
+        isNativeToken ? account : tokenAddressOrSymbol,
+        metadataVerify.r,
+        metadataVerify.s,
+        metadataVerify.v,
+        true,
+        url,
+        0
+      );
+    await claimRewardsTx.wait(1);
+
+    const claimedByAddresses =
+      await contracts.PathwayNFT.getAllAddrsByPathwayIDVersion(
+        pathway.streamId,
+        0
+      );
+    const currentUserHasClaimed = claimedByAddresses.includes(account);
+    setIsClaimed(currentUserHasClaimed);
+    setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
+    setClaimedBy(claimedByAddresses);
+    setIsClaiming(false);
+    return toast({
+      title: "Congratulations!",
+      description: `Rewards claimed successfully!`,
+      status: "success",
+      position: "bottom-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
+  };
+
   return (
     <Card h="lg">
       <HStack>
         <Tag p="2" variant="solid">
-          0/{pathway.rewardUserCap} Claimed
+          {claimedBy?.length}/{pathway.rewardUserCap} Claimed
         </Tag>
       </HStack>
       <Flex direction="column" w="full">
@@ -294,9 +412,18 @@ function PathwayCard({
       <Spacer />
 
       <Flex direction="column" w="full">
-        <Text as="h2" fontSize="2xl" color={getAccentColor}>
-          Rewards
-        </Text>
+        {isClaimed ? (
+          <HStack>
+            <Text as="h2" fontSize="2xl" color={getAccentColor}>
+              Rewards claimed
+            </Text>
+            <FaCheckCircle color={getAccentColor} />
+          </HStack>
+        ) : (
+          <Text as="h2" fontSize="2xl" color={getAccentColor}>
+            Rewards
+          </Text>
+        )}
         {/* <Avatar size="md" src={`https://ipfs.io/ipfs/${pathway.image}`} /> */}
         <Text color="text-weak">
           NFT + {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
@@ -354,7 +481,7 @@ function PathwayCard({
       {status == "MINTED" && (
         <>
           <Tooltip
-            label={`0% - 0/${pathway.quests?.length || 0} quests completed`}
+            label={`${pathwayProgress?.ratio}% - ${pathwayProgress?.completedQuestCount}/${pathwayProgress?.totalQuestCount} quests completed`}
             hasArrow
             placement="top"
           >
@@ -363,7 +490,7 @@ function PathwayCard({
                 w="full"
                 size="md"
                 rounded="md"
-                value={0}
+                value={pathwayProgress?.ratio}
                 border={`solid 1px ${getAccentColor}`}
                 hasStripe
                 colorScheme="accentDark"
@@ -373,23 +500,30 @@ function PathwayCard({
           </Tooltip>
 
           <Flex w="full" justify="space-between">
-            <Button
-              leftIcon={<RiSwordLine />}
-              fontSize="md"
-              onClick={() => openPathway()}
-            >
-              Explore
-            </Button>
+            {!isClaiming && (
+              <Button
+                leftIcon={<RiSwordLine />}
+                fontSize="md"
+                onClick={() => openPathway()}
+              >
+                Explore
+              </Button>
+            )}
 
-            {!pathway.isPending && (
+            {!pathway.isPending && !isClaimed && (
               <Button
                 fontSize="md"
                 variant="outline"
+                colorScheme={
+                  pathwayProgress?.ratio !== 100 ? "primary" : "accentDark"
+                }
+                loadingText={rewardStatus}
+                isLoading={isClaiming}
                 leftIcon={<RiHandCoinFill />}
-                disabled
-                onClick={() => console.log("Claim Pathway")}
+                disabled={pathwayProgress?.ratio !== 100}
+                onClick={handleClaimPathwayRewards}
               >
-                Claim
+                {isClaimed ? "Claimed" : "Claim"}
               </Button>
             )}
           </Flex>
