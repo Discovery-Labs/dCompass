@@ -90,7 +90,7 @@ type ExpandedServerSignature {
 
 type GithubContributorQuest {
   chainId: Int!
-  completedBy: [String!]
+  completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
@@ -166,7 +166,7 @@ type Mutation {
 type NFTOwnerQuest {
   chainId: Int!
   collectionContractAddress: String!
-  completedBy: [String!]
+  completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
@@ -296,7 +296,7 @@ type Query {
 
 type Quest {
   chainId: Int!
-  completedBy: [String!]
+  completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
@@ -337,7 +337,7 @@ input QuestQuestionAnswerInput {
 
 type QuizQuest {
   chainId: Int!
-  completedBy: [String!]
+  completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
@@ -371,7 +371,7 @@ type QuizQuestion {
 
 type SnapshotVoterQuest {
   chainId: Int!
-  completedBy: [String!]
+  completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
   createdAt: String!

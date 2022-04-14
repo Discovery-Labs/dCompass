@@ -43,7 +43,7 @@ export abstract class Quest extends BaseEntity {
   @Field(() => Pathway)
   pathway: Pathway;
 
-  @Field(() => [String])
+  @Field(() => [String], { defaultValue: [] })
   completedBy?: CeramicStreamId[];
 
   @Field(() => Boolean)
