@@ -28,7 +28,7 @@
     "@ceramicstudio/idx": "^0.12.1",
     "@ceramicstudio/idx-tools": "^0.11.0",
     "@discovery-dao/hardhat": "^0.0.11",
-    "@discovery-dao/schemas": "^0.0.9",
+    "@discovery-dao/schemas": "^0.0.10",
     "@glazed/datamodel": "^0.2.0",
     "@glazed/did-datastore": "^0.2.3",
     "@nestjs/axios": "^0.0.5",
