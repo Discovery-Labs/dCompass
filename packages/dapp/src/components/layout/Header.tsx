@@ -63,8 +63,8 @@ const LinkItems = () => {
   return (
     <>
       <LinkItem href="/">Projects</LinkItem>
-      <LinkItem href="/quests">Quests</LinkItem>
-      <LinkItem href="/badges">Badges</LinkItem>
+      {/* <LinkItem href="/quests">Quests</LinkItem> */}
+      <LinkItem href="/profile">Profile</LinkItem>
     </>
   );
 };
@@ -106,9 +106,7 @@ const Navbar = (props: any) => {
             spacing={4}
             display={["none", "none", "none", "flex"]}
           >
-            <LinkItem href="/">Projects</LinkItem>
-            <LinkItem href="/quests">Quests</LinkItem>
-            <LinkItem href="/profile">Profile</LinkItem>
+            <LinkItems />
             <MenuDropdown />
           </HStack>
         </HStack>
