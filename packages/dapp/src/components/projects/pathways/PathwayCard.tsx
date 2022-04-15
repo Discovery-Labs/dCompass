@@ -141,6 +141,7 @@ function PathwayCard({
         );
         const statusString: string =
           await contracts.pathwayNFTContract.statusStrings(statusInt);
+        console.log({ statusString });
         setStatus(isMinted ? "MINTED" : statusString);
         const claimedByAddresses =
           await contracts.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
