@@ -432,7 +432,12 @@ function PathwayPage({
 
             {/* Details */}
             <TabPanel px="0">
-              <HStack w="full" align="left" justifyContent="space-between">
+              <Flex
+                w="full"
+                align="left"
+                direction={["column", "column", "row"]}
+                justify="space-between"
+              >
                 <VStack align="left">
                   <HStack>
                     <Icon as={BsBarChartFill} />
@@ -542,107 +547,99 @@ function PathwayPage({
                     )}
                   </VStack>
                 </Flex>
-              </HStack>
+              </Flex>
               {quests && (
                 <Text pt="8" fontSize="xs">
                   {quests.length} Quest{quests.length > 1 ? "s" : ""}
                 </Text>
               )}
 
-              <HStack w="full" align="left" pt="2">
-                <CardMedia
-                  h="xs"
-                  src={`https://ipfs.io/ipfs/${image}`}
-                  imageHeight="160px"
+              <CardMedia
+                h="xs"
+                src={`https://ipfs.io/ipfs/${image}`}
+                imageHeight="160px"
+              >
+                <Stack
+                  w="full"
+                  justifyContent="space-between"
+                  direction="row"
+                  spacing={4}
+                  align="center"
                 >
-                  <VStack w="full" align="left">
-                    <Stack
+                  <Avatar
+                    boxSize="4.5rem"
+                    src={`https://ipfs.io/ipfs/${image}`}
+                    position="relative"
+                    zIndex={2}
+                    _before={{
+                      content: '""',
+                      width: "full",
+                      height: "full",
+                      rounded: "full",
+                      transform: "scale(1.125)",
+                      bg: "purple.500",
+                      position: "absolute",
+                      zIndex: -1,
+                      top: 0,
+                      left: 0,
+                    }}
+                  />
+                  <Text color="purple.500" fontSize="3xl" fontWeight="bold">
+                    NFT
+                  </Text>
+                  <Text
+                    fontFamily="heading"
+                    fontSize={{ base: "4xl", md: "6xl" }}
+                  >
+                    +
+                  </Text>
+                  <Flex
+                    align="center"
+                    justify="center"
+                    fontFamily="heading"
+                    fontWeight="bold"
+                    fontSize={{ base: "sm", md: "lg" }}
+                    bg="violet.100"
+                    color="text"
+                    rounded="full"
+                    position="relative"
+                    _before={{
+                      content: '""',
+                      width: "full",
+                      height: "full",
+                      rounded: "full",
+                      transform: "scale(1.125)",
+                      bgGradient: "linear(to-bl, purple.400,purple.500)",
+                      position: "absolute",
+                      zIndex: -1,
+                      top: 0,
+                      left: 0,
+                    }}
+                  >
+                    <Text fontSize="3xl" fontWeight="bold">
+                      {rewardAmount / rewardUserCap}{" "}
+                      {getRewardCurrency(rewardCurrency)}
+                    </Text>
+                  </Flex>
+                  <HStack w="40%">
+                    <Button
                       w="full"
-                      justifyContent="space-between"
-                      direction="row"
-                      spacing={4}
-                      align="center"
+                      fontSize="md"
+                      disabled={isClaiming || isClaimed}
+                      colorScheme={isClaimed ? "accentDark" : "primary"}
+                      loadingText={rewardStatus}
+                      isLoading={isClaiming}
+                      variant="outline"
+                      leftIcon={
+                        isClaimed ? <BsCheckCircleFill /> : <RiHandCoinFill />
+                      }
+                      onClick={handleClaimPathwayRewards}
                     >
-                      <Avatar
-                        boxSize="4.5rem"
-                        src={`https://ipfs.io/ipfs/${image}`}
-                        position="relative"
-                        zIndex={2}
-                        _before={{
-                          content: '""',
-                          width: "full",
-                          height: "full",
-                          rounded: "full",
-                          transform: "scale(1.125)",
-                          bg: "purple.500",
-                          position: "absolute",
-                          zIndex: -1,
-                          top: 0,
-                          left: 0,
-                        }}
-                      />
-                      <Text color="purple.500" fontSize="3xl" fontWeight="bold">
-                        NFT
-                      </Text>
-                      <Text
-                        fontFamily="heading"
-                        fontSize={{ base: "4xl", md: "6xl" }}
-                      >
-                        +
-                      </Text>
-                      <Flex
-                        align="center"
-                        justify="center"
-                        fontFamily="heading"
-                        fontWeight="bold"
-                        fontSize={{ base: "sm", md: "lg" }}
-                        bg="violet.100"
-                        color="text"
-                        rounded="full"
-                        position="relative"
-                        _before={{
-                          content: '""',
-                          width: "full",
-                          height: "full",
-                          rounded: "full",
-                          transform: "scale(1.125)",
-                          bgGradient: "linear(to-bl, purple.400,purple.500)",
-                          position: "absolute",
-                          zIndex: -1,
-                          top: 0,
-                          left: 0,
-                        }}
-                      >
-                        <Text fontSize="3xl" fontWeight="bold">
-                          {rewardAmount / rewardUserCap}{" "}
-                          {getRewardCurrency(rewardCurrency)}
-                        </Text>
-                      </Flex>
-                      <HStack w="40%">
-                        <Button
-                          w="full"
-                          fontSize="md"
-                          disabled={isClaiming || isClaimed}
-                          colorScheme={isClaimed ? "accentDark" : "primary"}
-                          loadingText={rewardStatus}
-                          isLoading={isClaiming}
-                          variant="outline"
-                          leftIcon={
-                            isClaimed ? (
-                              <BsCheckCircleFill />
-                            ) : (
-                              <RiHandCoinFill />
-                            )
-                          }
-                          onClick={handleClaimPathwayRewards}
-                        >
-                          {rewardStatus}
-                        </Button>
-                      </HStack>
-                    </Stack>
-                  </VStack>
-                </CardMedia>
-              </HStack>
+                      {rewardStatus}
+                    </Button>
+                  </HStack>
+                </Stack>
+              </CardMedia>
             </TabPanel>
           </TabPanels>
         </Tabs>
