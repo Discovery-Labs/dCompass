@@ -25,6 +25,7 @@ import {
   Text,
   useDisclosure,
   VStack,
+  Box,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
@@ -171,14 +172,21 @@ function ProjectPage({
         ]}
       />
       <Flex direction={["column", "column", "row"]} w="full" gap="8">
-        <Image
-          alt="logo image"
-          rounded="full"
-          src={`https://ipfs.io/ipfs/${logo}`}
-          objectFit="cover"
-          w={200}
-          h={200}
-        />
+        <Box
+          border="2px solid #6F3FF5"
+          borderRadius="full"
+          w="fit-content"
+          p="2"
+        >
+          <Image
+            alt="logo image"
+            rounded="full"
+            src={`https://ipfs.io/ipfs/${logo}`}
+            objectFit="cover"
+            w={200}
+            h={200}
+          />
+        </Box>
         <VStack w="full" align="start" justify="center">
           <Flex w="full" direction="row" wrap="wrap" gap="2">
             {tags.map((tag: Tag) => (

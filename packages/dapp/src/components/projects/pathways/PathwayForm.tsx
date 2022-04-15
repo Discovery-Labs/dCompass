@@ -17,6 +17,7 @@ import {
   Tag,
   Heading,
   Box,
+  Flex,
 } from "@chakra-ui/react";
 import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
@@ -197,7 +198,7 @@ export default function PathwayForm() {
       />
 
       <VStack w="full">
-        <HStack w="full" alignItems="center">
+        <Flex w="full" direction={["column", "column", "row"]} gap="2">
           <FormControl isInvalid={errors.rewardAmount}>
             <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
             <NumberInput
@@ -230,7 +231,7 @@ export default function PathwayForm() {
             options={[nativeToken.token, ...erc20Options]}
             placeholder="WETH, DAI,..."
           />
-        </HStack>
+        </Flex>
         {rewardAmount && (
           <Alert
             rounded="lg"

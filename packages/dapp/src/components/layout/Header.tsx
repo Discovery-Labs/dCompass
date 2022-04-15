@@ -88,16 +88,8 @@ const Navbar = (props: any) => {
     >
       <Container display="flex" p="2" maxW="7xl">
         <HStack spacing={4} alignItems="center">
-          <IconButton
-            size="md"
-            px="2"
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label="Open Menu"
-            display={["flex", "flex", "flex", "none"]}
-            onClick={isOpen ? onClose : onOpen}
-          />
           <NextLink href="/">
-            <Flex _hover={{ cursor: "pointer" }} align="center" mr={5}>
+            <Flex _hover={{ cursor: "pointer" }} align="center" mr={5} ml={2}>
               <LogoIcon size="25px" />
               <Text pl="2">dCompass</Text>
             </Flex>
@@ -126,6 +118,14 @@ const Navbar = (props: any) => {
             <NetworkSwitch />
           </HStack>
           <ConnectButton />
+          <IconButton
+            size="md"
+            px="2"
+            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            aria-label="Open Menu"
+            display={["flex", "flex", "flex", "none"]}
+            onClick={isOpen ? onClose : onOpen}
+          />
         </HStack>
       </Container>
 
