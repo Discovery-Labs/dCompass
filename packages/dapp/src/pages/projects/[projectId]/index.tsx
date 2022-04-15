@@ -16,7 +16,6 @@ import {
   ModalOverlay,
   Progress,
   SimpleGrid,
-  Spacer,
   Stack,
   Tab,
   TabList,
@@ -26,6 +25,7 @@ import {
   Text,
   useDisclosure,
   VStack,
+  Box,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
@@ -171,80 +171,86 @@ function ProjectPage({
           },
         ]}
       />
-      <Flex w="full" pt="8">
-        <HStack w="full" align="start" spacing="8">
-          <Image
-            alt="logo image"
-            rounded="full"
-            src={`https://ipfs.io/ipfs/${logo}`}
-            objectFit="cover"
-            w={200}
-            h={200}
-          />
-          <VStack w="full" h="full" align="start" justify="center">
-            <Stack direction="row">
-              {tags.map((tag: Tag) => (
-                <Badge key={tag.id} fontSize="lg" colorScheme={tag.color}>
-                  {tag.label}
-                </Badge>
-              ))}
-            </Stack>
-            <Heading as="h1" size="3xl" pl="4" color="text">
-              {name}
-            </Heading>
-
-            {/* Short description */}
-            <Text color="text-weak">{slogan}</Text>
-          </VStack>
-        </HStack>
-        <Spacer />
-        <HStack align="flex-start">
-          <Button
-            colorScheme={accentColorScheme}
-            leftIcon={<MdPersonAddAlt1 />}
-            onClick={onOpen}
+      <Flex direction={["column", "column", "row"]} w="full" gap="8">
+        <Box>
+          <Box
+            border="2px solid #6F3FF5"
+            borderRadius="full"
+            w="fit-content"
+            h="fit-content"
+            p="2"
           >
-            Apply
-          </Button>
-          <Modal onClose={onClose} isOpen={isOpen} size="4xl" isCentered>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Apply to {name}</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <ProfileForm
-                  submitButtonLabel="Submit application"
-                  projectId={id}
-                  projectName={name}
-                  onCloseForm={onClose}
-                />
-              </ModalBody>
-            </ModalContent>
-          </Modal>
-          {canEdit && (
-            <NextLink href={`/projects/${id}/edit-project/`} passHref>
-              <Button variant="outline" leftIcon={<EditIcon />}>
-                Edit Project
-              </Button>
-            </NextLink>
-          )}
-        </HStack>
+            <Image
+              alt="logo image"
+              rounded="full"
+              src={`https://ipfs.io/ipfs/${logo}`}
+              objectFit="cover"
+              w={200}
+              h={200}
+            />
+          </Box>
+        </Box>
+        <VStack w="full" align="start" justify="center">
+          <Flex w="full" direction="row" wrap="wrap" gap="2">
+            {tags.map((tag: Tag) => (
+              <Badge key={tag.id} fontSize="lg" colorScheme={tag.color}>
+                {tag.label}
+              </Badge>
+            ))}
+          </Flex>
+          <Heading as="h1" size="3xl" color="text">
+            {name}
+          </Heading>
+
+          {/* Short description */}
+          <Text color="text-weak">{slogan}</Text>
+        </VStack>
       </Flex>
 
       <HStack w="full" align="start">
-        <Flex direction="column" py="4">
-          <SocialLinks
-            website={website}
-            discord={discord}
-            twitter={twitter}
-            github={github}
-            gitbook={gitbook}
-          />
-        </Flex>
+        <Button
+          colorScheme={accentColorScheme}
+          leftIcon={<MdPersonAddAlt1 />}
+          onClick={onOpen}
+        >
+          Apply
+        </Button>
+        <Modal onClose={onClose} isOpen={isOpen} size="4xl" isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Apply to {name}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <ProfileForm
+                submitButtonLabel="Submit application"
+                projectId={id}
+                projectName={name}
+                onCloseForm={onClose}
+              />
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+        {canEdit && (
+          <NextLink href={`/projects/${id}/edit-project/`} passHref>
+            <Button variant="outline" leftIcon={<EditIcon />}>
+              Edit Project
+            </Button>
+          </NextLink>
+        )}
+      </HStack>
+
+      <HStack w="full" py="4">
+        <SocialLinks
+          website={website}
+          discord={discord}
+          twitter={twitter}
+          github={github}
+          gitbook={gitbook}
+        />
       </HStack>
 
       <Tabs w="full">
-        <HStack justifyContent="space-between">
+        <HStack w="full" justify="start">
           <TabList>
             <Tab>{t("pathways")}</Tab>
             <Tab>{t("guilds")}</Tab>
@@ -256,23 +262,27 @@ function ProjectPage({
           {/* Pathways */}
           <TabPanel px="0">
             <Tabs w="full" variant="unstyled">
-              <HStack justifyContent="space-between">
+              <Flex
+                w="full"
+                direction={["column-reverse", "column-reverse", "row"]}
+                justify="space-between"
+              >
                 <TabList>
                   <Tab>{t("all-pathways")}</Tab>
                   {canReviewPathways && <Tab>{t("pending-pathways")}</Tab>}
                   <Tab>{t("my-pathways")}</Tab>
                 </TabList>
-                {
-                  <NextLink
-                    href={`/projects/${id}/pathways/add-pathway/`}
-                    passHref
-                  >
+                <NextLink
+                  href={`/projects/${id}/pathways/add-pathway/`}
+                  passHref
+                >
+                  <Flex py="2" w="full" justify={["start", "start", "end"]}>
                     <Button variant="outline" leftIcon={<AddIcon />}>
                       {t("add-pathway")}
                     </Button>
-                  </NextLink>
-                }
-              </HStack>
+                  </Flex>
+                </NextLink>
+              </Flex>
 
               <TabPanels>
                 <TabPanel>
@@ -298,7 +308,7 @@ function ProjectPage({
 
           {/* Guilds */}
           <TabPanel px="0">
-            <SimpleGrid columns={3} spacing={4}>
+            <SimpleGrid columns={[1, 1, 2, 3]} spacing={4}>
               {squads.map((squad: any) => (
                 <CardMedia
                   key={squad.id}

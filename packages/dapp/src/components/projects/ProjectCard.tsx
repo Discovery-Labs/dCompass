@@ -78,7 +78,7 @@ const ProjectCard = ({
 
         <Spacer />
 
-        <HStack spacing={7}>
+        <HStack w="full" justify="space-between">
           {project.website && (
             <Link target="_blank" href={project.website}>
               <Icon boxSize={8} as={BsGlobe} />

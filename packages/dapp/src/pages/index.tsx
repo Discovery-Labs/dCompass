@@ -23,6 +23,7 @@ import {
   TabPanels,
   Tabs,
   Text,
+  Box,
 } from "@chakra-ui/react";
 import Fuse from "fuse.js";
 import { useTranslation } from "next-i18next";
@@ -192,7 +193,16 @@ function Projects() {
         </Heading>
         <Spacer />
         <NextLink href="/projects/create-project" passHref>
-          <Button leftIcon={<AddIcon />}>{t("create-project")}</Button>
+          <Box>
+            <Button display={["none", "none", "flex"]} leftIcon={<AddIcon />}>
+              {t("create-project")}
+            </Button>
+            <IconButton
+              display={["flex", "flex", "none"]}
+              aria-label="create project"
+              icon={<AddIcon />}
+            />
+          </Box>
         </NextLink>
       </Flex>
 

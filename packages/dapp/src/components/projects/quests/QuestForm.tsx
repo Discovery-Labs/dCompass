@@ -10,7 +10,6 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
-  HStack,
   Input,
   NumberDecrementStepper,
   NumberIncrementStepper,
@@ -24,24 +23,24 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
+import CodeEditorPreview from "components/custom/CodeEditorPreview";
+import useCustomColor from "core/hooks/useCustomColor";
+import { Contract, ethers } from "ethers";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useContext, useMemo, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
-
-import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
+import { GET_APP_DID } from "../../../graphql/app";
 import {
   CREATE_QUIZ_QUEST_MUTATION,
   GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
 } from "../../../graphql/quests";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
-
 import DiscordMemberForm from "./discord/DiscordMemberForm";
 import GithubContributorForm from "./github/GithubContributorForm";
 import PoapOwnerForm from "./poap/PoapOwnerForm";
@@ -50,8 +49,6 @@ import SnapshotForm from "./snapshot/SnapshotForm";
 import NFTOwnerForm from "./token/NFTOwnerForm";
 import TokenHolderForm from "./token/TokenHolderForm";
 import TwitterFollowerForm from "./twitter/TwitterFollowerForm";
-import { GET_APP_DID } from "../../../graphql/app";
-import { Contract, ethers } from "ethers";
 
 type QuestionFormItemType = {
   question: string;
@@ -533,7 +530,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       />
 
       <VStack w="full">
-        <HStack w="full" alignItems="center">
+        <Flex w="full" direction={["column", "column", "row"]} gap="2">
           <FormControl isInvalid={errors.rewardAmount}>
             <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
             <NumberInput
@@ -566,7 +563,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             options={[nativeToken.token, ...erc20Options]}
             placeholder="WETH, DAI,..."
           />
-        </HStack>
+        </Flex>
         {rewardAmount && (
           <Alert
             rounded="lg"
@@ -633,7 +630,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       {questDetails[questType]}
       <Flex w="full" pt="8" justify="space-between">
         <Button colorScheme="secondary" type="button" onClick={() => reset()}>
-          Reset Quest Form
+          Reset Form
         </Button>
         <Button
           isLoading={isSubmitting}

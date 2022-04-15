@@ -6,14 +6,14 @@ import { IoMdExit } from "react-icons/io";
 import { Web3Context } from "../../contexts/Web3Provider";
 import Address from "../custom/Address";
 
-function ConnectButton({ w }: { w?: string }) {
+function DrawerConnectButton({ w }: { w?: string }) {
   const { account, connectWeb3, logout } = useContext(Web3Context);
   const { t } = useTranslation("common");
 
   return (
     <HStack w="full">
       {account ? (
-        <HStack display={["none", "none", "flex"]}>
+        <HStack>
           <Address
             address={account}
             value={account}
@@ -32,4 +32,4 @@ function ConnectButton({ w }: { w?: string }) {
   );
 }
 
-export default ConnectButton;
+export default DrawerConnectButton;

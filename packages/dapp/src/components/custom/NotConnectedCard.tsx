@@ -15,8 +15,8 @@ function NotConnectedCard() {
   };
   return (
     <VStack align="left" w="100%" spacing="0.5rem">
-      <Heading fontSize="1.5rem">{t("wallet-not-connected")}</Heading>
-      <Text pb="2rem">{t("wallet-not-connected-desc")}</Text>
+      <Heading fontSize="1.5rem">Wallet not connected</Heading>
+      <Text pb="2rem">Please connect a wallet to continue.</Text>
 
       <Box justifyContent="center">
         <Button
@@ -28,6 +28,19 @@ function NotConnectedCard() {
           {t("connect")}
         </Button>
       </Box>
+      {/* <Heading fontSize="1.5rem">{t("wallet-not-connected")}</Heading>
+      <Text pb="2rem">{t("wallet-not-connected-desc")}</Text>
+
+      <Box justifyContent="center">
+        <Button
+          onClick={handleConnect}
+          w="100%"
+          isLoading={isConnecting}
+          loadingText="Connecting..."
+        >
+          {t("connect")}
+        </Button>
+      </Box> */}
     </VStack>
   );
 }

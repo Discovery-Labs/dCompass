@@ -9,6 +9,7 @@ import {
   Image,
   Input,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -51,22 +52,22 @@ const LogoDropzone = ({
   });
 
   const thumbs = files.map((file: any) => (
-    <Flex key={file.name}>
+    <Flex direction={["column", "row"]} w="full" key={file.name}>
       <Image
         borderRadius="2"
         objectFit="cover"
         boxSize="150px"
         src={file.preview}
       />
-      <Flex pl="4" d="column" w="full" alignSelf="center">
+      <VStack p="2" w="full" align="start" justify="center">
         <IconButton
           colorScheme="secondary"
           onClick={() => setFiles([])}
           aria-label="Remove Image"
           icon={<CloseIcon />}
         />
-        <Text>{file.path}</Text>
-      </Flex>
+        <Text noOfLines={1}>{file.path}</Text>
+      </VStack>
     </Flex>
   ));
 

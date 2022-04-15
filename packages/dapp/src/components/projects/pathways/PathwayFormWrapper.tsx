@@ -283,7 +283,7 @@ function PathwayFormWrapper() {
           type="button"
           onClick={() => reset(pathwaysDefaultValues)}
         >
-          Reset Pathway Form
+          Reset Form
         </Button>
         <Button
           isLoading={isSubmitting}

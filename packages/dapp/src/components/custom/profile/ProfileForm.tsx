@@ -519,7 +519,7 @@ const ProfileForm = ({
     </Box>
   ) : (
     <CenteredFrame>
-      <Card h="full" w="2xl" border="solid 1px red">
+      <Card layerStyle="solid-card" h="full" w="full" border="solid 1px red">
         <NotConnectedCard />
       </Card>
     </CenteredFrame>

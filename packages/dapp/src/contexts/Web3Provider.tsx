@@ -30,6 +30,8 @@ import { Web3Reducer } from "./Web3Reducer";
 
 export const supportedNetworks = Object.keys(ABIS);
 
+const INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
+
 const injected = new InjectedConnector({
   supportedChainIds: supportedNetworks.map((net) => parseInt(net, 10)),
 });
@@ -46,6 +48,7 @@ const providerOptions = {
       supportedChainIds: ALL_SUPPORTED_CHAIN_IDS,
       rpcs: NETWORK_URLS,
       qrcode: true,
+      infuraId: INFURA_ID,
     },
   },
   // authereum: {

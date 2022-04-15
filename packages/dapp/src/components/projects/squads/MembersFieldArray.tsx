@@ -1,7 +1,5 @@
 import { AddIcon } from "@chakra-ui/icons";
 import {
-  Center,
-  Divider,
   FormLabel,
   Heading,
   HStack,
@@ -10,7 +8,6 @@ import {
 } from "@chakra-ui/react";
 import { useFieldArray } from "react-hook-form";
 import { FiX } from "react-icons/fi";
-
 import AddressInput from "../../custom/AddressInput";
 
 const MembersFieldArray = ({ nestIndex, control, register, setValue }: any) => {
@@ -56,9 +53,6 @@ const MembersFieldArray = ({ nestIndex, control, register, setValue }: any) => {
                 onClick={() => remove(k)}
               />
             </HStack>
-            <Center w="full" height="50px">
-              <Divider />
-            </Center>
           </VStack>
         );
       })}

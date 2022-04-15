@@ -40,7 +40,7 @@ function Hero() {
           Who
         </Heading>
         <SimpleGrid columns={[2, 3, 4]} spacing={8}>
-          {data.members.map((member: any) => (
+          {data.members && data.members.map((member: any) => (
             <VStack key={member.name}>
               {/* <Link
                 href="https://dcompass.discovery-dao.xyz/"
