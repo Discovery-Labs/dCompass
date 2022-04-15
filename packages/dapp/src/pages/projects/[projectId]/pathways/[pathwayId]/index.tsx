@@ -260,7 +260,10 @@ function PathwayPage({
     await claimRewardsTx.wait(1);
 
     const claimedByAddresses =
-      await contracts.PathwayNFT.getAllAddrsByPathwayIDVersion(streamId, 0);
+      await contracts.PathwayNFTContract.getAllAddrsByPathwayIDVersion(
+        streamId,
+        0
+      );
     const currentUserHasClaimed = claimedByAddresses.includes(account);
     setIsClaimed(currentUserHasClaimed);
     setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");

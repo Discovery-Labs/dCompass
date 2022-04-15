@@ -244,8 +244,8 @@ const Web3Provider = ({ children }: { children: any }) => {
           signer
         );
         const pathwayNFTContract = new ethers.Contract(
-          abis[strChainId][network.name].contracts.PathwayNFT.address,
-          abis[strChainId][network.name].contracts.PathwayNFT.abi,
+          abis[strChainId][network.name].contracts.PathwayNFTContract.address,
+          abis[strChainId][network.name].contracts.PathwayNFTContract.abi,
           signer
         );
         const SponsorPassSFT = new ethers.Contract(

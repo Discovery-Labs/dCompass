@@ -360,7 +360,7 @@ function PathwayCard({
     await claimRewardsTx.wait(1);
 
     const claimedByAddresses =
-      await contracts.PathwayNFT.getAllAddrsByPathwayIDVersion(
+      await contracts.PathwayNFTContract.getAllAddrsByPathwayIDVersion(
         pathway.streamId,
         0
       );
