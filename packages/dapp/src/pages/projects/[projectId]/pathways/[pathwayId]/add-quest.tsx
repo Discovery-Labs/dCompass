@@ -25,7 +25,7 @@ function AddQuestForm() {
     <NotConnectedWrapper>
       <FormProvider {...methods}>
         <CenteredFrame>
-          <Box py="1">
+          <Box w="full" py="1">
             <Link
               textStyle={"small"}
               color="text"
@@ -36,7 +36,7 @@ function AddQuestForm() {
               Back to pathway
             </Link>
           </Box>
-          <Card h="full" w="2xl">
+          <Card layerStyle="solid-card" h="full" w="full">
             <CreateQuestForm />
           </Card>
         </CenteredFrame>

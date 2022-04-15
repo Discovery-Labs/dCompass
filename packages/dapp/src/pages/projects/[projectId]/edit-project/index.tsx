@@ -166,7 +166,7 @@ function EditProjectStepper(project: Project) {
     <NotConnectedWrapper>
       <FormProvider {...methods}>
         <CenteredFrame>
-          <Card h="full" w="2xl">
+          <Card layerStyle="solid-card" h="full" w="full">
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
               {id && <CreateProjectWallet id={id} />}
 

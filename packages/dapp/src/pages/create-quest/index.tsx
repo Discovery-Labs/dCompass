@@ -21,7 +21,7 @@ function CreateQuestStepper() {
     <NotConnectedWrapper>
       <FormProvider {...methods}>
         <CenteredFrame>
-          <Card h="full" w="2xl">
+          <Card layerStyle="solid-card" h="full" w="full">
             <QuestsForm />
           </Card>
         </CenteredFrame>

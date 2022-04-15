@@ -172,20 +172,23 @@ function ProjectPage({
         ]}
       />
       <Flex direction={["column", "column", "row"]} w="full" gap="8">
-        <Box
-          border="2px solid #6F3FF5"
-          borderRadius="full"
-          w="fit-content"
-          p="2"
-        >
-          <Image
-            alt="logo image"
-            rounded="full"
-            src={`https://ipfs.io/ipfs/${logo}`}
-            objectFit="cover"
-            w={200}
-            h={200}
-          />
+        <Box>
+          <Box
+            border="2px solid #6F3FF5"
+            borderRadius="full"
+            w="fit-content"
+            h="fit-content"
+            p="2"
+          >
+            <Image
+              alt="logo image"
+              rounded="full"
+              src={`https://ipfs.io/ipfs/${logo}`}
+              objectFit="cover"
+              w={200}
+              h={200}
+            />
+          </Box>
         </Box>
         <VStack w="full" align="start" justify="center">
           <Flex w="full" direction="row" wrap="wrap" gap="2">
