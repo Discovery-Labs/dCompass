@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { EditIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import { EditIcon, AddIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Button,
@@ -348,7 +348,7 @@ function PathwayPage({
               passHref
             >
               {/** TODO: Edit pathway form or page **/}
-              <Button disabled leftIcon={<PlusSquareIcon />}>
+              <Button disabled leftIcon={<AddIcon />}>
                 {t("edit-pathway")}
               </Button>
             </NextLink>
@@ -367,7 +367,11 @@ function PathwayPage({
             {/* Quests */}
             <TabPanel px="0">
               <Tabs w="full" variant="unstyled">
-                <HStack justifyContent="space-between">
+                <Flex
+                  w="full"
+                  direction={["column-reverse", "column-reverse", "row"]}
+                  justify="space-between"
+                >
                   <TabList>
                     <Tab>{t("all-quests")}</Tab>
                     {canReviewQuests && <Tab>{t("pending-quests")}</Tab>}
@@ -378,11 +382,13 @@ function PathwayPage({
                     href={`/projects/${projectId}/pathways/${id}/add-quest`}
                     passHref
                   >
-                    <Button leftIcon={<PlusSquareIcon />}>
-                      {t("add-quest")}
-                    </Button>
+                    <Flex py="2" w="full" justify={["start", "start", "end"]}>
+                      <Button variant="outline" leftIcon={<AddIcon />}>
+                        {t("add-quest")}
+                      </Button>
+                    </Flex>
                   </NextLink>
-                </HStack>
+                </Flex>
 
                 <TabPanels>
                   <TabPanel>
