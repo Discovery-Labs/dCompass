@@ -101,6 +101,7 @@ function NetworkSwitch() {
       </Menu>
       {!isSupportedNetwork && (
         <Alert
+          display={["none", "none", "none", "flex"]}
           status="error"
           variant="solid"
           flexDirection="column"

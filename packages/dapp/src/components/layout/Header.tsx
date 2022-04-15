@@ -32,6 +32,7 @@ import MenuDropdown from "../custom/MenuDropdown";
 import LogoIcon from "../Icons/LogoIcon";
 
 import ThemeToggle from "./ThemeToggle";
+import DrawerConnectButton from "components/Buttons/DrawerConnectButton";
 
 const LinkItem = ({ href, _target, children, ...props }: any) => {
   const { pathname } = useRouter();
@@ -137,6 +138,9 @@ const Navbar = (props: any) => {
             <DrawerBody>
               <VStack onClick={onClose} align="start" fontSize="lg" spacing="4">
                 <LinkItems />
+                <ThemeToggle />
+                <NetworkSwitch />
+                <DrawerConnectButton />
               </VStack>
             </DrawerBody>
           </DrawerContent>
