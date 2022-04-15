@@ -1,4 +1,6 @@
 import {
+  Center,
+  Divider,
   Button,
   FormControl,
   FormErrorMessage,
@@ -94,11 +96,14 @@ export default function Squads({
                   errors.squads[index].members.message}
               </FormErrorMessage>
             </FormControl>
+            <Center w="full" height="50px">
+              <Divider />
+            </Center>
           </VStack>
         );
       })}
 
-      <HStack w="full" justify="end">
+      <HStack w="full" pb="4" justify={["center", "center", "end"]}>
         <Button
           size="sm"
           onClick={() => {
@@ -116,6 +121,9 @@ export default function Squads({
           Reset
         </Button>
       </HStack>
+      <Center w="full" height="10px">
+        <Divider />
+      </Center>
     </VStack>
   );
 }

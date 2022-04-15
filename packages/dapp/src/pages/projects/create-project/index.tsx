@@ -238,7 +238,7 @@ function CreateProjectStepper() {
     <NotConnectedWrapper>
       <FormProvider {...methods}>
         <CenteredFrame>
-          <Box py="1">
+          <Box w="full" py="1">
             <NextLink href={"/"} passHref>
               <Link
                 textStyle={"small"}
@@ -250,18 +250,17 @@ function CreateProjectStepper() {
               </Link>
             </NextLink>
           </Box>
-          <Card h="full" w={activeStep === 2 ? "fit-content" : "2xl"}>
+          <Card layerStyle="solid-card" h="full" w="full">
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
               <Steps
                 w="full"
                 orientation="horizontal"
+                responsive={false}
                 colorScheme="purple"
                 activeStep={activeStep}
               >
                 {steps.map(({ label, content }) => (
-                  <Step label={label} key={label}>
-                    {content}
-                  </Step>
+                  <Step key={label}>{content}</Step>
                 ))}
               </Steps>
               <Flex w="full" justify="center">

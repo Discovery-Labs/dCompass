@@ -7,7 +7,7 @@ interface Children {
 const CenteredFrame = ({ children }: Children) => {
   return (
     <VStack minH={{ sm: "400px", md: "600px" }} align="center" justify="center">
-      <Box px="2.5rem">{children}</Box>
+      {children}
     </VStack>
   );
 };

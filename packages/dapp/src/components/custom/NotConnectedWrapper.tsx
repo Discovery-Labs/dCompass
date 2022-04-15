@@ -18,7 +18,7 @@ function MembershipWrapper(props: any) {
     <>{children}</>
   ) : (
     <CenteredFrame>
-      <Card h="full" w="2xl" border="solid 1px red">
+      <Card h="full" w="max-content" border="solid 1px red">
         <NotConnectedCard />
       </Card>
     </CenteredFrame>
