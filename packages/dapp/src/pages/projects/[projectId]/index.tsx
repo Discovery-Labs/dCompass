@@ -185,6 +185,7 @@ function ProjectPage({
               rounded="full"
               src={`https://ipfs.io/ipfs/${logo}`}
               objectFit="cover"
+              maxW="none"
               w={200}
               h={200}
             />
@@ -204,40 +205,41 @@ function ProjectPage({
 
           {/* Short description */}
           <Text color="text-weak">{slogan}</Text>
+
+          {/* Apply and Edit Buttons */}
+          <HStack w="full" align="start">
+            <Button
+              colorScheme={accentColorScheme}
+              leftIcon={<MdPersonAddAlt1 />}
+              onClick={onOpen}
+            >
+              Apply
+            </Button>
+            <Modal onClose={onClose} isOpen={isOpen} size="4xl" isCentered>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Apply to {name}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <ProfileForm
+                    submitButtonLabel="Submit application"
+                    projectId={id}
+                    projectName={name}
+                    onCloseForm={onClose}
+                  />
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+            {canEdit && (
+              <NextLink href={`/projects/${id}/edit-project/`} passHref>
+                <Button variant="outline" leftIcon={<EditIcon />}>
+                  Edit Project
+                </Button>
+              </NextLink>
+            )}
+          </HStack>
         </VStack>
       </Flex>
-
-      <HStack w="full" align="start">
-        <Button
-          colorScheme={accentColorScheme}
-          leftIcon={<MdPersonAddAlt1 />}
-          onClick={onOpen}
-        >
-          Apply
-        </Button>
-        <Modal onClose={onClose} isOpen={isOpen} size="4xl" isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Apply to {name}</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <ProfileForm
-                submitButtonLabel="Submit application"
-                projectId={id}
-                projectName={name}
-                onCloseForm={onClose}
-              />
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-        {canEdit && (
-          <NextLink href={`/projects/${id}/edit-project/`} passHref>
-            <Button variant="outline" leftIcon={<EditIcon />}>
-              Edit Project
-            </Button>
-          </NextLink>
-        )}
-      </HStack>
 
       <HStack w="full" py="4">
         <SocialLinks
