@@ -33,7 +33,7 @@
     "@walletconnect/web3-provider": "^1.6.5",
     "framer-motion": "^5",
     "fuse.js": "^6.4.6",
-    "next": "^11.1.2",
+    "next": "^12.1.0",
     "next-pwa": "^5.3.1",
     "next-seo": "^4.26.0",
     "react": "^17.0.2",
