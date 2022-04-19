@@ -82,7 +82,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         address _vrfAddress,
         address _projectNFTAddress,
         address _verifyAddress
-    ) ERC721("dCompassBadge", "DCOMPB") {
+    ) ERC721("dCompassPath", "DCOMPPATH") {
         vrfContract = RandomNumberConsumer(_vrfAddress);
         verifyContract = Verify(_verifyAddress);
         //uint rarityTotal = 0;

@@ -54,7 +54,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (string => mapping(uint => uint[])) internal allTokenIdsPerBadgeAndVersion;
     mapping (uint => TokenInfo) internal tokenInfoById;//will be used by getter
 
-    //pathwayId => ERC20Address => senderAddress => bool
+    //badgeId => ERC20Address => senderAddress => bool
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForBadgeERC20;//has user received funds for this badge in ERC20Token Address
     mapping (string => mapping(address => bool)) public userRewardedForBadgeNative;//has user received funds for this badge in native token
     uint256 public fee = 1500; //number divided by 10000 for fee. for example 100 = 1%
