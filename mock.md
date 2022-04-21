@@ -105,3 +105,29 @@ The Web module provides user authentication, data storage, and retrieval for bro
 ### [**Using the Core module →**](https://github.com/ceramicnetwork/docs/blob/main/docs/tools/self-id/read.md)
 
 The Core module only provides data retrieval for Node and browser-based applications.
+
+
+--- FILECOIN ----
+
+### Store your data using our simple API.
+#### It’s fast, open, and it’s free.
+
+### Store and retrieve with ease
+Most decentralized storage services either need you to jump through hoops (like buying some cryptocurrency) or aren't truly decentralized.
+
+With Web3.Storage, things are both easy-to-use and trustless! Upload any data via our API or our web UI for free. The data will end up on a decentralized set of IPFS and Filecoin storage providers.
+
+### Why Web3.Storage?
+
+With Web3.Storage you get all the benefits of decentralized storage technologies with the frictionless experience you expect in a modern dev workflow.
+
+> #### [READ THE DOCS](https://web3.storage/docs/)
+
+#### Simple
+With Web3.Storage, you get decentralized storage in minutes. Use our simple client library or the HTTP API directly - all you need is a free API token.
+
+#### Open
+All data stored is accessible on the public IPFS network via a content ID - interoperable with the tools and services building on the decentralized web.
+
+#### Free
+Data is stored on the Filecoin network, which has a unique economic model and over 15 EiB of capacity, allowing us to offer Web3.Storage for free today. This storage is cryptographically provable by anyone!
