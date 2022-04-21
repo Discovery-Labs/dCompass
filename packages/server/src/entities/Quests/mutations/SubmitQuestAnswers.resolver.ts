@@ -49,7 +49,7 @@ export class SubmitQuestAnswersResolver {
       }),
       answerSubmition.questAdventurerSignature,
     );
-
+    console.log({ decodedAddress})
     if (!decodedAddress) {
       throw new ForbiddenException('Unauthorized');
     }
@@ -61,14 +61,18 @@ export class SubmitQuestAnswersResolver {
             await ceramicClient.ceramic.did?.decryptDagJWE(
               JSON.parse(qa.answer),
             );
+
+            console.log({decryptedAnswers })
           const submittedAnswer = answerSubmition.questionAnswers.find(
             (question) => question.question === qa.question,
           )?.answer;
+          console.log({submittedAnswer})
+
           if (!submittedAnswer || !decryptedAnswers) {
             return false;
           }
 
-          const isCorrect = Object.values(decryptedAnswers).every((answer) =>
+          const isCorrect = decryptedAnswers.every((answer: string) =>
             submittedAnswer.includes(answer),
           );
           return isCorrect;
