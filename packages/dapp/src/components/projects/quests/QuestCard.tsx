@@ -43,7 +43,6 @@ import {
   VERIFY_QUEST_MUTATION,
 } from "../../../graphql/quests";
 
-const unlocked = true;
 
 const ModalDetails = ({ quest }: { quest: Quest }) => {
   const { getTextColor, getOverBgColor } = useCustomColor();
@@ -301,11 +300,12 @@ function QuestCard({
   };
   const isCompleted = (quest.completedBy || []).includes(self?.id);
   const isClaimed = account && claimedBy?.includes(account);
+  const isLocked = quest.id === "01g0yjfgqrhc2q0f4nqtxtqy81"
   return (
     <Card position="relative" h="xl" spacing="6" py="4">
-      {!unlocked && <LockedScreen />}
+      {isLocked && <LockedScreen />}
 
-      <Box filter={!unlocked ? "blur(4px)" : "blur(0px)"} w="full">
+      <Box filter={isLocked ? "blur(4px)" : "blur(0px)"} w="full">
         <Flex w="full" minH="56px">
           <Heading
             noOfLines={2}

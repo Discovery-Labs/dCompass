@@ -66,7 +66,7 @@ export class SubmitQuestAnswersResolver {
           const submittedAnswer = answerSubmition.questionAnswers.find(
             (question) => question.question === qa.question,
           )?.answer;
-          console.log({submittedAnswer, })
+          console.log({submittedAnswer})
 
           if (!submittedAnswer || !decryptedAnswers) {
             return false;
