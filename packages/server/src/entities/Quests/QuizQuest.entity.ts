@@ -5,6 +5,6 @@ import { QuizQuestion } from './QuizQuestion.entity';
 
 @ObjectType()
 export class QuizQuest extends Quest {
-  @Field(() => [QuizQuestion])
-  questions: QuizQuestion[];
+  @Field(() => [QuizQuestion], { nullable: true })
+  questions?: QuizQuestion[];
 }

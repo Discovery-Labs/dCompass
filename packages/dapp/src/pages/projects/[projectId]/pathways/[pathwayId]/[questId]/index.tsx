@@ -23,6 +23,7 @@ import {
 import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
+import BountyForm from "components/projects/quests/bounty/BountyForm";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
 import { GetServerSideProps } from "next";
@@ -39,7 +40,7 @@ import CardMedia from "../../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../../components/layout/BreadcrumbItems";
 // import GithubContributorQuestForm from "../../../../../../components/projects/quests/github/GithubContributorQuestForm";
 import QuestCompletedByList from "../../../../../../components/projects/quests/QuestCompletedByList";
-import QuizForm from "../../../../../../components/projects/quests/quizz/QuizForm";
+import QuizForm from "../../../../../../components/projects/quests/quiz/QuizForm";
 // import SnapshotVoterForm from "../../../../../../components/projects/quests/snapshot/SnapshotVoterForm";
 // import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
 // import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
@@ -167,8 +168,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       type,
       projectId,
       questions,
-      proposalId,
-      githubOrgId,
       createdBy,
       collectionContractAddress,
       tokenContractAddress,
@@ -196,8 +195,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         pathwayId,
         projectId,
         questions,
-        proposalId,
-        githubOrgId,
         createdBy,
         collectionContractAddress,
         tokenContractAddress,
@@ -353,6 +350,13 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                   {quizData?.getQuizQuestById.questType === "quiz" && (
                     <QuizForm
                       questions={quizData?.getQuizQuestById.questions}
+                      questId={questId}
+                      pathwayId={pathwayId}
+                      successCallback={() => handleTabsChange(2)}
+                    />
+                  )}
+                  {quizData?.getQuizQuestById.questType === "bounty" && (
+                    <BountyForm
                       questId={questId}
                       pathwayId={pathwayId}
                       successCallback={() => handleTabsChange(2)}

@@ -7,6 +7,7 @@ import { ApproveQuestResolver } from './mutations/ApproveQuest.resolver';
 import { ClaimQuestRewardsResolver } from './mutations/ClaimQuestRewards.resolver';
 import { CreateGithubContributorQuestResolver } from './mutations/CreateGithubContributorQuest.resolver';
 import { CreateNFTOwnerQuestResolver } from './mutations/CreateNFTOwnerQuest.resolver';
+import { CreateQuestResolver } from './mutations/CreateQuest.resolver';
 import { CreateQuizQuestResolver } from './mutations/CreateQuizQuest.resolver';
 
 // import { GetAllQuestsResolver } from './queries/GetAllQuests.resolver';
@@ -26,6 +27,7 @@ import { GetQuizQuestByIdResolver } from './queries/GetQuizQuestById.resolver';
     CreateGithubContributorQuestResolver,
     CreateNFTOwnerQuestResolver,
     CreateQuizQuestResolver,
+    CreateQuestResolver,
     ApproveQuestResolver,
     VerifyQuestResolver,
     GetAllQuestsByPathwayIdResolver,

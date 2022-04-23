@@ -36,6 +36,7 @@ import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
 import { GET_APP_DID } from "../../../graphql/app";
 import {
+  CREATE_QUEST_MUTATION,
   CREATE_QUIZ_QUEST_MUTATION,
   GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
 } from "../../../graphql/quests";
@@ -44,7 +45,7 @@ import ControlledSelect from "../../Inputs/ControlledSelect";
 import DiscordMemberForm from "./discord/DiscordMemberForm";
 import GithubContributorForm from "./github/GithubContributorForm";
 import PoapOwnerForm from "./poap/PoapOwnerForm";
-import QuestionsForm from "./quizz/QuestionsForm";
+import QuestionsForm from "./quiz/QuestionsForm";
 import SnapshotForm from "./snapshot/SnapshotForm";
 import NFTOwnerForm from "./token/NFTOwnerForm";
 import TokenHolderForm from "./token/TokenHolderForm";
@@ -80,10 +81,10 @@ const questTypeOptions = [
   //   label: "Github contributor",
   //   value: "github-contributor",
   // },
-  // {
-  //   label: "NFT owner",
-  //   value: "nft-owner",
-  // },
+  {
+    label: "Bounty",
+    value: "bounty",
+  },
   {
     label: "Quiz",
     value: "quiz",
@@ -98,8 +99,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const router = useRouter();
   const toast = useToast();
   const [code, setCode] = useState<string>();
-  const [submitStatus, setSubmitStatus] = useState<string>("Creating quest");
   const { codeEditorScheme } = useCustomColor();
+  const [submitStatus, setSubmitStatus] = useState<string>("Creating quest");
   const { tokens } = useTokenList();
   const { library, chainId } = useWeb3React();
   const { self, account, contracts } = useContext(Web3Context);
@@ -114,6 +115,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
     },
   });
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
+    refetchQueries: "all",
+  });
+  const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION, {
     refetchQueries: "all",
   });
 
@@ -184,6 +188,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     "nft-owner": <NFTOwnerForm />,
     "discord-member": <DiscordMemberForm />,
     quiz: <QuestionsForm />,
+    bounty: "",
     defaultOption: "",
   };
   const questType = (currentValues?.type?.value ||
@@ -402,6 +407,12 @@ const CreateQuestForm: React.FunctionComponent = () => {
     setSubmitStatus("Quest validation");
     if (questType === "quiz") {
       const { data } = await createQuizQuestMutation({
+        variables: createQuestMutationVariables,
+      });
+      result = data.createQuizQuest;
+    }
+    if (questType === "bounty") {
+      const { data } = await createQuestMutation({
         variables: createQuestMutationVariables,
       });
       result = data.createQuizQuest;

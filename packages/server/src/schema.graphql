@@ -144,6 +144,9 @@ type Mutation {
   """Create a new Project in dCompass"""
   createProject(input: CreateProjectInput!): [CreateProjectOutput!]
 
+  """Create a new Quest in dCompass"""
+  createQuest(input: CreateQuestInput!): Quest
+
   """Create a new Quiz quest in dCompass"""
   createQuizQuest(input: CreateQuestInput!): QuizQuest
 
@@ -352,7 +355,7 @@ type QuizQuest {
   pathway: Pathway!
   pathwayId: String!
   questType: String!
-  questions: [QuizQuestion!]!
+  questions: [QuizQuestion!]
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
