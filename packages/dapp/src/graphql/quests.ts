@@ -185,6 +185,12 @@ export const SUBMIT_QUEST_ANSWERS_MUTATION = gql`
   }
 `;
 
+export const SUBMIT_QUEST_SOLUTION_MUTATION = gql`
+  mutation SubmitQuestSolution($input: QuestSolutionSubmissionInput!) {
+    submitQuestSolution(input: $input)
+  }
+`;
+
 export const CLAIM_QUEST_REWARDS_MUTATION = gql`
   mutation ClaimQuestRewards($input: ClaimQuestRewardsInput!) {
     claimQuestRewards(input: $input) {

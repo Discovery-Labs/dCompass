@@ -323,6 +323,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
               <Tab>Guide</Tab>
               <Tab>Play quest</Tab>
               <Tab>Details &amp; rewards</Tab>
+              {quizData?.getQuizQuestById.questType === "bounty" && (
+                <Tab>Submissions</Tab>
+              )}
               <Tab>Completed by</Tab>
             </TabList>
           </HStack>
@@ -343,7 +346,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
             {/* 2 Tab */}
             <TabPanel px="0">
               {quizData?.getQuizQuestById.completedBy &&
-              quizData?.getQuizQuestById.completedBy.includes(self?.id) ? (
+                quizData?.getQuizQuestById.completedBy.includes(self?.id) ? (
                 <Text>Quest already completed!</Text>
               ) : (
                 <Box>
@@ -581,6 +584,20 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
             </TabPanel>
 
             {/* 3 Tab */}
+            {quizData?.getQuizQuestById.questType === "bounty" && (
+              <TabPanel px="0">
+                <VStack w="full" align="flex-start">
+                  {quizData?.getQuizQuestById.completedBy && (
+                    <QuestCompletedByList
+                      streamId={quizData.getQuizQuestById.streamId}
+                      completedBy={quizData.getQuizQuestById.completedBy}
+                      claimedByAddrs={claimedBy}
+                    />
+                  )}
+                </VStack>
+              </TabPanel>
+            )}
+            {/* 4 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 {quizData?.getQuizQuestById.completedBy && (

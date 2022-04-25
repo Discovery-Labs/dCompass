@@ -19,7 +19,7 @@ export class SubmitQuestAnswersResolver {
   constructor(
     private readonly threadDBService: ThreadDBService,
     public readonly appService: AppService,
-  ) {}
+  ) { }
   @Mutation(() => SubmitQuestAnswersOutput, {
     nullable: false,
     description: 'Submits quest answers',
@@ -49,7 +49,7 @@ export class SubmitQuestAnswersResolver {
       }),
       answerSubmition.questAdventurerSignature,
     );
-    console.log({ decodedAddress})
+    console.log({ decodedAddress });
     if (!decodedAddress) {
       throw new ForbiddenException('Unauthorized');
     }
@@ -62,11 +62,11 @@ export class SubmitQuestAnswersResolver {
               JSON.parse(qa.answer),
             );
 
-            console.log({decryptedAnswers })
+          console.log({ decryptedAnswers });
           const submittedAnswer = answerSubmition.questionAnswers.find(
             (question) => question.question === qa.question,
           )?.answer;
-          console.log({submittedAnswer})
+          console.log({ submittedAnswer });
 
           if (!submittedAnswer || !decryptedAnswers) {
             return false;

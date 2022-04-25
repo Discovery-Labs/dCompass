@@ -146,3 +146,12 @@ Data is stored on the Filecoin network, which has a unique economic model and ov
 - Should include a link to a working application using `@self.id/framework` (even on a dev or staging environment, using testnet networks)
 - Should include a link to the Github repo used for the deployed application
 - Should include feedback on the developer experience (minimum 200 words)
+
+---- CERAMIC CHALLENGE SOLUTION -----
+
+## [Link to working app](https://alpha.dcompass.xyz)
+## [Link to github repo](https://github.com/Discovery-Labs/dCompass)
+## Feedback on the developer experience
+- I had some issues trying to login on mobile using the Argent and Rainbow wallets
+- I had also issues when switching between wallets that had 2 different DIDs, I had to give a page refresh for a proper DID change
+- It was great to integrate the Github and Twitter account linking

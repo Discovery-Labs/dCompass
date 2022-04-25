@@ -35,24 +35,17 @@ const web3Storage = new Web3Storage({ token: getWeb3Token() });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const form = await parseForm(req);
-  const cids = await Promise.all(
-    Object.values(form.files)
-      .flatMap((file) => file)
-      .map(async (file: any) => {
-        const name = file.originalFilename;
-        const f = new File([fs.readFileSync(file.path)], name);
-        const cid = await web3Storage.put([f], { wrapWithDirectory: false });
-        return { field: file.fieldName, cid };
-      })
-  );
+  console.log({ fls: form });
+  const files = Object.values(form.files)
+    .flatMap((f) => f)
+    .map((file: any) => {
+      const name = file.originalFilename;
+      const f = new File([fs.readFileSync(file.path)], name);
+      return f;
+    });
 
-  return res.status(200).json({
-    cids: cids.reduce((formattedCids, curr) => {
-      // eslint-disable-next-line no-param-reassign
-      formattedCids[curr.field] = curr.cid;
-      return formattedCids;
-    }, {} as any),
-  });
+  const rootCid = await web3Storage.put(files, { wrapWithDirectory: true });
+  return res.status(200).json({ field: "medias", rootCid });
 }
 
 // first we need to disable the default body parser

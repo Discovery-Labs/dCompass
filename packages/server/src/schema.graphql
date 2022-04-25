@@ -159,6 +159,9 @@ type Mutation {
   """Submits quest answers"""
   submitQuestAnswers(input: QuestAnswersSubmitionInput!): SubmitQuestAnswersOutput!
 
+  """Submits quest solution"""
+  submitQuestSolution(input: QuestSolutionSubmissionInput!): Boolean!
+
   """Verify a new Pathway right before minting in dCompass"""
   verifyPathway(input: VerifyPathwayInput!): Pathway
 
@@ -336,6 +339,15 @@ input QuestAnswersSubmitionInput {
 input QuestQuestionAnswerInput {
   answer: [String!]!
   question: String!
+}
+
+input QuestSolutionSubmissionInput {
+  chainId: Int!
+  did: String!
+  namespace: String
+  questAdventurerSignature: String!
+  questId: String!
+  solution: String!
 }
 
 type QuizQuest {
