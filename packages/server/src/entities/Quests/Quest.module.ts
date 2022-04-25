@@ -19,6 +19,7 @@ import { SubmitQuestAnswersResolver } from './mutations/SubmitQuestAnswers.resol
 import { SubmitQuestSolutionResolver } from './mutations/SubmitQuestSolution.resolver';
 import { VerifyQuestResolver } from './mutations/VerifyQuest.resolver';
 import { GetAllQuestsByPathwayIdResolver } from './queries/GetAllQuestsByPathwayId.resolver';
+import { GetBountyQuestByIdResolver } from './queries/GetBountyQuestById.resolver';
 import { GetQuizQuestByIdResolver } from './queries/GetQuizQuestById.resolver';
 
 @Module({
@@ -38,6 +39,7 @@ import { GetQuizQuestByIdResolver } from './queries/GetQuizQuestById.resolver';
     ThreadDBService,
     AppService,
     ClaimQuestRewardsResolver,
+    GetBountyQuestByIdResolver,
     // CreateQuestResolver,
     // GetQuestByIdResolver,
   ],

@@ -138,6 +138,35 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
   }
 `;
 
+export const GET_BOUNTY_QUEST_BY_ID_QUERY = gql`
+  query GetBountyQuestById($questId: String!) {
+    getBountyQuestById(questId: $questId) {
+      id
+      streamId
+      name
+      description
+      slogan
+      pathwayId
+      questType
+      image
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
+      isPending
+      completedBy
+      createdBy {
+        did
+        name
+      }
+      submissions {
+        did
+        status
+        reviewComment
+        solution
+      }
+    }
+  }
+`;
 export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
   query GetQuizQuestById($questId: String!) {
     getQuizQuestById(questId: $questId) {

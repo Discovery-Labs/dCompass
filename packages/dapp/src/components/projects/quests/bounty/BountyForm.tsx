@@ -27,8 +27,8 @@ import { useForm } from "react-hook-form";
 import { Web3Context } from "../../../../contexts/Web3Context";
 import {
   GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
-  GET_QUIZ_QUEST_BY_ID_QUERY,
-  SUBMIT_QUEST_ANSWERS_MUTATION,
+  GET_BOUNTY_QUEST_BY_ID_QUERY,
+  SUBMIT_QUEST_SOLUTION_MUTATION,
 } from "../../../../graphql/quests";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
@@ -52,11 +52,11 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
 
   const { data, loading, error } = useQuery(GET_APP_DID);
   const [submitQuestSolutionMutation] = useMutation(
-    SUBMIT_QUEST_ANSWERS_MUTATION,
+    SUBMIT_QUEST_SOLUTION_MUTATION,
     {
       refetchQueries: [
         {
-          query: GET_QUIZ_QUEST_BY_ID_QUERY,
+          query: GET_BOUNTY_QUEST_BY_ID_QUERY,
           variables: {
             questId,
           },

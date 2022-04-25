@@ -15,7 +15,7 @@ export class SubmitQuestSolutionResolver {
   constructor(
     private readonly threadDBService: ThreadDBService,
     public readonly appService: AppService,
-  ) { }
+  ) {}
   @Mutation(() => Boolean, {
     nullable: false,
     description: 'Submits quest solution',
@@ -49,9 +49,9 @@ export class SubmitQuestSolutionResolver {
       throw new ForbiddenException('Unauthorized');
     }
 
-    const alreadySubmittedBy = quest.submissions.map(
-      ({ did }: { did: string }) => did,
-    );
+    const alreadySubmittedBy = quest.submissions
+      ? quest.submissions.map(({ did }: { did: string }) => did)
+      : [];
     const alreadyCompletedBy = quest.completedBy ?? [];
     const isQuestAlreadyCompleted = alreadyCompletedBy.includes(
       solutionSubmission.did,
@@ -65,6 +65,11 @@ export class SubmitQuestSolutionResolver {
     if (isQuestAlreadyCompleted) {
       throw new ForbiddenError('Quest already completed');
     }
+    const newSubmission = {
+      did: solutionSubmission.did,
+      solution: solutionSubmission.solution,
+      status: 'under-review',
+    };
 
     await this.threadDBService.update({
       collectionName: 'Quest',
@@ -74,14 +79,9 @@ export class SubmitQuestSolutionResolver {
         {
           _id,
           ...quest,
-          submissions: [
-            ...quest.submissions,
-            {
-              did: solutionSubmission.did,
-              solution: solutionSubmission.solution,
-              isApproved: false,
-            },
-          ],
+          submissions: quest.submissions
+            ? [...quest.submissions, newSubmission]
+            : [newSubmission],
         },
       ],
     });

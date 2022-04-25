@@ -23,6 +23,34 @@ input ApproveQuestInput {
   questApproverSignature: String!
 }
 
+type BountyQuest {
+  chainId: Int!
+  completedBy: [String!]!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+  createdBy: CreatedBy!
+  description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
+  id: String!
+  image: String!
+  isPending: Boolean
+  name: String!
+  namespace: String
+  pathway: Pathway!
+  pathwayId: String!
+  questType: String!
+  rewardAmount: Float!
+  rewardCurrency: String!
+  rewardUserCap: Int!
+  slogan: String!
+  streamId: String!
+  submissions: [SolutionSubmission!]!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+}
+
 input ClaimPathwayRewardsInput {
   chainId: Int!
   did: String!
@@ -86,6 +114,12 @@ type ExpandedServerSignature {
   r: String!
   s: String!
   v: Int!
+}
+
+input GetBountyQuestByIdInput {
+  did: String!
+  questId: String!
+  signature: String!
 }
 
 type GithubContributorQuest {
@@ -290,6 +324,9 @@ type Query {
   """Return the DID of the dCompass backend server"""
   getAppDID: String
 
+  """Gets a quiz quest by its ID"""
+  getBountyQuestById(input: GetBountyQuestByIdInput!): BountyQuest
+
   """Gets a pathway by its Stream ID"""
   getPathwayById(pathwayId: String!): Pathway
 
@@ -410,6 +447,13 @@ type SnapshotVoterQuest {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
+}
+
+type SolutionSubmission {
+  did: String!
+  reviewComment: String
+  solution: String!
+  status: String!
 }
 
 type Squad {

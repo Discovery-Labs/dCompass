@@ -24,6 +24,7 @@ import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
 import BountyForm from "components/projects/quests/bounty/BountyForm";
+import QuestSubmissionList from "components/projects/quests/bounty/QuestSubmissionList";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
 import { GetServerSideProps } from "next";
@@ -89,7 +90,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       questId,
     },
   });
+
   const [tabIndex, setTabIndex] = useState(0);
+  const [authzSignature, setAuthzSignature] = useState<string>();
   const [claimedBy, setClaimedBy] = useState<string[]>();
   const [isClaimed, setIsClaimed] = useState<boolean>(false);
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
@@ -265,6 +268,14 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
     });
   };
 
+  const handleUnlockSumbissions = async () => {
+    const signature = await library.provider.send("personal_sign", [
+      self.id,
+      account,
+    ]);
+    setAuthzSignature(signature.result);
+  };
+
   const isOwner = quizData?.getQuizQuestById.createdBy.did === self?.id;
   const isCompleted = useCallback(() => {
     return (quizData?.getQuizQuestById.completedBy || []).includes(self?.id);
@@ -346,7 +357,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
             {/* 2 Tab */}
             <TabPanel px="0">
               {quizData?.getQuizQuestById.completedBy &&
-                quizData?.getQuizQuestById.completedBy.includes(self?.id) ? (
+              quizData?.getQuizQuestById.completedBy.includes(self?.id) ? (
                 <Text>Quest already completed!</Text>
               ) : (
                 <Box>
@@ -587,12 +598,15 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
             {quizData?.getQuizQuestById.questType === "bounty" && (
               <TabPanel px="0">
                 <VStack w="full" align="flex-start">
-                  {quizData?.getQuizQuestById.completedBy && (
-                    <QuestCompletedByList
-                      streamId={quizData.getQuizQuestById.streamId}
-                      completedBy={quizData.getQuizQuestById.completedBy}
-                      claimedByAddrs={claimedBy}
+                  {authzSignature ? (
+                    <QuestSubmissionList
+                      signature={authzSignature}
+                      questId={quizData.getQuizQuestById.id}
                     />
+                  ) : (
+                    <Button onClick={handleUnlockSumbissions}>
+                      Sign to unlock protected content
+                    </Button>
                   )}
                 </VStack>
               </TabPanel>
