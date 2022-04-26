@@ -19,7 +19,7 @@ import "hardhat/console.sol";
 
 contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     using Counters for Counters.Counter;
-    //using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20;
     
     Counters.Counter private _tokenIds;
 

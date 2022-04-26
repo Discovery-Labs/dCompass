@@ -12,11 +12,13 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./RandomNumberConsumer.sol";
 import "./Verify.sol";
 
 contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
+    using safeERC20 for IERC20;
 
     Counters.Counter private _tokenIds;
 
