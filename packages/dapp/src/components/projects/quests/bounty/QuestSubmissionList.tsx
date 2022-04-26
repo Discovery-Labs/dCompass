@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import mime from "mime-types";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
@@ -35,11 +35,15 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { Web3Context } from "contexts/Web3Context";
 import { convertToKebabCase, dataURLtoBlob } from "core/helpers";
 import useCustomColor from "core/hooks/useCustomColor";
-import { GET_BOUNTY_QUEST_BY_ID_QUERY } from "graphql/quests";
+import {
+  APPROVE_QUEST_SOLUTION_MUTATION,
+  GET_BOUNTY_QUEST_BY_ID_QUERY,
+} from "graphql/quests";
 import { useContext, useState } from "react";
 import { BiDownload } from "react-icons/bi";
 import { MdOutlineRateReview } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
+import { useWeb3React } from "@web3-react/core";
 
 type SolutionSubmission = {
   did: string;
@@ -57,9 +61,13 @@ function QuestSubmissionList({
   const [solutionReview, setSolutionReview] =
     useState<SolutionSubmission | null>();
   const [markdownSolution, setMarkdownSolution] = useState<string | null>();
-  const { self } = useContext(Web3Context);
+  const { self, account } = useContext(Web3Context);
+  const { library } = useWeb3React();
   const { getBorderColor } = useCustomColor();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [approveQuestSolutionMutation] = useMutation(
+    APPROVE_QUEST_SOLUTION_MUTATION
+  );
   const { data, loading, error } = useQuery(GET_BOUNTY_QUEST_BY_ID_QUERY, {
     variables: {
       input: {
@@ -83,7 +91,27 @@ function QuestSubmissionList({
     return onOpen();
   };
 
-  const handleApproveSolution = (solution: SolutionSubmission) => {
+  const handleApproveSolution = async (solution: SolutionSubmission) => {
+    // TODO: call mutation to change the status of the submission
+    const signatureInput = {
+      id: questId,
+      pathwayId: data.getBountyQuestById.pathwayId,
+      adventurerDID: solution.did,
+    };
+    const signature = await library.provider.send("personal_sign", [
+      JSON.stringify(signatureInput),
+      account,
+    ]);
+    const res = await approveQuestSolutionMutation({
+      variables: {
+        input: {
+          id: questId,
+          adventurerDID: solution.did,
+          solutionApproverSignature: signature.result,
+        },
+      },
+    });
+    console.log({ res });
     setSolutionReview(null);
     return onClose();
   };
@@ -96,7 +124,7 @@ function QuestSubmissionList({
   if (loading)
     return (
       <Stack pt="30" px="8">
-        <Text textTransform="uppercase">Quest loading</Text>
+        <Text textTransform="uppercase">Submissions loading</Text>
         <Progress size="xs" isIndeterminate />
       </Stack>
     );

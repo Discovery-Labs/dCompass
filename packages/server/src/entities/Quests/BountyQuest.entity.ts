@@ -8,5 +8,5 @@ export class BountyQuest extends Quest {
   @Field(() => [SolutionSubmission], { defaultValue: [] })
   submissions: SolutionSubmission[];
   @Field(() => Boolean, { defaultValue: false })
-  isProjectContributor: boolean;
+  isProjectContributor?: boolean;
 }

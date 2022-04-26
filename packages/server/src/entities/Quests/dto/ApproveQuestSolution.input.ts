@@ -2,22 +2,22 @@ import { Field, InputType } from "@nestjs/graphql";
 import { IsString, IsDefined, IsNotEmpty } from "class-validator";
 
 @InputType()
-export class GetBountyQuestByIdInput {
+export class ApproveQuestSolutionInput {
   @Field()
   @IsString({ message: "wrong.type" })
   @IsDefined({ message: "not.defined" })
   @IsNotEmpty({ message: "not.empty" })
-  questId: string;
+  id: string;
 
   @Field()
   @IsString({ message: "wrong.type" })
   @IsDefined({ message: "not.defined" })
   @IsNotEmpty({ message: "not.empty" })
-  did: string;
+  adventurerDID: string;
 
   @Field()
   @IsString({ message: "wrong.type" })
   @IsDefined({ message: "not.defined" })
   @IsNotEmpty({ message: "not.empty" })
-  signature: string;
+  solutionApproverSignature: string;
 }

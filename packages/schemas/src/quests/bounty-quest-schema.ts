@@ -20,8 +20,11 @@ export const QuizQuestSchema = {
                     solution: {
                         type: "string",
                     },
-                    isApproved: {
-                        type: "boolean"
+                    status: {
+                        type: "string"
+                    },
+                    reviewComment: {
+                        type: "string"
                     }
                 },
             },

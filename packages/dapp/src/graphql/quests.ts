@@ -85,6 +85,22 @@ export const APPROVE_QUEST_MUTATION = gql`
   }
 `;
 
+export const APPROVE_QUEST_SOLUTION_MUTATION = gql`
+  mutation ApproveQuestSolution($input: ApproveQuestSolutionInput!) {
+    approveQuestSolution(input: $input) {
+      id
+      name
+      description
+      submissions {
+        did
+        status
+        reviewComment
+        solution
+      }
+    }
+  }
+`;
+
 export const VERIFY_QUEST_MUTATION = gql`
   mutation VerifyQuest($input: VerifyQuestInput!) {
     verifyQuest(input: $input) {
