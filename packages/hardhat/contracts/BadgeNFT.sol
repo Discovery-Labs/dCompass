@@ -58,6 +58,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForBadgeERC20;//has user received funds for this badge in ERC20Token Address
     mapping (string => mapping(address => bool)) public userRewardedForBadgeNative;//has user received funds for this badge in native token
     uint256 public fee = 1500; //number divided by 10000 for fee. for example 100 = 1%
+    uint256 public creatorFee = 300; //number divided by 10000 for fee. for example 100 = 1%
 
     enum BadgeStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
 
@@ -181,13 +182,19 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         require(success);
         address appWallet = abi.decode(data, (address));
         uint appPortion = (amount*fee)/10000;
+        uint creatorPortion = (amount*creatorFee)/10000;
+        uint creatorDivisor = contributors.length;
         if(useNative){
-            require(msg.value >= amount + appPortion, "not enough sent");
+            require(msg.value >= amount + appPortion + creatorPortion, "not enough sent");
             (success,) = payable(appWallet).call{value : appPortion}("");
             require(success);
+            for(uint index = 0; index < creatorDivisor; index++){
+                (success,) = payable(contributors[index]).call{value : creatorPortion/creatorDivisor}("");
+                require(success);
+            }
             nativeRewards[_badgeId] += amount;
-            if(msg.value > amount + appPortion){
-                (success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion}("");
+            if(msg.value > amount + appPortion + creatorPortion){
+                (success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion - creatorPortion}("");
                 require(success);
             }
         }
@@ -200,8 +207,11 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             require(success);
             success = abi.decode(data, (bool));
             require(success, "ERC20 not approved");
-            IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion);
+            IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion + creatorPortion);
             IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount);
+            for(uint index = 0; index < creatorDivisor; index++){
+                IERC20(_ERC20Address).transfer(contributors[index], creatorPortion/creatorDivisor);
+            }
             erc20Amounts[_badgeId][_ERC20Address] += amount;
         }
     }
