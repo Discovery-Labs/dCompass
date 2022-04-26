@@ -57,6 +57,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForPathwayERC20;//has user received funds for this pathway in ERC20Token Address
     mapping (string => mapping(address => bool)) public userRewardedForPathwayNative;//has user received funds for this pathway in native token
     uint256 public fee = 1500; //number divided by 10000 for fee. for example 100 = 1%
+    uint256 public creatorFee = 300; //number divided by 10000 for fee. for example 100 = 1%
 
     enum PathwayStatus {
         NONEXISTENT,
@@ -214,7 +215,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
 
     //TODO: move these to rewards contract!
     function addPathwayCreationReward(string memory _pathwayId, address _ERC20Address, bool useNative, uint amount) public payable{
-        require (status[_pathwayId] == PathwayStatus.PENDING, "pathway not pending");
+        require (status[_pathwayId] == PathwayStatus.PENDING || status[_pathwayId] == PathwayStatus.APPROVED, "pathway not pending/approved");
         require (numUsersRewardPerPathway[_pathwayId] > 0, "no user rewards");
         (bool success , bytes memory data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("appWallet()"))));
         require(success);
