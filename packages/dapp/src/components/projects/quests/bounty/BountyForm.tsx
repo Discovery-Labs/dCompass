@@ -84,52 +84,36 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         variant: "subtle",
       });
     }
-    console.log({ values });
     const files = values.medias;
-    console.log({ files });
-
     const markdownBlob = new Blob([values.solution], {
       type: "text/markdown",
     });
     const markdownDataUrl = await blobToDataURL(markdownBlob);
-    console.log({ markdownDataUrl });
-    // const mdFile = new File([mardownBlob], "solution.md");
-    // formData.append("solution.md", mdFile);
-    const attachments = [] as Array<string | ArrayBuffer | null>;
-    for (const file of files) {
-      // Encode the file using the FileReader API
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        attachments.push(reader.result);
-        // Logs data:<type>;base64,wL2dvYWwgbW9yZ...
-      };
-      reader.readAsDataURL(file);
-
-      // formData.append(file.name, file); // appending every file to formdata
+    const attachments = [] as string[];
+    for await (const file of files as FileList) {
+      const dataUrl = await blobToDataURL(
+        new Blob([file], {
+          type: file.type,
+        })
+      );
+      attachments.push(dataUrl);
     }
 
-    const submission = {
-      solution: markdownDataUrl,
-      medias: attachments,
-    };
-    console.log({ submission });
-    const solutionDag = await self.client.ceramic.did.createDagJWE(submission, [
-      // logged-in user,
-      self.id,
-      // backend ceramic did
-      data.getAppDID,
-    ]);
+    const solutionDag = await self.client.ceramic.did.createDagJWE(
+      {
+        solution: markdownDataUrl,
+        medias: attachments,
+      },
+      [
+        // logged-in user,
+        self.id,
+        // backend ceramic did
+        data.getAppDID,
+      ]
+    );
 
-    // const nftCidRes = await fetch("/api/media-storage/", {
-    //   method: "POST",
-    //   body: formData,
-    // });
-    // const { rootCid } = await nftCidRes.json();
-
-    // console.log({ rootCid });
-    // setIsLoading(true);
-    // // TODO: upload files under root dir through Web3.storage
-    // let isValid = false;
+    const decrypted = await self.client.ceramic.did.decryptDagJWE(solutionDag);
+    console.log({ decrypted });
     try {
       const signatureInput = {
         id: questId,
@@ -179,8 +163,8 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
     } catch (error) {
       console.log(error);
       return toast({
-        title: "Signature rejected",
-        description: `You didn't sign your solution submission`,
+        title: "Can't submit solution!",
+        description: `You already submitted a solution or you didn't sign your solution submission`,
         status: "error",
         position: "bottom-right",
         duration: 6000,
@@ -188,79 +172,6 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         variant: "subtle",
       });
     }
-    // try {
-    //   const signatureInput = {
-    //     id: questId,
-    //     pathwayId,
-    //   };
-    //   const signature = await library.provider.send("personal_sign", [
-    //     JSON.stringify(signatureInput),
-    //     account,
-    //   ]);
-    //   const { data } = await submitQuestAnswersMutation({
-    //     variables: {
-    //       input: {
-    //         questId,
-    //         did: self.id,
-    //         questionAnswers,
-    //         questAdventurerSignature: signature.result,
-    //         chainId,
-    //       },
-    //     },
-    //   });
-    //   isValid =
-    //     data.submitQuestAnswers.expandedServerSignatures &&
-    //     data.submitQuestAnswers.isSuccess;
-    //   setIsLoading(false);
-    //   if (isValid) {
-    //     const questStreamId = data.submitQuestAnswers.streamId;
-    //     const [, tokenAddressOrSymbol] =
-    //       data.submitQuestAnswers.rewardCurrency.split(":");
-    //     const isNativeToken = tokenAddressOrSymbol ? false : true;
-    //     toast({
-    //       title: "Well done!",
-    //       description: `You did submit the correct answers!`,
-    //       status: "success",
-    //       position: "bottom-right",
-    //       duration: 6000,
-    //       isClosable: true,
-    //       variant: "subtle",
-    //     });
-    //     // const [metadataVerify] =
-    //     //   data.submitQuestAnswers.expandedServerSignatures;
-    //     // await contracts.BadgeNFT.claimBadgeRewards(
-    //     //   questStreamId,
-    //     //   isNativeToken,
-    //     //   isNativeToken ? account : tokenAddressOrSymbol,
-    //     //   metadataVerify.r,
-    //     //   metadataVerify.s,
-    //     //   metadataVerify.v,
-    //     //   true
-    //     // );
-    //     return successCallback();
-    //   }
-    //   return toast({
-    //     title: "Incorrect answers",
-    //     description: `You didn't submit the correct answers!`,
-    //     status: "error",
-    //     position: "bottom-right",
-    //     duration: 6000,
-    //     isClosable: true,
-    //     variant: "subtle",
-    //   });
-    // } catch (error) {
-    //   isValid = false;
-    //   toast({
-    //     title: "Error!",
-    //     description: (error as ApolloError).message,
-    //     status: "error",
-    //     position: "bottom-right",
-    //     duration: 6000,
-    //     isClosable: true,
-    //     variant: "subtle",
-    //   });
-    //   return setIsLoading(false);
-    // }
   };
   if (loading) {
     <Stack>

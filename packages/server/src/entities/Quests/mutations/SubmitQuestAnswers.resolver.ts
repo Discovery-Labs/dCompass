@@ -1,43 +1,43 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { ForbiddenError } from 'apollo-server-express';
-import { Where } from '@textile/hub';
-import ABIS from '@discovery-dao/hardhat/abis.json';
+import { Resolver, Mutation, Args } from "@nestjs/graphql";
+import { ForbiddenError } from "apollo-server-express";
+import { Where } from "@textile/hub";
+import ABIS from "@discovery-dao/hardhat/abis.json";
 
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
-import { UseCeramicClient, UseThreadDBClient } from '../../../core/utils/types';
-import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
-import { QuestAnswersSubmitionInput } from '../dto/QuestAnswersSubmition.input';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { SubmitQuestAnswersOutput } from '../dto/SubmitQuestAnswers.output';
-import { AppService } from '../../../app.service';
-import { verifyNFTInfo } from '../../../core/utils/security/verify';
-import { ethers } from 'ethers';
+import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
+import { UseThreadDB } from "../../../core/decorators/UseThreadDB.decorator";
+import { UseCeramicClient, UseThreadDBClient } from "../../../core/utils/types";
+import { ThreadDBService } from "../../../services/thread-db/thread-db.service";
+import { QuestAnswersSubmitionInput } from "../dto/QuestAnswersSubmition.input";
+import { ForbiddenException, NotFoundException } from "@nestjs/common";
+import { SubmitQuestAnswersOutput } from "../dto/SubmitQuestAnswers.output";
+import { AppService } from "../../../app.service";
+import { verifyNFTInfo } from "../../../core/utils/security/verify";
+import { ethers } from "ethers";
 
 @Resolver(() => SubmitQuestAnswersOutput)
 export class SubmitQuestAnswersResolver {
   constructor(
     private readonly threadDBService: ThreadDBService,
-    public readonly appService: AppService,
-  ) { }
+    public readonly appService: AppService
+  ) {}
   @Mutation(() => SubmitQuestAnswersOutput, {
     nullable: false,
-    description: 'Submits quest answers',
-    name: 'submitQuestAnswers',
+    description: "Submits quest answers",
+    name: "submitQuestAnswers",
   })
   async submitQuestAnswers(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
     @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
-    @Args('input') answerSubmition: QuestAnswersSubmitionInput,
+    @Args("input") answerSubmition: QuestAnswersSubmitionInput
   ): Promise<SubmitQuestAnswersOutput> {
     const [foundQuest] = await this.threadDBService.query({
-      collectionName: 'Quest',
+      collectionName: "Quest",
       dbClient,
       threadId: latestThreadId,
-      query: new Where('_id').eq(answerSubmition.questId),
+      query: new Where("_id").eq(answerSubmition.questId),
     });
     if (!foundQuest) {
-      throw new NotFoundException('Quest not found');
+      throw new NotFoundException("Quest not found");
     }
 
     const { _id, ...quest } = foundQuest as any;
@@ -47,11 +47,11 @@ export class SubmitQuestAnswersResolver {
         id: answerSubmition.questId,
         pathwayId: quest.pathwayId,
       }),
-      answerSubmition.questAdventurerSignature,
+      answerSubmition.questAdventurerSignature
     );
     console.log({ decodedAddress });
     if (!decodedAddress) {
-      throw new ForbiddenException('Unauthorized');
+      throw new ForbiddenException("Unauthorized");
     }
     console.log({ quest });
     const decryptedQuestionAnswers = await Promise.all(
@@ -59,12 +59,12 @@ export class SubmitQuestAnswersResolver {
         async (qa: { question: string; choices: string[]; answer: string }) => {
           const decryptedAnswers =
             await ceramicClient.ceramic.did?.decryptDagJWE(
-              JSON.parse(qa.answer),
+              JSON.parse(qa.answer)
             );
 
           console.log({ decryptedAnswers });
           const submittedAnswer = answerSubmition.questionAnswers.find(
-            (question) => question.question === qa.question,
+            (question) => question.question === qa.question
           )?.answer;
           console.log({ submittedAnswer });
 
@@ -73,14 +73,14 @@ export class SubmitQuestAnswersResolver {
           }
 
           const isCorrect = decryptedAnswers.every((answer: string) =>
-            submittedAnswer.includes(answer),
+            submittedAnswer.includes(answer)
           );
           return isCorrect;
-        },
-      ),
+        }
+      )
     );
     const isSuccess = decryptedQuestionAnswers.every(
-      (answerIsCorrect) => answerIsCorrect,
+      (answerIsCorrect) => answerIsCorrect
     );
     console.log({ isSuccess });
 
@@ -88,15 +88,15 @@ export class SubmitQuestAnswersResolver {
     if (isSuccess) {
       const alreadyCompletedBy = quest.completedBy ?? [];
       const isQuestAlreadyCompleted = alreadyCompletedBy.includes(
-        answerSubmition.did,
+        answerSubmition.did
       );
       console.log({ isQuestAlreadyCompleted });
       if (isQuestAlreadyCompleted) {
-        throw new ForbiddenError('Quest already completed');
+        throw new ForbiddenError("Quest already completed");
       }
 
       await this.threadDBService.update({
-        collectionName: 'Quest',
+        collectionName: "Quest",
         dbClient,
         threadId: latestThreadId,
         values: [
@@ -109,18 +109,18 @@ export class SubmitQuestAnswersResolver {
       });
       const chainIdStr = answerSubmition.chainId.toString();
       if (!Object.keys(ABIS).includes(chainIdStr)) {
-        throw new Error('Unsupported Network');
+        throw new Error("Unsupported Network");
       }
       const pathway = await this.threadDBService.getPathwayById({
         dbClient,
         threadId: latestThreadId,
         pathwayId: quest.pathwayId,
       });
-      const verifyContract = this.appService.getContract(chainIdStr, 'Verify');
-      const questContract = this.appService.getContract(chainIdStr, 'BadgeNFT');
+      const verifyContract = this.appService.getContract(chainIdStr, "Verify");
+      const questContract = this.appService.getContract(chainIdStr, "BadgeNFT");
       const metadataNonceId = await verifyContract.noncesParentIdChildId(
         pathway.streamId,
-        quest.streamId,
+        quest.streamId
       );
       const { r, s, v } = await verifyNFTInfo({
         contractAddress: questContract.address,

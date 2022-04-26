@@ -75,6 +75,7 @@
     "key-did-provider-ed25519": "^1.1.0",
     "key-did-resolver": "^1.4.0",
     "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
     "multiparty": "^4.2.2",
     "next": "^11.1.2",
     "next-i18next": "^10.2.0",

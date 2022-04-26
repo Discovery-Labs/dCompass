@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+import mime from "mime-types";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Table,
@@ -30,12 +31,15 @@ import {
   Heading,
   HStack,
 } from "@chakra-ui/react";
-import CodeEditorPreview from "components/custom/CodeEditorPreview";
-import AddGitHubAccountScreen from "components/custom/profile/AddGithubAccountScreen";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { Web3Context } from "contexts/Web3Context";
+import { convertToKebabCase, dataURLtoBlob } from "core/helpers";
+import useCustomColor from "core/hooks/useCustomColor";
 import { GET_BOUNTY_QUEST_BY_ID_QUERY } from "graphql/quests";
 import { useContext, useState } from "react";
+import { BiDownload } from "react-icons/bi";
 import { MdOutlineRateReview } from "react-icons/md";
+import ReactMarkdown from "react-markdown";
 
 type SolutionSubmission = {
   did: string;
@@ -52,18 +56,30 @@ function QuestSubmissionList({
 }) {
   const [solutionReview, setSolutionReview] =
     useState<SolutionSubmission | null>();
+  const [markdownSolution, setMarkdownSolution] = useState<string | null>();
   const { self } = useContext(Web3Context);
+  const { getBorderColor } = useCustomColor();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { data, loading, error } = useQuery(GET_BOUNTY_QUEST_BY_ID_QUERY, {
     variables: {
-      questId,
-      signature,
-      did: self.id,
+      input: {
+        questId,
+        signature,
+        did: self.id,
+      },
     },
   });
 
-  const handleOpenReview = (solution: SolutionSubmission) => {
-    setSolutionReview(solution);
+  const handleOpenReview = async (submission: SolutionSubmission) => {
+    setSolutionReview(submission);
+    const solutionBlob = dataURLtoBlob(
+      JSON.parse(submission.solution).solution
+    );
+
+    const rawMarkdown = await solutionBlob.text();
+
+    setMarkdownSolution(rawMarkdown);
+
     return onOpen();
   };
 
@@ -128,10 +144,51 @@ function QuestSubmissionList({
                   </HStack>
                 </HStack>
 
-                <CodeEditorPreview
-                  key={solutionReview.did}
-                  code={solutionReview.solution}
-                />
+                {JSON.parse(solutionReview.solution).solution && (
+                  <Button leftIcon={<BiDownload />}>
+                    <a
+                      download={`questId_${questId}-did_${solutionReview.did}-solution.md`}
+                      href={JSON.parse(solutionReview.solution).solution}
+                    >
+                      Download solution
+                    </a>
+                  </Button>
+                )}
+
+                {JSON.parse(solutionReview.solution)?.medias &&
+                  JSON.parse(solutionReview.solution).medias.map(
+                    (media: string, i: number) => {
+                      const mimeTypeMatch = media.match(
+                        /[^:]\w+\/[\w-+\d.]+(?=;|,)/
+                      );
+                      if (mimeTypeMatch) {
+                        const extension = mime.extension(mimeTypeMatch[0]);
+                        return (
+                          <Button key={media} leftIcon={<BiDownload />}>
+                            <a
+                              download={`questId_${questId}-did_${solutionReview.did}-attachments_${i}.${extension}`}
+                              href={media}
+                            >
+                              Download attachment {i + 1}
+                            </a>
+                          </Button>
+                        );
+                      }
+                    }
+                  )}
+
+                <Box
+                  bgColor="bg"
+                  border={`1px solid ${getBorderColor}`}
+                  borderRadius="4px"
+                  padding="4"
+                >
+                  {markdownSolution && (
+                    <ReactMarkdown components={ChakraUIRenderer()} skipHtml>
+                      {markdownSolution}
+                    </ReactMarkdown>
+                  )}
+                </Box>
               </VStack>
             )}
           </ModalBody>

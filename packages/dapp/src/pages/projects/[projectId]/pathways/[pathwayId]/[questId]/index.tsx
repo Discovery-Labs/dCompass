@@ -292,7 +292,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
     );
   if (error || projectError || quizError)
     return `Loading error! ${error?.message || projectError?.message}`;
-
+  const isContributor = projectRes.getProjectById.squads
+    .flatMap(({ members }: { members: string[] }) => members)
+    .includes(account);
   return (
     <Container>
       <BreadcrumbItems
@@ -595,22 +597,25 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
             </TabPanel>
 
             {/* 3 Tab */}
-            {quizData?.getQuizQuestById.questType === "bounty" && (
-              <TabPanel px="0">
-                <VStack w="full" align="flex-start">
-                  {authzSignature ? (
-                    <QuestSubmissionList
-                      signature={authzSignature}
-                      questId={quizData.getQuizQuestById.id}
-                    />
-                  ) : (
-                    <Button onClick={handleUnlockSumbissions}>
-                      Sign to unlock protected content
-                    </Button>
-                  )}
-                </VStack>
-              </TabPanel>
-            )}
+            {quizData?.getQuizQuestById.questType === "bounty" &&
+              isContributor && (
+                <TabPanel px="0">
+                  <VStack w="full" align="flex-start">
+                    {authzSignature ? (
+                      <QuestSubmissionList
+                        signature={authzSignature}
+                        questId={quizData.getQuizQuestById.id}
+                      />
+                    ) : (
+                      isContributor && (
+                        <Button onClick={handleUnlockSumbissions}>
+                          Sign to unlock protected content
+                        </Button>
+                      )
+                    )}
+                  </VStack>
+                </TabPanel>
+              )}
             {/* 4 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">

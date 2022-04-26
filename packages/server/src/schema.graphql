@@ -35,6 +35,7 @@ type BountyQuest {
   id: String!
   image: String!
   isPending: Boolean
+  isProjectContributor: Boolean!
   name: String!
   namespace: String
   pathway: Pathway!

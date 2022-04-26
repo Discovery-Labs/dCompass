@@ -139,8 +139,8 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
 `;
 
 export const GET_BOUNTY_QUEST_BY_ID_QUERY = gql`
-  query GetBountyQuestById($questId: String!) {
-    getBountyQuestById(questId: $questId) {
+  query GetBountyQuestById($input: GetBountyQuestByIdInput!) {
+    getBountyQuestById(input: $input) {
       id
       streamId
       name
@@ -164,6 +164,7 @@ export const GET_BOUNTY_QUEST_BY_ID_QUERY = gql`
         reviewComment
         solution
       }
+      isProjectContributor
     }
   }
 `;
