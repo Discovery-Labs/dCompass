@@ -12,12 +12,14 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./RandomNumberConsumer.sol";
 import "./Verify.sol";
 import "hardhat/console.sol";
 
 contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     using Counters for Counters.Counter;
+    //using SafeERC20 for IERC20;
     
     Counters.Counter private _tokenIds;
 
@@ -118,13 +120,13 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             "incorrect pathwayId"
         );
         bool voteAllowed = verifyContract.metaDataVerify(_msgSender(), _badgeId, _pathwayId, r[0], s[0], v[0]);
-        require(voteAllowed, "sender is not approved pathway voter");
+        require(voteAllowed);
         bool thresholdCheck = verifyContract.thresholdVerify(_msgSender(), _badgeId, votesNeeded, r[1], s[1], v[1]);
-        require(thresholdCheck, "incorrect votes needed sent");
+        require(thresholdCheck);
         votes[_badgeId]++;
         reviewerVotes[_badgeId][_msgSender()] = true;
         if(votes[_badgeId] == 1){
-            require(_contributors.length >0, "empty array");
+            require(_contributors.length >0);
             contributors[_badgeId] = _contributors;
             if(votesNeeded <= votes[_badgeId]){
                 status[_badgeId] = BadgeStatus.APPROVED;
@@ -142,8 +144,8 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     }
 
     function voteForRejection(string memory _badgeId, string memory _pathwayId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint256 votesNeeded) public {
-        require(status[_badgeId] == BadgeStatus.PENDING, "badge not pending");
-        require(!reviewerVotes[_badgeId][_msgSender()], "already voted for this badge");
+        require(status[_badgeId] == BadgeStatus.PENDING);
+        require(!reviewerVotes[_badgeId][_msgSender()]);
         require(
             keccak256(abi.encodePacked(pathwayIdforBadge[_badgeId])) == keccak256(abi.encodePacked(_pathwayId)),
             "incorrect pathwayId"
@@ -156,7 +158,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             s[0],
             v[0]
         );
-        require(voteAllowed, "sender is not approved pathway voter");
+        require(voteAllowed);
         bool thresholdCheck = verifyContract.thresholdVerify(
             _msgSender(),
             _badgeId,
@@ -165,7 +167,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             s[1],
             v[1]
         );
-        require(thresholdCheck, "incorrect votes needed sent");
+        require(thresholdCheck);
         votesReject[_badgeId]++;
         reviewerVotes[_badgeId][_msgSender()] = true;        
         if(votesReject[_badgeId] >= votesNeeded){
@@ -177,19 +179,19 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
 
     function addBadgeCreationReward(string memory _badgeId, address _ERC20Address, bool useNative, uint amount) public payable{
         require (status[_badgeId] == BadgeStatus.PENDING || status[_badgeId] == BadgeStatus.APPROVED, "badge not pending/approved");
-        require (numUsersRewardPerBadge[_badgeId] > 0, "no user rewards");
+        require (numUsersRewardPerBadge[_badgeId] > 0, "no rewards");
         (bool success , bytes memory data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("appWallet()"))));
         require(success);
         address appWallet = abi.decode(data, (address));
         uint appPortion = (amount*fee)/10000;
         uint creatorPortion = (amount*creatorFee)/10000;
-        uint creatorDivisor = contributors.length;
+        uint creatorDivisor = contributors[_badgeId].length;
         if(useNative){
-            require(msg.value >= amount + appPortion + creatorPortion, "not enough sent");
+            require(msg.value >= amount + appPortion + creatorPortion, "not enough");
             (success,) = payable(appWallet).call{value : appPortion}("");
             require(success);
             for(uint index = 0; index < creatorDivisor; index++){
-                (success,) = payable(contributors[index]).call{value : creatorPortion/creatorDivisor}("");
+                (success,) = payable(contributors[_badgeId][index]).call{value : creatorPortion/creatorDivisor}("");
                 require(success);
             }
             nativeRewards[_badgeId] += amount;
@@ -206,11 +208,11 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             (success, data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("checkApprovedERC20PerProjectByChain(string,uint256,address)")), projectId, block.chainid, _ERC20Address));
             require(success);
             success = abi.decode(data, (bool));
-            require(success, "ERC20 not approved");
+            require(success, "not approved");
             IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion + creatorPortion);
             IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount);
             for(uint index = 0; index < creatorDivisor; index++){
-                IERC20(_ERC20Address).transfer(contributors[index], creatorPortion/creatorDivisor);
+                IERC20(_ERC20Address).transfer(contributors[_badgeId][index], creatorPortion/creatorDivisor);
             }
             erc20Amounts[_badgeId][_ERC20Address] += amount;
         }
@@ -367,19 +369,19 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     return tokenIds;
   }
 
-  function _mintAdventurerBadge(address _to, string memory _badgeId, string memory _tokenURI) internal {
-      address adventurerBadgeAddress = adventurerAddress[_badgeId];
-      require(adventurerBadgeAddress != address(0), "invalid badge address");
-      (bool success, bytes memory data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("balanceOf(address)")), _msgSender()));
-      require(success);
-      uint256 balance = abi.decode(data, (uint256));
-      if(balance == 0){
-          (success, data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("mint(address,uint256,string)")), _msgSender(), 1, _tokenURI));
-          require(success);
-          (success, data) = adventureFactory.call(abi.encodeWithSelector(bytes4(keccak256("setUserInfo(address,string)")), _msgSender(), _badgeId));
-          require(success);
-      }
-  }
+//   function _mintAdventurerBadge(address _to, string memory _badgeId, string memory _tokenURI) internal {
+//       address adventurerBadgeAddress = adventurerAddress[_badgeId];
+//       require(adventurerBadgeAddress != address(0), "invalid badge address");
+//       (bool success, bytes memory data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("balanceOf(address)")), _msgSender()));
+//       require(success);
+//       uint256 balance = abi.decode(data, (uint256));
+//       if(balance == 0){
+//           (success, data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("mint(address,uint256,string)")), _msgSender(), 1, _tokenURI));
+//           require(success);
+//           (success, data) = adventureFactory.call(abi.encodeWithSelector(bytes4(keccak256("setUserInfo(address,string)")), _msgSender(), _badgeId));
+//           require(success);
+//       }
+//   }
 
   function _localAdventureMint(address _to, string memory _badgeId, string memory _tokenURI, uint256 version) internal {
       if(mintTrackerByBadgeIdVersionMinter[_badgeId][version][_to]){
@@ -397,14 +399,14 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
       mintTrackerByBadgeIdVersionMinter[_badgeId][version][_to] = true;
   }
 
-  function _createAdventurerNFT(string memory _badgeId, string memory _pathwayId) internal {
-      (bool success , bytes memory data) = adventureFactory.call(abi.encodeWithSelector(bytes4(
-          keccak256("createNFTToken(string,bool,string)")
-      ), _badgeId, false, _pathwayId));
-      require(success);
-      address newTokenAddr = abi.decode(data, (address));
-      adventurerAddress[_badgeId] = newTokenAddr;
-  }
+//   function _createAdventurerNFT(string memory _badgeId, string memory _pathwayId) internal {
+//       (bool success , bytes memory data) = adventureFactory.call(abi.encodeWithSelector(bytes4(
+//           keccak256("createNFTToken(string,bool,string)")
+//       ), _badgeId, false, _pathwayId));
+//       require(success);
+//       address newTokenAddr = abi.decode(data, (address));
+//       adventurerAddress[_badgeId] = newTokenAddr;
+//   }
 
   function _verify(address from, string memory _badgeId, uint256 payload, bytes32 r, bytes32 s, uint8 v) internal returns (bool){
       bytes32 hashRecover = keccak256(
