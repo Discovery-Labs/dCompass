@@ -33,7 +33,7 @@ import {
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { Web3Context } from "contexts/Web3Context";
-import { convertToKebabCase, dataURLtoBlob } from "core/helpers";
+import { dataURLtoBlob } from "core/helpers";
 import useCustomColor from "core/hooks/useCustomColor";
 import {
   APPROVE_QUEST_SOLUTION_MUTATION,
