@@ -32,6 +32,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (uint => string) public statusStrings;
     mapping (string => bool) public badgeMinted; // tracks if mint has been done
     mapping (string => address[]) internal contributors; //contributors to this quest
+    mapping (string => address) public creator;//creator for given badgeId
     mapping (string => string) public pathwayIdforBadge;//the pathwayId that is the parent
     mapping (string => BadgeStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes per badgeId;
@@ -59,8 +60,8 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     //badgeId => ERC20Address => senderAddress => bool
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForBadgeERC20;//has user received funds for this badge in ERC20Token Address
     mapping (string => mapping(address => bool)) public userRewardedForBadgeNative;//has user received funds for this badge in native token
-    uint256 public fee = 1500; //number divided by 10000 for fee. for example 100 = 1%
-    uint256 public creatorFee = 300; //number divided by 10000 for fee. for example 100 = 1%
+    uint256 public fee = 1300; //number divided by 10000 for fee. for example 100 = 1%
+    uint256 public creatorFee = 200; //number divided by 10000 for fee. for example 100 = 1%
 
     enum BadgeStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
 
@@ -101,6 +102,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             status[_badgeId] = BadgeStatus.PENDING;
             pathwayIdforBadge[_badgeId] = _pathwayId;
             numUsersRewardPerBadge[_badgeId] = numUsersRewarded;
+            creator[_badgeId] = _msgSender();
             if (callRewards){
                 addBadgeCreationReward(_badgeId, _ERC20Address, useNative, amount);
             }
@@ -185,15 +187,12 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         address appWallet = abi.decode(data, (address));
         uint appPortion = (amount*fee)/10000;
         uint creatorPortion = (amount*creatorFee)/10000;
-        uint creatorDivisor = contributors[_badgeId].length;
         if(useNative){
-            require(msg.value >= amount + appPortion + creatorPortion, "not enough");
+            require(msg.value >= amount + appPortion + creatorPortion, "insufficient funds");
             (success,) = payable(appWallet).call{value : appPortion}("");
             require(success);
-            for(uint index = 0; index < creatorDivisor; index++){
-                (success,) = payable(contributors[_badgeId][index]).call{value : creatorPortion/creatorDivisor}("");
-                require(success);
-            }
+            (success,) = payable(creator[_badgeId]).call{value : creatorPortion}("");
+            require(success);
             nativeRewards[_badgeId] += amount;
             if(msg.value > amount + appPortion + creatorPortion){
                 (success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion - creatorPortion}("");
@@ -209,11 +208,9 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             require(success);
             success = abi.decode(data, (bool));
             require(success, "not approved");
-            IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion + creatorPortion);
-            IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount);
-            for(uint index = 0; index < creatorDivisor; index++){
-                IERC20(_ERC20Address).transfer(contributors[_badgeId][index], creatorPortion/creatorDivisor);
-            }
+            IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion);
+            IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount + creatorPortion);
+            IERC20(_ERC20Address).transfer(creator[_badgeId], creatorPortion);
             erc20Amounts[_badgeId][_ERC20Address] += amount;
         }
     }
