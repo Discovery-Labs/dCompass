@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Contract {
+  id         String           @id @default(cuid())
+  namespace String @default("eip155")
+  chainId String @default("1")
+  contractAddress String
+  project    Project?         @relation(fields: [projectId], references: [id])
+  projectId  String?
+}
+
+model QuizQuestion {
+  id         String           @id @default(cuid())
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  answer String
+  choices String[]
+  question String
+  quest    QuizQuest?         @relation(fields: [questId], references: [id])
+  questId  String?
+}
+
+model SolutionSubmission {
+  id         String           @id @default(cuid())
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  did String
+  reviewComment String
+  solution String
+  status String
+  quest    BountyQuest?         @relation(fields: [questId], references: [id])
+  questId  String?
+}
+
+enum PathwayDifficultyEnum {
+  ADVANCED
+  BEGINNER
+  EXPERT
+  INTERMEDIATE
+  WIZARD
+}
+
+model BountyQuest {
+  id         String           @id @default(cuid())
+  chainId Int
+  completedBy String[]
+  createdBy String
+  description String
+  image String
+  isPending Boolean
+  isProjectContributor Boolean
+  name String
+  namespace String
+  pathway    Pathway?         @relation(fields: [pathwayId], references: [id])
+  pathwayId  String?
+  questType String
+  rewardAmount Float
+  rewardCurrency String
+  rewardUserCap Int
+  slogan String
+  streamId String
+  submissions SolutionSubmission[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
+model QuizQuest {
+  id         String           @id @default(cuid())
+  chainId Int
+  completedBy String[]
+  createdAt String
+  createdBy String
+  description String
+  image String
+  isPending Boolean
+  isProjectContributor Boolean
+  name String
+  namespace String
+  pathway    Pathway?         @relation(fields: [pathwayId], references: [id])
+  pathwayId  String?
+  questType String
+  rewardAmount Float
+  rewardCurrency String
+  rewardUserCap Int
+  slogan String
+  streamId String
+  questions QuizQuestion[]
+  updatedAt String
+}
+
+model Pathway {
+  id         String           @id @default(cuid())
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  createdBy String
+  description String
+  difficulty PathwayDifficultyEnum
+  image String
+  isPending Boolean
+  prerequisites String[]
+  projectStreamId String
+  bountyQuests BountyQuest[]
+  quizQuests QuizQuest[]
+  rewardAmount Float
+  rewardCurrency String
+  rewardUserCap Int
+  slogan String
+  streamId String
+  title String
+  project    Project?         @relation(fields: [projectId], references: [id])
+  projectId  String?
+}
+
+
+model Tag {
+  id                  String              @id @default(cuid())
+  color String
+  value String
+  label String
+  projects Project[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
+model Project {
+  id                  String              @id @default(cuid())
+  name                String
+  introduction        String?
+  description         String
+  website             String
+  twitter             String?
+  discord             String?
+  github              String?
+  logo                String?
+  image               String?
+  contracts           Contract[]
+  isFeatured          Boolean             @default(false)
+  // features            Feature[]
+  gitbook             String?
+  pathways            Pathway[]
+  parentProjectId     String?
+  subprojects         Project[]           @relation("ProjectSubprojects")
+  parentProject       Project?            @relation("ProjectSubprojects", fields: [parentProjectId], references: [id])
+  tags                Tag[]
+  users               User[]
+  // coming from github
+  // technologies        String[]
+  // developmentActivity String[]
+  // //  first commit date ?
+  // projectCreationDate String?
+  // // coming from uniswap subgraph
+  // ticker              String?
+  // price               String?
+  // stored with Web3.storage
+  whitePaper          String?
+  demoVideo           String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
+model User {
+  id    Int     @default(autoincrement()) @id
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  did String  @unique
+  projects  Project[]
+}
+
