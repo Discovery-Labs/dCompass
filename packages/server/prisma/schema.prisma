@@ -55,6 +55,12 @@ enum PathwayDifficultyEnum {
   WIZARD
 }
 
+enum SponsorTierEnum {
+  SILVER
+  GOLD
+  DIAMOND
+}
+
 model BountyQuest {
   id         String           @id @default(cuid())
   streamId   String
@@ -137,23 +143,34 @@ model Tag {
   updatedAt           DateTime            @updatedAt
 }
 
+model ProjectSquad {
+  id                  String              @id @default(cuid())
+  image               String
+  members             String[]
+  project    Project?         @relation(fields: [projectId], references: [id])
+  projectId  String?
+}
+
 model Project {
   id                  String              @id @default(cuid())
   streamId            String
+  squads              ProjectSquad[]
   name                String
-  introduction        String?
+  slogan              String
+  sponsorTier         SponsorTierEnum
   description         String
   website             String
+  projectWallet       String
   twitter             String?
   discord             String?
   github              String?
+  gitbook             String?
   logo                String?
   image               String?
   tokenUris           String[]
   contracts           Contract[]
   isFeatured          Boolean             @default(false)
   // features            Feature[]
-  gitbook             String?
   pathways            Pathway[]
   parentProjectId     String?
   subprojects         Project[]           @relation("ProjectSubprojects")

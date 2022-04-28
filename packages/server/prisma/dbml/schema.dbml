@@ -117,22 +117,33 @@ Table Tag {
   updatedAt DateTime [not null]
 }
 
+Table ProjectSquad {
+  id String [pk]
+  image String [not null]
+  members String[] [not null]
+  project Project
+  projectId String
+}
+
 Table Project {
   id String [pk]
   streamId String [not null]
+  squads ProjectSquad [not null]
   name String [not null]
-  introduction String
+  slogan String [not null]
+  sponsorTier SponsorTierEnum [not null]
   description String [not null]
   website String [not null]
+  projectWallet String [not null]
   twitter String
   discord String
   github String
+  gitbook String
   logo String
   image String
   tokenUris String[] [not null]
   contracts Contract [not null]
   isFeatured Boolean [not null, default: false]
-  gitbook String
   pathways Pathway [not null]
   parentProjectId String
   subprojects Project [not null]
@@ -172,6 +183,12 @@ Enum PathwayDifficultyEnum {
   WIZARD
 }
 
+Enum SponsorTierEnum {
+  SILVER
+  GOLD
+  DIAMOND
+}
+
 Ref: Contract.projectId > Project.id
 
 Ref: QuizQuestion.questId > QuizQuest.id
@@ -183,5 +200,7 @@ Ref: BountyQuest.pathwayId > Pathway.id
 Ref: QuizQuest.pathwayId > Pathway.id
 
 Ref: Pathway.projectId > Project.id
+
+Ref: ProjectSquad.projectId > Project.id
 
 Ref: Project.parentProjectId > Project.id
