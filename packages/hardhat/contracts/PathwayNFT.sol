@@ -146,24 +146,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             keccak256(abi.encodePacked(projectIdforPathway[_pathwayId])) == keccak256(abi.encodePacked(_projectId)),
             "incorrect projectId"
         );
-        bool voteAllowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _pathwayId,
-            _projectId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(voteAllowed, "sender is not approved project voter");
-        bool thresholdCheck = verifyContract.thresholdVerify(
-            _msgSender(),
-            _pathwayId,
-            votesNeeded,
-            r[1],
-            s[1],
-            v[1]
-        );
-        require(thresholdCheck, "incorrect votes needed sent");
+        (bool voteAllowed, bool thresholdCheck) = verifyContractCall(_pathwayId,_projectId,r,s,v, votesNeeded, false);
         votes[_pathwayId]++;
         reviewerVotes[_pathwayId][_msgSender()] = true;
         if (votes[_pathwayId] == 1) {
@@ -190,24 +173,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             keccak256(abi.encodePacked(projectIdforPathway[_pathwayId])) == keccak256(abi.encodePacked(_projectId)),
             "incorrect projectId"
         );
-        bool voteAllowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _pathwayId,
-            _projectId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(voteAllowed, "sender is not approved project voter");
-        bool thresholdCheck = verifyContract.thresholdVerify(
-            _msgSender(),
-            _pathwayId,
-            votesNeeded,
-            r[1],
-            s[1],
-            v[1]
-        );
-        require(thresholdCheck, "incorrect votes needed sent");
+        (bool voteAllowed, bool thresholdCheck) = verifyContractCall(_pathwayId,_projectId,r,s,v, votesNeeded, false);
         votesReject[_pathwayId]++;
         reviewerVotes[_pathwayId][_msgSender()] = true;        
         if(votesReject[_pathwayId] >= votesNeeded){
@@ -287,27 +253,9 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         uint256 votesNeeded
     ) public returns (uint256[] memory) {
         require(!pathwayMinted[_pathwayId], "already minted");
-        //require(vrfContract.blockNumberResults(_pathwayId) > 0, "no request yet");
-        bool allowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _pathwayId,
-            _projectId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(allowed, "sender is not approved project minter");
+        (bool allowed,) = verifyContractCall(_pathwayId,_projectId,r,s,v, votesNeeded, true);
         if (status[_pathwayId] == PathwayStatus.PENDING) {
             require(votesNeeded <= votes[_pathwayId], "not enough votes");
-            allowed = verifyContract.thresholdVerify(
-                _msgSender(),
-                _pathwayId,
-                votesNeeded,
-                r[1],
-                s[1],
-                v[1]
-            );
-            require(allowed, "incorrect votes needed sent");
             status[_pathwayId] = PathwayStatus.APPROVED;
         }
         require(
@@ -433,6 +381,32 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
       address newTokenAddr = abi.decode(data, (address));
       adventurerAddress[_pathwayId] = newTokenAddr;
   }
+
+  function verifyContractCall(string memory _pathwayId, string memory _projectId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint256 votesNeeded, bool onlyOneCheck) internal returns(bool voteAllowed, bool thresholdCheck){
+       voteAllowed = verifyContract.metaDataVerify(
+            _msgSender(),
+            _pathwayId,
+            _projectId,
+            r[0],
+            s[0],
+            v[0]
+        );
+        require(voteAllowed);
+        if(onlyOneCheck && status[_pathwayId] != PathwayStatus.PENDING){
+            thresholdCheck = true;
+        }
+        else{
+            thresholdCheck = verifyContract.thresholdVerify(
+                _msgSender(),
+                _pathwayId,
+                votesNeeded,
+                r[1],
+                s[1],
+                v[1]
+            );
+            require(thresholdCheck);
+        }
+   }
 
     function _verify(address from, string memory _pathwayId, uint256 payload, bytes32 r, bytes32 s, uint8 v) internal returns (bool){
       bytes32 hashRecover = keccak256(

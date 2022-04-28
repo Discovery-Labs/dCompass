@@ -236,11 +236,12 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         require(!badgeMinted[_badgeId], "already minted");
         (bool allowed,) = verifyContractCall(_badgeId,_pathwayId,r,s,v, votesNeeded, true);
         if (status[_badgeId] == BadgeStatus.PENDING) {
+            require(votesNeeded <= votes[_badgeId], "insufficient votes");
             status[_badgeId] = BadgeStatus.APPROVED;
         }
         require(
             status[_badgeId] == BadgeStatus.APPROVED,
-            "can only mint for badges in approved status"
+            "status not approved"
         );
 
         //TODO : this can later be made a require instead of if statement?
