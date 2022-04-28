@@ -1,17 +1,16 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-generator client {
-  provider = "prisma-client-js"
-   previewFeatures = ["dataProxy"]
-}
-generator dbml {
-  provider = "prisma-dbml-generator"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["dataProxy"]
+}
+generator dbml {
+  provider = "prisma-dbml-generator"
 }
 
 model Contract {
@@ -25,6 +24,7 @@ model Contract {
 
 model QuizQuestion {
   id         String           @id @default(cuid())
+  streamId   String
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
   answer String
@@ -36,6 +36,7 @@ model QuizQuestion {
 
 model SolutionSubmission {
   id         String           @id @default(cuid())
+  streamId   String
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
   did String
@@ -56,6 +57,7 @@ enum PathwayDifficultyEnum {
 
 model BountyQuest {
   id         String           @id @default(cuid())
+  streamId   String
   chainId Int
   completedBy String[]
   createdBy String
@@ -72,7 +74,6 @@ model BountyQuest {
   rewardCurrency String
   rewardUserCap Int
   slogan String
-  streamId String
   submissions SolutionSubmission[]
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
@@ -80,6 +81,7 @@ model BountyQuest {
 
 model QuizQuest {
   id         String           @id @default(cuid())
+  streamId   String
   chainId Int
   completedBy String[]
   createdAt String
@@ -97,13 +99,13 @@ model QuizQuest {
   rewardCurrency String
   rewardUserCap Int
   slogan String
-  streamId String
   questions QuizQuestion[]
   updatedAt String
 }
 
 model Pathway {
   id         String           @id @default(cuid())
+  streamId   String
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
   createdBy String
@@ -119,7 +121,6 @@ model Pathway {
   rewardCurrency String
   rewardUserCap Int
   slogan String
-  streamId String
   title String
   project    Project?         @relation(fields: [projectId], references: [id])
   projectId  String?
@@ -138,6 +139,7 @@ model Tag {
 
 model Project {
   id                  String              @id @default(cuid())
+  streamId            String
   name                String
   introduction        String?
   description         String
@@ -147,6 +149,7 @@ model Project {
   github              String?
   logo                String?
   image               String?
+  tokenUris           String[]
   contracts           Contract[]
   isFeatured          Boolean             @default(false)
   // features            Feature[]
@@ -168,6 +171,7 @@ model Project {
   // stored with Web3.storage
   whitePaper          String?
   demoVideo           String?
+  createdBy           String
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
 }

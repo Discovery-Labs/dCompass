@@ -1,16 +1,17 @@
-import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
+import { Module } from "@nestjs/common";
+import { HttpModule } from "@nestjs/axios";
 
-import { RedisModule } from '../../core/resources/Redis/Redis.module';
+import { RedisModule } from "../../core/resources/Redis/Redis.module";
 
-import { CreatePathwayResolver } from './mutations/CreatePathway.resolver';
-import { GetAllPathwaysByProjectIdResolver } from './queries/GetAllPathwaysByProjectId.resolver';
-import { ApprovePathwayResolver } from './mutations/ApprovePathway.resolver';
-import { GetPathwayByIdResolver } from './queries/GetPathwayById.resolver';
-import { AppService } from '../../app.service';
-import { VerifyPathwayResolver } from './mutations/VerifyPathway.resolver';
-import { ThreadDBService } from '../../services/thread-db/thread-db.service';
-import { ClaimPathwayRewardsResolver } from './mutations/ClaimPathwayRewards.resolver';
+import { CreatePathwayResolver } from "./mutations/CreatePathway.resolver";
+import { GetAllPathwaysByProjectIdResolver } from "./queries/GetAllPathwaysByProjectId.resolver";
+import { ApprovePathwayResolver } from "./mutations/ApprovePathway.resolver";
+import { GetPathwayByIdResolver } from "./queries/GetPathwayById.resolver";
+import { AppService } from "../../app.service";
+import { VerifyPathwayResolver } from "./mutations/VerifyPathway.resolver";
+import { ThreadDBService } from "../../services/thread-db/thread-db.service";
+import { ClaimPathwayRewardsResolver } from "./mutations/ClaimPathwayRewards.resolver";
+import { PrismaService } from "../../services/prisma/Prisma.service";
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ClaimPathwayRewardsResolver } from './mutations/ClaimPathwayRewards.res
     ClaimPathwayRewardsResolver,
     AppService,
     ThreadDBService,
+    PrismaService,
   ],
   exports: [],
 })

@@ -24,7 +24,7 @@ import {
   ceramicDataModelFactory,
 } from "./services/ceramic/data-models";
 import { getDBClient } from "./core/resources/ThreadDB/thread-db";
-import { PrismaService } from "./services/prisma/Prisma.service";
+// import { PrismaService } from "./services/prisma/Prisma.service";
 
 const {
   api: { protocol, hostname, port, corsOptions },
@@ -42,8 +42,8 @@ async function bootstrap() {
   // app.set('trust proxy', 1); // trust first proxy
 
   // enable shutdown hooks
-  const prismaService = app.get(PrismaService);
-  await prismaService.enableShutdownHooks(app);
+  // const prismaService = app.get(PrismaService);
+  // await prismaService.enableShutdownHooks(app);
   app.enableShutdownHooks(["SIGINT", "SIGTERM"]);
 
   const ceramicClient = await ceramicDataModelFactory();
