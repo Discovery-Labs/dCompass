@@ -36,7 +36,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (string => string) public pathwayIdforBadge;//the pathwayId that is the parent
     mapping (string => BadgeStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes per badgeId;
-     mapping (string => uint) public votesReject;//tally of rejection votes per badgeId;
+    mapping (string => uint) public votesReject;//tally of rejection votes per badgeId;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of approved voters for badgeId
     mapping (string => uint) public nativeRewards;//badge rewards in native token
     mapping (string => mapping(address => uint)) internal erc20Amounts;//badge reward Amts in other tokens
@@ -121,10 +121,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             keccak256(abi.encodePacked(pathwayIdforBadge[_badgeId])) == keccak256(abi.encodePacked(_pathwayId)),
             "incorrect pathwayId"
         );
-        bool voteAllowed = verifyContract.metaDataVerify(_msgSender(), _badgeId, _pathwayId, r[0], s[0], v[0]);
-        require(voteAllowed);
-        bool thresholdCheck = verifyContract.thresholdVerify(_msgSender(), _badgeId, votesNeeded, r[1], s[1], v[1]);
-        require(thresholdCheck);
+        (bool voteAllowed, bool thresholdCheck) = verifyContractCall(_badgeId,_pathwayId,r,s,v, votesNeeded, false);
         votes[_badgeId]++;
         reviewerVotes[_badgeId][_msgSender()] = true;
         if(votes[_badgeId] == 1){
@@ -152,24 +149,8 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             keccak256(abi.encodePacked(pathwayIdforBadge[_badgeId])) == keccak256(abi.encodePacked(_pathwayId)),
             "incorrect pathwayId"
         );
-        bool voteAllowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _badgeId,
-            _pathwayId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(voteAllowed);
-        bool thresholdCheck = verifyContract.thresholdVerify(
-            _msgSender(),
-            _badgeId,
-            votesNeeded,
-            r[1],
-            s[1],
-            v[1]
-        );
-        require(thresholdCheck);
+        
+        (bool voteAllowed, bool thresholdCheck) = verifyContractCall(_badgeId,_pathwayId,r,s,v, votesNeeded, false);
         votesReject[_badgeId]++;
         reviewerVotes[_badgeId][_msgSender()] = true;        
         if(votesReject[_badgeId] >= votesNeeded){
@@ -253,26 +234,8 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         uint256 votesNeeded
     ) public returns (uint256[] memory) {
         require(!badgeMinted[_badgeId], "already minted");
-        bool allowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _badgeId,
-            _pathwayId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(allowed, "sender is not approved pathway minter");
+        (bool allowed,) = verifyContractCall(_badgeId,_pathwayId,r,s,v, votesNeeded, true);
         if (status[_badgeId] == BadgeStatus.PENDING) {
-            require(votesNeeded <= votes[_badgeId], "not enough votes");
-            allowed = verifyContract.thresholdVerify(
-                _msgSender(),
-                _badgeId,
-                votesNeeded,
-                r[1],
-                s[1],
-                v[1]
-            );
-            require(allowed, "incorrect votes needed sent");
             status[_badgeId] = BadgeStatus.APPROVED;
         }
         require(
@@ -404,6 +367,32 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
 //       address newTokenAddr = abi.decode(data, (address));
 //       adventurerAddress[_badgeId] = newTokenAddr;
 //   }
+
+   function verifyContractCall(string memory _badgeId, string memory _pathwayId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint256 votesNeeded, bool onlyOneCheck) internal returns(bool voteAllowed, bool thresholdCheck){
+       voteAllowed = verifyContract.metaDataVerify(
+            _msgSender(),
+            _badgeId,
+            _pathwayId,
+            r[0],
+            s[0],
+            v[0]
+        );
+        require(voteAllowed);
+        if(onlyOneCheck && status[_badgeId] != BadgeStatus.PENDING){
+            thresholdCheck = true;
+        }
+        else{
+            thresholdCheck = verifyContract.thresholdVerify(
+                _msgSender(),
+                _badgeId,
+                votesNeeded,
+                r[1],
+                s[1],
+                v[1]
+            );
+            require(thresholdCheck);
+        }
+   }
 
   function _verify(address from, string memory _badgeId, uint256 payload, bytes32 r, bytes32 s, uint8 v) internal returns (bool){
       bytes32 hashRecover = keccak256(
