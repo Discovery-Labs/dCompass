@@ -50,9 +50,10 @@ export class CreateProjectResolver {
       throw new ForbiddenError("Unauthorized");
     }
 
+    const { squads, tags, ...ogProjectInfos } = ogProject.content;
     await this.projectService.createProject({
       streamId: id,
-      ...ogProject.content,
+      ...ogProjectInfos,
       tokenUris,
       isFeatured: false,
       createdBy: decodedAddress,
