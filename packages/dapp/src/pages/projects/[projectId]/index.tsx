@@ -145,6 +145,13 @@ function ProjectPage({
     );
   if (error) return `Loading error! ${error.message}`;
 
+  const getShortenedAddress = (address: string) => {
+    let displayAddress = address.slice(0, 6);
+    displayAddress += `...${address.slice(-4)}`;
+
+    return displayAddress;
+  };
+
   const renderPathways = (pathways: Pathway[]) => {
     return pathways.map((pathway) => (
       <PathwayCard
@@ -362,8 +369,8 @@ function ProjectPage({
                   </Text>
                   <Text fontSize="sm" isTruncated>
                     {t("by")}{" "}
-                    <NextLink href={`/badges/${createdBy}/`} passHref>
-                      <Link>{createdBy}</Link>
+                    <NextLink href={`/profile/${createdBy}/`} passHref>
+                      <Link>{getShortenedAddress(createdBy)}</Link>
                     </NextLink>
                   </Text>
                 </VStack>

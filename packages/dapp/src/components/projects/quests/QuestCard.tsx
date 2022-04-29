@@ -9,11 +9,17 @@ import {
   Heading,
   HStack,
   Icon,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
   Spacer,
   Stack,
   Tag,
@@ -304,35 +310,49 @@ function QuestCard({
     <Card position="relative" h="xl" spacing="6" py="4">
       {isLocked && <LockedScreen />}
 
-      <Box filter={isLocked ? "blur(4px)" : "blur(0px)"} w="full">
-        <Flex w="full" minH="56px">
-          <Heading
-            noOfLines={2}
-            as="h2"
-            w="full"
-            fontSize="2xl"
-            color="text"
-            textTransform="uppercase"
+      <Flex
+        direction="column"
+        w="full"
+        h="full"
+        filter={isLocked ? "blur(4px)" : "blur(0px)"}
+      >
+        <Flex align="start" direction="row" w="full" gap="2">
+          <Tag
+            variant={isClaimed ? "outline" : "subtle"}
+            colorScheme={isClaimed || isCompleted ? "accentDark" : "purple"}
           >
-            {quest.name}
-          </Heading>
+            {isCompleted
+              ? isClaimed
+                ? "CLAIMED"
+                : "COMPLETED"
+              : "UNCOMPLETED"}
+          </Tag>
+          <Tag>
+            {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
+          </Tag>
+        </Flex>
 
-          <Spacer />
-          <Flex align="end" direction="column" w="full">
-            <Tag
-              variant={isClaimed ? "outline" : "subtle"}
-              colorScheme={isClaimed || isCompleted ? "accentDark" : "purple"}
+        <Flex w="full" minH="56px">
+          <Flex w="full" justify="center" direction="column">
+            <Text color="accent" textTransform="uppercase">
+              Quest type: {quest.questType}
+            </Text>
+            <Heading
+              noOfLines={2}
+              as="h2"
+              w="full"
+              fontSize="2xl"
+              color="text"
+              textTransform="uppercase"
             >
-              {isCompleted
-                ? isClaimed
-                  ? "CLAIMED"
-                  : "COMPLETED"
-                : "UNCOMPLETED"}
-            </Tag>
-            <Tag my="2">
-              {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
-            </Tag>
+              {quest.name}
+            </Heading>
           </Flex>
+          <Avatar
+            boxSize="4.8rem"
+            src={`https://ipfs.io/ipfs/${quest.image}`}
+            position="relative"
+          />
         </Flex>
         <VStack w="full" align="flex-start" onClick={onOpen}>
           <Modal isOpen={isOpen} onClose={onClose}>
@@ -342,98 +362,40 @@ function QuestCard({
           <Text color="text-weak" noOfLines={3}>
             {quest.slogan}
           </Text>
-          <Text>See more</Text>
+          <Text color="text-weak">See more</Text>
         </VStack>
-
-        <Divider />
 
         <VStack w="full" align="left" pt="2">
-          <HStack justifyContent="space-between">
-            <HStack>
-              <Icon as={RiSwordLine} />
-              <Text
-                fontWeight="bold"
-                fontSize="xl"
-                color="text"
-                textTransform="uppercase"
-              >
-                Quest type
-              </Text>
-            </HStack>
-            <Tag variant="outline">{quest.questType}</Tag>
-          </HStack>
-          <Divider />
-          <HStack justifyContent="space-between">
-            <HStack>
-              <Icon as={FiUserCheck} />
-              <Text
-                fontWeight="bold"
-                fontSize="xl"
-                color="text"
-                textTransform="uppercase"
-              >
-                Claimed
-              </Text>
-            </HStack>
-            <Tag variant="outline">
-              {claimedBy?.length || 0}/{quest.rewardUserCap}
+          <Flex align="start" direction="row" w="full" gap="2">
+            <Tag variant="subtle" colorScheme="accentDark">
+              OPEN
             </Tag>
-          </HStack>
-          <Divider />
-          <HStack justifyContent="space-between">
-            <HStack>
-              <Icon as={GiTwoCoins} />
-              <Text
-                fontWeight="bold"
-                fontSize="xl"
-                color="text"
-                textTransform="uppercase"
-              >
-                Rewards
-              </Text>
-            </HStack>
-            <Tag variant="outline">
-              {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
+            <Tag variant="subtle" colorScheme="purple">
+              {claimedBy?.length || 0}/{quest.rewardUserCap} CLAIMED
             </Tag>
-          </HStack>
+          </Flex>
 
-          <Stack
-            w="full"
-            justifyContent="space-between"
-            direction="row"
-            spacing={4}
-            align="center"
-          >
-            <Avatar
-              boxSize="4.8rem"
-              src={`https://ipfs.io/ipfs/${quest.image}`}
-              position="relative"
-            />
-            <Text color="purple.500" fontSize="3xl" fontWeight="bold">
-              NFT
-            </Text>
-            <Text fontFamily="heading" fontSize={{ base: "4xl", md: "6xl" }}>
-              +
-            </Text>
-            <Flex
-              align="center"
-              justify="center"
-              fontFamily="heading"
-              fontWeight="bold"
-              fontSize={{ base: "sm", md: "lg" }}
-              color="purple.500"
-              rounded="full"
-            >
-              <Text fontSize="3xl" fontWeight="bold">
-                {parseFloat(quest.rewardAmount) / quest.rewardUserCap}{" "}
-                {getRewardCurrency(quest.rewardCurrency)}
-              </Text>
-            </Flex>
-          </Stack>
-          <Spacer />
+          <VStack w="full" align="start">
+            <Text color="accent">Requisites: </Text>
+
+            <Popover isLazy>
+              <PopoverTrigger>
+                <Button variant="outline">3 Requisites</Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverBody>
+                  <Text>Complete the Quest TEST OF THE SUPER DEV</Text>
+                  <Text>Create one Quest</Text>
+                  <Text> Join one Guild</Text>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          </VStack>
         </VStack>
 
-        <Flex w="full" justify="space-between" pt="4">
+        <Spacer />
+
+        <Flex w="full" justify="end" pt="4">
           {canReviewQuests && status !== "MINTED" && (
             <VStack w="full" align="left">
               <Tag
@@ -521,7 +483,7 @@ function QuestCard({
             </>
           )}
         </Flex>
-      </Box>
+      </Flex>
     </Card>
   );
 }

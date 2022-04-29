@@ -8,6 +8,7 @@ import {
   Td,
   TableCaption,
   Tag,
+  Box,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { Web3Context } from "../../../contexts/Web3Context";
@@ -65,42 +66,44 @@ function QuestCompletedByList({
   }, [completedBy, core]);
 
   return (
-    <Table variant="simple">
-      <TableCaption>Quest completed by the users above</TableCaption>
-      <Thead>
-        <Tr>
-          <Th>Username</Th>
-          <Th>DID</Th>
-          <Th>Reward status</Th>
-        </Tr>
-      </Thead>
-      <Tbody>
-        {completedByWithUsername &&
-          completedByWithUsername.map(({ did, name, cryptoAccounts }) => {
-            const isClaimed =
-              claimedBy &&
-              claimedBy.some((address) => cryptoAccounts.includes(address));
-            return (
-              <Tr key={did}>
-                <Td>{name || "Anonymous"}</Td>
-                <Td>{did}</Td>
-                <Td>
-                  <Tag colorScheme={isClaimed ? "accentDark" : "orange"}>
-                    {isClaimed ? "Claimed" : "Unclaimed"}
-                  </Tag>
-                </Td>
-              </Tr>
-            );
-          })}
-      </Tbody>
-      <Tfoot>
-        <Tr>
-          <Th>Username</Th>
-          <Th>DID</Th>
-          <Th>Reward status</Th>
-        </Tr>
-      </Tfoot>
-    </Table>
+    <Box w="full" overflowX="auto">
+      <Table variant="simple">
+        <TableCaption>Quest completed by the users above</TableCaption>
+        <Thead>
+          <Tr>
+            <Th>Username</Th>
+            <Th>DID</Th>
+            <Th>Reward status</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {completedByWithUsername &&
+            completedByWithUsername.map(({ did, name, cryptoAccounts }) => {
+              const isClaimed =
+                claimedBy &&
+                claimedBy.some((address) => cryptoAccounts.includes(address));
+              return (
+                <Tr key={did}>
+                  <Td>{name || "Anonymous"}</Td>
+                  <Td>{did}</Td>
+                  <Td>
+                    <Tag colorScheme={isClaimed ? "accentDark" : "orange"}>
+                      {isClaimed ? "Claimed" : "Unclaimed"}
+                    </Tag>
+                  </Td>
+                </Tr>
+              );
+            })}
+        </Tbody>
+        <Tfoot>
+          <Tr>
+            <Th>Username</Th>
+            <Th>DID</Th>
+            <Th>Reward status</Th>
+          </Tr>
+        </Tfoot>
+      </Table>
+    </Box>
   );
 }
 
