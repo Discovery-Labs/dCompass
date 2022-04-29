@@ -85,6 +85,15 @@ import {
   Th,
   Td,
   TableCaption,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
 } from '@chakra-ui/react';
 
 const meta: Meta = {
@@ -321,6 +330,21 @@ export const All = () => {
             </ModalContent>
           </Modal>
         </>
+
+        {/* Popover */}
+        <Popover>
+          <PopoverTrigger>
+            <Button>Trigger Popover</Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverHeader>Confirmation!</PopoverHeader>
+            <PopoverBody>
+              Are you sure you want to have that milkshake?
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
 
         {/* Tabs */}
         <Tabs variant="soft-rounded">
