@@ -171,7 +171,13 @@ function ProjectPage({
           },
         ]}
       />
-      <Flex direction={["column", "column", "row"]} w="full" gap="8">
+      <Flex
+        pt="4"
+        direction={["column", "column", "row"]}
+        w="full"
+        gap="8"
+        align="center"
+      >
         <Box>
           <Box
             border="2px solid #6F3FF5"
@@ -191,8 +197,14 @@ function ProjectPage({
             />
           </Box>
         </Box>
-        <VStack w="full" align="start" justify="center">
-          <Flex w="full" direction="row" wrap="wrap" gap="2">
+        <VStack w="full" align={["center", "center", "start"]} justify="center">
+          <Flex
+            w="full"
+            direction="row"
+            wrap="wrap"
+            gap="2"
+            justify={["center", "center", "start"]}
+          >
             {tags.map((tag: Tag) => (
               <Badge key={tag.id} fontSize="lg" colorScheme={tag.color}>
                 {tag.label}
@@ -207,7 +219,7 @@ function ProjectPage({
           <Text color="text-weak">{slogan}</Text>
 
           {/* Apply and Edit Buttons */}
-          <HStack w="full" align="start">
+          <HStack w="full" justify={["center", "center", "start"]}>
             <Button
               colorScheme={accentColorScheme}
               leftIcon={<MdPersonAddAlt1 />}
@@ -241,7 +253,7 @@ function ProjectPage({
         </VStack>
       </Flex>
 
-      <HStack w="full" py="4">
+      <HStack w="full" py="4" justify={["center", "center", "start"]}>
         <SocialLinks
           website={website}
           discord={discord}
@@ -252,11 +264,11 @@ function ProjectPage({
       </HStack>
 
       <Tabs w="full">
-        <HStack w="full" justify="start">
-          <TabList>
-            <Tab>{t("pathways")}</Tab>
-            <Tab>{t("guilds")}</Tab>
-            <Tab>{t("about")}</Tab>
+        <HStack w="full">
+          <TabList w="full">
+            <Tab w="full">{t("pathways")}</Tab>
+            <Tab w="full">{t("guilds")}</Tab>
+            <Tab w="full">{t("about")}</Tab>
           </TabList>
         </HStack>
 
@@ -266,7 +278,7 @@ function ProjectPage({
             <Tabs w="full" variant="unstyled">
               <Flex
                 w="full"
-                direction={["column-reverse", "column-reverse", "row"]}
+                direction={["column", "column", "row"]}
                 justify="space-between"
               >
                 <TabList>
@@ -278,7 +290,7 @@ function ProjectPage({
                   href={`/projects/${id}/pathways/add-pathway/`}
                   passHref
                 >
-                  <Flex py="2" w="full" justify={["start", "start", "end"]}>
+                  <Flex pt="4" w="full" justify={["center", "center", "end"]}>
                     <Button variant="outline" leftIcon={<AddIcon />}>
                       {t("add-pathway")}
                     </Button>
