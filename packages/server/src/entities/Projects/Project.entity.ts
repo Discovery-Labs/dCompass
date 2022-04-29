@@ -1,8 +1,8 @@
-import { ObjectType, Field } from '@nestjs/graphql';
-import { BaseEntity } from '../../core/entities/BaseEntity';
-import { Pathway } from '../Pathways/Pathway.entity';
-import { Squad } from '../Squads/Squad.entity';
-import { Tag } from '../Tags/Tag.entity';
+import { ObjectType, Field } from "@nestjs/graphql";
+import { BaseEntity } from "../../core/entities/BaseEntity";
+import { Pathway } from "../Pathways/Pathway.entity";
+import { Squad } from "../Squads/Squad.entity";
+import { Tag } from "../Tags/Tag.entity";
 
 export type CeramicStreamId = string;
 @ObjectType()
@@ -41,7 +41,7 @@ export class Project extends BaseEntity {
   createdBy: string;
 
   @Field()
-  updatedBy: string;
+  updatedBy?: string;
 
   @Field()
   description: string;
@@ -52,8 +52,8 @@ export class Project extends BaseEntity {
   @Field()
   logo?: string;
 
-  @Field(() => [String])
-  contracts: string[];
+  @Field(() => [String], { nullable: true })
+  contracts?: string[];
 
   @Field(() => [String])
   members?: string[];
@@ -70,10 +70,10 @@ export class Project extends BaseEntity {
   @Field(() => [Tag])
   tags?: Tag[];
 
-  @Field(() => [Pathway])
+  @Field(() => [Pathway], { defaultValue: [] })
   pathways?: Pathway[];
 
-  @Field(() => [Pathway])
+  @Field(() => [Pathway], { defaultValue: [] })
   pendingPathways?: Pathway[];
 
   @Field(() => [Squad])

@@ -65,7 +65,8 @@ Table QuizQuest {
   streamId String [not null]
   chainId Int [not null]
   completedBy String[] [not null]
-  createdAt String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
   createdBy String [not null]
   description String [not null]
   image String [not null]
@@ -81,7 +82,6 @@ Table QuizQuest {
   rewardUserCap Int [not null]
   slogan String [not null]
   questions QuizQuestion [not null]
-  updatedAt String [not null]
 }
 
 Table Pathway {
@@ -119,6 +119,7 @@ Table Tag {
 
 Table ProjectSquad {
   id String [pk]
+  name String [not null]
   image String [not null]
   members String[] [not null]
   project Project

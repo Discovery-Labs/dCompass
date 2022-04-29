@@ -89,7 +89,8 @@ model QuizQuest {
   streamId   String
   chainId Int
   completedBy String[]
-  createdAt String
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
   createdBy String
   description String
   image String
@@ -105,7 +106,6 @@ model QuizQuest {
   rewardUserCap Int
   slogan String
   questions QuizQuestion[]
-  updatedAt String
 }
 
 model Pathway {
@@ -144,6 +144,7 @@ model Tag {
 
 model ProjectSquad {
   id                  String              @id @default(cuid())
+  name                String
   image               String
   members             String[]
   project    Project?         @relation(fields: [projectId], references: [id])
