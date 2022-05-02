@@ -41,7 +41,7 @@ export class CreateProjectResolver {
       ogProject.controllers[0]
     );
 
-    console.log({ ownerAccounts });
+    console.log({ ownerAccounts, decodedAddress });
     if (!ownerAccounts) throw new ForbiddenError("Unauthorized");
     const formattedAccounts = Object.keys(ownerAccounts).map(
       (account) => account.split("@")[0]

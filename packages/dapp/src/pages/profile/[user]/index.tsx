@@ -71,6 +71,94 @@ const gitcoinPath: SkillType[] = [
       },
     ],
   },
+  {
+    id: "gitcoin2",
+    title: "Get Started",
+    tooltip: { content: "" },
+    children: [
+      {
+        id: "g1",
+        title: "Moonshot Collective",
+        tooltip: { content: "" },
+        children: [],
+      },
+      {
+        id: "g2",
+        title: "Memes, Merch and Marketing",
+        tooltip: { content: "" },
+        children: [],
+      },
+      {
+        id: "g3",
+        title: "Workstream X",
+        tooltip: { content: "" },
+        children: [
+          {
+            id: "g4",
+            title: "squad x",
+            tooltip: { content: "" },
+            children: [],
+          },
+          {
+            id: "g5",
+            title: "squad y",
+            tooltip: { content: "" },
+            children: [],
+          },
+        ],
+      },
+      {
+        id: "g6",
+        title: "DAO OPS",
+        tooltip: { content: "" },
+        children: [],
+      },
+    ],
+  },
+  {
+    id: "gitcoin3",
+    title: "Get Started",
+    tooltip: { content: "" },
+    children: [
+      {
+        id: "g1",
+        title: "Moonshot Collective",
+        tooltip: { content: "" },
+        children: [],
+      },
+      {
+        id: "g2",
+        title: "Memes, Merch and Marketing",
+        tooltip: { content: "" },
+        children: [],
+      },
+      {
+        id: "g3",
+        title: "Workstream X",
+        tooltip: { content: "" },
+        children: [
+          {
+            id: "g4",
+            title: "squad x",
+            tooltip: { content: "" },
+            children: [],
+          },
+          {
+            id: "g5",
+            title: "squad y",
+            tooltip: { content: "" },
+            children: [],
+          },
+        ],
+      },
+      {
+        id: "g6",
+        title: "DAO OPS",
+        tooltip: { content: "" },
+        children: [],
+      },
+    ],
+  },
 ];
 
 const theGraphPath: SkillType[] = [

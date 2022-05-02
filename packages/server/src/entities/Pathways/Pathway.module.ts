@@ -13,6 +13,7 @@ import { ThreadDBService } from "../../services/thread-db/thread-db.service";
 import { ClaimPathwayRewardsResolver } from "./mutations/ClaimPathwayRewards.resolver";
 import { PrismaService } from "../../services/prisma/Prisma.service";
 import { ProjectService } from "../Projects/Project.service";
+import { PathwayService } from "./Pathway.service";
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ProjectService } from "../Projects/Project.service";
     AppService,
     ThreadDBService,
     ProjectService,
+    PathwayService,
     PrismaService,
   ],
   exports: [],
