@@ -6,23 +6,20 @@ const layerStyles = {
   'gradient-border': {
     p: '2px',
     borderRadius: borderRadius,
-    bgGradient: `linear(45deg, ${colors.primary[500]}, ${colors.accentDark[500]}, ${colors.primary[500]})`,
+    bgGradient: `linear(45deg, ${colors.primary[500]}, ${colors.accent[500]}, ${colors.primary[500]})`,
   },
   'gradient-bg': {
-    bgGradient: `linear(45deg, ${colors.primary[500]}, ${colors.accentDark[500]}, ${colors.primary[500]})`,
+    bgGradient: `linear(45deg, ${colors.primary[500]}, ${colors.accent[500]}, ${colors.primary[500]})`,
     '.chakra-ui-dark &': {
-      bgGradient: `linear(45deg, ${colors.primary[500]}, ${colors.accentDark[500]}, ${colors.primary[500]})`,
+      bgGradient: `linear(45deg, ${colors.primary[500]}, ${colors.accent[500]}, ${colors.primary[500]})`,
     },
-    // _hover: {
-    //   bgGradient: `linear(to-r, gray.300, ${colors.accentDark[500]}, ${colors.primary[500]})`,
-    // },
   },
   'gradient-text': {
-    bgGradient: `linear(45deg, ${colors.primary[500]}, ${colors.accentDark[500]}, ${colors.primary[500]})`,
+    bgGradient: `linear(45deg, ${colors.primary[500]}, ${colors.accent[500]}, ${colors.primary[500]})`,
     bgClip: 'text',
   },
   'solid-card': {
-    p: '2rem',
+    p: '1.5rem',
     bg: colors.neutralLighter,
     borderRadius: borderRadius,
     border: '1px solid',
@@ -34,7 +31,7 @@ const layerStyles = {
     },
   },
   'outline-card': {
-    p: '2rem',
+    p: '1.5rem',
     border: '1px solid',
     borderRadius: borderRadius,
     borderColor: colors.borderLight,
@@ -43,7 +40,7 @@ const layerStyles = {
     },
   },
   'no-border-card': {
-    p: '2rem',
+    p: '1.5rem',
     bg: colors.neutralLighter,
     borderRadius: borderRadius,
     '.chakra-ui-dark &': {
@@ -53,7 +50,7 @@ const layerStyles = {
 
   // With hover highlight
   'solid-hover2': {
-    p: '2rem',
+    p: '1.5rem',
     bg: colors.neutralLighter,
     borderRadius: borderRadius,
     border: '1px solid',
@@ -67,7 +64,7 @@ const layerStyles = {
     },
   },
   'outline-hover2': {
-    p: '2rem',
+    p: '1.5rem',
     border: '1px solid',
     borderRadius: borderRadius,
     borderColor: colors.borderLight,
@@ -78,7 +75,7 @@ const layerStyles = {
     },
   },
   'no-border-hover2': {
-    p: '2rem',
+    p: '1.5rem',
     bg: colors.neutralLighter,
     borderRadius: borderRadius,
     _hover: { bg: darken(colors.neutralLighter, 5) },
@@ -90,7 +87,7 @@ const layerStyles = {
 
   // With Y transform on hover
   'solid-hover': {
-    p: '2rem',
+    p: '1.5rem',
     bg: colors.neutralLighter,
     borderRadius: borderRadius,
     border: '1px solid',
@@ -105,17 +102,20 @@ const layerStyles = {
     },
   },
   'outline-hover': {
-    p: '2rem',
+    p: '1.5rem',
     border: '1px solid',
     borderRadius: borderRadius,
     borderColor: colors.borderLight,
     transition: 'all 0.3s',
     'transition-timing-function': 'spring(1 100 10 10)',
     _hover: { transform: 'translateY(-4px)', shadow: 'lg' },
-    '.chakra-ui-dark &': { borderColor: colors.neutralDark },
+    '.chakra-ui-dark &': {
+      border: '1px solid',
+      borderColor: colors.borderDark,
+    },
   },
   'no-border-hover': {
-    p: '2rem',
+    p: '1.5rem',
     bg: colors.neutralLighter,
     borderRadius: borderRadius,
     transition: 'all 0.3s',
@@ -126,7 +126,7 @@ const layerStyles = {
 
   // With Zoom transform on hover
   'solid-hover3': {
-    p: '2rem',
+    p: '1.5rem',
     bg: colors.neutralLighter,
     borderRadius: borderRadius,
     border: '1px solid',
@@ -141,17 +141,17 @@ const layerStyles = {
     },
   },
   'outline-hover3': {
-    p: '2rem',
+    p: '1.5rem',
     border: '1px solid',
     borderRadius: borderRadius,
     borderColor: colors.borderLight,
     transition: 'all 0.3s',
     'transition-timing-function': 'spring(1 100 10 10)',
     _hover: { transform: 'scale(1.05)' },
-    '.chakra-ui-dark &': { borderColor: colors.neutralDark },
+    '.chakra-ui-dark &': { borderColor: colors.borderDark },
   },
   'no-border-hover3': {
-    p: '2rem',
+    p: '1.5rem',
     bg: colors.neutralLighter,
     borderRadius: borderRadius,
     transition: 'all 0.3s',

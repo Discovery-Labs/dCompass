@@ -7,10 +7,10 @@ function useColor() {
     colors.neutralLight
   );
   const titleColor = useColorModeValue(
-    colors.accentLight[500],
-    colors.accentDark[500]
+    colors.accent[500],
+    colors.accent[500]
   );
-  const accentColorScheme = useColorModeValue('accentLight', 'accentDark');
+  const accentColorScheme = useColorModeValue('accent', 'accent');
 
   return { textVioletColor, titleColor, accentColorScheme };
 }
