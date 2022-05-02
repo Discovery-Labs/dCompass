@@ -287,7 +287,7 @@ function CreateProjectStepper() {
                 {activeStep === 2 && (
                   <Button
                     ml="0.5rem"
-                    // colorScheme="accentDark"
+                    // colorScheme="accent"
                     isLoading={methods.formState.isSubmitting}
                     type="submit"
                     px="1.25rem"

@@ -115,15 +115,15 @@ export default function ThreeTierPricing() {
           <VStack bg={getBgColor} py={4} borderBottomRadius="xl">
             <List spacing={3} textAlign="start" px={12}>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />
+                <ListIcon as={FaCheckCircle} color="accent.500" />
                 unlimited quests &amp; paths
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />
+                <ListIcon as={FaCheckCircle} color="accent.500" />
                 contributor management
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />
+                <ListIcon as={FaCheckCircle} color="accent.500" />
                 pathways &amp; quest analytics
               </ListItem>
             </List>
@@ -143,7 +143,7 @@ export default function ThreeTierPricing() {
                 bg="purple.500"
                 px={3}
                 py={1}
-                color="accentDark.500"
+                color="accent.500"
                 fontSize="sm"
                 fontWeight="600"
                 rounded="xl"
@@ -167,15 +167,15 @@ export default function ThreeTierPricing() {
             <VStack bg={getBgColor} py={4} borderBottomRadius="xl">
               <List spacing={3} textAlign="start" px={12}>
                 <ListItem>
-                  <ListIcon as={FaCheckCircle} color="accentDark.500" />
+                  <ListIcon as={FaCheckCircle} color="accent.500" />
                   everything from Silver tier
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircle} color="accentDark.500" />
+                  <ListIcon as={FaCheckCircle} color="accent.500" />
                   displayed as a featured project
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircle} color="accentDark.500" />
+                  <ListIcon as={FaCheckCircle} color="accent.500" />
                   pathway &amp; quest creation guidance
                 </ListItem>
               </List>
@@ -199,15 +199,15 @@ export default function ThreeTierPricing() {
           <VStack bg={getBgColor} py={4} borderBottomRadius="xl">
             <List spacing={3} textAlign="start" px={12}>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />
+                <ListIcon as={FaCheckCircle} color="accent.500" />
                 everything from Gold tier
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />1 custom
+                <ListIcon as={FaCheckCircle} color="accent.500" />1 custom
                 quest development
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accentDark.500" />1 custom
+                <ListIcon as={FaCheckCircle} color="accent.500" />1 custom
                 pathway guide creation
               </ListItem>
             </List>

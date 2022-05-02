@@ -287,7 +287,7 @@ function PathwayFormWrapper() {
         </Button>
         <Button
           isLoading={isSubmitting}
-          colorScheme="accentDark"
+          colorScheme="accent"
           type="submit"
           onClick={handleSubmit(onSubmit)}
         >

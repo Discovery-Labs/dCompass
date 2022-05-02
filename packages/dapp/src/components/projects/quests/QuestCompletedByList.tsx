@@ -87,7 +87,7 @@ function QuestCompletedByList({
                   <Td>{name || "Anonymous"}</Td>
                   <Td>{did}</Td>
                   <Td>
-                    <Tag colorScheme={isClaimed ? "accentDark" : "orange"}>
+                    <Tag colorScheme={isClaimed ? "accent" : "orange"}>
                       {isClaimed ? "Claimed" : "Unclaimed"}
                     </Tag>
                   </Td>

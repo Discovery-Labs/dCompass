@@ -319,7 +319,7 @@ function QuestCard({
         <Flex align="start" direction="row" w="full" gap="2">
           <Tag
             variant={isClaimed ? "outline" : "subtle"}
-            colorScheme={isClaimed || isCompleted ? "accentDark" : "purple"}
+            colorScheme={isClaimed || isCompleted ? "accent" : "purple"}
           >
             {isCompleted
               ? isClaimed
@@ -367,7 +367,7 @@ function QuestCard({
 
         <VStack w="full" align="left" pt="2">
           <Flex align="start" direction="row" w="full" gap="2">
-            <Tag variant="subtle" colorScheme="accentDark">
+            <Tag variant="subtle" colorScheme="accent">
               OPEN
             </Tag>
             <Tag variant="subtle" colorScheme="purple">
@@ -413,7 +413,7 @@ function QuestCard({
               {status && (status === "PENDING" || status === "NONEXISTENT") && (
                 <HStack w="full" justifyContent="space-between">
                   <Button
-                    colorScheme="accentDark"
+                    colorScheme="accent"
                     onClick={handleApproveQuest}
                     isLoading={isApproving}
                     loadingText="Approving"
@@ -464,7 +464,7 @@ function QuestCard({
                     value={0}
                     border={`solid 1px ${getAccentColor}`}
                     hasStripe
-                    colorScheme="accentDark"
+                    colorScheme="accent"
                     bgColor="bg"
                   />
                 </HStack> */}

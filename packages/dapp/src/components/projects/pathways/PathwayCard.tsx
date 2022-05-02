@@ -447,7 +447,7 @@ function PathwayCard({
           {status && (status === "PENDING" || status === "NONEXISTENT") && (
             <HStack w="full" justifyContent="space-between">
               <Button
-                colorScheme="accentDark"
+                colorScheme="accent"
                 onClick={handleApprovePathway}
                 leftIcon={<CheckIcon />}
                 isLoading={isApproving}
@@ -494,7 +494,7 @@ function PathwayCard({
                 value={pathwayProgress?.ratio}
                 border={`solid 1px ${getAccentColor}`}
                 hasStripe
-                colorScheme="accentDark"
+                colorScheme="accent"
                 bgColor="bg"
               />
             </HStack>
@@ -516,7 +516,7 @@ function PathwayCard({
                 fontSize="md"
                 variant="outline"
                 colorScheme={
-                  pathwayProgress?.ratio !== 100 ? "primary" : "accentDark"
+                  pathwayProgress?.ratio !== 100 ? "primary" : "accent"
                 }
                 loadingText={rewardStatus}
                 isLoading={isClaiming}

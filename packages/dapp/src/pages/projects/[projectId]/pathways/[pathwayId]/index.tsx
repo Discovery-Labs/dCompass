@@ -488,7 +488,7 @@ function PathwayPage({
                           value={pathwayProgress?.ratio}
                           border={`solid 1px ${getAccentColor}`}
                           hasStripe
-                          colorScheme="accentDark"
+                          colorScheme="accent"
                           bgColor="bg"
                         />
                       </HStack>
@@ -600,7 +600,7 @@ function PathwayPage({
                       w="full"
                       fontSize="md"
                       disabled={isClaiming || isClaimed}
-                      colorScheme={isClaimed ? "accentDark" : "primary"}
+                      colorScheme={isClaimed ? "accent" : "primary"}
                       loadingText={rewardStatus}
                       isLoading={isClaiming}
                       variant="outline"
