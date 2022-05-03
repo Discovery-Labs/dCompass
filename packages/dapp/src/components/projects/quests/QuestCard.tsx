@@ -1,46 +1,38 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { CheckIcon, CloseIcon, LockIcon } from "@chakra-ui/icons";
+import {
+  CheckIcon,
+  CloseIcon,
+  ExternalLinkIcon,
+  LockIcon,
+} from "@chakra-ui/icons";
 import {
   Avatar,
   Box,
   Button,
-  Divider,
   Flex,
   Heading,
   HStack,
-  Icon,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
+  Link,
+  ListItem,
   Popover,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
-  Select,
   Spacer,
-  Stack,
   Tag,
   TagLabel,
   Text,
-  useDisclosure,
+  Tooltip,
+  UnorderedList,
   useToast,
   VStack,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Card from "components/custom/Card";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { FiUserCheck } from "react-icons/fi";
-import { GiSwordwoman, GiTwoCoins } from "react-icons/gi";
-import { RiSwordLine } from "react-icons/ri";
-import ReactMarkdown from "react-markdown";
+import { GiSwordwoman } from "react-icons/gi";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import useCustomColor from "../../../core/hooks/useCustomColor";
-import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
 import { Quest } from "../../../core/types";
 import {
@@ -49,47 +41,20 @@ import {
   VERIFY_QUEST_MUTATION,
 } from "../../../graphql/quests";
 
-const ModalDetails = ({ quest }: { quest: Quest }) => {
-  const { getTextColor, getOverBgColor } = useCustomColor();
-  const pathwayCardMarkdownTheme = useCardMarkdownTheme();
-
-  return (
-    <>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{quest.name}</ModalHeader>
-        <ModalBody>
-          <VStack w="full" align="flex-start">
-            <Box
-              bgGradient={`linear(0deg, ${getOverBgColor} 10%, ${getTextColor} 60%, ${getTextColor})`}
-              bgClip="text"
-            >
-              <ReactMarkdown
-                className="card-markdown"
-                components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
-                skipHtml
-              >
-                {quest.description}
-              </ReactMarkdown>
-            </Box>
-          </VStack>
-        </ModalBody>
-      </ModalContent>
-    </>
-  );
-};
-
-function QuestCard({
-  quest,
-  projectContributors,
-  pathwayStreamId,
-  canReviewQuests,
-}: {
+interface Props {
+  children?: React.ReactNode;
   quest: Quest;
   canReviewQuests: boolean;
   projectContributors: string[];
   pathwayStreamId: string;
-}) {
+}
+
+const QuestCard = ({
+  quest,
+  projectContributors,
+  pathwayStreamId,
+  canReviewQuests,
+}: Props) => {
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isCreatingToken, setIsCreatingToken] = useState<boolean>(false);
   const [claimedBy, setClaimedBy] = useState<string[]>();
@@ -99,7 +64,6 @@ function QuestCard({
   const { getRewardCurrency } = useTokenList();
   const [status, setStatus] = useState<string>();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { chainId, library } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION);
@@ -305,7 +269,10 @@ function QuestCard({
   };
   const isCompleted = (quest.completedBy || []).includes(self?.id);
   const isClaimed = account && claimedBy?.includes(account);
+
   const isLocked = quest.id === "01g0yjfgqrhc2q0f4nqtxtqy81";
+  const withRequisites = true;
+
   return (
     <Card position="relative" h="xl" spacing="6" py="4">
       {isLocked && <LockedScreen />}
@@ -354,16 +321,16 @@ function QuestCard({
             position="relative"
           />
         </Flex>
-        <VStack w="full" align="flex-start" onClick={onOpen}>
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalDetails quest={quest} />
-          </Modal>
+        <VStack w="full" align="flex-start">
           {/* Short Description  */}
-          <Text color="text-weak" noOfLines={3}>
-            {quest.slogan}
-          </Text>
-          <Text color="text-weak">See more</Text>
+          <Tooltip label={quest.slogan}>
+            <Text color="text-weak" noOfLines={3}>
+              {quest.slogan}
+            </Text>
+          </Tooltip>
         </VStack>
+
+        <Spacer />
 
         <VStack w="full" align="left" pt="2">
           <Flex align="start" direction="row" w="full" gap="2">
@@ -378,22 +345,43 @@ function QuestCard({
           <VStack w="full" align="start">
             <Text color="accent">Requisites: </Text>
 
-            <Popover isLazy>
-              <PopoverTrigger>
-                <Button variant="outline">3 Requisites</Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <PopoverBody>
-                  <Text>Complete the Quest TEST OF THE SUPER DEV</Text>
-                  <Text>Create one Quest</Text>
-                  <Text> Join one Guild</Text>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+            {withRequisites ? (
+              <Popover isLazy>
+                <PopoverTrigger>
+                  <Button w="full" variant="outline">
+                    3 Requisites
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverBody>
+                    <UnorderedList>
+                      <ListItem>
+                        <Link href="http://localhost:3000/projects" isExternal>
+                          Complete the Quest TEST OF THE SUPER DEV{" "}
+                          <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                      <ListItem>
+                        <Link href="http://localhost:3000/projects" isExternal>
+                          Create one Quest <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                      <ListItem>
+                        <Link href="http://localhost:3000/projects" isExternal>
+                          Join one Guild <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                    </UnorderedList>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <Button w="full" variant="outline">
+                None
+              </Button>
+            )}
           </VStack>
         </VStack>
-
-        <Spacer />
 
         <Flex w="full" justify="end" pt="4">
           {canReviewQuests && status !== "MINTED" && (
@@ -486,6 +474,6 @@ function QuestCard({
       </Flex>
     </Card>
   );
-}
+};
 
 export default QuestCard;
