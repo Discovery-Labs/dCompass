@@ -14,7 +14,7 @@ import {
 import { useWeb3React } from "@web3-react/core";
 import { Contract, ethers } from "ethers";
 import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useTokenList from "../../../core/hooks/useTokenList";
@@ -29,6 +29,7 @@ const pathwaysDefaultValues = {
 };
 
 function PathwayFormWrapper() {
+  const [submitStatus, setSubmitStatus] = useState<string>("Creating pathway");
   const toast = useToast();
   const router = useRouter();
   const { library, chainId } = useWeb3React();
@@ -98,6 +99,7 @@ function PathwayFormWrapper() {
     // check if the native token is used
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
     const isNativeToken = tokenAddressOrSymbol ? false : true;
+    setSubmitStatus("Checking balance");
 
     let balance = 0;
     const rewardAmnt = parseFloat(values.rewardAmount);
@@ -150,6 +152,7 @@ function PathwayFormWrapper() {
         });
       }
     }
+    setSubmitStatus("Generating token URIs");
     // TODO: check prereqs
     const { prerequisites, ...pathwayOptions } = values;
     const prereqs = prerequisites
@@ -183,10 +186,14 @@ function PathwayFormWrapper() {
     });
 
     const { cids } = await cidsRes.json();
+
+    setSubmitStatus("Creating pathway");
+
     const finalValues = {
       ...serlializedValues,
       image: cids[values.title],
       projectId: router.query.projectId,
+      projectStreamId: data.getAllPathwaysByProjectId.streamId,
     };
 
     const pathwayDoc = await self.client.dataModel.createTile(
@@ -197,6 +204,7 @@ function PathwayFormWrapper() {
       }
     );
 
+    setSubmitStatus("Creating pathway on-chain");
     if (isNativeToken) {
       const createPathwayOnChainTx =
         await contracts.pathwayNFTContract.createPathway(
@@ -238,6 +246,8 @@ function PathwayFormWrapper() {
       await createPathwayOnChainTx.wait(1);
     }
 
+    setSubmitStatus("Signing pathway creation");
+
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify({
         id: pathwayDoc.id.toUrl(),
@@ -245,7 +255,7 @@ function PathwayFormWrapper() {
       }),
       account,
     ]);
-
+    setSubmitStatus("Pathway validation");
     await addPathwayMutation({
       variables: {
         input: {
@@ -254,7 +264,7 @@ function PathwayFormWrapper() {
         },
       },
     });
-
+    setSubmitStatus("Pathway created!");
     return router.push(`/projects/${router.query.projectId}/`);
   }
 
@@ -288,6 +298,7 @@ function PathwayFormWrapper() {
         <Button
           isLoading={isSubmitting}
           colorScheme="accentDark"
+          loadingText={submitStatus}
           type="submit"
           onClick={handleSubmit(onSubmit)}
         >

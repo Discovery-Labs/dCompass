@@ -70,27 +70,15 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
         rewardUserCap
         isPending
         projectId
-        quests {
+        quizQuests {
           id
           isPending
           completedBy
         }
-      }
-      pendingPathways {
-        id
-        streamId
-        title
-        description
-        slogan
-        image
-        difficulty
-        rewardCurrency
-        rewardAmount
-        rewardUserCap
-        isPending
-        projectId
-        quests {
+        bountyQuests {
           id
+          isPending
+          completedBy
         }
       }
     }

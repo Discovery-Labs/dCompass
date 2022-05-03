@@ -329,14 +329,20 @@ function ProjectPage({
               <TabPanels>
                 <TabPanel>
                   <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
-                    {renderPathways(data.getAllPathwaysByProjectId.pathways)}
+                    {renderPathways(
+                      data.getAllPathwaysByProjectId.pathways.filter(
+                        (pathway: Pathway) => !pathway.isPending
+                      )
+                    )}
                   </SimpleGrid>
                 </TabPanel>
                 {canReviewPathways && (
                   <TabPanel>
                     <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
                       {renderPathways(
-                        data.getAllPathwaysByProjectId.pendingPathways
+                        data.getAllPathwaysByProjectId.pathways.filter(
+                          (pathway: Pathway) => pathway.isPending
+                        )
                       )}
                     </SimpleGrid>
                   </TabPanel>

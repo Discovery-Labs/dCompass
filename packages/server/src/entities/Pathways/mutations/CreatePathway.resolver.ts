@@ -24,7 +24,7 @@ export class CreatePathwayResolver {
   ): Promise<Pathway | null | undefined> {
     // Check that the current user is the owner of the pathway
     const ogPathway = await ceramicClient.ceramic.loadStream(id);
-    const projectId = ogPathway.content.projectId;
+    const { projectId, ...ogPathwayInfos } = ogPathway.content;
     console.log(ogPathway.content);
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({ id, projectId }),
@@ -49,7 +49,8 @@ export class CreatePathwayResolver {
           id: projectId,
         },
       },
-      ...ogPathway.content,
+      ...ogPathwayInfos,
+      difficulty: ogPathway.content.difficulty.toUpperCase(),
       streamId: id,
       isPending: true,
     });

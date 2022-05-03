@@ -2,6 +2,26 @@ import { Injectable } from "@nestjs/common";
 import { Pathway, Prisma } from "@prisma/client";
 import { PrismaService } from "src/services/prisma/Prisma.service";
 
+type PathwayWithProjectInfos = Prisma.PathwayGetPayload<{
+  include: {
+    project: {
+      include: {
+        squads: true;
+      };
+    };
+  };
+}>;
+type PathwayWithQuestsAndProjectInfos = Prisma.PathwayGetPayload<{
+  include: {
+    quizQuests: true;
+    bountyQuests: true;
+    project: {
+      include: {
+        squads: true;
+      };
+    };
+  };
+}>;
 @Injectable()
 export class PathwayService {
   constructor(private prisma: PrismaService) {}
@@ -11,6 +31,37 @@ export class PathwayService {
   ): Promise<Pathway | null> {
     return this.prisma.pathway.findUnique({
       where: pathwayWhereUniqueInput,
+    });
+  }
+
+  async pathwayWithQuestsAndProjectInfos(
+    pathwayWhereUniqueInput: Prisma.PathwayWhereUniqueInput
+  ): Promise<PathwayWithQuestsAndProjectInfos | null> {
+    return this.prisma.pathway.findUnique({
+      where: pathwayWhereUniqueInput,
+      include: {
+        quizQuests: true,
+        bountyQuests: true,
+        project: {
+          include: {
+            squads: true,
+          },
+        },
+      },
+    });
+  }
+  async pathwayWithProjectInfos(
+    pathwayWhereUniqueInput: Prisma.PathwayWhereUniqueInput
+  ): Promise<PathwayWithProjectInfos | null> {
+    return this.prisma.pathway.findUnique({
+      where: pathwayWhereUniqueInput,
+      include: {
+        project: {
+          include: {
+            squads: true,
+          },
+        },
+      },
     });
   }
 
