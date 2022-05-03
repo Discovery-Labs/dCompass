@@ -1,7 +1,5 @@
-import { ViewIcon } from "@chakra-ui/icons";
 import {
   Badge,
-  Button,
   Flex,
   Heading,
   HStack,
@@ -19,18 +17,16 @@ import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 import { Project } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
 
-const ProjectCard = ({
-  project,
-  isReviewMode = false,
-}: {
+interface Props {
   project: Project;
   isReviewMode?: boolean;
-}) => {
+}
+
+const ProjectCard = ({ project, isReviewMode = false }: Props) => {
   const { t } = useTranslation("common");
-
   const router = useRouter();
-
   console.log({ pId: project.id });
+  const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
 
   function openProject() {
     router.push(
@@ -39,10 +35,15 @@ const ProjectCard = ({
         : `/projects/${project.id}`
     );
   }
-  const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
 
   return (
-    <CardMedia src={imgSrc} h="xl">
+    <CardMedia
+      src={imgSrc}
+      h="xl"
+      onClick={openProject}
+      _hover={{ cursor: "pointer", transform: "scale(1.05)" }}
+      _active={{ transform: "scale(0.95)" }}
+    >
       <VStack h="full">
         <Stack w="full" overflow="hidden" direction="row">
           {project.tags.map((tag) => (
@@ -120,13 +121,6 @@ const ProjectCard = ({
               </Text>
             </HStack>
           )}
-          <Button
-            w="full"
-            onClick={() => openProject()}
-            leftIcon={<ViewIcon />}
-          >
-            {!isReviewMode ? t("view-project") : t("review-project")}
-          </Button>
         </Flex>
       </VStack>
     </CardMedia>

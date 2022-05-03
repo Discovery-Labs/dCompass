@@ -73,7 +73,7 @@ const extendedColors: DeepPartial<
   neutralLighterAlpha: '#AFA2D6b3',
 
   borderDark: '#6F3FF5',
-  borderLight: '#6F3FF5',
+  borderLight: '#6137D8',
 
   // Functional
   success: '#9AF1A8',
