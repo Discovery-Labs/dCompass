@@ -72,6 +72,7 @@ input ClaimQuestRewardsInput {
   namespace: String
   questAdventurerSignature: String!
   questId: String!
+  questType: String!
 }
 
 input CreatePathwayInput {

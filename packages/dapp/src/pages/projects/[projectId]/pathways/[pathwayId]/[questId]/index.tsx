@@ -168,7 +168,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       rewardAmount,
       rewardCurrency,
       rewardUserCap,
-      type,
+      questType,
       projectId,
       questions,
       createdBy,
@@ -194,7 +194,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         rewardAmount,
         rewardCurrency,
         rewardUserCap,
-        type,
+        questType,
         pathwayId,
         projectId,
         questions,
@@ -221,6 +221,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
           did: self.id,
           questAdventurerSignature: signature.result,
           chainId: currentChainId,
+          questType: questType,
         },
       },
     });
@@ -250,7 +251,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         0
       );
     const currentUserHasClaimed = claimedByAddresses.includes(account);
-    console.log({ claimedByAddresses, currentUserHasClaimed });
+
     setIsClaimed(currentUserHasClaimed);
     setRewardStatus(
       currentUserHasClaimed ? "Rewards claimed" : "Claim rewards"
