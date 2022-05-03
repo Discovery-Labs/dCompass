@@ -24,11 +24,10 @@ Table QuizQuestion {
 
 Table SolutionSubmission {
   id String [pk]
-  streamId String [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   did String [not null]
-  reviewComment String [not null]
+  reviewComment String
   solution String [not null]
   status String [not null]
   quest BountyQuest

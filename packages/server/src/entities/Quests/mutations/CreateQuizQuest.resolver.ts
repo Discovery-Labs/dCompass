@@ -30,13 +30,11 @@ export class CreateQuizQuestResolver {
       JSON.stringify({ id, pathwayId }),
       questCreatorSignature
     );
-    console.log({ decodedAddress, controllers: ogQuest.controllers });
 
     const ownerAccounts = await ceramicClient.dataStore.get(
       "cryptoAccounts",
       ogQuest.controllers[0]
     );
-    console.log({ ownerAccounts });
     if (!ownerAccounts) throw new ForbiddenError("Unauthorized");
     const formattedAccounts = Object.keys(ownerAccounts).map(
       (account) => account.split("@")[0]

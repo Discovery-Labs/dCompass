@@ -18,6 +18,7 @@ type QuizQuestWithPathwayAndProjectSquads = Prisma.QuizQuestGetPayload<{
 }>;
 type BountyQuestWithPathwayAndProjectSquads = Prisma.BountyQuestGetPayload<{
   include: {
+    submissions: true;
     pathway: {
       include: {
         project: {
@@ -67,6 +68,7 @@ export class QuestService {
     return this.prisma.bountyQuest.findUnique({
       where: questWhereUniqueInput,
       include: {
+        submissions: true,
         pathway: {
           include: {
             project: {
