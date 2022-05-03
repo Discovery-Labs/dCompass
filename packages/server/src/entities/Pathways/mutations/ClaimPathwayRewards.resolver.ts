@@ -1,7 +1,6 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
 import { ethers } from "ethers";
 import ABIS from "@discovery-dao/hardhat/abis.json";
-import { Where } from "@textile/hub";
 
 import { UseCeramicClient, UseThreadDBClient } from "../../../core/utils/types";
 import { verifyAdventurerClaimInfo } from "../../../core/utils/security/verify";
@@ -9,12 +8,10 @@ import { AppService } from "../../../app.service";
 
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { UseThreadDB } from "../../../core/decorators/UseThreadDB.decorator";
-import { ThreadDBService } from "../../../services/thread-db/thread-db.service";
 import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
 import { ForbiddenError } from "apollo-server-express";
 import { Pathway } from "../Pathway.entity";
 import { ClaimPathwayRewardsInput } from "../dto/ClaimPathwayRewards.input";
-import { Quest } from "../../Quests/Quest.entity";
 import { PathwayService } from "../Pathway.service";
 import removeNulls from "../../../core/utils/helpers";
 

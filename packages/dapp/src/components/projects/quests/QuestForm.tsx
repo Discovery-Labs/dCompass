@@ -328,6 +328,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             rewardAmount: parseFloat(values.rewardAmount),
             rewardUserCap: parseInt(values.rewardUserCap, 10),
             pathwayId: router.query.pathwayId,
+            chainId,
           }
         : {
             ...values,
@@ -336,6 +337,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             rewardAmount: parseFloat(values.rewardAmount),
             rewardUserCap: parseInt(values.rewardUserCap, 10),
             pathwayId: router.query.pathwayId,
+            chainId,
           };
 
     const questDoc = await self.client.dataModel.createTile(

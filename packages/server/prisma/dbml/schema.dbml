@@ -4,8 +4,8 @@
 
 Table Contract {
   id String [pk]
-  namespace String [not null, default: 'eip155']
-  chainId String [not null, default: '1']
+  namespace String [default: 'eip155']
+  chainId String [default: '1']
   contractAddress String [not null]
   project Project
   projectId String
@@ -13,7 +13,6 @@ Table Contract {
 
 Table QuizQuestion {
   id String [pk]
-  streamId String [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   answer String [not null]
@@ -45,9 +44,8 @@ Table BountyQuest {
   description String [not null]
   image String [not null]
   isPending Boolean [not null]
-  isProjectContributor Boolean [not null]
   name String [not null]
-  namespace String [not null]
+  namespace String [default: 'eip155']
   pathway Pathway
   pathwayId String
   questType String [not null]
@@ -71,9 +69,8 @@ Table QuizQuest {
   description String [not null]
   image String [not null]
   isPending Boolean [not null]
-  isProjectContributor Boolean [not null]
   name String [not null]
-  namespace String [not null]
+  namespace String [default: 'eip155']
   pathway Pathway
   pathwayId String
   questType String [not null]

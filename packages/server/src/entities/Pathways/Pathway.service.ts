@@ -22,6 +22,13 @@ type PathwayWithQuestsAndProjectInfos = Prisma.PathwayGetPayload<{
     };
   };
 }>;
+
+type PathwayWithQuests = Prisma.PathwayGetPayload<{
+  include: {
+    quizQuests: true;
+    bountyQuests: true;
+  };
+}>;
 @Injectable()
 export class PathwayService {
   constructor(private prisma: PrismaService) {}
@@ -31,6 +38,18 @@ export class PathwayService {
   ): Promise<Pathway | null> {
     return this.prisma.pathway.findUnique({
       where: pathwayWhereUniqueInput,
+    });
+  }
+
+  async pathwayWithQuests(
+    pathwayWhereUniqueInput: Prisma.PathwayWhereUniqueInput
+  ): Promise<PathwayWithQuests | null> {
+    return this.prisma.pathway.findUnique({
+      where: pathwayWhereUniqueInput,
+      include: {
+        quizQuests: true,
+        bountyQuests: true,
+      },
     });
   }
 

@@ -21,6 +21,7 @@ input ApproveQuestInput {
   id: String!
   namespace: String
   questApproverSignature: String!
+  questType: String!
 }
 
 input ApproveQuestSolutionInput {
@@ -420,6 +421,7 @@ type QuizQuest {
 type QuizQuestion {
   answer: String!
   choices: [String!]!
+  id: String!
   question: String!
 }
 
@@ -520,4 +522,5 @@ input VerifyQuestInput {
   id: String!
   namespace: String
   questMinterSignature: String!
+  questType: String!
 }

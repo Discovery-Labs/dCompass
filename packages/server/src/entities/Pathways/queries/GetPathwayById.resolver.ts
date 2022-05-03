@@ -1,11 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 import { Resolver, Query, Args } from "@nestjs/graphql";
-import { Where } from "@textile/hub";
 
-import { UseThreadDB } from "../../../core/decorators/UseThreadDB.decorator";
 import removeNulls from "../../../core/utils/helpers";
-import { UseThreadDBClient } from "../../../core/utils/types";
-import { ThreadDBService } from "../../../services/thread-db/thread-db.service";
 import { Pathway } from "../Pathway.entity";
 import { PathwayService } from "../Pathway.service";
 

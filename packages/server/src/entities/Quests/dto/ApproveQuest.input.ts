@@ -13,6 +13,12 @@ export class ApproveQuestInput {
   @IsString({ message: "wrong.type" })
   @IsDefined({ message: "not.defined" })
   @IsNotEmpty({ message: "not.empty" })
+  questType: string;
+
+  @Field()
+  @IsString({ message: "wrong.type" })
+  @IsDefined({ message: "not.defined" })
+  @IsNotEmpty({ message: "not.empty" })
   questApproverSignature: string;
 
   @Field()

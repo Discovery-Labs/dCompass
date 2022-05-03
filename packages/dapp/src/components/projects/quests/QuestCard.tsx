@@ -43,7 +43,6 @@ import {
   VERIFY_QUEST_MUTATION,
 } from "../../../graphql/quests";
 
-
 const ModalDetails = ({ quest }: { quest: Quest }) => {
   const { getTextColor, getOverBgColor } = useCustomColor();
   const pathwayCardMarkdownTheme = useCardMarkdownTheme();
@@ -154,6 +153,7 @@ function QuestCard({
           id: quest.id,
           questApproverSignature: signature.result,
           chainId,
+          questType: quest.questType,
         },
       },
     });
@@ -236,6 +236,7 @@ function QuestCard({
             id: quest.id,
             questMinterSignature: signature.result,
             chainId,
+            questType: quest.questType,
           },
         },
       });
@@ -300,7 +301,7 @@ function QuestCard({
   };
   const isCompleted = (quest.completedBy || []).includes(self?.id);
   const isClaimed = account && claimedBy?.includes(account);
-  const isLocked = quest.id === "01g0yjfgqrhc2q0f4nqtxtqy81"
+  const isLocked = quest.id === "01g0yjfgqrhc2q0f4nqtxtqy81";
   return (
     <Card position="relative" h="xl" spacing="6" py="4">
       {isLocked && <LockedScreen />}

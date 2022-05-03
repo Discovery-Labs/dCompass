@@ -2,6 +2,33 @@ import { Injectable } from "@nestjs/common";
 import { QuizQuest, BountyQuest, Prisma } from "@prisma/client";
 import { PrismaService } from "src/services/prisma/Prisma.service";
 
+type QuizQuestWithPathwayAndProjectSquads = Prisma.QuizQuestGetPayload<{
+  include: {
+    questions: true;
+    pathway: {
+      include: {
+        project: {
+          include: {
+            squads: true;
+          };
+        };
+      };
+    };
+  };
+}>;
+type BountyQuestWithPathwayAndProjectSquads = Prisma.BountyQuestGetPayload<{
+  include: {
+    pathway: {
+      include: {
+        project: {
+          include: {
+            squads: true;
+          };
+        };
+      };
+    };
+  };
+}>;
 @Injectable()
 export class QuestService {
   constructor(private prisma: PrismaService) {}
@@ -11,6 +38,45 @@ export class QuestService {
   ): Promise<QuizQuest | null> {
     return this.prisma.quizQuest.findUnique({
       where: questWhereUniqueInput,
+    });
+  }
+
+  async quizQuestWithPathwayAndProjectSquads(
+    questWhereUniqueInput: Prisma.QuizQuestWhereUniqueInput
+  ): Promise<QuizQuestWithPathwayAndProjectSquads | null> {
+    return this.prisma.quizQuest.findUnique({
+      where: questWhereUniqueInput,
+      include: {
+        questions: true,
+        pathway: {
+          include: {
+            project: {
+              include: {
+                squads: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async bountyQuestWithPathwayAndProjectSquads(
+    questWhereUniqueInput: Prisma.BountyQuestWhereUniqueInput
+  ): Promise<BountyQuestWithPathwayAndProjectSquads | null> {
+    return this.prisma.bountyQuest.findUnique({
+      where: questWhereUniqueInput,
+      include: {
+        pathway: {
+          include: {
+            project: {
+              include: {
+                squads: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 

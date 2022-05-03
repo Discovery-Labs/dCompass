@@ -95,8 +95,17 @@ export class ApprovePathwayResolver {
       }),
     ]);
 
+    const updatedPathway = await this.pathwayService.updatePathway({
+      where: {
+        id: foundPathway.id,
+      },
+      data: {
+        isPending: false,
+      },
+    });
+
     return removeNulls({
-      ...foundPathway,
+      ...updatedPathway,
       id,
       projectStreamId,
       expandedServerSignatures: [

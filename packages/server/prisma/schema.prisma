@@ -14,8 +14,8 @@ generator dbml {
 
 model Contract {
   id         String           @id @default(cuid())
-  namespace String @default("eip155")
-  chainId String @default("1")
+  namespace String? @default("eip155")
+  chainId String? @default("1")
   contractAddress String
   project    Project?         @relation(fields: [projectId], references: [id])
   projectId  String?
@@ -23,7 +23,6 @@ model Contract {
 
 model QuizQuestion {
   id         String           @id @default(cuid())
-  streamId   String
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
   answer String
@@ -69,9 +68,8 @@ model BountyQuest {
   description String
   image String
   isPending Boolean
-  isProjectContributor Boolean
   name String
-  namespace String
+  namespace String? @default("eip155")
   pathway    Pathway?         @relation(fields: [pathwayId], references: [id])
   pathwayId  String?
   questType String
@@ -95,9 +93,8 @@ model QuizQuest {
   description String
   image String
   isPending Boolean
-  isProjectContributor Boolean
   name String
-  namespace String
+  namespace String? @default("eip155")
   pathway    Pathway?         @relation(fields: [pathwayId], references: [id])
   pathwayId  String?
   questType String
