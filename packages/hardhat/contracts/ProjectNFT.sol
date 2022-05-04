@@ -265,15 +265,13 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         require(!projectMinted[_projectId], "project already minted");
         bool isAllowed = reviewers[_msgSender()];
         bool notContributor = true;
-        if(!isAllowed){
-            address[] memory currContributors = contributors[_projectId];
-            for(uint i=0; i<currContributors.length; i++){
-                if(_msgSender() == currContributors[i]){
-                    isAllowed = true;
-                }
-                if(newContributor == currContributors[i]){
-                    notContributor = false;
-                }
+        address[] memory currContributors = contributors[_projectId];
+        for(uint i=0; i<currContributors.length; i++){
+            if(!isAllowed && _msgSender() == currContributors[i]){
+                isAllowed = true;
+            }
+            if(newContributor == currContributors[i]){
+                notContributor = false;
             }
         }
         require(isAllowed, "must be a project contributor or reviewer");

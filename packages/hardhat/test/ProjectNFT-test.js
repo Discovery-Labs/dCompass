@@ -39,6 +39,17 @@ describe("ProjectNFT", function() {
 })
 
   describe("Testing deployment and voting", function() {
+
+    it("testing constructor require statements", async function(){
+      BadProjectFactory = await ethers.getContractFactory("ProjectNFT");
+      await expect(BadProjectFactory.deploy(`${owner.address}`, [], 10)).to.be.revertedWith("Must have at least 1 reviewer");
+      await expect(BadProjectFactory.deploy(`${owner.address}`, [`${owner.address}`], 101)).to.be.revertedWith("invalid threshold");
+      //duplicate reviewers deploys with only one reviewer
+      const duplicateReviewers = await BadProjectFactory.deploy(`${owner.address}`, [`${owner.address}`, `${owner.address}`], 10);
+      await duplicateReviewers.deployed();
+      expect(await duplicateReviewers.numReviewers()).to.be.equal(1);
+    })
+
     it("testing constructor and reviewer setters and getters", async function() {  
       //set in constructor
       expect(await projectNFT.multiSigThreshold()).to.be.equal(10);
@@ -52,8 +63,11 @@ describe("ProjectNFT", function() {
       //reviewers can change Threshold, and add reviewers
       await projectNFT.setThreshold(40);
       expect(await projectNFT.multiSigThreshold()).to.be.equal(40);
+      await expect(projectNFT.connect(addr5).setThreshold(30)).to.be.revertedWith("not a reviewer");
+      await expect(projectNFT.connect(addr1).setThreshold(0)).to.be.revertedWith("invalid threshold");
       await projectNFT.connect(addr1).setThreshold(30);
       expect(await projectNFT.multiSigThreshold()).to.be.equal(30);
+      await expect(projectNFT.connect(addr3).addReviewer(`${addr4.address}`)).to.be.revertedWith("already reviewer");
       await projectNFT.connect(addr3).addReviewer(`${addr5.address}`);
       expect(await projectNFT.numReviewers()).to.be.equal(6);
       await projectNFT.connect(addr5).setStatusString(2,"DEPRECATED");
@@ -68,8 +82,10 @@ describe("ProjectNFT", function() {
       expect(await projectNFT.reviewers(`${owner.address}`)).to.be.true;
 
       //check setters and getters
+      await expect(projectNFT.connect(addr2).setAppDiamond("0x0000000000000000000000000000000000000000")).to.be.reverted;
       await projectNFT.connect(addr2).setAppDiamond(appDiamond.address);
       expect(await projectNFT.getAppDiamond()).to.be.equal(`${appDiamond.address}`);
+      await expect(projectNFT.connect(addr2).setSFTAddr("0x0000000000000000000000000000000000000000")).to.be.reverted;
       await projectNFT.connect(addr4).setSFTAddr(sponsorSFT.address);
       expect(await projectNFT.getSFTAddr()).to.be.equal(`${sponsorSFT.address}`);
       //not a reviewer
@@ -111,7 +127,10 @@ describe("ProjectNFT", function() {
       expect(await projectNFT.votes("firstTestProject")).to.be.equal(1);//1 vote needed for approval
       let contributors = await projectNFT.getContributors("firstTestProject");
       expect(contributors.length).to.be.equal(5);//make sure contributors are added correctly
+      await expect(projectNFT.connect(addr6).addProjectContributor("NonexistentProject", `${addrs[0].address}`)).to.be.revertedWith("project doesn't exist");
+      await expect(projectNFT.connect(addrs[1]).addProjectContributor("firstTestProject", `${addrs[2].address}`)).to.be.revertedWith("must be a project contributor or reviewer");
       await projectNFT.connect(addr6).addProjectContributor("firstTestProject", `${addrs[0].address}`);
+      await expect(projectNFT.connect(addr6).addProjectContributor("firstTestProject", `${addrs[0].address}`)).to.be.revertedWith("already a contributor on project");
       contributors = await projectNFT.getContributors("firstTestProject");
       expect(contributors.length).to.be.equal(6);//make sure contributors can be added before mint
       expect(await projectNFT.projectMinted("firstTestProject")).to.be.false;//not minted yet
@@ -127,6 +146,7 @@ describe("ProjectNFT", function() {
         console.log(tokenURI);//should match ipfs://f + first array[i] + second array[i]
       }
       expect(await projectNFT.projectMinted("firstTestProject")).to.be.true;//Project minted
+      await expect(projectNFT.connect(addr6).addProjectContributor("firstTestProject", `${addrs[2].address}`)).to.be.revertedWith("project already minted");
 
       //checking mint balances
       expect(await projectNFT.projectMinted("firstTestProject")).to.be.true;//Project minted
