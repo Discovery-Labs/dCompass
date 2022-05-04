@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { getIdentity } from '../../core/resources/ThreadDB/thread-db';
-import { Client, ThreadID, QueryJSON, Where } from '@textile/hub';
-import { Tag } from '../../entities/Tags/Tag.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { getIdentity } from "../../core/resources/ThreadDB/thread-db";
+import { Client, ThreadID, QueryJSON, Where } from "@textile/hub";
+import { Tag } from "../../entities/Tags/Tag.entity";
 
 @Injectable()
 export class ThreadDBService {
@@ -12,7 +12,7 @@ export class ThreadDBService {
   async getAppThreads(dbClient: Client) {
     const appThreads = await dbClient.listThreads();
     const latestThreadId = ThreadID.fromString(
-      appThreads[appThreads.length - 1].id,
+      appThreads[appThreads.length - 1].id
     );
     return { appThreads, latestThreadId };
   }
@@ -80,20 +80,20 @@ export class ThreadDBService {
   }) {
     const [foundProjects, allTags] = await Promise.all([
       this.query({
-        collectionName: 'Project',
+        collectionName: "Project",
         dbClient,
         threadId,
-        query: new Where('_id').eq(projectId),
+        query: new Where("_id").eq(projectId),
       }),
       this.query({
-        collectionName: 'Tag',
+        collectionName: "Tag",
         threadId,
         dbClient,
       }),
     ]);
 
     if (!foundProjects || foundProjects.length === 0) {
-      throw new NotFoundException('Project not found');
+      throw new NotFoundException("Project not found");
     }
 
     const [project] = foundProjects as any[];
@@ -106,7 +106,7 @@ export class ThreadDBService {
       tags: allTags
         .map((t: any) => ({ id: t._id, ...t }))
         .filter((tag: any) =>
-          project.tags.map((pjTag: Tag) => pjTag.id).includes(tag.id),
+          project.tags.map((pjTag: Tag) => pjTag.id).includes(tag.id)
         ),
     };
     return foundProject;
@@ -122,13 +122,13 @@ export class ThreadDBService {
     pathwayId: string;
   }) {
     const [foundPathway] = await this.query({
-      collectionName: 'Pathway',
+      collectionName: "Pathway",
       dbClient,
       threadId,
-      query: new Where('_id').eq(pathwayId),
+      query: new Where("_id").eq(pathwayId),
     });
     if (!foundPathway) {
-      throw new NotFoundException('Pathway not found by back-end');
+      throw new NotFoundException("Pathway not found by back-end");
     }
     return foundPathway as any;
   }
@@ -142,13 +142,13 @@ export class ThreadDBService {
     questId: string;
   }) {
     const [foundQuest] = await this.query({
-      collectionName: 'Quest',
+      collectionName: "Quest",
       dbClient,
       threadId,
-      query: new Where('_id').eq(questId),
+      query: new Where("_id").eq(questId),
     });
     if (!foundQuest) {
-      throw new NotFoundException('Pathway not found by back-end');
+      throw new NotFoundException("Pathway not found by back-end");
     }
     return foundQuest as any;
   }

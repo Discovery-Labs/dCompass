@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Link, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Link, Stack, useToast } from "@chakra-ui/react";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
 import { useWeb3React } from "@web3-react/core";
@@ -38,6 +38,7 @@ const steps = [
 ];
 
 function CreateProjectStepper() {
+  const toast = useToast();
   const { getPrimaryColor } = useCustomColor();
   const { t } = useTranslation("common");
   const router = useRouter();
@@ -197,7 +198,15 @@ function CreateProjectStepper() {
         },
       },
     });
-    console.log({ allProjects });
+    toast({
+      title: "Project submitted!",
+      description: `Your project will be reviewed soon!`,
+      status: "success",
+      position: "bottom-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
     return router.push("/");
   }
 

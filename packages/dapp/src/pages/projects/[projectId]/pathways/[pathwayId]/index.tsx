@@ -35,7 +35,7 @@ import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Blockies from "react-blockies";
 import { BsBarChartFill, BsCheckCircleFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
@@ -49,7 +49,6 @@ import QuestCard from "../../../../../components/projects/quests/QuestCard";
 import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../core/hooks/useTokenList";
-import { Quest } from "../../../../../core/types";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
 
 type Props = {
@@ -101,7 +100,8 @@ function PathwayPage({
   description,
   slogan,
   image,
-  quests = [],
+  quizQuests = [],
+  bountyQuests = [],
   difficulty,
   createdBy,
   createdAt,
@@ -150,12 +150,21 @@ function PathwayPage({
     },
   });
 
+  const allQuests = useMemo(
+    () => [
+      ...(data?.getAllQuestsByPathwayId?.quizQuests || []),
+      ...(data?.getAllQuestsByPathwayId?.bountyQuests || []),
+    ],
+    [
+      data?.getAllQuestsByPathwayId?.quizQuests,
+      data?.getAllQuestsByPathwayId?.bountyQuests,
+    ]
+  );
   useEffect(() => {
-    const totalQuestCount = quests.length;
+    const totalQuestCount = allQuests.length;
     const completedQuestCount = self?.id
-      ? quests.filter(
-          (q: Quest) => q.completedBy.includes(self.id) && !q.isPending
-        ).length
+      ? allQuests.filter((q) => q.completedBy.includes(self.id) && !q.isPending)
+          .length
       : 0;
     const ratio = (completedQuestCount / totalQuestCount) * 100;
 
@@ -164,7 +173,7 @@ function PathwayPage({
       completedQuestCount,
       ratio,
     });
-  }, [quests, self?.id]);
+  }, [allQuests, self?.id]);
 
   useEffect(() => {
     async function init() {
@@ -210,7 +219,8 @@ function PathwayPage({
         description,
         slogan,
         image,
-        quests,
+        quizQuests,
+        bountyQuests,
         difficulty,
         createdBy,
         createdAt,
@@ -281,6 +291,40 @@ function PathwayPage({
   };
 
   const isOwner = createdBy === account;
+  const isProjectContributor = useMemo(
+    () =>
+      projectRes?.getProjectById?.squads &&
+      projectRes.getProjectById.squads
+        .flatMap(({ members }: { members: string[] }) => members)
+        .includes(account),
+    [projectRes?.getProjectById, account]
+  );
+  const canEdit = isProjectContributor || isOwner;
+
+  const canReviewQuests = isProjectContributor || isOwner || isReviewer;
+
+  const renderQuests = useCallback(
+    (questsToRender: Record<string, unknown>[]) => {
+      return (
+        data?.getAllQuestsByPathwayId &&
+        projectRes?.getProjectById &&
+        questsToRender.map((quest: any) => (
+          <QuestCard
+            key={quest.id}
+            quest={quest}
+            canReviewQuests={canReviewQuests}
+            pathwayStreamId={data.getAllQuestsByPathwayId.streamId}
+            projectContributors={
+              projectRes.getProjectById.squads.flatMap(
+                ({ members }: { members: string[] }) => members
+              ) || []
+            }
+          />
+        ))
+      );
+    },
+    [data?.getAllQuestsByPathwayId, canReviewQuests, projectRes?.getProjectById]
+  );
 
   if (loading || projectLoading || !projectRes?.getProjectById)
     return (
@@ -293,27 +337,6 @@ function PathwayPage({
     );
   if (error || projectError)
     return `Loading error! ${error?.message || projectError?.message}`;
-  const isProjectContributor = projectRes.getProjectById.squads
-    .flatMap(({ members }: { members: string[] }) => members)
-    .includes(account);
-  const canEdit = isProjectContributor || isOwner;
-  console.log({ canEdit, isOwner, isProjectContributor });
-  const canReviewQuests = isProjectContributor || isOwner || isReviewer;
-  const renderQuests = (questsToRender: Record<string, unknown>[]) => {
-    return questsToRender.map((quest: any) => (
-      <QuestCard
-        key={quest.id}
-        quest={quest}
-        canReviewQuests={canReviewQuests}
-        pathwayStreamId={data.getAllQuestsByPathwayId.streamId}
-        projectContributors={
-          projectRes.getProjectById.squads.flatMap(
-            ({ members }: { members: string[] }) => members
-          ) || []
-        }
-      />
-    ));
-  };
 
   return (
     <Container>
@@ -397,9 +420,7 @@ function PathwayPage({
                   <TabPanel>
                     <SimpleGrid columns={[1, 2]} spacing={10}>
                       {renderQuests(
-                        data.getAllQuestsByPathwayId.quests.filter(
-                          (quest: any) => !quest.isPending
-                        )
+                        allQuests.filter((quest: any) => !quest.isPending)
                       )}
                     </SimpleGrid>
                   </TabPanel>
@@ -407,9 +428,7 @@ function PathwayPage({
                     <TabPanel>
                       <SimpleGrid columns={[1, 2]} spacing={10}>
                         {renderQuests(
-                          data.getAllQuestsByPathwayId.quests.filter(
-                            (quest: any) => quest.isPending
-                          )
+                          allQuests.filter((quest: any) => quest.isPending)
                         )}
                       </SimpleGrid>
                     </TabPanel>
@@ -551,9 +570,9 @@ function PathwayPage({
                   </VStack>
                 </Flex>
               </Flex>
-              {quests && (
+              {allQuests && (
                 <Text pt="8" fontSize="xs">
-                  {quests.length} Quest{quests.length > 1 ? "s" : ""}
+                  {allQuests.length} Quest{allQuests.length > 1 ? "s" : ""}
                 </Text>
               )}
 

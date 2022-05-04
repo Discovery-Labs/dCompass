@@ -779,7 +779,7 @@
       "chainId": "4",
       "contracts": {
         "ProjectNFT": {
-          "address": "0x01b0Cf47d358A16824ca3374b2382243AE536cB9",
+          "address": "0x6c7ab611e3f73a72DE681c401cd73D6332843a49",
           "abi": [
             {
               "inputs": [
@@ -1790,7 +1790,7 @@
           ]
         },
         "RandomNumberConsumer": {
-          "address": "0x9C80181bc463169D6FD13e94CCAc86D0933E450b",
+          "address": "0xFAABCfdD314D395A0B9bE9bc2FC88971c7824d52",
           "abi": [
             {
               "inputs": [
@@ -2021,7 +2021,7 @@
           ]
         },
         "Verify": {
-          "address": "0xAFB7b4dFb5e309564Bd6799fE091006e589d148E",
+          "address": "0xc52bF987637f0E3F17201AD6DC5e36dC41B2dC18",
           "abi": [
             {
               "inputs": [
@@ -2328,7 +2328,7 @@
           ]
         },
         "PathwayNFT": {
-          "address": "0x69408bc51fFf47a83B00B0ffb436C929128A2D08",
+          "address": "0x2C3d710dd5EC1efB9b58890303CBE1B010D24905",
           "abi": [
             {
               "inputs": [
@@ -3630,7 +3630,7 @@
           ]
         },
         "BadgeNFT": {
-          "address": "0xFec486D7D2aE3D2713FACDa2F393D80875Cde1fE",
+          "address": "0x3D60459b1C3bB81CF1a4EE6Fa6AEC969662FbDA7",
           "abi": [
             {
               "inputs": [
@@ -4937,7 +4937,7 @@
           ]
         },
         "SponsorPassSFT": {
-          "address": "0x9f20670371795A916fAe1F1ef5E27b3234D626B5",
+          "address": "0x656d7Eb24F2020E1E991AD91FEFA4006527074fc",
           "abi": [
             {
               "inputs": [
@@ -5435,7 +5435,7 @@
           ]
         },
         "AppDiamond": {
-          "address": "0x9709FB1d4086A219655b4354A2d8bDEdE34aE4cd",
+          "address": "0xb6a711FD57Fdc366D5C8d7c11af37B4C61F0b8cD",
           "abi": [
             {
               "inputs": [
@@ -5858,7 +5858,7 @@
           ]
         },
         "AdventurerNFT": {
-          "address": "0xC0f2C6e09ddA1F1eDb677EabA45F3169CF4Ab2e1",
+          "address": "0x743645f08958fa4168C56f80d73ECa5351659BAE",
           "abi": [
             {
               "inputs": [],
@@ -6358,7 +6358,7 @@
           ]
         },
         "AdventurerBadgeFactory": {
-          "address": "0x19d6817bB3E5daaCaf8739a1732084C7Eaa018B0",
+          "address": "0x6F08801DF7347ef0EcCc43f790933d3524Da5510",
           "abi": [
             {
               "inputs": [

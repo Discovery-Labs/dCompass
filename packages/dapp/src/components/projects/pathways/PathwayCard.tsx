@@ -116,9 +116,11 @@ function PathwayCard({
   const router = useRouter();
 
   useEffect(() => {
-    const totalQuestCount = pathway.quests.length;
+    const allQuests = [...pathway.quizQuests, ...pathway.bountyQuests];
+    const totalQuestCount = allQuests.length;
+
     const completedQuestCount = self?.id
-      ? pathway.quests.filter(
+      ? allQuests.filter(
           (q: Quest) => q.completedBy.includes(self.id) && !q.isPending
         ).length
       : 0;
@@ -129,7 +131,7 @@ function PathwayCard({
       completedQuestCount,
       ratio,
     });
-  }, [pathway.quests, self?.id]);
+  }, [pathway.quizQuests, pathway.bountyQuests, self?.id]);
   useEffect(() => {
     async function init() {
       if (contracts && pathway.streamId) {

@@ -21,6 +21,7 @@ const ImageDropzone = ({
   isRequired = false,
   fieldName,
   label,
+  isMultiple = false
 }: any) => {
   const [files, setFiles] = useState([]);
   const fieldOptions = isRequired
@@ -48,23 +49,23 @@ const ImageDropzone = ({
   );
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
+    accept: "image/*, video/*, audio/*, .pdf",
     onDrop,
   });
 
   const thumbs = files.map((file: any) => (
     <Flex direction={["column", "row"]} w="full" key={file.name}>
-      <Image
+     {file.type.includes("image") && <Image
         alt="file preview"
         borderRadius="2"
         objectFit="cover"
         boxSize="150px"
         src={file.preview}
-      />
+      />}
       <VStack p="2" w="full" align="start" justify="center">
         <IconButton
           colorScheme="secondary"
-          onClick={() => setFiles([])}
+          onClick={() => setFiles(isMultiple ? files.filter((f: any) => f.name !== file.name) : [])}
           aria-label="Remove Image"
           icon={<CloseIcon />}
         />
@@ -84,10 +85,8 @@ const ImageDropzone = ({
   return (
     <FormControl isInvalid={errors[fieldName]}>
       <FormLabel htmlFor={fieldName}>{label}</FormLabel>
-      {files && thumbs}
-
-      {files.length === 0 && (
-        <Button {...getRootProps()}>
+      {(isMultiple || files.length === 0) && (
+        <Button {...getRootProps()} mb="4">
           Upload
           <Input
             type="file"
@@ -97,6 +96,7 @@ const ImageDropzone = ({
           />
         </Button>
       )}
+      {files && thumbs}
 
       <FormErrorMessage>
         {errors[fieldName] && errors[fieldName].message}

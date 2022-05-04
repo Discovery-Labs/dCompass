@@ -131,3 +131,27 @@ All data stored is accessible on the public IPFS network via a content ID - inte
 
 #### Free
 Data is stored on the Filecoin network, which has a unique economic model and over 15 EiB of capacity, allowing us to offer Web3.Storage for free today. This storage is cryptographically provable by anyone!
+
+
+--- SELF ID BOUNTY ----
+
+> ##### `@self.id/framework` the highest-level abstraction provided by the Self.ID SDK, designed to easily power React applications with React components, hooks, and utility functions for user authentication, data storage, and retrieval.
+
+
+###  📖 Quest external resources
+- [🔗 Official docs ](https://developers.ceramic.network/tools/self-id/framework/)
+- [🔗 Github repo](https://github.com/ceramicstudio/self.id)
+
+### ✅ Quest success criterias
+- Should include a link to a working application using `@self.id/framework` (even on a dev or staging environment, using testnet networks)
+- Should include a link to the Github repo used for the deployed application
+- Should include feedback on the developer experience (minimum 200 words)
+
+---- CERAMIC CHALLENGE SOLUTION -----
+
+## [Link to working app](https://alpha.dcompass.xyz)
+## [Link to github repo](https://github.com/Discovery-Labs/dCompass)
+## Feedback on the developer experience
+- I had some issues trying to login on mobile using the Argent and Rainbow wallets
+- I had also issues when switching between wallets that had 2 different DIDs, I had to give a page refresh for a proper DID change
+- It was great to integrate the Github and Twitter account linking

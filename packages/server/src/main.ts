@@ -1,29 +1,30 @@
-import { config as dotenvConfig } from 'dotenv';
+import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 // import cookieParser from 'cookie-parser';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { NestExpressApplication } from "@nestjs/platform-express";
 // import { sessionMiddleware } from './core/resources/Redis/redis';
-import { Context } from './core/utils/types';
-import { ThreadID } from '@textile/hub';
-import { NextFunction } from 'express';
+import { Context } from "./core/utils/types";
+import { ThreadID } from "@textile/hub";
+import { NextFunction } from "express";
 import {
   BadRequestException,
   Logger,
   ValidationError,
   ValidationPipe,
-} from '@nestjs/common';
-import config from './core/configs/config';
+} from "@nestjs/common";
+import config from "./core/configs/config";
 // import { makeCeramicClient } from './services/ceramic/ceramic.service';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
-import { CorsConfig, SwaggerConfig } from './core/configs/config.interface';
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config";
+import { CorsConfig, SwaggerConfig } from "./core/configs/config.interface";
 import {
   ceramicCoreFactory,
   ceramicDataModelFactory,
-} from './services/ceramic/data-models';
-import { getDBClient } from './core/resources/ThreadDB/thread-db';
+} from "./services/ceramic/data-models";
+import { getDBClient } from "./core/resources/ThreadDB/thread-db";
+// import { PrismaService } from "./services/prisma/Prisma.service";
 
 const {
   api: { protocol, hostname, port, corsOptions },
@@ -35,11 +36,15 @@ async function bootstrap() {
   });
 
   app.enableCors(corsOptions);
-  app.disable('x-powered-by');
+  app.disable("x-powered-by");
 
   // if we add cloudflare on a proxy
   // app.set('trust proxy', 1); // trust first proxy
-  app.enableShutdownHooks(['SIGINT', 'SIGTERM']);
+
+  // enable shutdown hooks
+  // const prismaService = app.get(PrismaService);
+  // await prismaService.enableShutdownHooks(app);
+  app.enableShutdownHooks(["SIGINT", "SIGTERM"]);
 
   const ceramicClient = await ceramicDataModelFactory();
 
@@ -54,11 +59,11 @@ async function bootstrap() {
   // });
 
   app.use(
-    async (req: Context['req'], _res: Context['res'], next: NextFunction) => {
+    async (req: Context["req"], _res: Context["res"], next: NextFunction) => {
       const dbClient = await getDBClient();
       const appThreads = await dbClient.listThreads();
       const latestThreadId = ThreadID.fromString(
-        appThreads[appThreads.length - 1].id,
+        appThreads[appThreads.length - 1].id
       );
       const ceramicCore = ceramicCoreFactory();
       req.ceramicClient = ceramicClient;
@@ -66,23 +71,23 @@ async function bootstrap() {
       req.latestThreadId = latestThreadId;
       req.ceramicCore = ceramicCore;
       next();
-    },
+    }
   );
 
   const configService = app.get(ConfigService);
-  const corsConfig = configService.get<CorsConfig>('cors');
-  const swaggerConfig = configService.get<SwaggerConfig>('swagger');
+  const corsConfig = configService.get<CorsConfig>("cors");
+  const swaggerConfig = configService.get<SwaggerConfig>("swagger");
 
   // Swagger Api
   if (swaggerConfig?.enabled) {
     const options = new DocumentBuilder()
-      .setTitle(swaggerConfig.title || 'Nestjs')
-      .setDescription(swaggerConfig.description || 'The nestjs API description')
-      .setVersion(swaggerConfig.version || '1.0')
+      .setTitle(swaggerConfig.title || "Nestjs")
+      .setDescription(swaggerConfig.description || "The nestjs API description")
+      .setVersion(swaggerConfig.version || "1.0")
       .build();
     const document = SwaggerModule.createDocument(app, options);
 
-    SwaggerModule.setup(swaggerConfig.path || 'api', app, document);
+    SwaggerModule.setup(swaggerConfig.path || "api", app, document);
   }
 
   // Cors
@@ -99,11 +104,11 @@ async function bootstrap() {
       exceptionFactory: (errors: ValidationError[]) =>
         new BadRequestException(errors),
       forbidNonWhitelisted: true,
-    }),
+    })
   );
   await app.listen(port, () => {
-    Logger.log(`${protocol()}://${hostname}/health`, 'REST API');
-    Logger.log(`${protocol()}://${hostname}/graphql`, 'GraphQL API');
+    Logger.log(`${protocol()}://${hostname}/health`, "REST API");
+    Logger.log(`${protocol()}://${hostname}/graphql`, "GraphQL API");
   });
 }
 bootstrap();

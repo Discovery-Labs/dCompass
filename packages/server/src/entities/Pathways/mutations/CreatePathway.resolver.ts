@@ -1,87 +1,60 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { ethers } from 'ethers';
-import { ForbiddenError } from 'apollo-server-express';
+import { Resolver, Mutation, Args } from "@nestjs/graphql";
+import { ethers } from "ethers";
+import { ForbiddenError } from "apollo-server-express";
 
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient, UseThreadDBClient } from '../../../core/utils/types';
-import { CreatePathwayInput } from '../dto/CreatePathway.input';
-import { Pathway } from '../Pathway.entity';
-import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
-import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
+import { UseCeramicClient } from "../../../core/utils/types";
+import { CreatePathwayInput } from "../dto/CreatePathway.input";
+import { Pathway } from "../Pathway.entity";
+import { PathwayService } from "../Pathway.service";
+import removeNulls from "../../../core/utils/helpers";
 
 @Resolver(() => Pathway)
 export class CreatePathwayResolver {
-  constructor(private readonly threadDBService: ThreadDBService) {}
+  constructor(private readonly pathwayService: PathwayService) {}
 
   @Mutation(() => Pathway, {
     nullable: true,
-    description: 'Create a new Pathway in dCompass',
-    name: 'createPathway',
+    description: "Create a new Pathway in dCompass",
+    name: "createPathway",
   })
   async createPathway(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
-    @UseThreadDB()
-    { dbClient, latestThreadId }: UseThreadDBClient,
-    @Args('input') { id, pathwayCreatorSignature }: CreatePathwayInput,
+    @Args("input") { id, pathwayCreatorSignature }: CreatePathwayInput
   ): Promise<Pathway | null | undefined> {
     // Check that the current user is the owner of the pathway
     const ogPathway = await ceramicClient.ceramic.loadStream(id);
-    const projectId = ogPathway.content.projectId;
+    const { projectId, ...ogPathwayInfos } = ogPathway.content;
     console.log(ogPathway.content);
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({ id, projectId }),
-      pathwayCreatorSignature,
+      pathwayCreatorSignature
     );
 
     const ownerAccounts = await ceramicClient.dataStore.get(
-      'cryptoAccounts',
-      ogPathway.controllers[0],
+      "cryptoAccounts",
+      ogPathway.controllers[0]
     );
     console.log({ ownerAccounts, decodedAddress });
-    if (!ownerAccounts) throw new ForbiddenError('Unauthorized');
+    if (!ownerAccounts) throw new ForbiddenError("Unauthorized");
     const formattedAccounts = Object.keys(ownerAccounts).map(
-      (account) => account.split('@')[0],
+      (account) => account.split("@")[0]
     );
     if (!formattedAccounts.includes(decodedAddress)) {
-      throw new ForbiddenError('Unauthorized');
+      throw new ForbiddenError("Unauthorized");
     }
-
-    const [newPathwayId] = await this.threadDBService.create({
-      collectionName: 'Pathway',
-      threadId: latestThreadId,
-      values: [
-        {
-          streamId: id,
-          ...ogPathway.content,
+    const createdPathway = await this.pathwayService.createPathway({
+      project: {
+        connect: {
+          id: projectId,
         },
-      ],
-      dbClient,
-    });
-
-    const projectDetails = await this.threadDBService.getProjectById({
-      dbClient,
-      threadId: latestThreadId,
-      projectId,
-    });
-
-    const existingPendingPathways = projectDetails.pendingPathways ?? [];
-    await this.threadDBService.update({
-      collectionName: 'Project',
-      dbClient,
-      threadId: latestThreadId,
-      values: [
-        {
-          _id: projectId,
-          ...projectDetails,
-          pendingPathways: [...existingPendingPathways, newPathwayId],
-        },
-      ],
-    });
-
-    return {
-      id: newPathwayId,
+      },
+      ...ogPathwayInfos,
+      difficulty: ogPathway.content.difficulty.toUpperCase(),
       streamId: id,
-      ...ogPathway.content,
-    };
+      isPending: true,
+    });
+
+    return removeNulls(createdPathway) as Pathway;
   }
 }

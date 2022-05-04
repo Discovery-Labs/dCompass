@@ -21,6 +21,42 @@ input ApproveQuestInput {
   id: String!
   namespace: String
   questApproverSignature: String!
+  questType: String!
+}
+
+input ApproveQuestSolutionInput {
+  adventurerDID: String!
+  id: String!
+  solutionApproverSignature: String!
+  solutionId: String!
+}
+
+type BountyQuest {
+  chainId: Int!
+  completedBy: [String!]!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  createdBy: String!
+  description: String!
+  expandedServerSignatures: [ExpandedServerSignature!]
+  id: String!
+  image: String!
+  isPending: Boolean
+  isProjectContributor: Boolean!
+  name: String!
+  namespace: String
+  pathwayId: String!
+  questType: String!
+  rewardAmount: Float!
+  rewardCurrency: String!
+  rewardUserCap: Int!
+  slogan: String!
+  streamId: String!
+  submissions: [SolutionSubmission!]!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 input ClaimPathwayRewardsInput {
@@ -37,6 +73,7 @@ input ClaimQuestRewardsInput {
   namespace: String
   questAdventurerSignature: String!
   questId: String!
+  questType: String!
 }
 
 input CreatePathwayInput {
@@ -50,21 +87,15 @@ input CreateProjectInput {
   tokenUris: [String!]!
 }
 
-type CreateProjectOutput {
-  id: String!
-  isFeatured: Boolean!
-  tokenUris: [String!]!
-}
-
 input CreateQuestInput {
   id: String!
   questCreatorSignature: String!
 }
 
-type CreatedBy {
-  did: String!
-  name: String!
-}
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 input EditProjectInput {
   color: String
@@ -88,13 +119,19 @@ type ExpandedServerSignature {
   v: Int!
 }
 
+input GetBountyQuestByIdInput {
+  did: String!
+  questId: String!
+  signature: String!
+}
+
 type GithubContributorQuest {
   chainId: Int!
   completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
-  createdAt: String!
-  createdBy: CreatedBy!
+  createdAt: DateTime!
+  createdBy: String!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   githubOrgId: String!
@@ -103,7 +140,6 @@ type GithubContributorQuest {
   isPending: Boolean
   name: String!
   namespace: String
-  pathway: Pathway!
   pathwayId: String!
   questType: String!
   rewardAmount: Float!
@@ -113,7 +149,7 @@ type GithubContributorQuest {
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: DateTime!
 }
 
 type Mutation {
@@ -125,6 +161,9 @@ type Mutation {
 
   """Approve a new Quest in dCompass"""
   approveQuest(input: ApproveQuestInput!): Quest
+
+  """Approve a solution for a BountyQuest in dCompass"""
+  approveQuestSolution(input: ApproveQuestSolutionInput!): BountyQuest
 
   """Verify a new Pathway right before minting in dCompass"""
   claimPathwayRewards(input: ClaimPathwayRewardsInput!): Pathway
@@ -142,7 +181,10 @@ type Mutation {
   createPathway(input: CreatePathwayInput!): Pathway
 
   """Create a new Project in dCompass"""
-  createProject(input: CreateProjectInput!): [CreateProjectOutput!]
+  createProject(input: CreateProjectInput!): Project
+
+  """Create a new Quest in dCompass"""
+  createQuest(input: CreateQuestInput!): Quest
 
   """Create a new Quiz quest in dCompass"""
   createQuizQuest(input: CreateQuestInput!): QuizQuest
@@ -155,6 +197,9 @@ type Mutation {
 
   """Submits quest answers"""
   submitQuestAnswers(input: QuestAnswersSubmitionInput!): SubmitQuestAnswersOutput!
+
+  """Submits quest solution"""
+  submitQuestSolution(input: QuestSolutionSubmissionInput!): Boolean!
 
   """Verify a new Pathway right before minting in dCompass"""
   verifyPathway(input: VerifyPathwayInput!): Pathway
@@ -169,8 +214,8 @@ type NFTOwnerQuest {
   completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
-  createdAt: String!
-  createdBy: CreatedBy!
+  createdAt: DateTime!
+  createdBy: String!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
@@ -178,7 +223,6 @@ type NFTOwnerQuest {
   isPending: Boolean
   name: String!
   namespace: String
-  pathway: Pathway!
   pathwayId: String!
   questType: String!
   rewardAmount: Float!
@@ -188,12 +232,14 @@ type NFTOwnerQuest {
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: DateTime!
 }
 
 type Pathway {
+  bountyQuests: [BountyQuest!]
+
   """Identifies the date and time when the object was created."""
-  createdAt: String!
+  createdAt: DateTime!
   createdBy: String!
   description: String!
   difficulty: PathwayDifficultyEnum!
@@ -205,6 +251,7 @@ type Pathway {
   projectId: String!
   projectStreamId: String!
   quests: [Quest!]
+  quizQuests: [QuizQuest!]
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
@@ -213,7 +260,7 @@ type Pathway {
   title: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: DateTime!
 }
 
 """
@@ -229,10 +276,10 @@ enum PathwayDifficultyEnum {
 
 type Project {
   color: String
-  contracts: [String!]!
+  contracts: [String!]
 
   """Identifies the date and time when the object was created."""
-  createdAt: String!
+  createdAt: DateTime!
   createdBy: String!
   description: String!
   discord: String
@@ -243,10 +290,10 @@ type Project {
   logo: String
   members: [String!]
   name: String!
-  pathways: [Pathway!]
+  pathways: [Pathway!]!
   peerProjects: [String!]
   pendingMembers: [String!]
-  pendingPathways: [Pathway!]
+  pendingPathways: [Pathway!]!
   repos: [String!]
   slogan: String!
   squads: [Squad!]!
@@ -256,8 +303,8 @@ type Project {
   twitter: String
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
-  updatedBy: String!
+  updatedAt: DateTime!
+  updatedBy: String
   website: String!
   whitepaper: String
 }
@@ -284,6 +331,9 @@ type Query {
   """Return the DID of the dCompass backend server"""
   getAppDID: String
 
+  """Gets a quiz quest by its ID"""
+  getBountyQuestById(input: GetBountyQuestByIdInput!): BountyQuest
+
   """Gets a pathway by its Stream ID"""
   getPathwayById(pathwayId: String!): Pathway
 
@@ -299,8 +349,8 @@ type Quest {
   completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
-  createdAt: String!
-  createdBy: CreatedBy!
+  createdAt: DateTime!
+  createdBy: String!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
@@ -308,7 +358,6 @@ type Quest {
   isPending: Boolean
   name: String!
   namespace: String
-  pathway: Pathway!
   pathwayId: String!
   questType: String!
   rewardAmount: Float!
@@ -318,7 +367,7 @@ type Quest {
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: DateTime!
 }
 
 input QuestAnswersSubmitionInput {
@@ -335,13 +384,22 @@ input QuestQuestionAnswerInput {
   question: String!
 }
 
+input QuestSolutionSubmissionInput {
+  chainId: Int!
+  did: String!
+  namespace: String
+  questAdventurerSignature: String!
+  questId: String!
+  solution: String!
+}
+
 type QuizQuest {
   chainId: Int!
   completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
-  createdAt: String!
-  createdBy: CreatedBy!
+  createdAt: DateTime!
+  createdBy: String!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
@@ -349,10 +407,9 @@ type QuizQuest {
   isPending: Boolean
   name: String!
   namespace: String
-  pathway: Pathway!
   pathwayId: String!
   questType: String!
-  questions: [QuizQuestion!]!
+  questions: [QuizQuestion!]
   rewardAmount: Float!
   rewardCurrency: String!
   rewardUserCap: Int!
@@ -360,12 +417,13 @@ type QuizQuest {
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: DateTime!
 }
 
 type QuizQuestion {
   answer: String!
   choices: [String!]!
+  id: String!
   question: String!
 }
 
@@ -374,8 +432,8 @@ type SnapshotVoterQuest {
   completedBy: [String!]!
 
   """Identifies the date and time when the object was created."""
-  createdAt: String!
-  createdBy: CreatedBy!
+  createdAt: DateTime!
+  createdBy: String!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
@@ -383,7 +441,6 @@ type SnapshotVoterQuest {
   isPending: Boolean
   name: String!
   namespace: String
-  pathway: Pathway!
   pathwayId: String!
   proposalId: String!
   questType: String!
@@ -394,18 +451,26 @@ type SnapshotVoterQuest {
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: DateTime!
+}
+
+type SolutionSubmission {
+  did: String!
+  id: String!
+  reviewComment: String
+  solution: String!
+  status: String!
 }
 
 type Squad {
   """Identifies the date and time when the object was created."""
-  createdAt: String!
+  createdAt: DateTime!
   image: String
   members: [String!]!
   name: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: DateTime!
 }
 
 type SubmitQuestAnswersOutput {
@@ -413,8 +478,8 @@ type SubmitQuestAnswersOutput {
   completedBy: [String!]
 
   """Identifies the date and time when the object was created."""
-  createdAt: String!
-  createdBy: CreatedBy!
+  createdAt: DateTime!
+  createdBy: String!
   description: String!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
@@ -423,7 +488,6 @@ type SubmitQuestAnswersOutput {
   isSuccess: Boolean!
   name: String!
   namespace: String
-  pathway: Pathway!
   pathwayId: String!
   questType: String!
   rewardAmount: Int!
@@ -433,19 +497,19 @@ type SubmitQuestAnswersOutput {
   streamId: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: DateTime!
 }
 
 type Tag {
   color: String!
 
   """Identifies the date and time when the object was created."""
-  createdAt: String!
+  createdAt: DateTime!
   id: String!
   label: String!
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: DateTime!
   value: String!
 }
 
@@ -461,4 +525,5 @@ input VerifyQuestInput {
   id: String!
   namespace: String
   questMinterSignature: String!
+  questType: String!
 }
