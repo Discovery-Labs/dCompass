@@ -6,7 +6,9 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
+import { SiweMessage } from "siwe";
 // import Authereum from "authereum";
+
 import { ethers } from "ethers";
 import { useReducer, useEffect, useCallback, useMemo } from "react";
 import Web3Modal from "web3modal";
@@ -15,6 +17,13 @@ import { ceramicCoreFactory, CERAMIC_TESTNET } from "../core/ceramic";
 import { IdentityLink } from "../core/ceramic/identity-link";
 import { NETWORK_URLS } from "../core/connectors";
 import { ALL_SUPPORTED_CHAIN_IDS } from "../core/connectors/chains";
+import getLibrary from "../core/connectors/getLibrary";
+import {
+  SignatureType,
+  useGetNonceLazyQuery,
+  useSignInMutation,
+  useSignOutMutation,
+} from "../core/graphql/generated/types";
 import { useActiveWeb3React } from "../core/hooks/web3";
 import NETWORKS from "../core/networks";
 // import {
@@ -57,6 +66,15 @@ const providerOptions = {
 };
 
 const Web3Provider = ({ children }: { children: any }) => {
+  const [signIn] = useSignInMutation({
+    fetchPolicy: "network-only",
+  });
+  const [signOut] = useSignOutMutation({
+    fetchPolicy: "network-only",
+  });
+  const [getNonce] = useGetNonceLazyQuery({
+    fetchPolicy: "network-only",
+  });
   const [state, dispatch] = useReducer(Web3Reducer, initialState);
   const { activate, chainId, library } = useWeb3React();
   const { active, account } = useActiveWeb3React();
@@ -101,6 +119,13 @@ const Web3Provider = ({ children }: { children: any }) => {
     dispatch({
       type: "SET_CONTRACTS",
       payload: contracts,
+    });
+  };
+
+  const setIsSignedIn = (isSignedIn: boolean) => {
+    dispatch({
+      type: "SET_IS_SIGNED_IN",
+      payload: isSignedIn,
     });
   };
 
@@ -196,7 +221,7 @@ const Web3Provider = ({ children }: { children: any }) => {
         setSelf(mySelf);
         const identityLinkService = new IdentityLink(
           process.env.NEXT_PUBLIC_CERAMIC_VERIFICATION_SERVER_URL ||
-          "https://verifications-clay.3boxlabs.com"
+            "https://verifications-clay.3boxlabs.com"
         );
         setIdentityLink(identityLinkService);
 
@@ -230,6 +255,7 @@ const Web3Provider = ({ children }: { children: any }) => {
 
   const connectWeb3 = useCallback(async () => {
     const provider = await web3Modal.connect();
+    const lib = getLibrary(provider);
     const ethersProvider = new ethers.providers.Web3Provider(provider, "any");
     activate(
       ethersProvider.connection.url === "metamask" ? injected : walletconnect
@@ -288,9 +314,56 @@ const Web3Provider = ({ children }: { children: any }) => {
 
     setAccount(connectedAccount);
 
+    // Sign in with ethereum
+    try {
+      // Get a nonce from the back-end
+      const { data } = await getNonce();
+      console.log({ nonce: data?.getNonce });
+      if (!account || !data?.getNonce) {
+        throw new Error("No nonce or account");
+      }
+      const message = new SiweMessage({
+        domain: window.document.location.host,
+        address: account,
+        chainId: await lib
+          .getNetwork()
+          .then(({ chainId }: { chainId: number }) => chainId),
+        uri: window.document.location.origin,
+        version: "1",
+        statement: "Howdy Adventurer!",
+        nonce: data?.getNonce,
+      });
+
+      console.log({ message });
+
+      const signature = await lib
+        .getSigner()
+        .signMessage(message.prepareMessage());
+
+      console.log({ signature });
+
+      const isSignedIn = await signIn({
+        variables: {
+          input: {
+            message: {
+              ...message,
+              statement: message.statement || "Howdy Adventurer!",
+              type: SignatureType.PersonalSignature,
+              signature,
+            },
+          },
+        },
+      });
+      console.log(isSignedIn.data);
+      setIsSignedIn(true);
+    } catch (error) {
+      setIsSignedIn(false);
+      console.log(error);
+    }
+
     const identityLinkService = new IdentityLink(
       process.env.NEXT_PUBLIC_CERAMIC_VERIFICATION_SERVER_URL ||
-      "https://verifications-clay.3boxlabs.com"
+        "https://verifications-clay.3boxlabs.com"
     );
     setIdentityLink(identityLinkService);
 

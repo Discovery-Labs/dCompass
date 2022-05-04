@@ -18,12 +18,13 @@ import config from "./core/configs/config";
 // import { makeCeramicClient } from './services/ceramic/ceramic.service';
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
-import { CorsConfig, SwaggerConfig } from "./core/configs/config.interface";
+import { SwaggerConfig } from "./core/configs/config.interface";
 import {
   ceramicCoreFactory,
   ceramicDataModelFactory,
 } from "./services/ceramic/data-models";
 import { getDBClient } from "./core/resources/ThreadDB/thread-db";
+import { sessionMiddleware } from "./core/resources/Redis/redis";
 // import { PrismaService } from "./services/prisma/Prisma.service";
 
 const {
@@ -33,6 +34,7 @@ const {
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bodyParser: true,
+    cors: false,
   });
 
   app.enableCors(corsOptions);
@@ -45,6 +47,7 @@ async function bootstrap() {
   // const prismaService = app.get(PrismaService);
   // await prismaService.enableShutdownHooks(app);
   app.enableShutdownHooks(["SIGINT", "SIGTERM"]);
+  app.use(sessionMiddleware);
 
   const ceramicClient = await ceramicDataModelFactory();
 
@@ -75,7 +78,6 @@ async function bootstrap() {
   );
 
   const configService = app.get(ConfigService);
-  const corsConfig = configService.get<CorsConfig>("cors");
   const swaggerConfig = configService.get<SwaggerConfig>("swagger");
 
   // Swagger Api
@@ -88,11 +90,6 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, options);
 
     SwaggerModule.setup(swaggerConfig.path || "api", app, document);
-  }
-
-  // Cors
-  if (corsConfig?.enabled) {
-    app.enableCors();
   }
 
   app.useGlobalPipes(

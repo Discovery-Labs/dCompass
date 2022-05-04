@@ -195,6 +195,12 @@ type Mutation {
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
 
+  """Sign in a user and notifies the connected clients"""
+  signIn(input: SiweRegisterInput!): User!
+
+  """Logs out a user an notifies the connected clients"""
+  signOut: Boolean!
+
   """Submits quest answers"""
   submitQuestAnswers(input: QuestAnswersSubmitionInput!): SubmitQuestAnswersOutput!
 
@@ -334,6 +340,9 @@ type Query {
   """Gets a quiz quest by its ID"""
   getBountyQuestById(input: GetBountyQuestByIdInput!): BountyQuest
 
+  """Gets a nonce"""
+  getNonce: String
+
   """Gets a pathway by its Stream ID"""
   getPathwayById(pathwayId: String!): Pathway
 
@@ -342,6 +351,9 @@ type Query {
 
   """Gets a quiz quest by its ID"""
   getQuizQuestById(questId: String!): QuizQuest
+
+  """Gets the currently logged in user"""
+  me: User
 }
 
 type Quest {
@@ -425,6 +437,33 @@ type QuizQuestion {
   choices: [String!]!
   id: String!
   question: String!
+}
+
+"""EIP-191 signature scheme"""
+enum SignatureType {
+  PERSONAL_SIGNATURE
+}
+
+input SiweMessageInput {
+  address: String!
+  chainId: Int!
+  domain: String!
+  expirationTime: String
+  issuedAt: String!
+  nonce: String!
+  notBefore: String
+  requestId: String
+  resources: [String!]
+  signature: String!
+  statement: String!
+  type: SignatureType!
+  uri: String!
+  version: String!
+}
+
+input SiweRegisterInput {
+  ens: String
+  message: SiweMessageInput!
 }
 
 type SnapshotVoterQuest {
@@ -511,6 +550,12 @@ type Tag {
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
   value: String!
+}
+
+type User {
+  addresses: [String!]!
+  did: String!
+  id: String!
 }
 
 input VerifyPathwayInput {

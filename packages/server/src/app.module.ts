@@ -21,6 +21,7 @@ import { QuestModule } from "./entities/Quests/Quest.module";
 import { TagModule } from "./entities/Tags/Tag.module";
 import { GetAppDIDResolver } from "./entities/App/queries/GetAppDID.resolver";
 import { PrismaService } from "./services/prisma/Prisma.service";
+import { UserModule } from "./entities/Users/User.module";
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { PrismaService } from "./services/prisma/Prisma.service";
     PathwayModule,
     QuestModule,
     TagModule,
+    UserModule,
   ],
   controllers: [AppController, HealthController, CeramicController],
   providers: [AppService, ConfigService, GetAppDIDResolver, PrismaService],

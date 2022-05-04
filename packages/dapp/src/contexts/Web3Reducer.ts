@@ -1,5 +1,6 @@
 import { Client } from "@textile/hub";
 export type State = {
+  isSignedIn: boolean;
   loading: boolean;
   account: null | string;
   ens?: string;
@@ -24,6 +25,11 @@ export const Web3Reducer = (state: State, action: Record<string, any>) => {
       return {
         ...state,
         ens: action.payload,
+      };
+    case "SET_IS_SIGNED_IN":
+      return {
+        ...state,
+        isSignedIn: action.payload,
       };
     case "SET_SELF":
       return {
