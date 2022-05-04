@@ -19,13 +19,20 @@ export class GetQuizQuestByIdResolver {
     @UseCeramic() { ceramicCore }: UseCeramicClient,
     @Args("questId") questId: string
   ): Promise<QuizQuest | null | undefined> {
-    const foundQuest =
-      await this.questService.quizQuestWithPathwayAndProjectSquads({
-        id: questId,
-      });
-    console.log({ foundQuest });
+    let foundQuest = null;
+    foundQuest = await this.questService.quizQuestWithPathwayAndProjectSquads({
+      id: questId,
+    });
+
     if (!foundQuest) {
-      throw new NotFoundException("Quest not found");
+      const foundBountyQuest =
+        await this.questService.bountyQuestWithPathwayAndProjectSquads({
+          id: questId,
+        });
+      if (!foundBountyQuest) {
+        throw new NotFoundException("Quest not found by back-end");
+      }
+      foundQuest = foundBountyQuest;
     }
 
     const questInfos = await ceramicCore.ceramic.loadStream(

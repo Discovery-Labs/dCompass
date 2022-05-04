@@ -92,6 +92,7 @@ export const APPROVE_QUEST_SOLUTION_MUTATION = gql`
       name
       description
       submissions {
+        id
         did
         status
         reviewComment
@@ -187,6 +188,7 @@ export const GET_BOUNTY_QUEST_BY_ID_QUERY = gql`
       completedBy
       createdBy
       submissions {
+        id
         did
         status
         reviewComment

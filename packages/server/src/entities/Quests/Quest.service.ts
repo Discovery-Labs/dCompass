@@ -1,5 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { QuizQuest, BountyQuest, Prisma } from "@prisma/client";
+import {
+  QuizQuest,
+  BountyQuest,
+  Prisma,
+  SolutionSubmission,
+} from "@prisma/client";
 import { PrismaService } from "src/services/prisma/Prisma.service";
 
 type QuizQuestWithPathwayAndProjectSquads = Prisma.QuizQuestGetPayload<{
@@ -165,6 +170,16 @@ export class QuestService {
     return this.prisma.bountyQuest.update({
       data,
       where,
+    });
+  }
+  async updateBountyQuestSubmission(params: {
+    where: Prisma.SolutionSubmissionWhereUniqueInput;
+    data: Prisma.SolutionSubmissionUpdateInput;
+  }): Promise<SolutionSubmission> {
+    const { data, where } = params;
+    return this.prisma.solutionSubmission.update({
+      where: where,
+      data: data,
     });
   }
 

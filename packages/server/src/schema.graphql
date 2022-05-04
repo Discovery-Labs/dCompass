@@ -28,6 +28,7 @@ input ApproveQuestSolutionInput {
   adventurerDID: String!
   id: String!
   solutionApproverSignature: String!
+  solutionId: String!
 }
 
 type BountyQuest {
@@ -161,7 +162,7 @@ type Mutation {
   """Approve a new Quest in dCompass"""
   approveQuest(input: ApproveQuestInput!): Quest
 
-  """Approve a solution Quest in dCompass"""
+  """Approve a solution for a BountyQuest in dCompass"""
   approveQuestSolution(input: ApproveQuestSolutionInput!): BountyQuest
 
   """Verify a new Pathway right before minting in dCompass"""
@@ -455,6 +456,7 @@ type SnapshotVoterQuest {
 
 type SolutionSubmission {
   did: String!
+  id: String!
   reviewComment: String
   solution: String!
   status: String!
