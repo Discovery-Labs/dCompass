@@ -118,6 +118,11 @@ describe("ProjectNFT", function() {
       await projectNFT.connect(addr2).setAppDiamond(appDiamond.address);
       await projectNFT.setSFTAddr(sponsorSFT.address);
       await projectNFT.connect(addr6).addProjectWallet("firstTestProject", `${addr5.address}`, "SILVER" , {value : `0xde0b6b3a7640000`});
+      await expect(projectNFT.connect(addr6).addProjectWallet("firstTestProject", `${addr2.address}`, "SILVER" , {value : `0xde0b6b3a7640000`})).to.be.revertedWith("already project wallet");
+      await expect(projectNFT.connect(addr6).addProjectWallet("secondTestProject", `${addr2.address}`, "PLATINUM" , {value : `0xde0b6b3a7640000`})).to.be.revertedWith("invalid sponsor stake");
+      await expect(projectNFT.connect(addr6).addProjectWallet("secondTestProject", `${addr2.address}`, "SILVER" , {value : `0xdead`})).to.be.revertedWith("not enough staked");
+      await projectNFT.connect(addr6).addProjectWallet("excessAmountTestProject", `${addr2.address}`, "SILVER" , {value : `0xde0b6b3a7640005`});
+      await expect(projectNFT.connect(addr6).changeProjectWallet("excessAmountTestProject", `${addr3.address}`)).to.be.revertedWith("ProjectNFT: wrong caller");
       let balance = await ethers.provider.getBalance(addr6.address);
       console.log(balance.toString());
       await projectNFT.voteForApproval([`${addr5.address}`, `${addr6.address}`, "0xCf642913012CaBCBF09ca4f18748a430fA01237e", "0x4E7a45148C65248183AE1CE6C33fFAE5825C1979", "0x4553d50bEAf37ea51430C7E192ec4283d9B5BD56"], 15, "firstTestProject");

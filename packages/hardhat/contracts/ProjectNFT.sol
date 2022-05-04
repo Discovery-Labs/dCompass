@@ -164,7 +164,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
 
     function addProjectWallet(string memory _projectId, address _projectWallet, string memory level) external payable{
         require (projectWallets[_projectId] == address(0), "already project wallet");
-        require(status[_projectId] == ProjectStatus.NONEXISTENT);
+        //require(status[_projectId] == ProjectStatus.NONEXISTENT);
         uint pendingSponsorLevel = sponsorLevels[level];
         require (pendingSponsorLevel > 0, "invalid sponsor stake");
         (bool success, bytes memory data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("stakeAmounts(uint256)")), pendingSponsorLevel));
