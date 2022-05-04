@@ -15,6 +15,7 @@ import {
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { BsGlobe } from "react-icons/bs";
+import { MdCheckCircle, MdRateReview } from "react-icons/md";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 import { Project } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
@@ -22,9 +23,11 @@ import CardMedia from "../custom/CardMedia";
 const ProjectCard = ({
   project,
   isReviewMode = false,
+  showStatus = false,
 }: {
   project: Project;
   isReviewMode?: boolean;
+  showStatus?: boolean;
 }) => {
   const { t } = useTranslation("common");
 
@@ -44,6 +47,17 @@ const ProjectCard = ({
   return (
     <CardMedia src={imgSrc} h="xl">
       <VStack h="full">
+        {showStatus && (
+          <Badge
+            key={project.id}
+            colorScheme={project.isFeatured ? "accentDark" : "orange"}
+          >
+            <HStack w="full">
+              {project.isFeatured ? <MdCheckCircle /> : <MdRateReview />}
+              <Text>{project.isFeatured ? "Approved" : "review pending"}</Text>
+            </HStack>
+          </Badge>
+        )}
         <Stack w="full" overflow="hidden" direction="row">
           {project.tags.map((tag) => (
             <Badge key={tag.id} colorScheme={tag.color}>

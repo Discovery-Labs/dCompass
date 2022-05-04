@@ -92,6 +92,7 @@ export const APPROVE_QUEST_SOLUTION_MUTATION = gql`
       name
       description
       submissions {
+        id
         did
         status
         reviewComment
@@ -135,7 +136,22 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
       rewardUserCap
       isPending
       projectId
-      quests {
+      quizQuests {
+        id
+        streamId
+        name
+        description
+        slogan
+        pathwayId
+        questType
+        image
+        rewardCurrency
+        rewardAmount
+        rewardUserCap
+        isPending
+        completedBy
+      }
+      bountyQuests {
         id
         streamId
         name
@@ -170,11 +186,9 @@ export const GET_BOUNTY_QUEST_BY_ID_QUERY = gql`
       rewardUserCap
       isPending
       completedBy
-      createdBy {
-        did
-        name
-      }
+      createdBy
       submissions {
+        id
         did
         status
         reviewComment
@@ -200,11 +214,9 @@ export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
       rewardUserCap
       isPending
       completedBy
-      createdBy {
-        did
-        name
-      }
+      createdBy
       questions {
+        id
         question
         choices
         answer

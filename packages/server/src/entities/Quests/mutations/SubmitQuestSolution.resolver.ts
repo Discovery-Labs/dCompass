@@ -1,19 +1,16 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
 import { ForbiddenError } from "apollo-server-express";
-import { Where } from "@textile/hub";
 
-import { UseThreadDB } from "../../../core/decorators/UseThreadDB.decorator";
-import { UseThreadDBClient } from "../../../core/utils/types";
-import { ThreadDBService } from "../../../services/thread-db/thread-db.service";
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { AppService } from "../../../app.service";
 import { ethers } from "ethers";
 import { QuestSolutionSubmissionInput } from "../dto/QuestSolutionSubmission.input";
+import { QuestService } from "../Quest.service";
 
 @Resolver(() => Boolean)
 export class SubmitQuestSolutionResolver {
   constructor(
-    private readonly threadDBService: ThreadDBService,
+    private readonly questService: QuestService,
     public readonly appService: AppService
   ) {}
   @Mutation(() => Boolean, {
@@ -22,25 +19,29 @@ export class SubmitQuestSolutionResolver {
     name: "submitQuestSolution",
   })
   async submitQuestSolution(
-    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
     @Args("input") solutionSubmission: QuestSolutionSubmissionInput
   ): Promise<boolean> {
-    const [foundQuest] = await this.threadDBService.query({
-      collectionName: "Quest",
-      dbClient,
-      threadId: latestThreadId,
-      query: new Where("_id").eq(solutionSubmission.questId),
-    });
+    const foundQuest =
+      await this.questService.bountyQuestWithPathwayAndProjectSquads({
+        id: solutionSubmission.questId,
+      });
     if (!foundQuest) {
       throw new NotFoundException("Quest not found");
     }
 
-    const { _id, ...quest } = foundQuest as any;
+    const { pathway } = foundQuest;
+    if (!pathway) {
+      throw new NotFoundException("Quest has no parent pathway");
+    }
+    const { project } = pathway;
+    if (!project) {
+      throw new NotFoundException("Pathway has no parent project");
+    }
 
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({
         id: solutionSubmission.questId,
-        pathwayId: quest.pathwayId,
+        pathwayId: foundQuest.pathwayId,
       }),
       solutionSubmission.questAdventurerSignature
     );
@@ -49,10 +50,10 @@ export class SubmitQuestSolutionResolver {
       throw new ForbiddenException("Unauthorized");
     }
 
-    const alreadySubmittedBy = quest.submissions
-      ? quest.submissions.map(({ did }: { did: string }) => did)
+    const alreadySubmittedBy = foundQuest.submissions
+      ? foundQuest.submissions.map(({ did }: { did: string }) => did)
       : [];
-    const alreadyCompletedBy = quest.completedBy ?? [];
+    const alreadyCompletedBy = foundQuest.completedBy ?? [];
     const isQuestAlreadyCompleted = alreadyCompletedBy.includes(
       solutionSubmission.did
     );
@@ -71,19 +72,15 @@ export class SubmitQuestSolutionResolver {
       status: "under-review",
     };
 
-    await this.threadDBService.update({
-      collectionName: "Quest",
-      dbClient,
-      threadId: latestThreadId,
-      values: [
-        {
-          _id,
-          ...quest,
-          submissions: quest.submissions
-            ? [...quest.submissions, newSubmission]
-            : [newSubmission],
+    await this.questService.updateBountyQuest({
+      where: {
+        id: foundQuest.id,
+      },
+      data: {
+        submissions: {
+          create: newSubmission,
         },
-      ],
+      },
     });
 
     return true;

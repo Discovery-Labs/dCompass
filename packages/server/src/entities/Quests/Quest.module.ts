@@ -2,7 +2,9 @@ import { Module } from "@nestjs/common";
 import { AppService } from "../../app.service";
 
 import { RedisModule } from "../../core/resources/Redis/Redis.module";
+import { PrismaService } from "../../services/prisma/Prisma.service";
 import { ThreadDBService } from "../../services/thread-db/thread-db.service";
+import { PathwayService } from "../Pathways/Pathway.service";
 import { ApproveQuestResolver } from "./mutations/ApproveQuest.resolver";
 import { ApproveQuestSolutionResolver } from "./mutations/ApproveQuestSolution.resolver";
 import { ClaimQuestRewardsResolver } from "./mutations/ClaimQuestRewards.resolver";
@@ -22,6 +24,7 @@ import { VerifyQuestResolver } from "./mutations/VerifyQuest.resolver";
 import { GetAllQuestsByPathwayIdResolver } from "./queries/GetAllQuestsByPathwayId.resolver";
 import { GetBountyQuestByIdResolver } from "./queries/GetBountyQuestById.resolver";
 import { GetQuizQuestByIdResolver } from "./queries/GetQuizQuestById.resolver";
+import { QuestService } from "./Quest.service";
 
 @Module({
   imports: [RedisModule],
@@ -42,6 +45,9 @@ import { GetQuizQuestByIdResolver } from "./queries/GetQuizQuestById.resolver";
     ClaimQuestRewardsResolver,
     GetBountyQuestByIdResolver,
     ApproveQuestSolutionResolver,
+    PrismaService,
+    PathwayService,
+    QuestService,
     // CreateQuestResolver,
     // GetQuestByIdResolver,
   ],

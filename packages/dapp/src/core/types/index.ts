@@ -34,7 +34,8 @@ export type Pathway = {
   slogan: string;
   projectId: string;
   projectStreamId: string;
-  quests: Quest[];
+  quizQuests: Quest[];
+  bountyQuests: Quest[];
   difficulty: string;
   rewardCurrency: string;
   rewardAmount: string;

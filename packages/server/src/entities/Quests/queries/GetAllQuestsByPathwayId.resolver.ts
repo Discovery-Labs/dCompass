@@ -1,79 +1,31 @@
-import { NotFoundException } from '@nestjs/common';
-import { Resolver, Query, Args } from '@nestjs/graphql';
-import { Where } from '@textile/hub';
+import { NotFoundException } from "@nestjs/common";
+import { Resolver, Query, Args } from "@nestjs/graphql";
 
-import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
-import { UseThreadDBClient } from '../../../core/utils/types';
-import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
-import { Pathway } from '../../Pathways/Pathway.entity';
+import removeNulls from "../../../core/utils/helpers";
+
+import { Pathway } from "../../Pathways/Pathway.entity";
+import { PathwayService } from "../../Pathways/Pathway.service";
 
 @Resolver(() => Pathway)
 export class GetAllQuestsByPathwayIdResolver {
-  constructor(private readonly threadDBService: ThreadDBService) {}
+  constructor(private readonly pathwayService: PathwayService) {}
   @Query(() => Pathway, {
     nullable: true,
-    description: 'Gets all the quests in dCompass',
-    name: 'getAllQuestsByPathwayId',
+    description: "Gets all the quests in dCompass",
+    name: "getAllQuestsByPathwayId",
   })
   async getAllQuestsByPathwayId(
-    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
-    @Args('pathwayId') pathwayId: string,
+    @Args("pathwayId") pathwayId: string
   ): Promise<Pathway | null> {
-    const [foundPathway] = await this.threadDBService.query({
-      collectionName: 'Pathway',
-      dbClient,
-      threadId: latestThreadId,
-      query: new Where('_id').eq(pathwayId),
+    const foundPathway = await this.pathwayService.pathwayWithQuests({
+      id: pathwayId,
     });
     if (!foundPathway) {
-      throw new NotFoundException('Pathway not found');
+      throw new NotFoundException("Pathway not found");
     }
-    const { _id, ...pathway } = foundPathway as any;
 
-    const questIds = pathway.quests ?? [];
-
-    const pendingQuestIds = pathway.pendingQuests ?? [];
-
-    const questsWithDetails = await Promise.all(
-      questIds.map(async (questId: string) => {
-        const [quest] = await this.threadDBService.query({
-          collectionName: 'Quest',
-          dbClient,
-          threadId: latestThreadId,
-          query: new Where('_id').eq(questId),
-        });
-        return {
-          id: (quest as any)._id,
-          ...(quest as any),
-          isPending: false,
-        };
-      }),
-    );
-    const pendingQuestsWithDetails = await Promise.all(
-      pendingQuestIds.map(async (questId: string) => {
-        const [quest] = await this.threadDBService.query({
-          collectionName: 'Quest',
-          dbClient,
-          threadId: latestThreadId,
-          query: new Where('_id').eq(questId),
-        });
-        return {
-          id: (quest as any)._id,
-          ...(quest as any),
-          isPending: true,
-        };
-      }),
-    );
-
-    return {
-      id: _id,
-      ...pathway,
-      quests: [...questsWithDetails, ...pendingQuestsWithDetails].map(
-        (quest) => ({
-          ...quest,
-          questType: quest.type.label,
-        }),
-      ),
-    };
+    return removeNulls({
+      ...foundPathway,
+    });
   }
 }

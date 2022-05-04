@@ -26,6 +26,9 @@ import {
   useDisclosure,
   VStack,
   Box,
+  TagLabel,
+  Tag as TagStatus,
+  Spacer,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
@@ -36,7 +39,7 @@ import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import { MdPersonAddAlt1 } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
@@ -93,6 +96,7 @@ export const getServerSideProps: GetServerSideProps<
 
 function ProjectPage({
   id,
+  streamId,
   name,
   createdBy,
   description,
@@ -107,6 +111,7 @@ function ProjectPage({
   github,
   gitbook,
 }: any) {
+  const [status, setStatus] = useState<string>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenSquad,
@@ -117,8 +122,7 @@ function ProjectPage({
 
   const { t } = useTranslation("common");
   const { accentColorScheme } = useCustomColor();
-  const { account, isReviewer } = useContext(Web3Context);
-  console.log({ isReviewer });
+  const { account, isReviewer, contracts } = useContext(Web3Context);
   const { data, loading, error } = useQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
     {
@@ -133,6 +137,24 @@ function ProjectPage({
     .includes(account);
   const canEdit = isProjectContributor || isOwner;
   const canReviewPathways = isProjectContributor || isOwner || isReviewer;
+
+  useEffect(() => {
+    async function init() {
+      if (contracts.projectNFTContract && streamId && account) {
+        const statusInt = await contracts.projectNFTContract.status(streamId);
+        const isMinted = await contracts.projectNFTContract.projectMinted(
+          streamId
+        );
+        const statusString = await contracts.projectNFTContract.statusStrings(
+          statusInt
+        );
+        setStatus(isMinted ? "MINTED" : statusString);
+      }
+    }
+    if (contracts?.projectNFTContract) {
+      init();
+    }
+  }, [contracts?.projectNFTContract, streamId, account]);
 
   if (loading)
     return (
@@ -191,6 +213,7 @@ function ProjectPage({
             />
           </Box>
         </Box>
+
         <VStack w="full" align="start" justify="center">
           <Flex w="full" direction="row" wrap="wrap" gap="2">
             {tags.map((tag: Tag) => (
@@ -199,13 +222,30 @@ function ProjectPage({
               </Badge>
             ))}
           </Flex>
-          <Heading as="h1" size="3xl" color="text">
-            {name}
-          </Heading>
-
-          {/* Short description */}
+          <Flex w="full">
+            <Heading as="h1" size="3xl" color="text">
+              {name}
+            </Heading>
+            <Spacer />
+            <VStack>
+              {status && createdBy === account && (
+                <TagStatus
+                  variant="outline"
+                  w="fit-content"
+                  colorScheme={
+                    status === "APPROVED" || status === "MINTED"
+                      ? "green"
+                      : "orange"
+                  }
+                  size="md"
+                >
+                  <TagLabel>{status}</TagLabel>
+                </TagStatus>
+              )}
+            </VStack>
+            {/* Short description */}
+          </Flex>
           <Text color="text-weak">{slogan}</Text>
-
           {/* Apply and Edit Buttons */}
           <HStack w="full" align="start">
             <Button
@@ -289,14 +329,20 @@ function ProjectPage({
               <TabPanels>
                 <TabPanel>
                   <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
-                    {renderPathways(data.getAllPathwaysByProjectId.pathways)}
+                    {renderPathways(
+                      data.getAllPathwaysByProjectId.pathways.filter(
+                        (pathway: Pathway) => !pathway.isPending
+                      )
+                    )}
                   </SimpleGrid>
                 </TabPanel>
                 {canReviewPathways && (
                   <TabPanel>
                     <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
                       {renderPathways(
-                        data.getAllPathwaysByProjectId.pendingPathways
+                        data.getAllPathwaysByProjectId.pathways.filter(
+                          (pathway: Pathway) => pathway.isPending
+                        )
                       )}
                     </SimpleGrid>
                   </TabPanel>

@@ -33,7 +33,7 @@ import {
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { Web3Context } from "contexts/Web3Context";
-import { convertToKebabCase, dataURLtoBlob } from "core/helpers";
+import { dataURLtoBlob } from "core/helpers";
 import useCustomColor from "core/hooks/useCustomColor";
 import {
   APPROVE_QUEST_SOLUTION_MUTATION,
@@ -46,6 +46,7 @@ import ReactMarkdown from "react-markdown";
 import { useWeb3React } from "@web3-react/core";
 
 type SolutionSubmission = {
+  id: string;
   did: string;
   solution: string;
   reviewComment?: string;
@@ -97,6 +98,7 @@ function QuestSubmissionList({
       id: questId,
       pathwayId: data.getBountyQuestById.pathwayId,
       adventurerDID: solution.did,
+      solutionId: solution.id,
     };
     const signature = await library.provider.send("personal_sign", [
       JSON.stringify(signatureInput),
@@ -108,6 +110,7 @@ function QuestSubmissionList({
           id: questId,
           adventurerDID: solution.did,
           solutionApproverSignature: signature.result,
+          solutionId: solution.id,
         },
       },
     });
@@ -237,13 +240,14 @@ function QuestSubmissionList({
           {data?.getBountyQuestById?.submissions &&
             data.getBountyQuestById.submissions.map(
               ({
+                id,
                 did,
                 status,
                 reviewComment,
                 solution,
               }: SolutionSubmission) => {
                 return (
-                  <Tr key={did}>
+                  <Tr key={id}>
                     <Td>
                       <Tag
                         colorScheme={
@@ -258,6 +262,7 @@ function QuestSubmissionList({
                       <Button
                         onClick={() =>
                           handleOpenReview({
+                            id,
                             did,
                             status,
                             solution,

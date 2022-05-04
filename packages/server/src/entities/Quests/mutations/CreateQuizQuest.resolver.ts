@@ -1,92 +1,68 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { ethers } from 'ethers';
+import { Resolver, Mutation, Args } from "@nestjs/graphql";
+import { ethers } from "ethers";
 
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient, UseThreadDBClient } from '../../../core/utils/types';
-import { CreateQuestInput } from '../dto/CreateQuest.input';
-import { QuizQuest } from '../QuizQuest.entity';
-import { ForbiddenError } from 'apollo-server-express';
-import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
-import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
+import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
+import { UseCeramicClient } from "../../../core/utils/types";
+import { CreateQuestInput } from "../dto/CreateQuest.input";
+import { QuizQuest } from "../QuizQuest.entity";
+import { ForbiddenError } from "apollo-server-express";
+
+import { QuestService } from "../Quest.service";
+import removeNulls from "../../../core/utils/helpers";
 
 @Resolver(() => QuizQuest)
 export class CreateQuizQuestResolver {
-  constructor(private readonly threadDBService: ThreadDBService) {}
+  constructor(private readonly questService: QuestService) {}
 
   @Mutation(() => QuizQuest, {
     nullable: true,
-    description: 'Create a new Quiz quest in dCompass',
-    name: 'createQuizQuest',
+    description: "Create a new Quiz quest in dCompass",
+    name: "createQuizQuest",
   })
   async createQuizQuest(
     @UseCeramic() { ceramicClient }: UseCeramicClient,
-    @UseThreadDB()
-    { dbClient, latestThreadId }: UseThreadDBClient,
-    @Args('input') { id, questCreatorSignature }: CreateQuestInput,
+    @Args("input") { id, questCreatorSignature }: CreateQuestInput
   ): Promise<QuizQuest | null | undefined> {
     // Check that the current user is the owner of the quest
     const ogQuest = await ceramicClient.ceramic.loadStream(id);
-    const pathwayId = ogQuest.content.pathwayId;
-    console.log({ pathwayId, id, ogQuest: ogQuest.content });
+    const { pathwayId, questions, type, ...ogQuestInfos } = ogQuest.content;
     const decodedAddress = ethers.utils.verifyMessage(
       JSON.stringify({ id, pathwayId }),
-      questCreatorSignature,
+      questCreatorSignature
     );
-    console.log({ decodedAddress, controllers: ogQuest.controllers });
 
     const ownerAccounts = await ceramicClient.dataStore.get(
-      'cryptoAccounts',
-      ogQuest.controllers[0],
+      "cryptoAccounts",
+      ogQuest.controllers[0]
     );
-    console.log({ ownerAccounts });
-    if (!ownerAccounts) throw new ForbiddenError('Unauthorized');
+    if (!ownerAccounts) throw new ForbiddenError("Unauthorized");
     const formattedAccounts = Object.keys(ownerAccounts).map(
-      (account) => account.split('@')[0],
+      (account) => account.split("@")[0]
     );
 
     if (!formattedAccounts.includes(decodedAddress)) {
-      throw new ForbiddenError('Unauthorized');
+      throw new ForbiddenError("Unauthorized");
     }
 
-    const [newQuestId] = await this.threadDBService.create({
-      collectionName: 'Quest',
-      threadId: latestThreadId,
-      values: [
-        {
-          streamId: id,
-          ...ogQuest.content,
-          isPending: true,
+    const createdQuest = await this.questService.createQuizQuest({
+      pathway: {
+        connect: {
+          id: pathwayId,
         },
-      ],
-      dbClient,
-    });
-
-    const pathwayDetails = await this.threadDBService.getPathwayById({
-      dbClient,
-      threadId: latestThreadId,
-      pathwayId,
-    });
-
-    const existingPendingQuests = pathwayDetails.pendingQuests ?? [];
-    const updatedPathway = await this.threadDBService.update({
-      collectionName: 'Pathway',
-      dbClient,
-      threadId: latestThreadId,
-      values: [
-        {
-          _id: pathwayId,
-          ...pathwayDetails,
-          pendingQuests: [...existingPendingQuests, newQuestId],
+      },
+      ...ogQuestInfos,
+      questions: {
+        createMany: {
+          data: questions,
+          skipDuplicates: true,
         },
-      ],
-    });
-
-    console.log({ updatedPathway });
-
-    return {
-      id: newQuestId,
+      },
+      questType: type.value,
       streamId: id,
-      ...ogQuest.content,
-    };
+      isPending: true,
+      createdBy: ogQuest.controllers[0],
+    });
+
+    return removeNulls(createdQuest);
   }
 }

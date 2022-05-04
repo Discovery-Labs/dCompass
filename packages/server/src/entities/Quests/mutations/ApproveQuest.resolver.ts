@@ -1,113 +1,117 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { Where } from '@textile/hub';
-import { NotFoundException } from '@nestjs/common';
-import ABIS from '@discovery-dao/hardhat/abis.json';
+import { Resolver, Mutation, Args } from "@nestjs/graphql";
+import { NotFoundException } from "@nestjs/common";
+import ABIS from "@discovery-dao/hardhat/abis.json";
 
-import { UseThreadDBClient } from '../../../core/utils/types';
-import { Quest } from '../Quest.entity';
-import { verifyNFTInfo } from '../../../core/utils/security/verify';
-import { ApproveQuestInput } from '../dto/ApproveQuest.input';
-import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
-import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
-import { ethers } from 'ethers';
-import { Squad } from '../../Squads/Squad.entity';
-import { ForbiddenError } from 'apollo-server-express';
-import { AppService } from '../../../app.service';
+import { Quest } from "../Quest.entity";
+import { verifyNFTInfo } from "../../../core/utils/security/verify";
+import { ApproveQuestInput } from "../dto/ApproveQuest.input";
+
+import { ethers } from "ethers";
+
+import { ForbiddenError } from "apollo-server-express";
+import { AppService } from "../../../app.service";
+import { QuestService } from "../Quest.service";
+import removeNulls from "../../../core/utils/helpers";
 
 @Resolver(() => Quest)
 export class ApproveQuestResolver {
   constructor(
-    private readonly threadDBService: ThreadDBService,
-    public readonly appService: AppService,
+    private readonly questService: QuestService,
+    public readonly appService: AppService
   ) {}
   @Mutation(() => Quest, {
     nullable: true,
-    description: 'Approve a new Quest in dCompass',
-    name: 'approveQuest',
+    description: "Approve a new Quest in dCompass",
+    name: "approveQuest",
   })
   async approveQuest(
-    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
-    @Args('input') { id, questApproverSignature, chainId }: ApproveQuestInput,
+    @Args("input")
+    { id, questApproverSignature, chainId, questType }: ApproveQuestInput
   ): Promise<Quest | null | undefined> {
-    const [foundQuest] = await this.threadDBService.query({
-      collectionName: 'Quest',
-      dbClient,
-      threadId: latestThreadId,
-      query: new Where('_id').eq(id),
-    });
-    if (!foundQuest) {
-      throw new NotFoundException('Quest not found by back-end');
+    let foundQuest = null;
+    if (questType === "quiz") {
+      foundQuest = await this.questService.quizQuestWithPathwayAndProjectSquads(
+        {
+          id: id,
+        }
+      );
     }
-    const quest = foundQuest as any;
-    // Check if the current user is a project contributor
-    const foundPathway = await this.threadDBService.getPathwayById({
-      dbClient,
-      threadId: latestThreadId,
-      pathwayId: quest.pathwayId,
-    });
-    const { projectId } = foundPathway;
-    const foundProject = await this.threadDBService.getProjectById({
-      dbClient,
-      threadId: latestThreadId,
-      projectId,
-    });
-    console.log({ foundProject });
+    if (questType === "bounty") {
+      foundQuest =
+        await this.questService.bountyQuestWithPathwayAndProjectSquads({
+          id: id,
+        });
+    }
+
+    if (!foundQuest) {
+      throw new NotFoundException("Quest not found by back-end");
+    }
 
     const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: id, pathwayId: quest.pathwayId }),
-      questApproverSignature,
+      JSON.stringify({ id: id, pathwayId: foundQuest.pathwayId }),
+      questApproverSignature
     );
+
+    const { pathway } = foundQuest;
+    if (!pathway) {
+      throw new NotFoundException("Quest has no parent pathway");
+    }
+    const { project } = pathway;
+    if (!project) {
+      throw new NotFoundException("Pathway has no parent project");
+    }
     // TODO: Keep track of address & network to avoid impersonation
     console.log({ decodedAddress });
-    const projectContributors = foundProject.squads
-      ? foundProject.squads.flatMap((squad: Squad) =>
-          squad.members.map((m) => m.toLowerCase()),
+    const projectContributors = project.squads
+      ? project.squads.flatMap((squad) =>
+          squad.members.map((m) => m.toLowerCase())
         )
       : [];
 
     if (!projectContributors.includes(decodedAddress.toLowerCase())) {
-      throw new ForbiddenError('Unauthorized');
+      throw new ForbiddenError("Unauthorized");
     }
 
-    const existingQuests = foundPathway.quests ?? [];
-    // remove previously pending quest and set it as approved
-    const updatedPathway = {
-      _id: quest.pathwayId,
-      ...foundPathway,
-      quests: [...new Set(existingQuests), id],
-      pendingQuests: [
-        ...new Set(
-          foundPathway.pendingQuests.filter(
-            (questId: string) => questId !== id,
-          ),
-        ),
-      ],
-    };
-
-    await this.threadDBService.update({
-      collectionName: 'Pathway',
-      dbClient,
-      threadId: latestThreadId,
-      values: [updatedPathway],
-    });
+    let updatedQuest = null;
+    if (questType === "quiz") {
+      updatedQuest = await this.questService.updateQuizQuest({
+        where: {
+          id: foundQuest.id,
+        },
+        data: {
+          isPending: false,
+        },
+      });
+    }
+    if (questType === "bounty") {
+      updatedQuest = await this.questService.updateBountyQuest({
+        where: {
+          id: foundQuest.id,
+        },
+        data: {
+          isPending: false,
+        },
+      });
+    }
+    // set it previously pending quest as approved
 
     const chaindIdStr = chainId.toString();
     if (!Object.keys(ABIS).includes(chaindIdStr)) {
-      throw new Error('Unsupported Network');
+      throw new Error("Unsupported Network");
     }
 
-    const verifyContract = this.appService.getContract(chaindIdStr, 'Verify');
+    const verifyContract = this.appService.getContract(chaindIdStr, "Verify");
     const badgeNFTContract = this.appService.getContract(
       chaindIdStr,
-      'BadgeNFT',
+      "BadgeNFT"
     );
-    console.log({ pId: foundPathway.streamId, qId: quest.streamId });
+
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
       verifyContract.noncesParentIdChildId(
-        foundPathway.streamId,
-        quest.streamId,
+        pathway.streamId,
+        foundQuest.streamId
       ),
-      verifyContract.thresholdNoncesById(quest.streamId),
+      verifyContract.thresholdNoncesById(foundQuest.streamId),
     ]);
     console.log({ bNFTAdr: badgeNFTContract.address });
     // console.log({ pathwayId: foundPathway.streamId });
@@ -115,28 +119,26 @@ export class ApproveQuestResolver {
       verifyNFTInfo({
         contractAddress: badgeNFTContract.address,
         nonceId: metadataNonceId,
-        objectId: quest.streamId,
+        objectId: foundQuest.streamId,
         senderAddress: decodedAddress,
         verifyContract: verifyContract.address,
       }),
       verifyNFTInfo({
         contractAddress: badgeNFTContract.address,
         nonceId: thresholdNonceId,
-        objectId: quest.streamId,
+        objectId: foundQuest.streamId,
         senderAddress: decodedAddress,
         verifyContract: verifyContract.address,
         votesNeeded: 1,
       }),
     ]);
 
-    return {
-      ...quest,
-      id: quest._id,
-      pathwayStreamId: foundPathway.streamId,
+    return removeNulls({
+      ...updatedQuest,
       expandedServerSignatures: [
         { r: metadataVerify.r, s: metadataVerify.s, v: metadataVerify.v },
         { r: tresholdVerify.r, s: tresholdVerify.s, v: tresholdVerify.v },
       ],
-    };
+    });
   }
 }
