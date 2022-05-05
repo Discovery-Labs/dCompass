@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { Stack, Button } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
+
 import Card from "components/custom/Card";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import CenteredFrame from "components/layout/CenteredFrame";
@@ -71,7 +71,6 @@ type Project = {
 function EditProjectStepper(project: Project) {
   const { t } = useTranslation("common");
   const { self } = useContext(Web3Context);
-  const { account, library } = useWeb3React();
 
   const [editProjectMutation] = useMutation(EDIT_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -142,20 +141,12 @@ function EditProjectStepper(project: Project) {
       }),
     };
 
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify({
-        id,
-      }),
-      account,
-    ]);
-
     await currentProjectDoc.update(serializedProject);
     const allProjects = await editProjectMutation({
       variables: {
         input: {
           id,
           ...serializedProject,
-          editorSignature: signature.result,
         },
       },
     });

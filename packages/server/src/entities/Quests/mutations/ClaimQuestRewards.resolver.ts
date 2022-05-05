@@ -1,5 +1,4 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
-import { ethers } from "ethers";
 import ABIS from "@discovery-dao/hardhat/abis.json";
 
 import { UseCeramicClient } from "../../../core/utils/types";
@@ -14,6 +13,8 @@ import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
 import { ForbiddenError } from "apollo-server-express";
 import { QuestService } from "../Quest.service";
 import removeNulls from "../../../core/utils/helpers";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Quest)
 export class ClaimQuestRewardsResolver {
@@ -28,15 +29,10 @@ export class ClaimQuestRewardsResolver {
     name: "claimQuestRewards",
   })
   async claimQuestRewards(
+    @UseSiwe() siwe: SiweMessage,
     @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args("input")
-    {
-      questId,
-      questType,
-      did,
-      questAdventurerSignature,
-      chainId,
-    }: ClaimQuestRewardsInput
+    { questId, questType, did }: ClaimQuestRewardsInput
   ): Promise<Quest | null | undefined> {
     let foundQuest = null;
     if (questType === "quiz") {
@@ -56,14 +52,10 @@ export class ClaimQuestRewardsResolver {
     if (!foundQuest) {
       throw new NotFoundException("Quest not found by back-end");
     }
-    const { pathwayId } = foundQuest;
 
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: questId, pathwayId }),
-      questAdventurerSignature
-    );
+    const { address, chainId } = siwe;
 
-    if (!decodedAddress) {
+    if (!address) {
       throw new ForbiddenException("Unauthorized");
     }
 
@@ -72,12 +64,12 @@ export class ClaimQuestRewardsResolver {
       "cryptoAccounts",
       did
     );
-    console.log({ adventurerAccounts, decodedAddress });
+    console.log({ adventurerAccounts, address });
     if (!adventurerAccounts) throw new ForbiddenError("Unauthorized");
     const formattedAccounts = Object.keys(adventurerAccounts).map(
       (account) => account.split("@")[0]
     );
-    if (!formattedAccounts.includes(decodedAddress)) {
+    if (!formattedAccounts.includes(address)) {
       throw new ForbiddenError("Unauthorized");
     }
 
@@ -95,14 +87,14 @@ export class ClaimQuestRewardsResolver {
     const questContract = this.appService.getContract(chainIdStr, "BadgeNFT");
     const metadataNonceId = await questContract.nonces(
       foundQuest.streamId,
-      decodedAddress
+      address
     );
     console.log({ metadataNonceId });
     const { r, s, v } = await verifyAdventurerClaimInfo({
       contractAddress: questContract.address,
       nonceId: metadataNonceId,
       objectId: foundQuest.streamId,
-      senderAddress: decodedAddress,
+      senderAddress: address,
       chainId,
       verifyContract: questContract.address,
     });

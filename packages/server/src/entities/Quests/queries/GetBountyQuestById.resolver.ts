@@ -1,8 +1,9 @@
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { Resolver, Query, Args } from "@nestjs/graphql";
-import { ethers } from "ethers";
+import { SiweMessage } from "siwe";
 
 import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 import removeNulls from "../../../core/utils/helpers";
 import { UseCeramicClient } from "../../../core/utils/types";
@@ -26,8 +27,9 @@ export class GetBountyQuestByIdResolver {
     name: "getBountyQuestById",
   })
   async getBountyQuestById(
+    @UseSiwe() siwe: SiweMessage,
     @UseCeramic() { ceramicClient, ceramicCore }: UseCeramicClient,
-    @Args("input") { questId, did, signature }: GetBountyQuestByIdInput
+    @Args("input") { questId, did }: GetBountyQuestByIdInput
   ): Promise<BountyQuest | null | undefined> {
     const foundQuest =
       await this.questService.bountyQuestWithPathwayAndProjectSquads({
@@ -58,9 +60,10 @@ export class GetBountyQuestByIdResolver {
 
     // TODO:
     // 1. check if signature matches an address in the crypto accounts of the did provided
-    const decodedAddress = ethers.utils.verifyMessage(did, signature);
-    console.log({ decodedAddress });
-    if (!decodedAddress) {
+
+    const { address, chainId } = siwe;
+    console.log({ address });
+    if (!address) {
       throw new ForbiddenException("Unauthorized");
     }
 
@@ -73,7 +76,7 @@ export class GetBountyQuestByIdResolver {
       : [];
 
     const isProjectContributor = projectContributors.includes(
-      decodedAddress.toLowerCase()
+      address.toLowerCase()
     );
 
     console.log({ isProjectContributor });
@@ -106,7 +109,7 @@ export class GetBountyQuestByIdResolver {
         decryptedSolutions.length > 0
           ? decryptedSolutions
           : foundQuest.submissions || [],
-      chainId: questInfos.content.chainId,
+      chainId: questInfos.content.chainId || chainId,
       namespace: questInfos.content.namespace,
       createdBy: questCreatorDID,
       // createdBy: {

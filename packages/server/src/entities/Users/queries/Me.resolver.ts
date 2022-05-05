@@ -1,26 +1,28 @@
-import { UnauthorizedException } from "@nestjs/common";
-import { Resolver, Query, Context } from "@nestjs/graphql";
-import { Context as ContextType } from "../../../core/utils/types";
+import { Resolver, Query } from "@nestjs/graphql";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
+import removeNulls from "../../../core/utils/helpers";
 
 import { User } from "../User.entity";
+import { UserService } from "../User.service";
 
 @Resolver(() => User)
 export class MeResolver {
+  constructor(private readonly userService: UserService) {}
   @Query(() => User, {
     nullable: true,
     description: "Gets the currently logged in user",
     name: "me",
   })
-  async me(@Context() ctx: ContextType): Promise<User | undefined> {
-    if (!ctx.req.session.siwe) {
-      throw new UnauthorizedException({ message: "You have to first sign_in" });
-    }
-
-    console.log({ ens: ctx.req.session.ens ?? undefined });
-    return {
-      id: ctx.req.session.siwe.address,
-      did: ctx.req.session.siwe.address,
-      addresses: [ctx.req.session.siwe.address],
-    };
+  async me(@UseSiwe() siwe: SiweMessage): Promise<User | undefined> {
+    const chainSpecificAddress = `${siwe.address}@eip155:${siwe.chainId}`;
+    const [foundUser] = await this.userService.users({
+      where: {
+        addresses: {
+          has: chainSpecificAddress,
+        },
+      },
+    });
+    return removeNulls(foundUser);
   }
 }

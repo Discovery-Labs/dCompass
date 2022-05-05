@@ -1,5 +1,4 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
-import { ethers } from "ethers";
 import ABIS from "@discovery-dao/hardhat/abis.json";
 
 import { Pathway } from "../Pathway.entity";
@@ -11,6 +10,8 @@ import { Squad } from "../../Squads/Squad.entity";
 
 import { PathwayService } from "../Pathway.service";
 import removeNulls from "../../../core/utils/helpers";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Pathway)
 export class VerifyPathwayResolver {
@@ -25,8 +26,9 @@ export class VerifyPathwayResolver {
     name: "verifyPathway",
   })
   async verifyPathway(
+    @UseSiwe() siwe: SiweMessage,
     @Args("input")
-    { id, pathwayMinterSignature, chainId }: VerifyPathwayInput
+    { id }: VerifyPathwayInput
   ): Promise<Pathway | null | undefined> {
     const foundPathway = await this.pathwayService.pathwayWithProjectInfos({
       id,
@@ -34,26 +36,23 @@ export class VerifyPathwayResolver {
     if (!foundPathway) {
       throw new NotFoundException("Pathway not found by back-end");
     }
-    const { projectId, project } = foundPathway;
+    const { project } = foundPathway;
     if (!project) {
       throw new NotFoundException("Pathway has no parent project!");
     }
 
     const projectStreamId = project.streamId;
     console.log("approving pathway");
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: id, projectId }),
-      pathwayMinterSignature
-    );
+    const { address, chainId } = siwe;
 
-    if (!decodedAddress) {
+    if (!address) {
       throw new ForbiddenException("Unauthorized");
     }
 
     const projectContributors = project.squads.flatMap(
       (squad: Squad) => squad.members
     );
-    if (!projectContributors.includes(decodedAddress)) {
+    if (!projectContributors.includes(address)) {
       throw new ForbiddenException("Unauthorized");
     }
     const chaindIdStr = chainId.toString();
@@ -80,14 +79,14 @@ export class VerifyPathwayResolver {
         contractAddress: pathwayContract.address,
         nonceId: metadataNonceId,
         objectId: foundPathway.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
       }),
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
         nonceId: thresholdNonceId,
         objectId: foundPathway.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
         votesNeeded: 1,
       }),

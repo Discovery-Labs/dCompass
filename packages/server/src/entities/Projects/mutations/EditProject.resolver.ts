@@ -1,10 +1,11 @@
 import { NotFoundException } from "@nestjs/common";
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
 import { ForbiddenError } from "apollo-server-errors";
-import { ethers } from "ethers";
+import { SiweMessage } from "siwe";
 
 import { schemaAliases } from "../../../core/constants/idx";
 import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 import { UseCeramicClient } from "../../../core/utils/types";
 import { Squad } from "../../Squads/Squad.entity";
 import { EditProjectInput } from "../dto/EditProject.input";
@@ -18,17 +19,16 @@ export class EditProjectResolver {
     name: "editProject",
   })
   async editProject(
+    @UseSiwe() siwe: SiweMessage,
     @UseCeramic()
     { ceramicClient }: UseCeramicClient,
-    @Args("input") { id, editorSignature, ...projectValues }: EditProjectInput
+    @Args("input") { id, ...projectValues }: EditProjectInput
   ): Promise<Project | null> {
     // Check that the current user is a contributor or the owner of the project
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id }),
-      editorSignature
-    );
+    const { address } = siwe;
+
     console.log({
-      decodedAddress,
+      address,
       id,
       projectValues,
     });
@@ -44,8 +44,8 @@ export class EditProjectResolver {
     const formattedOwnerAccounts = Object.keys(ownerAccounts).map(
       (account) => account.split("@")[0]
     );
-    const isOwner = formattedOwnerAccounts.includes(decodedAddress);
-    const isContributor = allContributors.includes(decodedAddress);
+    const isOwner = formattedOwnerAccounts.includes(address);
+    const isContributor = allContributors.includes(address);
     if (!isOwner || !isContributor) {
       throw new ForbiddenError("Unauthorized");
     }
@@ -66,7 +66,7 @@ export class EditProjectResolver {
       id,
       ...currentProjectValues,
       ...projectValues,
-      updatedBy: decodedAddress,
+      updatedBy: address,
       updatedAt: new Date(),
     };
 

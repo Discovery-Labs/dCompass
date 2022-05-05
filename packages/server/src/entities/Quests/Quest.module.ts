@@ -8,8 +8,7 @@ import { PathwayService } from "../Pathways/Pathway.service";
 import { ApproveQuestResolver } from "./mutations/ApproveQuest.resolver";
 import { ApproveQuestSolutionResolver } from "./mutations/ApproveQuestSolution.resolver";
 import { ClaimQuestRewardsResolver } from "./mutations/ClaimQuestRewards.resolver";
-import { CreateGithubContributorQuestResolver } from "./mutations/CreateGithubContributorQuest.resolver";
-import { CreateNFTOwnerQuestResolver } from "./mutations/CreateNFTOwnerQuest.resolver";
+
 import { CreateQuestResolver } from "./mutations/CreateQuest.resolver";
 import { CreateQuizQuestResolver } from "./mutations/CreateQuizQuest.resolver";
 
@@ -17,7 +16,7 @@ import { CreateQuizQuestResolver } from "./mutations/CreateQuizQuest.resolver";
 // import { CreateQuestResolver } from './mutations/CreateQuest.resolver';
 // import { GetQuestByIdResolver } from './queries/GetQuestById.resolver';
 // import { SubmitQuestAnswersResolver } from './mutations/SubmitQuestAnswers.resolver';
-import { CreateSnapshotVoterQuestResolver } from "./mutations/CreateSnapshotVoterQuest.resolver";
+
 import { SubmitQuestAnswersResolver } from "./mutations/SubmitQuestAnswers.resolver";
 import { SubmitQuestSolutionResolver } from "./mutations/SubmitQuestSolution.resolver";
 import { VerifyQuestResolver } from "./mutations/VerifyQuest.resolver";
@@ -29,9 +28,6 @@ import { QuestService } from "./Quest.service";
 @Module({
   imports: [RedisModule],
   providers: [
-    CreateSnapshotVoterQuestResolver,
-    CreateGithubContributorQuestResolver,
-    CreateNFTOwnerQuestResolver,
     CreateQuizQuestResolver,
     CreateQuestResolver,
     ApproveQuestResolver,

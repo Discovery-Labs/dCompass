@@ -1,6 +1,5 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
 import { ForbiddenError } from "apollo-server-errors";
-import { ethers } from "ethers";
 import { AppService } from "../../../app.service";
 
 import { ApproveProjectInput } from "../dto/ApproveProject.input";
@@ -9,6 +8,8 @@ import { NotFoundException } from "@nestjs/common";
 import { Project } from "../Project.entity";
 import { ProjectService } from "../Project.service";
 import removeNulls from "../../../core/utils/helpers";
+import { SiweMessageInput } from "../../Users/dto/SiweMessageInput";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Project)
 export class ApproveProjectResolver {
@@ -22,8 +23,9 @@ export class ApproveProjectResolver {
     name: "approveProject",
   })
   async approveProject(
+    @UseSiwe() siwe: SiweMessageInput,
     @Args("input")
-    { id, tokenUris, reviewerSignature, chainId }: ApproveProjectInput
+    { id, tokenUris }: ApproveProjectInput
   ): Promise<Project | null> {
     const foundProject = await this.projectService.project({ id: id });
 
@@ -32,16 +34,14 @@ export class ApproveProjectResolver {
     }
 
     // Check that the current user is a reviewer
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id, tokenUris, chainId }),
-      reviewerSignature
-    );
+    const { address, chainId } = siwe;
+
     const projectNFTContract = this.appService.getContract(
-      chainId,
+      chainId.toString(),
       "ProjectNFT"
     );
 
-    const isReviewer = await projectNFTContract.reviewers(decodedAddress);
+    const isReviewer = await projectNFTContract.reviewers(address);
     console.log({ isReviewer });
     if (!isReviewer) {
       throw new ForbiddenError("Unauthorized");

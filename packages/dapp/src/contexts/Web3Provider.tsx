@@ -21,6 +21,7 @@ import getLibrary from "../core/connectors/getLibrary";
 import {
   SignatureType,
   useGetNonceLazyQuery,
+  useMeLazyQuery,
   useSignInMutation,
   useSignOutMutation,
 } from "../core/graphql/generated/types";
@@ -73,6 +74,9 @@ const Web3Provider = ({ children }: { children: any }) => {
     fetchPolicy: "network-only",
   });
   const [getNonce] = useGetNonceLazyQuery({
+    fetchPolicy: "network-only",
+  });
+  const [me] = useMeLazyQuery({
     fetchPolicy: "network-only",
   });
   const [state, dispatch] = useReducer(Web3Reducer, initialState);
@@ -157,6 +161,18 @@ const Web3Provider = ({ children }: { children: any }) => {
   //   });
   // };
 
+  const logout = async () => {
+    await signOut();
+    setAccount(null);
+    setSelf(null);
+    setCore(null);
+    setIsReviewer(false);
+    setContracts(null);
+    setIsSignedIn(false);
+    // TODO: better way to handle this ? https://github.com/NoahZinsmeister/web3-react/issues/228
+    localStorage.setItem("defaultWallet", "");
+  };
+
   useEffect(() => {
     const coreCeramic = ceramicCoreFactory();
     setCore(coreCeramic);
@@ -211,9 +227,28 @@ const Web3Provider = ({ children }: { children: any }) => {
       if (active && account) {
         setAccount(account);
 
+        try {
+          const { data: meData } = await me();
+          if (!meData?.me?.did) {
+            return;
+          }
+          setIsSignedIn(true);
+          // setAccount(meData.me.address);
+          // setENS(meData.me.ens);
+        } catch (error) {
+          console.log("NOT_AUTHENTICATED");
+        }
         const provider = await web3Modal.connect();
+        const ethersProvider = new ethers.providers.Web3Provider(
+          provider,
+          "any"
+        );
+
         const mySelf = await SelfID.authenticate({
-          authProvider: new EthereumAuthProvider(provider, account),
+          authProvider: new EthereumAuthProvider(
+            ethersProvider.provider,
+            account
+          ),
           ceramic: CERAMIC_TESTNET,
           connectNetwork: CERAMIC_TESTNET,
           model: publishedModel,
@@ -239,19 +274,9 @@ const Web3Provider = ({ children }: { children: any }) => {
     handleActiveAccount();
     return () => {
       setAccount(null);
-      setENS(null);
+      return setENS(null);
     };
-  }, [account, active, library, web3Modal]);
-
-  const logout = async () => {
-    setAccount(null);
-    setSelf(null);
-    setCore(null);
-    setIsReviewer(false);
-    setContracts(null);
-    // TODO: better way to handle this ? https://github.com/NoahZinsmeister/web3-react/issues/228
-    localStorage.setItem("defaultWallet", "");
-  };
+  }, [account, me, active, library, web3Modal]);
 
   const connectWeb3 = useCallback(async () => {
     const provider = await web3Modal.connect();

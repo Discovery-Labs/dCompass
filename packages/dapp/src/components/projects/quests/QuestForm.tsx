@@ -349,13 +349,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     );
 
     setSubmitStatus("Signing quest creation");
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify({
-        id: questDoc.id.toUrl(),
-        pathwayId: router.query.pathwayId,
-      }),
-      account,
-    ]);
 
     if (isNativeToken) {
       setSubmitStatus("Creating quest on-chain");
@@ -401,7 +394,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const createQuestMutationVariables = {
       input: {
         id: questDoc.id.toUrl(),
-        questCreatorSignature: signature.result,
       },
     };
 

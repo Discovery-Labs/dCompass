@@ -1,13 +1,14 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
 import { NotFoundException } from "@nestjs/common";
 
-import { ethers } from "ethers";
 import { ForbiddenError } from "apollo-server-express";
 import { AppService } from "../../../app.service";
 import { BountyQuest } from "../BountyQuest.entity";
 import { ApproveQuestSolutionInput } from "../dto/ApproveQuestSolution.input";
 import { QuestService } from "../Quest.service";
 import removeNulls from "../../../core/utils/helpers";
+import { SiweMessageInput } from "../../Users/dto/SiweMessageInput";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => BountyQuest)
 export class ApproveQuestSolutionResolver {
@@ -21,13 +22,9 @@ export class ApproveQuestSolutionResolver {
     name: "approveQuestSolution",
   })
   async approveQuestSolution(
+    @UseSiwe() siwe: SiweMessageInput,
     @Args("input")
-    {
-      id,
-      solutionId,
-      solutionApproverSignature,
-      adventurerDID,
-    }: ApproveQuestSolutionInput
+    { id, solutionId, adventurerDID }: ApproveQuestSolutionInput
   ): Promise<BountyQuest | null | undefined> {
     const foundBountyQuest =
       await this.questService.bountyQuestWithPathwayAndProjectSquads({
@@ -46,15 +43,7 @@ export class ApproveQuestSolutionResolver {
       throw new NotFoundException("Pathway has no parent project");
     }
 
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({
-        id: id,
-        pathwayId: foundBountyQuest.pathwayId,
-        adventurerDID,
-        solutionId,
-      }),
-      solutionApproverSignature
-    );
+    const { address } = siwe;
     // TODO: Keep track of address & network to avoid impersonation
     const projectContributors = project.squads
       ? project.squads.flatMap((squad) =>
@@ -62,9 +51,7 @@ export class ApproveQuestSolutionResolver {
         )
       : [];
 
-    const isContributor = projectContributors.includes(
-      decodedAddress.toLowerCase()
-    );
+    const isContributor = projectContributors.includes(address.toLowerCase());
 
     if (!isContributor) {
       throw new ForbiddenError("Unauthorized");

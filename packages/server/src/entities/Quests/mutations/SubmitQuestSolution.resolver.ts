@@ -3,9 +3,10 @@ import { ForbiddenError } from "apollo-server-express";
 
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { AppService } from "../../../app.service";
-import { ethers } from "ethers";
 import { QuestSolutionSubmissionInput } from "../dto/QuestSolutionSubmission.input";
 import { QuestService } from "../Quest.service";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Boolean)
 export class SubmitQuestSolutionResolver {
@@ -19,6 +20,7 @@ export class SubmitQuestSolutionResolver {
     name: "submitQuestSolution",
   })
   async submitQuestSolution(
+    @UseSiwe() siwe: SiweMessage,
     @Args("input") solutionSubmission: QuestSolutionSubmissionInput
   ): Promise<boolean> {
     const foundQuest =
@@ -38,15 +40,10 @@ export class SubmitQuestSolutionResolver {
       throw new NotFoundException("Pathway has no parent project");
     }
 
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({
-        id: solutionSubmission.questId,
-        pathwayId: foundQuest.pathwayId,
-      }),
-      solutionSubmission.questAdventurerSignature
-    );
-    console.log({ decodedAddress });
-    if (!decodedAddress) {
+    const { address } = siwe;
+
+    console.log({ address });
+    if (!address) {
       throw new ForbiddenException("Unauthorized");
     }
 
