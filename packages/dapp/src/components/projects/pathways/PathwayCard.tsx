@@ -169,21 +169,10 @@ function PathwayCard({
   const handleApprovePathway = async () => {
     setIsApproving(true);
     if (chainId && account) {
-      const signatureInput = {
-        id: pathway.id,
-        projectId: pathway.projectId,
-      };
-      const signature = await library.provider.send("personal_sign", [
-        JSON.stringify(signatureInput),
-        account,
-      ]);
-
       const { data } = await approvePathwayMutation({
         variables: {
           input: {
             id: pathway.id,
-            pathwayApproverSignature: signature.result,
-            chainId,
           },
         },
       });
@@ -244,21 +233,10 @@ function PathwayCard({
       });
       const { url } = await nftCidRes.json();
 
-      const signatureInput = {
-        id: pathway.id,
-        projectId: pathway.projectId,
-      };
-      const signature = await library.provider.send("personal_sign", [
-        JSON.stringify(signatureInput),
-        account,
-      ]);
-
       const { data } = await verifyPathwayMutation({
         variables: {
           input: {
             id: pathway.id,
-            pathwayMinterSignature: signature.result,
-            chainId,
           },
         },
       });
@@ -307,15 +285,6 @@ function PathwayCard({
   const handleClaimPathwayRewards = async () => {
     setIsClaiming(true);
     setRewardStatus("Claiming rewards");
-    const signatureInput = {
-      id: pathway.id,
-      projectId: pathway.projectId,
-    };
-    setRewardStatus("Signing claim");
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify(signatureInput),
-      account,
-    ]);
 
     setRewardStatus("Generating tokenURI");
     const formData = new FormData();
@@ -336,8 +305,6 @@ function PathwayCard({
         input: {
           pathwayId: pathway.id,
           did: self.id,
-          questAdventurerSignature: signature.result,
-          chainId,
         },
       },
     });

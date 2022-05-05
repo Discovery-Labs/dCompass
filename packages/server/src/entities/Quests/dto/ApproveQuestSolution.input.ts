@@ -20,10 +20,4 @@ export class ApproveQuestSolutionInput {
   @IsDefined({ message: "not.defined" })
   @IsNotEmpty({ message: "not.empty" })
   solutionId: string;
-
-  @Field()
-  @IsString({ message: "wrong.type" })
-  @IsDefined({ message: "not.defined" })
-  @IsNotEmpty({ message: "not.empty" })
-  solutionApproverSignature: string;
 }

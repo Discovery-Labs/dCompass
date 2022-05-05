@@ -93,6 +93,7 @@
     "react-icons": "^4.3.1",
     "react-markdown": "^7.0.0",
     "react-parallax-tilt": "^1.5.73",
+    "siwe": "^1.1.6",
     "states-cities-db": "^1.4.1",
     "tiny-invariant": "^1.2.0",
     "uint8arrays": "^3.0.0",

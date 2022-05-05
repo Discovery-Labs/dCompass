@@ -44,22 +44,12 @@ function QuizForm({ questions, questId, pathwayId, successCallback }: any) {
     // TODO: call ceramic & back-end here
     let isValid = false;
     try {
-      const signatureInput = {
-        id: questId,
-        pathwayId,
-      };
-      const signature = await library.provider.send("personal_sign", [
-        JSON.stringify(signatureInput),
-        account,
-      ]);
       const { data } = await submitQuestAnswersMutation({
         variables: {
           input: {
             questId,
             did: self.id,
             questionAnswers,
-            questAdventurerSignature: signature.result,
-            chainId,
           },
         },
       });

@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import { ExecutionParams } from 'subscriptions-transport-ws';
-import CeramicClient from '@ceramicnetwork/http-client';
-import { DIDDataStore } from '@glazed/did-datastore';
-import { DataModel } from '@glazed/datamodel';
-import { Core } from '@self.id/core';
-import { Client, ThreadID } from '@textile/hub';
+import { Request, Response } from "express";
+import { ExecutionParams } from "subscriptions-transport-ws";
+import CeramicClient from "@ceramicnetwork/http-client";
+import { DIDDataStore } from "@glazed/did-datastore";
+import { DataModel } from "@glazed/datamodel";
+import { Core } from "@self.id/core";
+import { Client, ThreadID } from "@textile/hub";
 
 export interface Ceramic {
   ceramic: CeramicClient;

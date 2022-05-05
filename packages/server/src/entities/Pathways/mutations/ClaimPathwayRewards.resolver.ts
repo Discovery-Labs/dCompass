@@ -1,19 +1,20 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
-import { ethers } from "ethers";
 import ABIS from "@discovery-dao/hardhat/abis.json";
 
-import { UseCeramicClient, UseThreadDBClient } from "../../../core/utils/types";
+import { UseCeramicClient } from "../../../core/utils/types";
 import { verifyAdventurerClaimInfo } from "../../../core/utils/security/verify";
 import { AppService } from "../../../app.service";
 
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
-import { UseThreadDB } from "../../../core/decorators/UseThreadDB.decorator";
+
 import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
 import { ForbiddenError } from "apollo-server-express";
 import { Pathway } from "../Pathway.entity";
 import { ClaimPathwayRewardsInput } from "../dto/ClaimPathwayRewards.input";
 import { PathwayService } from "../Pathway.service";
 import removeNulls from "../../../core/utils/helpers";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Pathway)
 export class ClaimPathwayRewardsResolver {
@@ -28,15 +29,10 @@ export class ClaimPathwayRewardsResolver {
     name: "claimPathwayRewards",
   })
   async claimPathwayRewards(
-    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
+    @UseSiwe() siwe: SiweMessage,
     @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args("input")
-    {
-      pathwayId,
-      did,
-      questAdventurerSignature,
-      chainId,
-    }: ClaimPathwayRewardsInput
+    { pathwayId, did }: ClaimPathwayRewardsInput
   ): Promise<Pathway | null | undefined> {
     const foundPathway =
       await this.pathwayService.pathwayWithQuestsAndProjectInfos({
@@ -45,17 +41,13 @@ export class ClaimPathwayRewardsResolver {
     if (!foundPathway) {
       throw new NotFoundException("Pathway not found by back-end");
     }
-    const { projectId, project } = foundPathway;
+    const { project } = foundPathway;
     if (!project) {
       throw new NotFoundException("Pathway has no parent project!");
     }
 
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: pathwayId, projectId }),
-      questAdventurerSignature
-    );
-
-    if (!decodedAddress) {
+    const { address, chainId } = siwe;
+    if (!address) {
       throw new ForbiddenException("Unauthorized");
     }
 
@@ -68,7 +60,7 @@ export class ClaimPathwayRewardsResolver {
     const formattedAccounts = Object.keys(adventurerAccounts).map(
       (account) => account.split("@")[0]
     );
-    if (!formattedAccounts.includes(decodedAddress)) {
+    if (!formattedAccounts.includes(address)) {
       throw new ForbiddenError("Unauthorized");
     }
     const allQuests = [
@@ -108,14 +100,14 @@ export class ClaimPathwayRewardsResolver {
     );
     const metadataNonceId = await pathwayContract.nonces(
       foundPathway.streamId,
-      decodedAddress
+      address
     );
     console.log({ metadataNonceId });
     const { r, s, v } = await verifyAdventurerClaimInfo({
       contractAddress: pathwayContract.address,
       nonceId: metadataNonceId,
       objectId: foundPathway.streamId,
-      senderAddress: decodedAddress,
+      senderAddress: address,
       chainId,
       verifyContract: pathwayContract.address,
     });

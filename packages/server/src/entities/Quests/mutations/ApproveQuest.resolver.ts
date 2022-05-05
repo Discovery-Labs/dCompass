@@ -6,12 +6,12 @@ import { Quest } from "../Quest.entity";
 import { verifyNFTInfo } from "../../../core/utils/security/verify";
 import { ApproveQuestInput } from "../dto/ApproveQuest.input";
 
-import { ethers } from "ethers";
-
 import { ForbiddenError } from "apollo-server-express";
 import { AppService } from "../../../app.service";
 import { QuestService } from "../Quest.service";
 import removeNulls from "../../../core/utils/helpers";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Quest)
 export class ApproveQuestResolver {
@@ -25,8 +25,9 @@ export class ApproveQuestResolver {
     name: "approveQuest",
   })
   async approveQuest(
+    @UseSiwe() siwe: SiweMessage,
     @Args("input")
-    { id, questApproverSignature, chainId, questType }: ApproveQuestInput
+    { id, questType }: ApproveQuestInput
   ): Promise<Quest | null | undefined> {
     let foundQuest = null;
     if (questType === "quiz") {
@@ -47,10 +48,7 @@ export class ApproveQuestResolver {
       throw new NotFoundException("Quest not found by back-end");
     }
 
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: id, pathwayId: foundQuest.pathwayId }),
-      questApproverSignature
-    );
+    const { address, chainId } = siwe;
 
     const { pathway } = foundQuest;
     if (!pathway) {
@@ -61,14 +59,14 @@ export class ApproveQuestResolver {
       throw new NotFoundException("Pathway has no parent project");
     }
     // TODO: Keep track of address & network to avoid impersonation
-    console.log({ decodedAddress });
+    console.log({ address });
     const projectContributors = project.squads
       ? project.squads.flatMap((squad) =>
           squad.members.map((m) => m.toLowerCase())
         )
       : [];
 
-    if (!projectContributors.includes(decodedAddress.toLowerCase())) {
+    if (!projectContributors.includes(address.toLowerCase())) {
       throw new ForbiddenError("Unauthorized");
     }
 
@@ -120,14 +118,14 @@ export class ApproveQuestResolver {
         contractAddress: badgeNFTContract.address,
         nonceId: metadataNonceId,
         objectId: foundQuest.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
       }),
       verifyNFTInfo({
         contractAddress: badgeNFTContract.address,
         nonceId: thresholdNonceId,
         objectId: foundQuest.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
         votesNeeded: 1,
       }),

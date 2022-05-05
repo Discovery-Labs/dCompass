@@ -174,19 +174,12 @@ function ReviewProjectPage({
         const mutationInput = {
           id,
           tokenUris,
-          chainId: chainId.toString(),
         };
-        const signature = await library.provider.send("personal_sign", [
-          JSON.stringify(mutationInput),
-          account,
-        ]);
+
         setIsApprovingProject(false);
         return approveProjectMutation({
           variables: {
-            input: {
-              ...mutationInput,
-              reviewerSignature: signature.result,
-            },
+            input: mutationInput,
           },
         });
       }

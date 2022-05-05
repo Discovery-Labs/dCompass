@@ -248,19 +248,11 @@ function PathwayFormWrapper() {
 
     setSubmitStatus("Signing pathway creation");
 
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify({
-        id: pathwayDoc.id.toUrl(),
-        projectId: router.query.projectId,
-      }),
-      account,
-    ]);
     setSubmitStatus("Pathway validation");
     await addPathwayMutation({
       variables: {
         input: {
           id: pathwayDoc.id.toUrl(),
-          pathwayCreatorSignature: signature.result,
         },
       },
     });

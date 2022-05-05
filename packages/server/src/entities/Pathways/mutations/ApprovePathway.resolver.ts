@@ -1,5 +1,4 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
-import { ethers } from "ethers";
 import { ForbiddenError } from "apollo-server-express";
 
 import ABIS from "@discovery-dao/hardhat/abis.json";
@@ -13,6 +12,8 @@ import { AppService } from "../../../app.service";
 import { PathwayService } from "../Pathway.service";
 import { NotFoundException } from "@nestjs/common";
 import removeNulls from "../../../core/utils/helpers";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
+import { SiweMessage } from "siwe";
 
 @Resolver(() => Pathway)
 export class ApprovePathwayResolver {
@@ -27,8 +28,9 @@ export class ApprovePathwayResolver {
     name: "approvePathway",
   })
   async approvePathway(
+    @UseSiwe() siwe: SiweMessage,
     @Args("input")
-    { id, pathwayApproverSignature, chainId }: ApprovePathwayInput
+    { id }: ApprovePathwayInput
   ): Promise<Pathway | null | undefined> {
     const foundPathway = await this.pathwayService.pathwayWithProjectInfos({
       id,
@@ -37,16 +39,13 @@ export class ApprovePathwayResolver {
     if (!foundPathway) {
       throw new NotFoundException("Pathway not found!");
     }
-    const { projectId, project } = foundPathway;
+    const { project } = foundPathway;
 
     if (!project) {
       throw new NotFoundException("Pathway has no parent project!");
     }
     const projectStreamId = project.streamId;
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: id, projectId }),
-      pathwayApproverSignature
-    );
+    const { address, chainId } = siwe;
     // TODO: Keep track of address & network to avoid impersonation
     const projectContributors = project.squads
       ? project.squads.flatMap((squad) =>
@@ -54,7 +53,7 @@ export class ApprovePathwayResolver {
         )
       : [];
 
-    if (!projectContributors.includes(decodedAddress.toLowerCase())) {
+    if (!projectContributors.includes(address.toLowerCase())) {
       throw new ForbiddenError("Unauthorized");
     }
 
@@ -82,14 +81,14 @@ export class ApprovePathwayResolver {
         contractAddress: pathwayContract.address,
         nonceId: metadataNonceId,
         objectId: foundPathway.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
       }),
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
         nonceId: thresholdNonceId,
         objectId: foundPathway.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
         votesNeeded: 1,
       }),

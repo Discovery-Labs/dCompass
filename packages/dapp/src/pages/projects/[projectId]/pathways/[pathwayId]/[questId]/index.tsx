@@ -20,7 +20,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
+
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
 import BountyForm from "components/projects/quests/bounty/BountyForm";
@@ -92,7 +92,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
   });
 
   const [tabIndex, setTabIndex] = useState(0);
-  const [authzSignature, setAuthzSignature] = useState<string>();
+
   const [claimedBy, setClaimedBy] = useState<string[]>();
   const [isClaimed, setIsClaimed] = useState<boolean>(false);
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
@@ -104,7 +104,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
   const questMarkdownTheme = usePageMarkdownTheme();
   const toast = useToast();
   const { account, self, contracts } = useContext(Web3Context);
-  const { library, chainId: currentChainId } = useWeb3React();
 
   useEffect(() => {
     async function getClaimedBy() {
@@ -150,15 +149,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
   const handleClaimQuestRewards = async () => {
     setIsClaiming(true);
     setRewardStatus("Claiming rewards");
-    const signatureInput = {
-      id: questId,
-      pathwayId: pathwayId,
-    };
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify(signatureInput),
-      account,
-    ]);
-    setRewardStatus("Signing claim");
     const {
       name,
       streamId,
@@ -219,8 +209,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         input: {
           questId,
           did: self.id,
-          questAdventurerSignature: signature.result,
-          chainId: currentChainId,
           questType: questType,
         },
       },
@@ -267,14 +255,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       isClosable: true,
       variant: "subtle",
     });
-  };
-
-  const handleUnlockSumbissions = async () => {
-    const signature = await library.provider.send("personal_sign", [
-      self.id,
-      account,
-    ]);
-    setAuthzSignature(signature.result);
   };
 
   const isOwner = quizData?.getQuizQuestById.createdBy.did === self?.id;
@@ -602,18 +582,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
               isContributor && (
                 <TabPanel px="0">
                   <VStack w="full" align="flex-start">
-                    {authzSignature ? (
-                      <QuestSubmissionList
-                        signature={authzSignature}
-                        questId={quizData.getQuizQuestById.id}
-                      />
-                    ) : (
-                      isContributor && (
-                        <Button onClick={handleUnlockSumbissions}>
-                          Sign to unlock protected content
-                        </Button>
-                      )
-                    )}
+                    <QuestSubmissionList
+                      questId={quizData.getQuizQuestById.id}
+                    />
                   </VStack>
                 </TabPanel>
               )}

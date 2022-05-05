@@ -1,5 +1,4 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
-import { ethers } from "ethers";
 
 import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
 import { UseCeramicClient } from "../../../core/utils/types";
@@ -8,6 +7,8 @@ import { Quest } from "../Quest.entity";
 import { ForbiddenError } from "apollo-server-express";
 import { QuestService } from "../Quest.service";
 import removeNulls from "../../../core/utils/helpers";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Quest)
 export class CreateQuestResolver {
@@ -19,17 +20,15 @@ export class CreateQuestResolver {
     name: "createQuest",
   })
   async createQuest(
+    @UseSiwe() siwe: SiweMessage,
     @UseCeramic() { ceramicClient }: UseCeramicClient,
-    @Args("input") { id, questCreatorSignature }: CreateQuestInput
+    @Args("input") { id }: CreateQuestInput
   ): Promise<Quest | null | undefined> {
     // Check that the current user is the owner of the quest
     const ogQuest = await ceramicClient.ceramic.loadStream(id);
     const { pathwayId, type, ...ogQuestInfos } = ogQuest.content;
 
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id, pathwayId }),
-      questCreatorSignature
-    );
+    const { address } = siwe;
 
     const ownerAccounts = await ceramicClient.dataStore.get(
       "cryptoAccounts",
@@ -40,7 +39,7 @@ export class CreateQuestResolver {
       (account) => account.split("@")[0]
     );
 
-    if (!formattedAccounts.includes(decodedAddress)) {
+    if (!formattedAccounts.includes(address)) {
       throw new ForbiddenError("Unauthorized");
     }
 

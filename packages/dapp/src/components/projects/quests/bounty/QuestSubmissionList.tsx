@@ -43,7 +43,6 @@ import { useContext, useState } from "react";
 import { BiDownload } from "react-icons/bi";
 import { MdOutlineRateReview } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
-import { useWeb3React } from "@web3-react/core";
 
 type SolutionSubmission = {
   id: string;
@@ -52,18 +51,11 @@ type SolutionSubmission = {
   reviewComment?: string;
   status: string;
 };
-function QuestSubmissionList({
-  questId,
-  signature,
-}: {
-  questId: string;
-  signature: string;
-}) {
+function QuestSubmissionList({ questId }: { questId: string }) {
   const [solutionReview, setSolutionReview] =
     useState<SolutionSubmission | null>();
   const [markdownSolution, setMarkdownSolution] = useState<string | null>();
-  const { self, account } = useContext(Web3Context);
-  const { library } = useWeb3React();
+  const { self } = useContext(Web3Context);
   const { getBorderColor } = useCustomColor();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [approveQuestSolutionMutation] = useMutation(
@@ -73,13 +65,12 @@ function QuestSubmissionList({
     variables: {
       input: {
         questId,
-        signature,
         did: self.id,
       },
     },
   });
 
-  const handleOpenReview = async (submission: SolutionSubmission) => {
+  const handleOpenReview = async (submission: SolutionSubmission): void => {
     setSolutionReview(submission);
     const solutionBlob = dataURLtoBlob(
       JSON.parse(submission.solution).solution
@@ -94,22 +85,12 @@ function QuestSubmissionList({
 
   const handleApproveSolution = async (solution: SolutionSubmission) => {
     // TODO: call mutation to change the status of the submission
-    const signatureInput = {
-      id: questId,
-      pathwayId: data.getBountyQuestById.pathwayId,
-      adventurerDID: solution.did,
-      solutionId: solution.id,
-    };
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify(signatureInput),
-      account,
-    ]);
+
     const res = await approveQuestSolutionMutation({
       variables: {
         input: {
           id: questId,
           adventurerDID: solution.did,
-          solutionApproverSignature: signature.result,
           solutionId: solution.id,
         },
       },
@@ -119,7 +100,7 @@ function QuestSubmissionList({
     return onClose();
   };
 
-  const handleRejectSolution = (solution: SolutionSubmission) => {
+  const handleRejectSolution = (solution: SolutionSubmission): void => {
     setSolutionReview(null);
     return onClose();
   };

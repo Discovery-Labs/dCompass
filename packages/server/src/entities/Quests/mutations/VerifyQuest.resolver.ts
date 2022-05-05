@@ -1,5 +1,4 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
-import { ethers } from "ethers";
 import ABIS from "@discovery-dao/hardhat/abis.json";
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
 
@@ -9,6 +8,8 @@ import { AppService } from "../../../app.service";
 import { VerifyQuestInput } from "../dto/VerifyQuest.input";
 import { QuestService } from "../Quest.service";
 import removeNulls from "../../../core/utils/helpers";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Quest)
 export class VerifyQuestResolver {
@@ -23,8 +24,9 @@ export class VerifyQuestResolver {
     name: "verifyQuest",
   })
   async verifyQuest(
+    @UseSiwe() siwe: SiweMessage,
     @Args("input")
-    { id, questMinterSignature, chainId, questType }: VerifyQuestInput
+    { id, questType }: VerifyQuestInput
   ): Promise<Quest | null | undefined> {
     let foundQuest = null;
     if (questType === "quiz") {
@@ -45,10 +47,7 @@ export class VerifyQuestResolver {
       throw new NotFoundException("Quest not found by back-end");
     }
 
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: id, pathwayId: foundQuest.pathwayId }),
-      questMinterSignature
-    );
+    const { address, chainId } = siwe;
 
     const { pathway } = foundQuest;
     if (!pathway) {
@@ -59,14 +58,14 @@ export class VerifyQuestResolver {
       throw new NotFoundException("Pathway has no parent project");
     }
     // TODO: Keep track of address & network to avoid impersonation
-    console.log({ decodedAddress });
+    console.log({ address });
     const projectContributors = project.squads
       ? project.squads.flatMap((squad) =>
           squad.members.map((m) => m.toLowerCase())
         )
       : [];
 
-    if (!projectContributors.includes(decodedAddress.toLowerCase())) {
+    if (!projectContributors.includes(address.toLowerCase())) {
       throw new ForbiddenException("Unauthorized");
     }
 
@@ -91,14 +90,14 @@ export class VerifyQuestResolver {
         contractAddress: questContract.address,
         nonceId: metadataNonceId,
         objectId: foundQuest.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
       }),
       verifyNFTInfo({
         contractAddress: questContract.address,
         nonceId: thresholdNonceId,
         objectId: foundQuest.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
         votesNeeded: 1,
       }),

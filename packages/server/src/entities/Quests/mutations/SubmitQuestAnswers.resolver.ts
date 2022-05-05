@@ -11,9 +11,10 @@ import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { SubmitQuestAnswersOutput } from "../dto/SubmitQuestAnswers.output";
 import { AppService } from "../../../app.service";
 import { verifyNFTInfo } from "../../../core/utils/security/verify";
-import { ethers } from "ethers";
 import { QuestService } from "../Quest.service";
 import removeNulls from "../../../core/utils/helpers";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => SubmitQuestAnswersOutput)
 export class SubmitQuestAnswersResolver {
@@ -27,6 +28,7 @@ export class SubmitQuestAnswersResolver {
     name: "submitQuestAnswers",
   })
   async submitQuestAnswers(
+    @UseSiwe() siwe: SiweMessage,
     @UseCeramic() { ceramicClient }: UseCeramicClient,
     @Args("input") answerSubmition: QuestAnswersSubmitionInput
   ): Promise<SubmitQuestAnswersOutput> {
@@ -47,15 +49,9 @@ export class SubmitQuestAnswersResolver {
       throw new NotFoundException("Pathway has no parent project");
     }
 
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({
-        id: answerSubmition.questId,
-        pathwayId: foundQuest.pathwayId,
-      }),
-      answerSubmition.questAdventurerSignature
-    );
-    console.log({ decodedAddress });
-    if (!decodedAddress) {
+    const { address, chainId } = siwe;
+
+    if (!address) {
       throw new ForbiddenException("Unauthorized");
     }
     console.log({ foundQuest });
@@ -108,7 +104,7 @@ export class SubmitQuestAnswersResolver {
           completedBy: [...alreadyCompletedBy, answerSubmition.did],
         },
       });
-      const chainIdStr = answerSubmition.chainId.toString();
+      const chainIdStr = chainId.toString();
       if (!Object.keys(ABIS).includes(chainIdStr)) {
         throw new Error("Unsupported Network");
       }
@@ -123,7 +119,7 @@ export class SubmitQuestAnswersResolver {
         contractAddress: questContract.address,
         nonceId: metadataNonceId,
         objectId: foundQuest.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
       });
       return removeNulls({

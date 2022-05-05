@@ -1,9 +1,10 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
 import { ProjectSquad } from "@prisma/client";
 import { ForbiddenError } from "apollo-server-errors";
-import { ethers } from "ethers";
+import { SiweMessage } from "siwe";
 
 import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 // import { UseThreadDB } from "../../../core/decorators/UseThreadDB.decorator";
 import removeNulls from "../../../core/utils/helpers";
 import { UseCeramicClient } from "../../../core/utils/types";
@@ -23,35 +24,33 @@ export class CreateProjectResolver {
     name: "createProject",
   })
   async createProject(
+    @UseSiwe() siwe: SiweMessage,
     @UseCeramic()
     { ceramicClient }: UseCeramicClient,
     // @UseThreadDB()
     // { dbClient, latestThreadId }: UseThreadDBClient,
-    @Args("input") { id, tokenUris, creatorSignature }: CreateProjectInput
+    @Args("input") { id, tokenUris }: CreateProjectInput
   ): Promise<Project | null> {
     // Check that the current user is the owner of the project
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id, tokenUris }),
-      creatorSignature
-    );
+    const { address } = siwe;
+
     const ogProject = await ceramicClient.ceramic.loadStream(id);
-    console.log("CTRLR", ogProject.controllers[0]);
+
     const ownerAccounts = await ceramicClient.dataStore.get(
       "cryptoAccounts",
       ogProject.controllers[0]
     );
 
-    console.log({ ownerAccounts, decodedAddress });
     if (!ownerAccounts) throw new ForbiddenError("Unauthorized");
     const formattedAccounts = Object.keys(ownerAccounts).map(
       (account) => account.split("@")[0]
     );
-    if (!formattedAccounts.includes(decodedAddress)) {
+    if (!formattedAccounts.includes(address)) {
       throw new ForbiddenError("Unauthorized");
     }
 
     const { squads, tags, ...ogProjectInfos } = ogProject.content;
-    console.log({ tags });
+
     const prismaProject = await this.projectService.createProject({
       streamId: id,
       ...ogProjectInfos,
@@ -60,40 +59,20 @@ export class CreateProjectResolver {
       },
       tokenUris,
       isFeatured: false,
-      createdBy: decodedAddress,
+      createdBy: address,
     });
 
-    const createdSquads = await this.projectService.createSquads(
+    await this.projectService.createSquads(
       squads.map((squad: Squad) => ({
         ...squad,
         projectId: prismaProject.id,
       }))
     );
 
-    console.log({ createdSquads });
-
     const projectWithSquadsAndTags =
       await this.projectService.projectWithSquadsAndTags({
         id: prismaProject.id,
       });
-
-    console.log({ projectWithSquads: projectWithSquadsAndTags?.squads });
-
-    // await this.threadDBService.create({
-    //   collectionName: "Project",
-    //   threadId: latestThreadId,
-    //   values: [
-    //     {
-    //       streamId: id,
-    //       ...ogProject.content,
-    //       tokenUris,
-    //       isFeatured: false,
-    //       createdBy: decodedAddress,
-    //       createdAt: new Date().toISOString(),
-    //     },
-    //   ],
-    //   dbClient,
-    // });
 
     const serializedProject = removeNulls(projectWithSquadsAndTags) as
       | (Project & {

@@ -43,8 +43,8 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
     setValue,
     formState: { errors },
   } = useForm();
-  const { self, account } = useContext(Web3Context);
-  const { chainId, library } = useWeb3React();
+  const { self } = useContext(Web3Context);
+
   const [code, setCode] = useState<string>();
   const { codeEditorScheme } = useCustomColor();
 
@@ -115,25 +115,12 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
     const decrypted = await self.client.ceramic.did.decryptDagJWE(solutionDag);
     console.log({ decrypted });
     try {
-      const signatureInput = {
-        id: questId,
-        pathwayId,
-        solution: JSON.stringify(solutionDag),
-      };
-
-      const signature = await library.provider.send("personal_sign", [
-        JSON.stringify(signatureInput),
-        account,
-      ]);
-
       const { data } = await submitQuestSolutionMutation({
         variables: {
           input: {
             questId,
             did: self.id,
             solution: JSON.stringify(solutionDag),
-            questAdventurerSignature: signature.result,
-            chainId,
           },
         },
       });

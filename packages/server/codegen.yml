@@ -1,0 +1,10 @@
+schema: ./src/schema.graphql
+documents: ../dapp/src/graphql/*.ts
+generates:
+  ../dapp/src/core/graphql/generated/types.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      fetcher: fetch

@@ -3,31 +3,22 @@
 # ------------------------------------------------------
 
 input ApprovePathwayInput {
-  chainId: Int!
   id: String!
-  namespace: String
-  pathwayApproverSignature: String!
 }
 
 input ApproveProjectInput {
-  chainId: String!
   id: String!
-  reviewerSignature: String!
   tokenUris: [String!]!
 }
 
 input ApproveQuestInput {
-  chainId: Int!
   id: String!
-  namespace: String
-  questApproverSignature: String!
   questType: String!
 }
 
 input ApproveQuestSolutionInput {
   adventurerDID: String!
   id: String!
-  solutionApproverSignature: String!
   solutionId: String!
 }
 
@@ -60,18 +51,12 @@ type BountyQuest {
 }
 
 input ClaimPathwayRewardsInput {
-  chainId: Int!
   did: String!
-  namespace: String
   pathwayId: String!
-  questAdventurerSignature: String!
 }
 
 input ClaimQuestRewardsInput {
-  chainId: Int!
   did: String!
-  namespace: String
-  questAdventurerSignature: String!
   questId: String!
   questType: String!
 }
@@ -82,14 +67,12 @@ input CreatePathwayInput {
 }
 
 input CreateProjectInput {
-  creatorSignature: String!
   id: String!
   tokenUris: [String!]!
 }
 
 input CreateQuestInput {
   id: String!
-  questCreatorSignature: String!
 }
 
 """
@@ -101,7 +84,6 @@ input EditProjectInput {
   color: String
   description: String
   discord: String
-  editorSignature: String!
   github: String
   id: String!
   logo: String
@@ -122,34 +104,6 @@ type ExpandedServerSignature {
 input GetBountyQuestByIdInput {
   did: String!
   questId: String!
-  signature: String!
-}
-
-type GithubContributorQuest {
-  chainId: Int!
-  completedBy: [String!]!
-
-  """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
-  createdBy: String!
-  description: String!
-  expandedServerSignatures: [ExpandedServerSignature!]
-  githubOrgId: String!
-  id: String!
-  image: String!
-  isPending: Boolean
-  name: String!
-  namespace: String
-  pathwayId: String!
-  questType: String!
-  rewardAmount: Float!
-  rewardCurrency: String!
-  rewardUserCap: Int!
-  slogan: String!
-  streamId: String!
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
 }
 
 type Mutation {
@@ -171,12 +125,6 @@ type Mutation {
   """Verify a new Quest right before minting in dCompass"""
   claimQuestRewards(input: ClaimQuestRewardsInput!): Quest
 
-  """Create a new Github Contributor Quest in dCompass"""
-  createGithubContributorQuest(input: CreateQuestInput!): GithubContributorQuest
-
-  """Create a new NFT Owner Quest in dCompass"""
-  createNFTOwnerQuest(input: CreateQuestInput!): NFTOwnerQuest
-
   """Create a new Pathway in dCompass"""
   createPathway(input: CreatePathwayInput!): Pathway
 
@@ -189,11 +137,14 @@ type Mutation {
   """Create a new Quiz quest in dCompass"""
   createQuizQuest(input: CreateQuestInput!): QuizQuest
 
-  """Create a new Snapshot Voter Quest in dCompass"""
-  createSnapshotVoterQuest(input: CreateQuestInput!): SnapshotVoterQuest
-
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
+
+  """Sign in a user and notifies the connected clients"""
+  signIn(input: SiweRegisterInput!): User!
+
+  """Logs out a user an notifies the connected clients"""
+  signOut: Boolean!
 
   """Submits quest answers"""
   submitQuestAnswers(input: QuestAnswersSubmitionInput!): SubmitQuestAnswersOutput!
@@ -206,33 +157,6 @@ type Mutation {
 
   """Verify a new Quest right before minting in dCompass"""
   verifyQuest(input: VerifyQuestInput!): Quest
-}
-
-type NFTOwnerQuest {
-  chainId: Int!
-  collectionContractAddress: String!
-  completedBy: [String!]!
-
-  """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
-  createdBy: String!
-  description: String!
-  expandedServerSignatures: [ExpandedServerSignature!]
-  id: String!
-  image: String!
-  isPending: Boolean
-  name: String!
-  namespace: String
-  pathwayId: String!
-  questType: String!
-  rewardAmount: Float!
-  rewardCurrency: String!
-  rewardUserCap: Int!
-  slogan: String!
-  streamId: String!
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
 }
 
 type Pathway {
@@ -334,6 +258,9 @@ type Query {
   """Gets a quiz quest by its ID"""
   getBountyQuestById(input: GetBountyQuestByIdInput!): BountyQuest
 
+  """Gets a nonce"""
+  getNonce: String
+
   """Gets a pathway by its Stream ID"""
   getPathwayById(pathwayId: String!): Pathway
 
@@ -342,6 +269,9 @@ type Query {
 
   """Gets a quiz quest by its ID"""
   getQuizQuestById(questId: String!): QuizQuest
+
+  """Gets the currently logged in user"""
+  me: User
 }
 
 type Quest {
@@ -371,10 +301,7 @@ type Quest {
 }
 
 input QuestAnswersSubmitionInput {
-  chainId: Int!
   did: String!
-  namespace: String
-  questAdventurerSignature: String!
   questId: String!
   questionAnswers: [QuestQuestionAnswerInput!]!
 }
@@ -385,10 +312,7 @@ input QuestQuestionAnswerInput {
 }
 
 input QuestSolutionSubmissionInput {
-  chainId: Int!
   did: String!
-  namespace: String
-  questAdventurerSignature: String!
   questId: String!
   solution: String!
 }
@@ -427,31 +351,31 @@ type QuizQuestion {
   question: String!
 }
 
-type SnapshotVoterQuest {
+"""EIP-191 signature scheme"""
+enum SignatureType {
+  PERSONAL_SIGNATURE
+}
+
+input SiweMessageInput {
+  address: String!
   chainId: Int!
-  completedBy: [String!]!
+  domain: String!
+  expirationTime: String
+  issuedAt: String!
+  nonce: String!
+  notBefore: String
+  requestId: String
+  resources: [String!]
+  signature: String!
+  statement: String!
+  type: SignatureType!
+  uri: String!
+  version: String!
+}
 
-  """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
-  createdBy: String!
-  description: String!
-  expandedServerSignatures: [ExpandedServerSignature!]
-  id: String!
-  image: String!
-  isPending: Boolean
-  name: String!
-  namespace: String
-  pathwayId: String!
-  proposalId: String!
-  questType: String!
-  rewardAmount: Float!
-  rewardCurrency: String!
-  rewardUserCap: Int!
-  slogan: String!
-  streamId: String!
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
+input SiweRegisterInput {
+  ens: String
+  message: SiweMessageInput!
 }
 
 type SolutionSubmission {
@@ -513,17 +437,17 @@ type Tag {
   value: String!
 }
 
-input VerifyPathwayInput {
-  chainId: Int!
+type User {
+  addresses: [String!]!
+  did: String!
   id: String!
-  namespace: String
-  pathwayMinterSignature: String!
+}
+
+input VerifyPathwayInput {
+  id: String!
 }
 
 input VerifyQuestInput {
-  chainId: Int!
   id: String!
-  namespace: String
-  questMinterSignature: String!
   questType: String!
 }

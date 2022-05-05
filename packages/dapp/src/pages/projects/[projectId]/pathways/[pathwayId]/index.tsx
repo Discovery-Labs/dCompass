@@ -22,7 +22,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
+
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
@@ -127,7 +127,7 @@ function PathwayPage({
   const pathwayMarkdownTheme = usePageMarkdownTheme();
 
   const { account, isReviewer, contracts, self } = useContext(Web3Context);
-  const { chainId, library } = useWeb3React();
+
   const { getAccentColor } = useCustomColor();
   const [claimPathwayRewardsMutation] = useMutation(
     CLAIM_PATHWAY_REWARDS_MUTATION
@@ -196,15 +196,6 @@ function PathwayPage({
   const handleClaimPathwayRewards = async () => {
     setIsClaiming(true);
     setRewardStatus("Claiming rewards");
-    const signatureInput = {
-      id,
-      projectId,
-    };
-    setRewardStatus("Signing claim");
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify(signatureInput),
-      account,
-    ]);
 
     setRewardStatus("Generating tokenURI");
     const formData = new FormData();
@@ -243,8 +234,6 @@ function PathwayPage({
         input: {
           pathwayId: id,
           did: self.id,
-          questAdventurerSignature: signature.result,
-          chainId,
         },
       },
     });
