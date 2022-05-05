@@ -62,7 +62,7 @@ abstract contract ERC1155BaseInternal is IERC1155Internal{
             .balances[id];
         balances[account] += amount;
 
-        emit TransferSingle(msg.sender, address(0), account, id, amount);
+        emit InternalTransferSingle(msg.sender, address(0), account, id, amount);
     }
 
     /**
@@ -129,7 +129,7 @@ abstract contract ERC1155BaseInternal is IERC1155Internal{
             }
         }
 
-        emit TransferBatch(msg.sender, address(0), account, ids, amounts);
+        emit InternalTransferBatch(msg.sender, address(0), account, ids, amounts);
     }
 
     /**
@@ -191,7 +191,7 @@ abstract contract ERC1155BaseInternal is IERC1155Internal{
             balances[account] -= amount;
         }
 
-        emit TransferSingle(msg.sender, account, address(0), id, amount);
+        emit InternalTransferSingle(msg.sender, account, address(0), id, amount);
     }
 
     /**
@@ -227,7 +227,7 @@ abstract contract ERC1155BaseInternal is IERC1155Internal{
             }
         }
 
-        emit TransferBatch(msg.sender, account, address(0), ids, amounts);
+        emit InternalTransferBatch(msg.sender, account, address(0), ids, amounts);
     }
 
     /**
@@ -276,7 +276,7 @@ abstract contract ERC1155BaseInternal is IERC1155Internal{
 
         balances[id][recipient] += amount;
 
-        emit TransferSingle(operator, sender, recipient, id, amount);
+        emit InternalTransferSingle(operator, sender, recipient, id, amount);
     }
 
     /**
@@ -361,7 +361,7 @@ abstract contract ERC1155BaseInternal is IERC1155Internal{
             balances[token][recipient] += amount;
         }
 
-        emit TransferBatch(operator, sender, recipient, ids, amounts);
+        emit InternalTransferBatch(operator, sender, recipient, ids, amounts);
     }
 
     /**
