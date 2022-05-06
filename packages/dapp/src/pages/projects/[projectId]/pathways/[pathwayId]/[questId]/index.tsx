@@ -435,23 +435,37 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                       {quizData?.getQuizQuestById.rewardUserCap}
                     </Tag>
                   </HStack>
-                  <HStack w="full">
-                    <Icon as={GiTwoCoins} />
-                    <Text
-                      fontWeight="bold"
-                      fontSize="xl"
-                      color="text"
-                      textTransform="uppercase"
-                    >
-                      Total Rewards
-                    </Text>
-                    <Tag variant="outline" size="lg">
-                      {quizData?.getQuizQuestById.rewardAmount}{" "}
-                      {getRewardCurrency(
-                        quizData?.getQuizQuestById.rewardCurrency
-                      )}
-                    </Tag>
-                  </HStack>
+                  {quizData?.getQuizQuestById.rewardAmount !== 0 ? (
+                    <HStack w="full">
+                      <Icon as={GiTwoCoins} />
+                      <Text
+                        fontWeight="bold"
+                        fontSize="xl"
+                        color="text"
+                        textTransform="uppercase"
+                      >
+                        Total Rewards
+                      </Text>
+                      <Tag variant="outline" size="lg">
+                        {quizData?.getQuizQuestById.rewardAmount}{" "}
+                        {getRewardCurrency(
+                          quizData?.getQuizQuestById.rewardCurrency
+                        )}
+                      </Tag>
+                    </HStack>
+                  ) : (
+                    <HStack w="full">
+                      <Icon as={GiTwoCoins} />
+                      <Text
+                        fontWeight="bold"
+                        fontSize="xl"
+                        color="text"
+                        textTransform="uppercase"
+                      >
+                        Only NFT
+                      </Text>
+                    </HStack>
+                  )}
                 </VStack>
                 <Flex align="center" maxW="full" py="4">
                   {quizData?.getQuizQuestById.createdBy && (
@@ -521,14 +535,18 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                         left: 0,
                       }}
                     />
-                    <Text>+</Text>
-                    <Tag variant="outline" size="lg">
-                      {quizData?.getQuizQuestById.rewardAmount /
-                        quizData?.getQuizQuestById.rewardUserCap}{" "}
-                      {getRewardCurrency(
-                        quizData?.getQuizQuestById.rewardCurrency
-                      )}
-                    </Tag>
+                    {quizData?.getQuizQuestById.rewardAmount !== 0 && (
+                      <>
+                        <Text>+</Text>
+                        <Tag variant="outline" size="lg">
+                          {quizData?.getQuizQuestById.rewardAmount /
+                            quizData?.getQuizQuestById.rewardUserCap}{" "}
+                          {getRewardCurrency(
+                            quizData?.getQuizQuestById.rewardCurrency
+                          )}
+                        </Tag>
+                      </>
+                    )}
                   </HStack>
                   <Button
                     w="full"

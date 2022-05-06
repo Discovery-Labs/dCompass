@@ -294,9 +294,11 @@ const QuestCard = ({
                 : "COMPLETED"
               : "UNCOMPLETED"}
           </Tag>
-          <Tag>
-            {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
-          </Tag>
+          {+quest.rewardAmount !== 0 && (
+            <Tag>
+              {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
+            </Tag>
+          )}
         </Flex>
 
         <Flex w="full" minH="56px">
@@ -321,7 +323,7 @@ const QuestCard = ({
             position="relative"
           />
         </Flex>
-        <VStack w="full" align="flex-start">
+        <VStack w="full" pt={2} align="flex-start">
           {/* Short Description  */}
           <Tooltip label={quest.slogan}>
             <Text color="text-weak" noOfLines={3}>

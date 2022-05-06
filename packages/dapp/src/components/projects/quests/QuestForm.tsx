@@ -22,6 +22,7 @@ import {
   Text,
   useToast,
   VStack,
+  Checkbox,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
@@ -29,7 +30,7 @@ import useCustomColor from "core/hooks/useCustomColor";
 import { Contract, ethers } from "ethers";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
@@ -98,6 +99,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const router = useRouter();
   const toast = useToast();
   const [code, setCode] = useState<string>();
+  const [isWithRewards, setIsWithRewards] = useState<boolean>();
   const [submitStatus, setSubmitStatus] = useState<string>("Creating quest");
   const { codeEditorScheme } = useCustomColor();
   const { tokens } = useTokenList();
@@ -215,7 +217,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
   async function onSubmit(values: Record<string, any>) {
     console.log("submitted", values);
     // TODO: add a field for this
-    const isRewardProvider = true;
+    const isRewardProvider = isWithRewards;
 
     // check if the native token is used
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
@@ -223,7 +225,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     setSubmitStatus("Checking balance");
     let balance = 0;
-    const rewardAmnt = parseFloat(values.rewardAmount);
+    const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
     const feeAmount = (rewardAmnt * 15) / 100;
     const totalToPay = rewardAmnt + feeAmount;
     if (!isNativeToken) {
@@ -320,7 +322,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             ),
             image: cids[values.name],
             rewardCurrency: values.rewardCurrency.value,
-            rewardAmount: parseFloat(values.rewardAmount),
+            rewardAmount: rewardAmnt,
             rewardUserCap: parseInt(values.rewardUserCap, 10),
             pathwayId: router.query.pathwayId,
           }
@@ -328,7 +330,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             ...values,
             rewardCurrency: values.rewardCurrency.value,
             image: cids[values.name],
-            rewardAmount: parseFloat(values.rewardAmount),
+            rewardAmount: rewardAmnt,
             rewardUserCap: parseInt(values.rewardUserCap, 10),
             pathwayId: router.query.pathwayId,
           };
@@ -426,6 +428,14 @@ const CreateQuestForm: React.FunctionComponent = () => {
     value: `${token.chainId}:${token.address}`,
   }));
 
+  const withRewards = (e: ChangeEvent<HTMLInputElement>) => {
+    // console.log(e.target.checked);
+    setIsWithRewards(e.target.checked);
+  };
+  useEffect(() => {
+    setIsWithRewards(false);
+  }, []);
+
   if (loading || pathwayLoading) {
     <Stack>
       <Progress size="xs" isIndeterminate />
@@ -507,16 +517,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
       </FormControl>
 
       {code && <CodeEditorPreview code={code} />}
-      <ControlledSelect
-        control={control}
-        name="type"
-        id="type"
-        label="Type"
-        rules={{
-          required: REQUIRED_FIELD_LABEL,
-        }}
-        options={questTypeOptions}
-      />
 
       <ImageDropzone
         {...{
@@ -529,76 +529,81 @@ const CreateQuestForm: React.FunctionComponent = () => {
         }}
       />
 
-      <VStack w="full">
-        <Flex w="full" direction={["column", "column", "row"]} gap="2">
-          <FormControl isInvalid={errors.rewardAmount}>
-            <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
-            <NumberInput
-              step={nativeToken.isMatic ? 10_000 : 5}
-              defaultValue={nativeToken.isMatic ? 10_000 : 5}
+      <Checkbox onChange={(e) => withRewards(e)}>ERC20 Rewards</Checkbox>
+      {isWithRewards ? (
+        <VStack w="full">
+          <Flex w="full" direction={["column", "column", "row"]} gap="2">
+            <FormControl isInvalid={errors.rewardAmount}>
+              <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
+              <NumberInput
+                step={nativeToken.isMatic ? 10_000 : 5}
+                defaultValue={nativeToken.isMatic ? 10_000 : 5}
+              >
+                <NumberInputField
+                  placeholder=""
+                  {...register(`rewardAmount`, {
+                    required: REQUIRED_FIELD_LABEL,
+                  })}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+              <FormErrorMessage>
+                {errors.rewardAmount && errors.rewardAmount.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <ControlledSelect
+              control={control}
+              name="rewardCurrency"
+              label="Reward currency"
+              rules={{
+                required: REQUIRED_FIELD_LABEL,
+              }}
+              options={[nativeToken.token, ...erc20Options]}
+              placeholder="WETH, DAI,..."
+            />
+          </Flex>
+          {rewardAmount && (
+            <Alert
+              rounded="lg"
+              w="full"
+              status={errors.rewardAmount ? "error" : "warning"}
             >
-              <NumberInputField
-                placeholder=""
-                {...register(`rewardAmount`, {
-                  required: REQUIRED_FIELD_LABEL,
-                })}
-              />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-            <FormErrorMessage>
-              {errors.rewardAmount && errors.rewardAmount.message}
-            </FormErrorMessage>
-          </FormControl>
+              <VStack pr="4" w="30%">
+                <AlertIcon />
+                <Text fontSize={"sm"}>Total with fee</Text>
+                <Tag colorScheme={errors.rewardAmount ? "red" : "primary"}>
+                  {parseFloat(rewardAmount) +
+                    (parseFloat(rewardAmount) * 15) / 100}{" "}
+                  {rewardCurrency.label}
+                </Tag>
+              </VStack>
 
-          <ControlledSelect
-            control={control}
-            name="rewardCurrency"
-            label="Reward currency"
-            rules={{
-              required: REQUIRED_FIELD_LABEL,
-            }}
-            options={[nativeToken.token, ...erc20Options]}
-            placeholder="WETH, DAI,..."
-          />
-        </Flex>
-        {rewardAmount && (
-          <Alert
-            rounded="lg"
-            w="full"
-            status={errors.rewardAmount ? "error" : "warning"}
-          >
-            <VStack pr="4" w="30%">
-              <AlertIcon />
-              <Text fontSize={"sm"}>Total with fee</Text>
-              <Tag colorScheme={errors.rewardAmount ? "red" : "primary"}>
-                {parseFloat(rewardAmount) +
-                  (parseFloat(rewardAmount) * 15) / 100}{" "}
-                {rewardCurrency.label}
-              </Tag>
-            </VStack>
+              <VStack w="70%">
+                <Heading as="h4" size="md">
+                  dCompass takes a fee of 15% on top of the total quest rewards.
+                </Heading>
+                <Text fontSize="md">
+                  10% goes to the dCompass treasury and 5% goes to the Gitcoin
+                  DAO treasury.
+                </Text>
+              </VStack>
+            </Alert>
+          )}
+        </VStack>
+      ) : (
+        <></>
+      )}
 
-            <VStack w="70%">
-              <Heading as="h4" size="md">
-                dCompass takes a fee of 15% on top of the total quest rewards.
-              </Heading>
-              <Text fontSize="md">
-                10% goes to the dCompass treasury and 5% goes to the Gitcoin DAO
-                treasury.
-              </Text>
-            </VStack>
-          </Alert>
-        )}
-      </VStack>
-
-      <VStack alignItems="center" w="full">
+      <VStack>
         <FormControl isInvalid={errors.rewardUserCap}>
           <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
           <NumberInput step={1_000} defaultValue={1_000}>
             <NumberInputField
-              roundedBottom="none"
+              roundedBottom={isWithRewards ? "none" : "auto"}
               placeholder="Number of max. claims"
               {...register(`rewardUserCap`, {
                 required: REQUIRED_FIELD_LABEL,
@@ -609,7 +614,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          {rewardCurrency && (
+          {rewardCurrency && isWithRewards && (
             <Alert roundedBottom="lg" w="full" status="info">
               <AlertIcon />
               <Text fontSize="md">
@@ -627,7 +632,18 @@ const CreateQuestForm: React.FunctionComponent = () => {
         </FormControl>
       </VStack>
 
+      <ControlledSelect
+        control={control}
+        name="type"
+        id="type"
+        label="Type"
+        rules={{
+          required: REQUIRED_FIELD_LABEL,
+        }}
+        options={questTypeOptions}
+      />
       {questDetails[questType]}
+
       <Flex w="full" pt="8" justify="space-between">
         <Button colorScheme="secondary" type="button" onClick={() => reset()}>
           Reset Form
