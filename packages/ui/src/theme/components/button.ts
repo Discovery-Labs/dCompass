@@ -2,7 +2,7 @@ import type {
   SystemStyleFunction,
   SystemStyleObject,
 } from '@chakra-ui/theme-tools';
-import { mode, transparentize } from '@chakra-ui/theme-tools';
+import { mode, transparentize, darken, lighten } from '@chakra-ui/theme-tools';
 import { colors } from '../colors';
 import { borderRadius } from '../default-props';
 
@@ -72,7 +72,7 @@ const variantOutline: SystemStyleFunction = (props) => {
 };
 
 const variantSolid: SystemStyleFunction = (props) => {
-  const { colorScheme: c } = props;
+  const { colorScheme: c, theme } = props;
 
   if (c === 'gray') {
     const bg = mode(`gray.100`, `whiteAlpha.200`)(props);
@@ -89,21 +89,41 @@ const variantSolid: SystemStyleFunction = (props) => {
     };
   }
 
+  if (c === 'white') {
+    return {
+      bg: mode(colors.neutralDarkest, colors.neutralLightest)(props),
+      color: mode(colors.neutralLightest, colors.neutralDarkest)(props),
+      border: '1px solid',
+      borderColor: mode(colors.neutralDarkest, colors.neutralLightest)(props),
+      _hover: {
+        bg: mode(colors.neutralLightest, colors.neutralDarkest)(props),
+        color: mode(colors.neutralDarkest, colors.neutralLightest)(props),
+        _disabled: {
+          bg: mode(`${c}.500`, `${c}.200`)(props),
+        },
+      },
+      _active: { bg: mode(`${c}.200`, `${c}.500`)(props) },
+    };
+  }
+
   let textColor = mode(colors.neutralLightest, colors.neutralLightest)(props);
-  if (c === 'accentLight' || c === 'accentDark') {
+  if (c === 'accent') {
     textColor = mode(colors.neutralDarkest, colors.neutralDarkest)(props);
   }
 
   return {
-    bg: mode(`${c}.300`, `${c}.300`)(props),
+    bg: mode(`${c}.400`, `${c}.300`)(props),
     color: textColor,
     _hover: {
-      bg: mode(`${c}.400`, `${c}.400`)(props),
+      bg: mode(
+        lighten(`${c}.400`, 5)(theme),
+        darken(`${c}.300`, 5)(theme)
+      )(props),
       _disabled: {
         bg: mode(`${c}.500`, `${c}.200`)(props),
       },
     },
-    _active: { bg: mode(`${c}.400`, `${c}.400`)(props) },
+    _active: { bg: mode(`${c}.200`, `${c}.500`)(props) },
   };
 };
 

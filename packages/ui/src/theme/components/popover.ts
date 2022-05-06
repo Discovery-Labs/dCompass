@@ -5,6 +5,7 @@ import type {
   SystemStyleObject,
 } from "@chakra-ui/theme-tools"
 import { cssVar, mode } from "@chakra-ui/theme-tools"
+import useThemeColor from "../../hooks/useThemeColor";
 
 const $popperBg = cssVar("popper-bg")
 
@@ -16,24 +17,28 @@ const baseStylePopper: SystemStyleObject = {
 }
 
 const baseStyleContent: SystemStyleFunction = (props) => {
+  const { getBgColor, getOverBgColor } = useThemeColor();
   const bg = mode("white", "gray.700")(props)
   const shadowColor = mode("gray.200", "whiteAlpha.300")(props)
 
   return {
     [$popperBg.variable]: `colors.${bg}`,
-    bg: $popperBg.reference,
+    bg: getBgColor(props),
     [$arrowBg.variable]: $popperBg.reference,
     [$arrowShadowColor.variable]: `colors.${shadowColor}`,
     width: "xs",
     border: "1px solid",
-    borderColor: "inherit",
+    borderColor: getOverBgColor(props),
     borderRadius: "md",
     boxShadow: "sm",
     zIndex: "inherit",
     _focus: {
-      outline: 0,
-      boxShadow: "outline",
+      boxShadow: 'none',
     },
+    // _focus: {
+    //   outline: 0,
+    //   boxShadow: "outline",
+    // },
   }
 }
 

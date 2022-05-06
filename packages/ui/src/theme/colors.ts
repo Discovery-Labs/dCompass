@@ -7,11 +7,12 @@ interface ExtendedColors {
   neutralLightest: string;
   neutralLighter: string;
   neutralLight: string;
-  borderDark: string;
-  borderLight: string;
 
   neutralDarkerAlpha: string;
   neutralLighterAlpha: string;
+
+  borderDark: string;
+  borderLight: string;
 
   // Functional
   success: string;
@@ -29,7 +30,7 @@ interface ExtendedColors {
     800: string;
     900: string;
   };
-  accentDark: {
+  secondary: {
     50: string;
     100: string;
     200: string;
@@ -41,7 +42,7 @@ interface ExtendedColors {
     800: string;
     900: string;
   };
-  accentLight: {
+  accent: {
     50: string;
     100: string;
     200: string;
@@ -68,64 +69,56 @@ const extendedColors: DeepPartial<
   neutralLighter: '#fff',
   neutralLight: '#AFA2D6',
 
-  neutralDarkerAlpha: '#1a2227b3',
-  neutralLighterAlpha: '#f0f0f0b3',
+  neutralDarkerAlpha: '#513B91b3',
+  neutralLighterAlpha: '#AFA2D6b3',
 
   borderDark: '#6F3FF5',
-  borderLight: '#6F3FF5',
+  borderLight: '#6137D8',
 
   // Functional
   success: '#9AF1A8',
   error: '#F86D97',
 
-  // Main
+  /**
+   * Main
+   * Generate your shades
+   * https://colorkit.io/shades-tints
+   */
   primary: {
-    50: '#eee9fe',
-    100: '#cab8fb',
-    200: '#8C65F7', // purplelight
-    300: '#6F3FF5', // purple
-    400: '#5932C4', // purpledark
-    500: '#6F3FF5',
-    600: '#4b0ff2',
-    700: '#420bdc',
-    800: '#3b0ac4',
-    900: '#2d0893',
+    50: '#EDE7FE',
+    100: '#C3AFFB',
+    200: '#9977F8',
+    300: '#6F3FF5', // dark main
+    400: '#6137D8', // light main
+    500: '#522EB8',
+    600: '#432598',
+    700: '#341C78',
+    800: '#251358',
+    900: '#160A38',
   },
   secondary: {
-    50: '#ffffff',
-    100: '#fccfdf',
-    200: '#F579A6', // pinklight
-    300: '#F35890', // pink
-    400: '#D44D6E', // pinkdark
-    500: '#F35890',
-    600: '#f02870',
-    700: '#ed1161',
-    800: '#d60f57',
-    900: '#a60c44',
+    50: '#FDE7EF',
+    100: '#F9B8D0',
+    200: '#F688B0',
+    300: '#F35890', // dark main
+    400: '#D24A7C', // light main
+    500: '#B33E69',
+    600: '#943256',
+    700: '#752643',
+    800: '#561A30',
+    900: '#370E1D',
   },
-  accentDark: {
-    50: '#98fee6',
-    100: '#66fed9',
-    200: '#5BF1CD', // aqualight
-    300: '#02E2AC', // aqua
-    400: '#11BC92', // aquadark
-    500: '#00DEA5',
-    600: '#02af86',
-    700: '#019672',
-    800: '#017d5f',
-    900: '#014a39',
-  },
-  accentLight: {
-    50: '#98fee6',
-    100: '#66fed9',
-    200: '#5BF1CD', // aqualight
-    300: '#02E2AC', // aqua
-    400: '#11BC92', // aquadark
-    500: '#00DEA5',
-    600: '#02af86',
-    700: '#019672',
-    800: '#017d5f',
-    900: '#014a39',
+  accent: {
+    50: '#E6FFF9',
+    100: '#9AF6E0',
+    200: '#4EECC6',
+    300: '#02E2AC', // dark main
+    400: '#00C797', // light main
+    500: '#00AA81',
+    600: '#008D6B',
+    700: '#007055',
+    800: '#00533F',
+    900: '#003629',
   },
 };
 

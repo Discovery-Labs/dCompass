@@ -1,40 +1,38 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { CheckIcon, CloseIcon, LockIcon } from "@chakra-ui/icons";
+import {
+  CheckIcon,
+  CloseIcon,
+  ExternalLinkIcon,
+  LockIcon,
+} from "@chakra-ui/icons";
 import {
   Avatar,
   Box,
   Button,
-  Divider,
   Flex,
   Heading,
   HStack,
-  Icon,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
+  Link,
+  ListItem,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   Spacer,
-  Stack,
   Tag,
   TagLabel,
   Text,
-  useDisclosure,
+  Tooltip,
+  UnorderedList,
   useToast,
   VStack,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Card from "components/custom/Card";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { FiUserCheck } from "react-icons/fi";
-import { GiSwordwoman, GiTwoCoins } from "react-icons/gi";
-import { RiSwordLine } from "react-icons/ri";
-import ReactMarkdown from "react-markdown";
+import { GiSwordwoman } from "react-icons/gi";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import useCustomColor from "../../../core/hooks/useCustomColor";
-import { useCardMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../core/hooks/useTokenList";
 import { Quest } from "../../../core/types";
 import {
@@ -43,47 +41,20 @@ import {
   VERIFY_QUEST_MUTATION,
 } from "../../../graphql/quests";
 
-const ModalDetails = ({ quest }: { quest: Quest }) => {
-  const { getTextColor, getOverBgColor } = useCustomColor();
-  const pathwayCardMarkdownTheme = useCardMarkdownTheme();
-
-  return (
-    <>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{quest.name}</ModalHeader>
-        <ModalBody>
-          <VStack w="full" align="flex-start">
-            <Box
-              bgGradient={`linear(0deg, ${getOverBgColor} 10%, ${getTextColor} 60%, ${getTextColor})`}
-              bgClip="text"
-            >
-              <ReactMarkdown
-                className="card-markdown"
-                components={ChakraUIRenderer(pathwayCardMarkdownTheme)}
-                skipHtml
-              >
-                {quest.description}
-              </ReactMarkdown>
-            </Box>
-          </VStack>
-        </ModalBody>
-      </ModalContent>
-    </>
-  );
-};
-
-function QuestCard({
-  quest,
-  projectContributors,
-  pathwayStreamId,
-  canReviewQuests,
-}: {
+interface Props {
+  children?: React.ReactNode;
   quest: Quest;
   canReviewQuests: boolean;
   projectContributors: string[];
   pathwayStreamId: string;
-}) {
+}
+
+const QuestCard = ({
+  quest,
+  projectContributors,
+  pathwayStreamId,
+  canReviewQuests,
+}: Props) => {
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isCreatingToken, setIsCreatingToken] = useState<boolean>(false);
   const [claimedBy, setClaimedBy] = useState<string[]>();
@@ -93,7 +64,6 @@ function QuestCard({
   const { getRewardCurrency } = useTokenList();
   const [status, setStatus] = useState<string>();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { chainId, library } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION);
@@ -281,141 +251,123 @@ function QuestCard({
   };
   const isCompleted = (quest.completedBy || []).includes(self?.id);
   const isClaimed = account && claimedBy?.includes(account);
+
   const isLocked = quest.id === "01g0yjfgqrhc2q0f4nqtxtqy81";
+  const withRequisites = true;
+
   return (
     <Card position="relative" h="xl" spacing="6" py="4">
       {isLocked && <LockedScreen />}
 
-      <Box filter={isLocked ? "blur(4px)" : "blur(0px)"} w="full">
-        <Flex w="full" minH="56px">
-          <Heading
-            noOfLines={2}
-            as="h2"
-            w="full"
-            fontSize="2xl"
-            color="text"
-            textTransform="uppercase"
+      <Flex
+        direction="column"
+        w="full"
+        h="full"
+        filter={isLocked ? "blur(4px)" : "blur(0px)"}
+      >
+        <Flex align="start" direction="row" w="full" gap="2">
+          <Tag
+            variant={isClaimed ? "outline" : "subtle"}
+            colorScheme={isClaimed || isCompleted ? "accent" : "purple"}
           >
-            {quest.name}
-          </Heading>
-
-          <Spacer />
-          <Flex align="end" direction="column" w="full">
-            <Tag
-              variant={isClaimed ? "outline" : "subtle"}
-              colorScheme={isClaimed || isCompleted ? "accentDark" : "purple"}
-            >
-              {isCompleted
-                ? isClaimed
-                  ? "CLAIMED"
-                  : "COMPLETED"
-                : "UNCOMPLETED"}
-            </Tag>
-            <Tag my="2">
+            {isCompleted
+              ? isClaimed
+                ? "CLAIMED"
+                : "COMPLETED"
+              : "UNCOMPLETED"}
+          </Tag>
+          {+quest.rewardAmount !== 0 && (
+            <Tag>
               {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
             </Tag>
-          </Flex>
+          )}
         </Flex>
-        <VStack w="full" align="flex-start" onClick={onOpen}>
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalDetails quest={quest} />
-          </Modal>
+
+        <Flex w="full" minH="56px">
+          <Flex w="full" justify="center" direction="column">
+            <Text color="accent" textTransform="uppercase">
+              Quest type: {quest.questType}
+            </Text>
+            <Heading
+              noOfLines={2}
+              as="h2"
+              w="full"
+              fontSize="2xl"
+              color="text"
+              textTransform="uppercase"
+            >
+              {quest.name}
+            </Heading>
+          </Flex>
+          <Avatar
+            boxSize="4.8rem"
+            src={`https://ipfs.io/ipfs/${quest.image}`}
+            position="relative"
+          />
+        </Flex>
+        <VStack w="full" pt={2} align="flex-start">
           {/* Short Description  */}
-          <Text color="text-weak" noOfLines={3}>
-            {quest.slogan}
-          </Text>
-          <Text>See more</Text>
+          <Tooltip label={quest.slogan}>
+            <Text color="text-weak" noOfLines={3}>
+              {quest.slogan}
+            </Text>
+          </Tooltip>
         </VStack>
 
-        <Divider />
+        <Spacer />
 
         <VStack w="full" align="left" pt="2">
-          <HStack justifyContent="space-between">
-            <HStack>
-              <Icon as={RiSwordLine} />
-              <Text
-                fontWeight="bold"
-                fontSize="xl"
-                color="text"
-                textTransform="uppercase"
-              >
-                Quest type
-              </Text>
-            </HStack>
-            <Tag variant="outline">{quest.questType}</Tag>
-          </HStack>
-          <Divider />
-          <HStack justifyContent="space-between">
-            <HStack>
-              <Icon as={FiUserCheck} />
-              <Text
-                fontWeight="bold"
-                fontSize="xl"
-                color="text"
-                textTransform="uppercase"
-              >
-                Claimed
-              </Text>
-            </HStack>
-            <Tag variant="outline">
-              {claimedBy?.length || 0}/{quest.rewardUserCap}
+          <Flex align="start" direction="row" w="full" gap="2">
+            <Tag variant="subtle" colorScheme="accent">
+              OPEN
             </Tag>
-          </HStack>
-          <Divider />
-          <HStack justifyContent="space-between">
-            <HStack>
-              <Icon as={GiTwoCoins} />
-              <Text
-                fontWeight="bold"
-                fontSize="xl"
-                color="text"
-                textTransform="uppercase"
-              >
-                Rewards
-              </Text>
-            </HStack>
-            <Tag variant="outline">
-              {quest.rewardAmount} {getRewardCurrency(quest.rewardCurrency)}
+            <Tag variant="subtle" colorScheme="purple">
+              {claimedBy?.length || 0}/{quest.rewardUserCap} CLAIMED
             </Tag>
-          </HStack>
+          </Flex>
 
-          <Stack
-            w="full"
-            justifyContent="space-between"
-            direction="row"
-            spacing={4}
-            align="center"
-          >
-            <Avatar
-              boxSize="4.8rem"
-              src={`https://ipfs.io/ipfs/${quest.image}`}
-              position="relative"
-            />
-            <Text color="purple.500" fontSize="3xl" fontWeight="bold">
-              NFT
-            </Text>
-            <Text fontFamily="heading" fontSize={{ base: "4xl", md: "6xl" }}>
-              +
-            </Text>
-            <Flex
-              align="center"
-              justify="center"
-              fontFamily="heading"
-              fontWeight="bold"
-              fontSize={{ base: "sm", md: "lg" }}
-              color="purple.500"
-              rounded="full"
-            >
-              <Text fontSize="3xl" fontWeight="bold">
-                {parseFloat(quest.rewardAmount) / quest.rewardUserCap}{" "}
-                {getRewardCurrency(quest.rewardCurrency)}
-              </Text>
-            </Flex>
-          </Stack>
-          <Spacer />
+          <VStack w="full" align="start">
+            <Text color="accent">Requisites: </Text>
+
+            {withRequisites ? (
+              <Popover isLazy>
+                <PopoverTrigger>
+                  <Button w="full" variant="outline">
+                    3 Requisites
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverBody>
+                    <UnorderedList>
+                      <ListItem>
+                        <Link href="http://localhost:3000/projects" isExternal>
+                          Complete the Quest TEST OF THE SUPER DEV{" "}
+                          <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                      <ListItem>
+                        <Link href="http://localhost:3000/projects" isExternal>
+                          Create one Quest <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                      <ListItem>
+                        <Link href="http://localhost:3000/projects" isExternal>
+                          Join one Guild <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                    </UnorderedList>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <Button w="full" variant="outline">
+                None
+              </Button>
+            )}
+          </VStack>
         </VStack>
 
-        <Flex w="full" justify="space-between" pt="4">
+        <Flex w="full" justify="end" pt="4">
           {canReviewQuests && status !== "MINTED" && (
             <VStack w="full" align="left">
               <Tag
@@ -433,7 +385,7 @@ function QuestCard({
               {status && (status === "PENDING" || status === "NONEXISTENT") && (
                 <HStack w="full" justifyContent="space-between">
                   <Button
-                    colorScheme="accentDark"
+                    colorScheme="accent"
                     onClick={handleApproveQuest}
                     isLoading={isApproving}
                     loadingText="Approving"
@@ -484,7 +436,7 @@ function QuestCard({
                     value={0}
                     border={`solid 1px ${getAccentColor}`}
                     hasStripe
-                    colorScheme="accentDark"
+                    colorScheme="accent"
                     bgColor="bg"
                   />
                 </HStack> */}
@@ -503,9 +455,9 @@ function QuestCard({
             </>
           )}
         </Flex>
-      </Box>
+      </Flex>
     </Card>
   );
-}
+};
 
 export default QuestCard;

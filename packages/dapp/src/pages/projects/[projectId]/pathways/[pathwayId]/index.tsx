@@ -279,6 +279,13 @@ function PathwayPage({
     });
   };
 
+  const getShortenedAddress = (address: string) => {
+    let displayAddress = address.slice(0, 6);
+    displayAddress += `...${address.slice(-4)}`;
+
+    return displayAddress;
+  };
+
   const isOwner = createdBy === account;
   const isProjectContributor = useMemo(
     () =>
@@ -370,11 +377,11 @@ function PathwayPage({
           )}
         </HStack>
         <Tabs w="full">
-          <HStack justifyContent="space-between">
-            <TabList>
-              <Tab>Quests</Tab>
-              <Tab>Guide</Tab>
-              <Tab>Details &amp; rewards</Tab>
+          <HStack w="full">
+            <TabList w="full">
+              <Tab w="full">Quests</Tab>
+              <Tab w="full">Guide</Tab>
+              <Tab w="full">Details&amp;Rewards</Tab>
             </TabList>
           </HStack>
 
@@ -384,7 +391,7 @@ function PathwayPage({
               <Tabs w="full" variant="unstyled">
                 <Flex
                   w="full"
-                  direction={["column-reverse", "column-reverse", "row"]}
+                  direction={["column", "column", "row"]}
                   justify="space-between"
                 >
                   <TabList>
@@ -397,7 +404,7 @@ function PathwayPage({
                     href={`/projects/${projectId}/pathways/${id}/add-quest`}
                     passHref
                   >
-                    <Flex py="2" w="full" justify={["start", "start", "end"]}>
+                    <Flex pt="4" w="full" justify={["center", "center", "end"]}>
                       <Button variant="outline" leftIcon={<AddIcon />}>
                         {t("add-quest")}
                       </Button>
@@ -489,7 +496,7 @@ function PathwayPage({
                           value={pathwayProgress?.ratio}
                           border={`solid 1px ${getAccentColor}`}
                           hasStripe
-                          colorScheme="accentDark"
+                          colorScheme="accent"
                           bgColor="bg"
                         />
                       </HStack>
@@ -543,7 +550,7 @@ function PathwayPage({
                       {new Date(createdAt).toLocaleString()}
                     </Text>
                     <Text fontSize="sm" isTruncated>
-                      {t("by")} {createdBy}
+                      {t("by")} {getShortenedAddress(createdBy)}
                     </Text>
                     {isOwner && (
                       // TODO: edit pathway form
@@ -564,80 +571,44 @@ function PathwayPage({
                   {allQuests.length} Quest{allQuests.length > 1 ? "s" : ""}
                 </Text>
               )}
-
-              <CardMedia
-                h="xs"
-                src={`https://ipfs.io/ipfs/${image}`}
-                imageHeight="160px"
-              >
-                <Stack
-                  w="full"
-                  justifyContent="space-between"
-                  direction="row"
-                  spacing={4}
-                  align="center"
+              <SimpleGrid columns={[1, 2]} spacing={10}>
+                <CardMedia
+                  h="xs"
+                  src={`https://ipfs.io/ipfs/${image}`}
+                  imageHeight="120px"
                 >
-                  <Avatar
-                    boxSize="4.5rem"
-                    src={`https://ipfs.io/ipfs/${image}`}
-                    position="relative"
-                    zIndex={2}
-                    _before={{
-                      content: '""',
-                      width: "full",
-                      height: "full",
-                      rounded: "full",
-                      transform: "scale(1.125)",
-                      bg: "purple.500",
-                      position: "absolute",
-                      zIndex: -1,
-                      top: 0,
-                      left: 0,
-                    }}
-                  />
-                  <Text color="purple.500" fontSize="3xl" fontWeight="bold">
-                    NFT
-                  </Text>
-                  <Text
-                    fontFamily="heading"
-                    fontSize={{ base: "4xl", md: "6xl" }}
-                  >
-                    +
-                  </Text>
-                  <Flex
-                    align="center"
-                    justify="center"
-                    fontFamily="heading"
-                    fontWeight="bold"
-                    fontSize={{ base: "sm", md: "lg" }}
-                    bg="violet.100"
-                    color="text"
-                    rounded="full"
-                    position="relative"
-                    _before={{
-                      content: '""',
-                      width: "full",
-                      height: "full",
-                      rounded: "full",
-                      transform: "scale(1.125)",
-                      bgGradient: "linear(to-bl, purple.400,purple.500)",
-                      position: "absolute",
-                      zIndex: -1,
-                      top: 0,
-                      left: 0,
-                    }}
-                  >
-                    <Text fontSize="3xl" fontWeight="bold">
-                      {rewardAmount / rewardUserCap}{" "}
-                      {getRewardCurrency(rewardCurrency)}
-                    </Text>
-                  </Flex>
-                  <HStack w="40%">
+                  <VStack w="full" align="start">
+                    <Text color="accent">Rewards</Text>
+                    <HStack pb="2">
+                      <Avatar
+                        boxSize="3rem"
+                        src={`https://ipfs.io/ipfs/${image}`}
+                        position="relative"
+                        zIndex={2}
+                        _before={{
+                          content: '""',
+                          width: "full",
+                          height: "full",
+                          rounded: "full",
+                          transform: "scale(1.125)",
+                          bg: "purple.500",
+                          position: "absolute",
+                          zIndex: -1,
+                          top: 0,
+                          left: 0,
+                        }}
+                      />
+                      <Text>+</Text>
+                      <Tag variant="outline" size="lg">
+                        {rewardAmount} {getRewardCurrency(rewardCurrency)}
+                      </Tag>
+                    </HStack>
+
                     <Button
                       w="full"
                       fontSize="md"
                       disabled={isClaiming || isClaimed}
-                      colorScheme={isClaimed ? "accentDark" : "primary"}
+                      colorScheme={isClaimed ? "accent" : "primary"}
                       loadingText={rewardStatus}
                       isLoading={isClaiming}
                       variant="outline"
@@ -648,9 +619,9 @@ function PathwayPage({
                     >
                       {rewardStatus}
                     </Button>
-                  </HStack>
-                </Stack>
-              </CardMedia>
+                  </VStack>
+                </CardMedia>
+              </SimpleGrid>
             </TabPanel>
           </TabPanels>
         </Tabs>

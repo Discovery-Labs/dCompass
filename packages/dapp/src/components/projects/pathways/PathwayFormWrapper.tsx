@@ -14,7 +14,7 @@ import {
 import { useWeb3React } from "@web3-react/core";
 import { Contract, ethers } from "ethers";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useTokenList from "../../../core/hooks/useTokenList";
@@ -32,6 +32,7 @@ function PathwayFormWrapper() {
   const [submitStatus, setSubmitStatus] = useState<string>("Creating pathway");
   const toast = useToast();
   const router = useRouter();
+  const [isWithRewards, setIsWithRewards] = useState<boolean>();
   const { library, chainId } = useWeb3React();
   const { tokens } = useTokenList();
   const [addPathwayMutation] = useMutation(CREATE_PATHWAY_MUTATION, {
@@ -94,7 +95,7 @@ function PathwayFormWrapper() {
 
   async function onSubmit(values: Record<string, any>) {
     // TODO: add a field for this
-    const isRewardProvider = true;
+    const isRewardProvider = isWithRewards;
 
     // check if the native token is used
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
@@ -102,7 +103,7 @@ function PathwayFormWrapper() {
     setSubmitStatus("Checking balance");
 
     let balance = 0;
-    const rewardAmnt = parseFloat(values.rewardAmount);
+    const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
     const feeAmount = (rewardAmnt * 15) / 100;
     const totalToPay = rewardAmnt + feeAmount;
     if (!isNativeToken) {
@@ -167,7 +168,7 @@ function PathwayFormWrapper() {
       ...pathwayOptions,
       difficulty: values.difficulty.value,
       rewardCurrency: values.rewardCurrency.value,
-      rewardAmount: parseFloat(values.rewardAmount),
+      rewardAmount: rewardAmnt,
       rewardUserCap: parseInt(values.rewardUserCap, 10),
       ...prereqs,
       createdBy: account,
@@ -260,6 +261,14 @@ function PathwayFormWrapper() {
     return router.push(`/projects/${router.query.projectId}/`);
   }
 
+  const withRewards = (e: ChangeEvent<HTMLInputElement>) => {
+    // console.log(e.target.checked);
+    setIsWithRewards(e.target.checked);
+  };
+  useEffect(() => {
+    setIsWithRewards(false);
+  }, []);
+
   if (loading)
     return (
       <Stack>
@@ -277,7 +286,7 @@ function PathwayFormWrapper() {
   return (
     <>
       <Heading>Add Pathway</Heading>
-      <PathwayForm />
+      <PathwayForm isWithRewards={isWithRewards} withRewards={withRewards} />
 
       <Flex w="full" justify="space-between">
         <Button
@@ -289,7 +298,7 @@ function PathwayFormWrapper() {
         </Button>
         <Button
           isLoading={isSubmitting}
-          colorScheme="accentDark"
+          colorScheme="accent"
           loadingText={submitStatus}
           type="submit"
           onClick={handleSubmit(onSubmit)}

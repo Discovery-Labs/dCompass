@@ -26,20 +26,20 @@ const semanticTokens = {
       _dark: 'neutralLightest',
     },
     'text-weak': {
-      default: 'neutralDark',
-      _dark: 'neutralLight',
+      default: 'neutralDarkerAlpha',
+      _dark: 'neutralLighterAlpha',
     },
-    'text-inverted': {
+    'text-inverse': {
       default: 'neutralLightest',
       _dark: 'neutralDarkest',
     },
     primary: {
-      default: 'primary.500',
-      _dark: 'primary.200',
+      default: 'primary.400',
+      _dark: 'primary.300',
     },
     accent: {
-      default: 'accentLight.500',
-      _dark: 'accentDark.500',
+      default: 'accent.400',
+      _dark: 'accent.300',
     },
   },
 };

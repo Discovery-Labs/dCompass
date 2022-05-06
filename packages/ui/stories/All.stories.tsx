@@ -85,6 +85,15 @@ import {
   Th,
   Td,
   TableCaption,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
 } from '@chakra-ui/react';
 
 const meta: Meta = {
@@ -117,27 +126,41 @@ export const All = () => {
 
         {/* Buttons Primary Variants */}
         <HStack>
-          <Button onClick={() => console.log('hello')}>Hello</Button>
-          <Button variant="outline">Hello</Button>
-          <Button variant="ghost">Hello</Button>
+          <Button onClick={() => console.log('hello')}>Primary</Button>
+          <Button variant="outline">Primary</Button>
+          <Button variant="ghost">Primary</Button>
           <IconButton aria-label="Search database" icon={<SearchIcon />} />
         </HStack>
 
         {/* Buttons Secondary Variants */}
         <HStack>
           <Button colorScheme="secondary" onClick={() => console.log('hello')}>
-            Hello
+            Secondary
           </Button>
           <Button colorScheme="secondary" variant="outline">
-            Hello
+            Secondary
           </Button>
           <Button colorScheme="secondary" variant="ghost">
-            Hello
+            Secondary
+          </Button>
+        </HStack>
+
+        {/* Buttons Secondary Variants */}
+        <HStack>
+          <Button colorScheme="accent" onClick={() => console.log('hello')}>
+            Accent
+          </Button>
+          <Button colorScheme="accent" variant="outline">
+            Accent
+          </Button>
+          <Button colorScheme="accent" variant="ghost">
+            Accent
           </Button>
         </HStack>
 
         {/* Buttons Custom Styles */}
-        <Button layerStyle="gradient-bg">Hello</Button>
+        <Button layerStyle="gradient-bg">Gradient</Button>
+        <Button colorScheme="white">Gradient</Button>
 
         {/* Heading and Text */}
         <Heading>Heading</Heading>
@@ -321,6 +344,21 @@ export const All = () => {
             </ModalContent>
           </Modal>
         </>
+
+        {/* Popover */}
+        <Popover>
+          <PopoverTrigger>
+            <Button>Trigger Popover</Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverHeader>Confirmation!</PopoverHeader>
+            <PopoverBody>
+              Are you sure you want to have that milkshake?
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
 
         {/* Tabs */}
         <Tabs variant="soft-rounded">

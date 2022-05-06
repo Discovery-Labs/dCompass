@@ -56,7 +56,7 @@ const ProfileForm = ({
 }) => {
   const toast = useToast();
   const { account, self } = useContext(Web3Context);
-  const accentDarkColor = "accentDark.300";
+  const accentDarkColor = "accent.300";
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isTwitterOpen,

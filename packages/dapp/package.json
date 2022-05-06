@@ -30,7 +30,7 @@
     "@discovery-dao/hardhat": "^0.0.13",
     "@discovery-dao/schemas": "^0.0.12",
     "@discovery-dao/tree": "^0.0.1",
-    "@discovery-dao/ui": "^0.0.16",
+    "@discovery-dao/ui": "^0.0.19",
     "@emotion/cache": "^11.4.0",
     "@emotion/react": "^11.4.1",
     "@emotion/server": "^11.4.0",

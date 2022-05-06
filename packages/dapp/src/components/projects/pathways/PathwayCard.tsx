@@ -372,10 +372,11 @@ function PathwayCard({
             <ModalDetails pathway={pathway} />
           </Modal>
           {/* Short Description  */}
-          <Text color="text-weak" noOfLines={3}>
-            {pathway.slogan}
-          </Text>
-          <Text>See more</Text>
+          <Tooltip label={pathway.slogan}>
+            <Text color="text-weak" noOfLines={3}>
+              {pathway.slogan}
+            </Text>
+          </Tooltip>
         </VStack>
       </Flex>
 
@@ -391,13 +392,19 @@ function PathwayCard({
           </HStack>
         ) : (
           <Text as="h2" fontSize="2xl" color={getAccentColor}>
-            Rewards
+            {+pathway.rewardAmount !== 0 ? "Rewards" : "Reward"}
           </Text>
         )}
         {/* <Avatar size="md" src={`https://ipfs.io/ipfs/${pathway.image}`} /> */}
         <Text color="text-weak">
-          NFT + {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
-          {getRewardCurrency(pathway.rewardCurrency)}
+          NFT
+          {+pathway.rewardAmount !== 0 && (
+            <>
+              {" "}
+              + {parseFloat(pathway.rewardAmount) / pathway.rewardUserCap}{" "}
+              {getRewardCurrency(pathway.rewardCurrency)}
+            </>
+          )}
         </Text>
       </Flex>
 
@@ -416,7 +423,7 @@ function PathwayCard({
           {status && (status === "PENDING" || status === "NONEXISTENT") && (
             <HStack w="full" justifyContent="space-between">
               <Button
-                colorScheme="accentDark"
+                colorScheme="accent"
                 onClick={handleApprovePathway}
                 leftIcon={<CheckIcon />}
                 isLoading={isApproving}
@@ -463,7 +470,7 @@ function PathwayCard({
                 value={pathwayProgress?.ratio}
                 border={`solid 1px ${getAccentColor}`}
                 hasStripe
-                colorScheme="accentDark"
+                colorScheme="accent"
                 bgColor="bg"
               />
             </HStack>
@@ -485,7 +492,7 @@ function PathwayCard({
                 fontSize="md"
                 variant="outline"
                 colorScheme={
-                  pathwayProgress?.ratio !== 100 ? "primary" : "accentDark"
+                  pathwayProgress?.ratio !== 100 ? "primary" : "accent"
                 }
                 loadingText={rewardStatus}
                 isLoading={isClaiming}

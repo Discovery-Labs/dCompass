@@ -1,21 +1,11 @@
-import {
-  ChakraProvider,
-  Button as ChakraButton,
-  Heading,
-  Box,
-} from '@chakra-ui/react';
-import { Button, QButton, Switch, customTheme } from '../../.';
+import { ChakraProvider } from '@chakra-ui/react';
+import { customTheme } from '../../.';
+import Home from './views/Home';
 
 function App() {
   return (
     <ChakraProvider theme={customTheme}>
-      <Box p="16">
-        <Heading>Custom Design Library</Heading>
-        <Button variant="outline">Hello OK</Button>
-        <QButton variant="outline">Hello OK</QButton>
-        <ChakraButton variant="outline">Hello OK</ChakraButton>
-        <Switch />
-      </Box>
+      <Home />
     </ChakraProvider>
   );
 }

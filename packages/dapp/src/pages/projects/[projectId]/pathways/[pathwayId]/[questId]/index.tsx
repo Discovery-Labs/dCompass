@@ -262,6 +262,13 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
     return (quizData?.getQuizQuestById.completedBy || []).includes(self?.id);
   }, [quizData?.getQuizQuestById.completedBy, self?.id]);
 
+  const getShortenedAddress = (address: string) => {
+    let displayAddress = address.slice(0, 6);
+    displayAddress += `...${address.slice(-4)}`;
+
+    return displayAddress;
+  };
+
   if (loading || projectLoading || quizLoading)
     return (
       <Stack pt="30" px="8">
@@ -313,19 +320,19 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
 
         <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">
-            <TabList>
+            <TabList overflowX="auto">
               <Tab>Guide</Tab>
-              <Tab>Play quest</Tab>
-              <Tab>Details &amp; rewards</Tab>
+              <Tab>Play</Tab>
+              <Tab>Details&amp;Rewards</Tab>
               {quizData?.getQuizQuestById.questType === "bounty" && (
                 <Tab>Submissions</Tab>
               )}
-              <Tab>Completed by</Tab>
+              <Tab>Status</Tab>
             </TabList>
           </HStack>
 
           <TabPanels>
-            {/* 1 Tab */}
+            {/* Guide */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
@@ -337,7 +344,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
               </VStack>
             </TabPanel>
 
-            {/* 2 Tab */}
+            {/* Play */}
             <TabPanel px="0">
               {quizData?.getQuizQuestById.completedBy &&
               quizData?.getQuizQuestById.completedBy.includes(self?.id) ? (
@@ -389,9 +396,14 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
               )}
             </TabPanel>
 
-            {/* 3 Tab */}
+            {/* Details&amp;Rewards */}
             <TabPanel px="0">
-              <HStack w="full" align="left" justifyContent="space-between">
+              <Flex
+                w="full"
+                direction={["column", "column", "row"]}
+                align="left"
+                justifyContent="space-between"
+              >
                 <VStack align="left">
                   <HStack>
                     <Icon as={RiSwordLine} />
@@ -424,23 +436,37 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                       {quizData?.getQuizQuestById.rewardUserCap}
                     </Tag>
                   </HStack>
-                  <HStack w="full">
-                    <Icon as={GiTwoCoins} />
-                    <Text
-                      fontWeight="bold"
-                      fontSize="xl"
-                      color="text"
-                      textTransform="uppercase"
-                    >
-                      Total Rewards
-                    </Text>
-                    <Tag variant="outline" size="lg">
-                      {quizData?.getQuizQuestById.rewardAmount}{" "}
-                      {getRewardCurrency(
-                        quizData?.getQuizQuestById.rewardCurrency
-                      )}
-                    </Tag>
-                  </HStack>
+                  {quizData?.getQuizQuestById.rewardAmount !== 0 ? (
+                    <HStack w="full">
+                      <Icon as={GiTwoCoins} />
+                      <Text
+                        fontWeight="bold"
+                        fontSize="xl"
+                        color="text"
+                        textTransform="uppercase"
+                      >
+                        Total Rewards
+                      </Text>
+                      <Tag variant="outline" size="lg">
+                        {quizData?.getQuizQuestById.rewardAmount}{" "}
+                        {getRewardCurrency(
+                          quizData?.getQuizQuestById.rewardCurrency
+                        )}
+                      </Tag>
+                    </HStack>
+                  ) : (
+                    <HStack w="full">
+                      <Icon as={GiTwoCoins} />
+                      <Text
+                        fontWeight="bold"
+                        fontSize="xl"
+                        color="text"
+                        textTransform="uppercase"
+                      >
+                        Only NFT
+                      </Text>
+                    </HStack>
+                  )}
                 </VStack>
                 <Flex align="center" maxW="full" py="4">
                   {quizData?.getQuizQuestById.createdBy && (
@@ -464,8 +490,10 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                     {quizData?.getQuizQuestById.createdBy && (
                       <Text fontSize="sm" isTruncated>
                         {t("by")}{" "}
-                        {quizData?.getQuizQuestById.createdBy.name ||
-                          quizData?.getQuizQuestById.createdBy.did}
+                        {getShortenedAddress(
+                          quizData?.getQuizQuestById.createdBy.name ||
+                            quizData?.getQuizQuestById.createdBy.did
+                        )}
                       </Text>
                     )}
                     {isOwner && (
@@ -474,107 +502,69 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                         href={`/projects/${projectId}/pathways/${pathwayId}/${questId}/edit-quest`}
                         passHref
                       >
-                        <Button leftIcon={<EditIcon />}>
-                          {t("edit-quest")}
-                        </Button>
+                        <Button leftIcon={<EditIcon />}>Edit Quest</Button>
                       </NextLink>
                     )}
                   </VStack>
                 </Flex>
-              </HStack>
+              </Flex>
 
-              <HStack w="full" align="left" pt="2">
-                <CardMedia
-                  h="sm"
-                  src={`https://ipfs.io/ipfs/${quizData?.getQuizQuestById.image}`}
-                  imageHeight="160px"
-                >
-                  <VStack w="full" align="left">
-                    <Stack
-                      w="full"
-                      justifyContent="space-between"
-                      direction="row"
-                      spacing={4}
-                      align="center"
-                    >
-                      <Avatar
-                        boxSize="4.5rem"
-                        src={`https://ipfs.io/ipfs/${quizData?.getQuizQuestById.image}`}
-                        position="relative"
-                        zIndex={2}
-                        _before={{
-                          content: '""',
-                          width: "full",
-                          height: "full",
-                          rounded: "full",
-                          transform: "scale(1.125)",
-                          bg: "purple.500",
-                          position: "absolute",
-                          zIndex: -1,
-                          top: 0,
-                          left: 0,
-                        }}
-                      />
-                      <Text color="purple.500" fontSize="3xl" fontWeight="bold">
-                        NFT
-                      </Text>
-                      <Text
-                        fontFamily="heading"
-                        fontSize={{ base: "4xl", md: "6xl" }}
-                      >
-                        +
-                      </Text>
-                      <Flex
-                        align="center"
-                        justify="center"
-                        fontFamily="heading"
-                        fontWeight="bold"
-                        fontSize={{ base: "sm", md: "lg" }}
-                        bg="violet.100"
-                        color="text"
-                        rounded="full"
-                        position="relative"
-                        _before={{
-                          content: '""',
-                          width: "full",
-                          height: "full",
-                          rounded: "full",
-                          transform: "scale(1.125)",
-                          bgGradient: "linear(to-bl, purple.400,purple.500)",
-                          position: "absolute",
-                          zIndex: -1,
-                          top: 0,
-                          left: 0,
-                        }}
-                      >
-                        <Text fontSize="3xl" fontWeight="bold">
+              <CardMedia
+                h="xs"
+                mt="4"
+                src={`https://ipfs.io/ipfs/${quizData?.getQuizQuestById.image}`}
+                imageHeight="120px"
+              >
+                <VStack w="full" align="start">
+                  <Text color="accent">Rewards</Text>
+                  <HStack pb="2">
+                    <Avatar
+                      boxSize="3rem"
+                      src={`https://ipfs.io/ipfs/${quizData?.getQuizQuestById.image}`}
+                      position="relative"
+                      zIndex={2}
+                      _before={{
+                        content: '""',
+                        width: "full",
+                        height: "full",
+                        rounded: "full",
+                        transform: "scale(1.125)",
+                        bg: "purple.500",
+                        position: "absolute",
+                        zIndex: -1,
+                        top: 0,
+                        left: 0,
+                      }}
+                    />
+                    {quizData?.getQuizQuestById.rewardAmount !== 0 && (
+                      <>
+                        <Text>+</Text>
+                        <Tag variant="outline" size="lg">
                           {quizData?.getQuizQuestById.rewardAmount /
                             quizData?.getQuizQuestById.rewardUserCap}{" "}
                           {getRewardCurrency(
                             quizData?.getQuizQuestById.rewardCurrency
                           )}
-                        </Text>
-                      </Flex>
-                    </Stack>
-                  </VStack>
-                  <HStack w="full">
-                    <Button
-                      w="full"
-                      fontSize="md"
-                      disabled={isClaiming || !isCompleted() || isClaimed}
-                      loadingText={rewardStatus}
-                      isLoading={isClaiming}
-                      variant="outline"
-                      leftIcon={
-                        isClaimed ? <BsCheckCircleFill /> : <RiHandCoinFill />
-                      }
-                      onClick={handleClaimQuestRewards}
-                    >
-                      {rewardStatus}
-                    </Button>
+                        </Tag>
+                      </>
+                    )}
                   </HStack>
-                </CardMedia>
-              </HStack>
+                  <Button
+                    w="full"
+                    fontSize="md"
+                    disabled={isClaiming || !isCompleted() || isClaimed}
+                    loadingText={rewardStatus}
+                    isLoading={isClaiming}
+                    variant="outline"
+                    leftIcon={
+                      isClaimed ? <BsCheckCircleFill /> : <RiHandCoinFill />
+                    }
+                    onClick={handleClaimQuestRewards}
+                  >
+                    {rewardStatus}
+                  </Button>
+                </VStack>
+              </CardMedia>
             </TabPanel>
 
             {/* 3 Tab */}
@@ -588,6 +578,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                   </VStack>
                 </TabPanel>
               )}
+
             {/* 4 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
