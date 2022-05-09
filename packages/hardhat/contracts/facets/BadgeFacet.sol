@@ -6,8 +6,8 @@ pragma solidity >=0.7.0 <0.9.0;
  * @dev NFTs for creating badges
 */
 
-//import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import { IERC1155 } from "../interfaces/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+//import { IERC1155 } from "../interfaces/IERC1155.sol";
 //import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import { ERC1155BaseInternal } from "../base/ERC1155BaseInternal.sol";
 import { LibBadge } from "../libraries/LibBadge.sol";

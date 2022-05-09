@@ -12,12 +12,14 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./RandomNumberConsumer.sol";
 import "./Verify.sol";
 import "hardhat/console.sol";
 
 contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     using Counters for Counters.Counter;
+    using SafeERC20 for IERC20;
     
     Counters.Counter private _tokenIds;
 
@@ -30,10 +32,11 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (uint => string) public statusStrings;
     mapping (string => bool) public badgeMinted; // tracks if mint has been done
     mapping (string => address[]) internal contributors; //contributors to this quest
+    mapping (string => address) public creator;//creator for given badgeId
     mapping (string => string) public pathwayIdforBadge;//the pathwayId that is the parent
     mapping (string => BadgeStatus) public status;
     mapping (string => uint) public votes;//tally of approved votes per badgeId;
-     mapping (string => uint) public votesReject;//tally of rejection votes per badgeId;
+    mapping (string => uint) public votesReject;//tally of rejection votes per badgeId;
     mapping (string => mapping(address => bool)) public reviewerVotes;//vote record of approved voters for badgeId
     mapping (string => uint) public nativeRewards;//badge rewards in native token
     mapping (string => mapping(address => uint)) internal erc20Amounts;//badge reward Amts in other tokens
@@ -54,10 +57,11 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping (string => mapping(uint => uint[])) internal allTokenIdsPerBadgeAndVersion;
     mapping (uint => TokenInfo) internal tokenInfoById;//will be used by getter
 
-    //pathwayId => ERC20Address => senderAddress => bool
+    //badgeId => ERC20Address => senderAddress => bool
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForBadgeERC20;//has user received funds for this badge in ERC20Token Address
     mapping (string => mapping(address => bool)) public userRewardedForBadgeNative;//has user received funds for this badge in native token
-    uint256 public fee = 1500; //number divided by 10000 for fee. for example 100 = 1%
+    uint256 public fee = 1300; //number divided by 10000 for fee. for example 100 = 1%
+    uint256 public creatorFee = 200; //number divided by 10000 for fee. for example 100 = 1%
 
     enum BadgeStatus{ NONEXISTENT, PENDING, DENIED, APPROVED }
 
@@ -98,6 +102,7 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             status[_badgeId] = BadgeStatus.PENDING;
             pathwayIdforBadge[_badgeId] = _pathwayId;
             numUsersRewardPerBadge[_badgeId] = numUsersRewarded;
+            creator[_badgeId] = _msgSender();
             if (callRewards){
                 addBadgeCreationReward(_badgeId, _ERC20Address, useNative, amount);
             }
@@ -116,14 +121,11 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             keccak256(abi.encodePacked(pathwayIdforBadge[_badgeId])) == keccak256(abi.encodePacked(_pathwayId)),
             "incorrect pathwayId"
         );
-        bool voteAllowed = verifyContract.metaDataVerify(_msgSender(), _badgeId, _pathwayId, r[0], s[0], v[0]);
-        require(voteAllowed, "sender is not approved pathway voter");
-        bool thresholdCheck = verifyContract.thresholdVerify(_msgSender(), _badgeId, votesNeeded, r[1], s[1], v[1]);
-        require(thresholdCheck, "incorrect votes needed sent");
+        (bool voteAllowed, bool thresholdCheck) = verifyContractCall(_badgeId,_pathwayId,r,s,v, votesNeeded, false);
         votes[_badgeId]++;
         reviewerVotes[_badgeId][_msgSender()] = true;
         if(votes[_badgeId] == 1){
-            require(_contributors.length >0, "empty array");
+            require(_contributors.length >0);
             contributors[_badgeId] = _contributors;
             if(votesNeeded <= votes[_badgeId]){
                 status[_badgeId] = BadgeStatus.APPROVED;
@@ -141,30 +143,14 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     }
 
     function voteForRejection(string memory _badgeId, string memory _pathwayId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint256 votesNeeded) public {
-        require(status[_badgeId] == BadgeStatus.PENDING, "badge not pending");
-        require(!reviewerVotes[_badgeId][_msgSender()], "already voted for this badge");
+        require(status[_badgeId] == BadgeStatus.PENDING);
+        require(!reviewerVotes[_badgeId][_msgSender()]);
         require(
             keccak256(abi.encodePacked(pathwayIdforBadge[_badgeId])) == keccak256(abi.encodePacked(_pathwayId)),
             "incorrect pathwayId"
         );
-        bool voteAllowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _badgeId,
-            _pathwayId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(voteAllowed, "sender is not approved pathway voter");
-        bool thresholdCheck = verifyContract.thresholdVerify(
-            _msgSender(),
-            _badgeId,
-            votesNeeded,
-            r[1],
-            s[1],
-            v[1]
-        );
-        require(thresholdCheck, "incorrect votes needed sent");
+        
+        (bool voteAllowed, bool thresholdCheck) = verifyContractCall(_badgeId,_pathwayId,r,s,v, votesNeeded, false);
         votesReject[_badgeId]++;
         reviewerVotes[_badgeId][_msgSender()] = true;        
         if(votesReject[_badgeId] >= votesNeeded){
@@ -176,18 +162,21 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
 
     function addBadgeCreationReward(string memory _badgeId, address _ERC20Address, bool useNative, uint amount) public payable{
         require (status[_badgeId] == BadgeStatus.PENDING || status[_badgeId] == BadgeStatus.APPROVED, "badge not pending/approved");
-        require (numUsersRewardPerBadge[_badgeId] > 0, "no user rewards");
+        require (numUsersRewardPerBadge[_badgeId] > 0, "no rewards");
         (bool success , bytes memory data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("appWallet()"))));
         require(success);
         address appWallet = abi.decode(data, (address));
         uint appPortion = (amount*fee)/10000;
+        uint creatorPortion = (amount*creatorFee)/10000;
         if(useNative){
-            require(msg.value >= amount + appPortion, "not enough sent");
+            require(msg.value >= amount + appPortion + creatorPortion, "insufficient funds");
             (success,) = payable(appWallet).call{value : appPortion}("");
             require(success);
+            (success,) = payable(creator[_badgeId]).call{value : creatorPortion}("");
+            require(success);
             nativeRewards[_badgeId] += amount;
-            if(msg.value > amount + appPortion){
-                (success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion}("");
+            if(msg.value > amount + appPortion + creatorPortion){
+                (success,) = payable(_msgSender()).call{value : msg.value - amount- appPortion - creatorPortion}("");
                 require(success);
             }
         }
@@ -199,9 +188,10 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
             (success, data) = appDiamond.call(abi.encodeWithSelector(bytes4(keccak256("checkApprovedERC20PerProjectByChain(string,uint256,address)")), projectId, block.chainid, _ERC20Address));
             require(success);
             success = abi.decode(data, (bool));
-            require(success, "ERC20 not approved");
+            require(success, "not approved");
             IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion);
-            IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount);
+            IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount + creatorPortion);
+            IERC20(_ERC20Address).transfer(creator[_badgeId], creatorPortion);
             erc20Amounts[_badgeId][_ERC20Address] += amount;
         }
     }
@@ -244,31 +234,14 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
         uint256 votesNeeded
     ) public returns (uint256[] memory) {
         require(!badgeMinted[_badgeId], "already minted");
-        bool allowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _badgeId,
-            _pathwayId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(allowed, "sender is not approved pathway minter");
+        (bool allowed,) = verifyContractCall(_badgeId,_pathwayId,r,s,v, votesNeeded, true);
         if (status[_badgeId] == BadgeStatus.PENDING) {
-            require(votesNeeded <= votes[_badgeId], "not enough votes");
-            allowed = verifyContract.thresholdVerify(
-                _msgSender(),
-                _badgeId,
-                votesNeeded,
-                r[1],
-                s[1],
-                v[1]
-            );
-            require(allowed, "incorrect votes needed sent");
+            require(votesNeeded <= votes[_badgeId], "insufficient votes");
             status[_badgeId] = BadgeStatus.APPROVED;
         }
         require(
             status[_badgeId] == BadgeStatus.APPROVED,
-            "can only mint for badges in approved status"
+            "status not approved"
         );
 
         //TODO : this can later be made a require instead of if statement?
@@ -357,19 +330,19 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
     return tokenIds;
   }
 
-  function _mintAdventurerBadge(address _to, string memory _badgeId, string memory _tokenURI) internal {
-      address adventurerBadgeAddress = adventurerAddress[_badgeId];
-      require(adventurerBadgeAddress != address(0), "invalid badge address");
-      (bool success, bytes memory data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("balanceOf(address)")), _msgSender()));
-      require(success);
-      uint256 balance = abi.decode(data, (uint256));
-      if(balance == 0){
-          (success, data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("mint(address,uint256,string)")), _msgSender(), 1, _tokenURI));
-          require(success);
-          (success, data) = adventureFactory.call(abi.encodeWithSelector(bytes4(keccak256("setUserInfo(address,string)")), _msgSender(), _badgeId));
-          require(success);
-      }
-  }
+//   function _mintAdventurerBadge(address _to, string memory _badgeId, string memory _tokenURI) internal {
+//       address adventurerBadgeAddress = adventurerAddress[_badgeId];
+//       require(adventurerBadgeAddress != address(0), "invalid badge address");
+//       (bool success, bytes memory data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("balanceOf(address)")), _msgSender()));
+//       require(success);
+//       uint256 balance = abi.decode(data, (uint256));
+//       if(balance == 0){
+//           (success, data) = adventurerBadgeAddress.call(abi.encodeWithSelector(bytes4(keccak256("mint(address,uint256,string)")), _msgSender(), 1, _tokenURI));
+//           require(success);
+//           (success, data) = adventureFactory.call(abi.encodeWithSelector(bytes4(keccak256("setUserInfo(address,string)")), _msgSender(), _badgeId));
+//           require(success);
+//       }
+//   }
 
   function _localAdventureMint(address _to, string memory _badgeId, string memory _tokenURI, uint256 version) internal {
       if(mintTrackerByBadgeIdVersionMinter[_badgeId][version][_to]){
@@ -387,14 +360,40 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable{
       mintTrackerByBadgeIdVersionMinter[_badgeId][version][_to] = true;
   }
 
-  function _createAdventurerNFT(string memory _badgeId, string memory _pathwayId) internal {
-      (bool success , bytes memory data) = adventureFactory.call(abi.encodeWithSelector(bytes4(
-          keccak256("createNFTToken(string,bool,string)")
-      ), _badgeId, false, _pathwayId));
-      require(success);
-      address newTokenAddr = abi.decode(data, (address));
-      adventurerAddress[_badgeId] = newTokenAddr;
-  }
+//   function _createAdventurerNFT(string memory _badgeId, string memory _pathwayId) internal {
+//       (bool success , bytes memory data) = adventureFactory.call(abi.encodeWithSelector(bytes4(
+//           keccak256("createNFTToken(string,bool,string)")
+//       ), _badgeId, false, _pathwayId));
+//       require(success);
+//       address newTokenAddr = abi.decode(data, (address));
+//       adventurerAddress[_badgeId] = newTokenAddr;
+//   }
+
+   function verifyContractCall(string memory _badgeId, string memory _pathwayId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint256 votesNeeded, bool onlyOneCheck) internal returns(bool voteAllowed, bool thresholdCheck){
+       voteAllowed = verifyContract.metaDataVerify(
+            _msgSender(),
+            _badgeId,
+            _pathwayId,
+            r[0],
+            s[0],
+            v[0]
+        );
+        require(voteAllowed);
+        if(onlyOneCheck && status[_badgeId] != BadgeStatus.PENDING){
+            thresholdCheck = true;
+        }
+        else{
+            thresholdCheck = verifyContract.thresholdVerify(
+                _msgSender(),
+                _badgeId,
+                votesNeeded,
+                r[1],
+                s[1],
+                v[1]
+            );
+            require(thresholdCheck);
+        }
+   }
 
   function _verify(address from, string memory _badgeId, uint256 payload, bytes32 r, bytes32 s, uint8 v) internal returns (bool){
       bytes32 hashRecover = keccak256(

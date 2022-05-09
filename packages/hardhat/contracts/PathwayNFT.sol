@@ -12,11 +12,13 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./RandomNumberConsumer.sol";
 import "./Verify.sol";
 
 contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
+    using SafeERC20 for IERC20;
 
     Counters.Counter private _tokenIds;
 
@@ -28,6 +30,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     mapping(uint256 => string) public statusStrings;
     mapping(string => bool) public pathwayMinted; // tracks if mint has been done
     mapping(string => address[]) internal contributors; //contributors to this pathway
+    mapping (string => address) public creator;//creator for this pathwayId
     uint8[] internal rarityThresholds; //used for getting cutoffs of common, uncommon et al
     mapping(string => string) public projectIdforPathway; //the projectId that is the root
     mapping(string => PathwayStatus) public status;
@@ -56,7 +59,8 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     //pathwayId => ERC20Address => senderAddress => bool
     mapping (string => mapping(address => mapping (address => bool))) userRewardedForPathwayERC20;//has user received funds for this pathway in ERC20Token Address
     mapping (string => mapping(address => bool)) public userRewardedForPathwayNative;//has user received funds for this pathway in native token
-    uint256 public fee = 1500; //number divided by 10000 for fee. for example 100 = 1%
+    uint256 public fee = 1300; //number divided by 10000 for fee. for example 100 = 1%
+    uint256 public creatorFee = 200; //number divided by 10000 for fee. for example 100 = 1%
 
     enum PathwayStatus {
         NONEXISTENT,
@@ -82,7 +86,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         address _vrfAddress,
         address _projectNFTAddress,
         address _verifyAddress
-    ) ERC721("dCompassBadge", "DCOMPB") {
+    ) ERC721("dCompassPath", "DCOMPPATH") {
         vrfContract = RandomNumberConsumer(_vrfAddress);
         verifyContract = Verify(_verifyAddress);
         //uint rarityTotal = 0;
@@ -115,6 +119,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             status[_pathwayId] = PathwayStatus.PENDING;
             projectIdforPathway[_pathwayId] = _projectId;
             numUsersRewardPerPathway[_pathwayId] = numUsersRewarded;
+            creator[_pathwayId] = _msgSender();
             if (callRewards){
                 addPathwayCreationReward(_pathwayId, _ERC20Address, useNative, amount);
             }
@@ -141,24 +146,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             keccak256(abi.encodePacked(projectIdforPathway[_pathwayId])) == keccak256(abi.encodePacked(_projectId)),
             "incorrect projectId"
         );
-        bool voteAllowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _pathwayId,
-            _projectId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(voteAllowed, "sender is not approved project voter");
-        bool thresholdCheck = verifyContract.thresholdVerify(
-            _msgSender(),
-            _pathwayId,
-            votesNeeded,
-            r[1],
-            s[1],
-            v[1]
-        );
-        require(thresholdCheck, "incorrect votes needed sent");
+        (bool voteAllowed, bool thresholdCheck) = verifyContractCall(_pathwayId,_projectId,r,s,v, votesNeeded, false);
         votes[_pathwayId]++;
         reviewerVotes[_pathwayId][_msgSender()] = true;
         if (votes[_pathwayId] == 1) {
@@ -185,24 +173,7 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             keccak256(abi.encodePacked(projectIdforPathway[_pathwayId])) == keccak256(abi.encodePacked(_projectId)),
             "incorrect projectId"
         );
-        bool voteAllowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _pathwayId,
-            _projectId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(voteAllowed, "sender is not approved project voter");
-        bool thresholdCheck = verifyContract.thresholdVerify(
-            _msgSender(),
-            _pathwayId,
-            votesNeeded,
-            r[1],
-            s[1],
-            v[1]
-        );
-        require(thresholdCheck, "incorrect votes needed sent");
+        (bool voteAllowed, bool thresholdCheck) = verifyContractCall(_pathwayId,_projectId,r,s,v, votesNeeded, false);
         votesReject[_pathwayId]++;
         reviewerVotes[_pathwayId][_msgSender()] = true;        
         if(votesReject[_pathwayId] >= votesNeeded){
@@ -214,15 +185,18 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
 
     //TODO: move these to rewards contract!
     function addPathwayCreationReward(string memory _pathwayId, address _ERC20Address, bool useNative, uint amount) public payable{
-        require (status[_pathwayId] == PathwayStatus.PENDING, "pathway not pending");
+        require (status[_pathwayId] == PathwayStatus.PENDING || status[_pathwayId] == PathwayStatus.APPROVED, "pathway not pending/approved");
         require (numUsersRewardPerPathway[_pathwayId] > 0, "no user rewards");
         (bool success , bytes memory data) = projectNFTAddress.call(abi.encodeWithSelector(bytes4(keccak256("appWallet()"))));
         require(success);
         address appWallet = abi.decode(data, (address));
         uint appPortion = (amount*fee)/10000;
+        uint creatorPortion = (amount*creatorFee)/10000;
         if(useNative){
-            require(msg.value >= amount + appPortion, "not enough sent");
+            require(msg.value >= amount + appPortion + creatorPortion, "insufficient funds");
             (success,) = payable(appWallet).call{value : appPortion}("");
+            require(success);
+            (success,) = payable(creator[_pathwayId]).call{value : creatorPortion}("");
             require(success);
             nativeRewards[_pathwayId] += amount;
             if(msg.value > amount + appPortion){
@@ -237,7 +211,8 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             success = abi.decode(data, (bool));
             require(success, "ERC20 not approved");
             IERC20(_ERC20Address).transferFrom(_msgSender(), appWallet, appPortion);
-            IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount);
+            IERC20(_ERC20Address).transferFrom(_msgSender(), address(this), amount + creatorPortion);
+            IERC20(_ERC20Address).transfer(creator[_pathwayId], creatorPortion);
             erc20Amounts[_pathwayId][_ERC20Address] += amount;
         }
     }
@@ -278,27 +253,9 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         uint256 votesNeeded
     ) public returns (uint256[] memory) {
         require(!pathwayMinted[_pathwayId], "already minted");
-        //require(vrfContract.blockNumberResults(_pathwayId) > 0, "no request yet");
-        bool allowed = verifyContract.metaDataVerify(
-            _msgSender(),
-            _pathwayId,
-            _projectId,
-            r[0],
-            s[0],
-            v[0]
-        );
-        require(allowed, "sender is not approved project minter");
+        (bool allowed,) = verifyContractCall(_pathwayId,_projectId,r,s,v, votesNeeded, true);
         if (status[_pathwayId] == PathwayStatus.PENDING) {
             require(votesNeeded <= votes[_pathwayId], "not enough votes");
-            allowed = verifyContract.thresholdVerify(
-                _msgSender(),
-                _pathwayId,
-                votesNeeded,
-                r[1],
-                s[1],
-                v[1]
-            );
-            require(allowed, "incorrect votes needed sent");
             status[_pathwayId] = PathwayStatus.APPROVED;
         }
         require(
@@ -424,6 +381,32 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
       address newTokenAddr = abi.decode(data, (address));
       adventurerAddress[_pathwayId] = newTokenAddr;
   }
+
+  function verifyContractCall(string memory _pathwayId, string memory _projectId, bytes32[2] memory r, bytes32[2] memory s, uint8[2] memory v, uint256 votesNeeded, bool onlyOneCheck) internal returns(bool voteAllowed, bool thresholdCheck){
+       voteAllowed = verifyContract.metaDataVerify(
+            _msgSender(),
+            _pathwayId,
+            _projectId,
+            r[0],
+            s[0],
+            v[0]
+        );
+        require(voteAllowed);
+        if(onlyOneCheck && status[_pathwayId] != PathwayStatus.PENDING){
+            thresholdCheck = true;
+        }
+        else{
+            thresholdCheck = verifyContract.thresholdVerify(
+                _msgSender(),
+                _pathwayId,
+                votesNeeded,
+                r[1],
+                s[1],
+                v[1]
+            );
+            require(thresholdCheck);
+        }
+   }
 
     function _verify(address from, string memory _pathwayId, uint256 payload, bytes32 r, bytes32 s, uint8 v) internal returns (bool){
       bytes32 hashRecover = keccak256(

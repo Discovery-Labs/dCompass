@@ -188,11 +188,11 @@ describe("BadgeNFT", function() {
       expect(await badgeNFT.reviewerVotes("firstBadgeProject", `${owner.address}`)).to.be.false;
 
       //await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", false, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xff");
-      await badgeNFT.createBadge("firstBadgeProject", "firstCourseProject", 200, true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", {value : "0xff59ee833b30000"});
+      await badgeNFT.createBadge("firstBadgeProject", "firstCourseProject", 200, true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", {value : "0xa3c2057b1d9c0000"});
       expect(await badgeNFT.status("firstBadgeProject")).to.be.equal(1);
       nativeAmtTest = await badgeNFT.nativeRewards("firstBadgeProject");
       expect(nativeAmtTest.toString()).to.be.equal('1000000000000000000');
-      await expect(badgeNFT.addBadgeCreationReward("firstBadgeProject", "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xde0b6b3a7640000")).to.be.revertedWith("ERC20 not approved");
+      await expect(badgeNFT.addBadgeCreationReward("firstBadgeProject", "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xde0b6b3a7640000")).to.be.revertedWith("not approved");
       
       //construct r,s, and v arrays
       let r = Array(2);
