@@ -10,8 +10,9 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract ProjectNFT is ERC721URIStorage, Ownable{
+contract ProjectNFT is ERC721URIStorage, Ownable, ReentrancyGuard{
     using Counters for Counters.Counter;
     
     Counters.Counter private _tokenIds;
@@ -164,7 +165,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
 
     function addProjectWallet(string memory _projectId, address _projectWallet, string memory level) external payable{
         require (projectWallets[_projectId] == address(0), "already project wallet");
-        require(status[_projectId] == ProjectStatus.NONEXISTENT);
+        //require(status[_projectId] == ProjectStatus.NONEXISTENT);
         uint pendingSponsorLevel = sponsorLevels[level];
         require (pendingSponsorLevel > 0, "invalid sponsor stake");
         (bool success, bytes memory data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("stakeAmounts(uint256)")), pendingSponsorLevel));
@@ -197,7 +198,7 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         refundPerProject[_projectId] += msg.value;
     }
 
-    function updateSponsorLevel(string memory _projectId, string memory newLevel) external payable {
+    function updateSponsorLevel(string memory _projectId, string memory newLevel) external payable nonReentrant {
         require(status[_projectId] == ProjectStatus.PENDING || status[_projectId] == ProjectStatus.APPROVED, "incorrect status");
         require(_msgSender() == projectWallets[_projectId], "wrong sender");
         uint newSponsorLevel = sponsorLevels[newLevel];
@@ -210,19 +211,23 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         if(currLevel == newSponsorLevel){
             if(status[_projectId] == ProjectStatus.PENDING){
                 if(stakeAmount < pastAmount){
+                    stakePerProject[_projectId] = stakeAmount;
                     (success, ) = payable(_msgSender()).call{value : pastAmount - stakeAmount}("");
                     require(success, "failed refund");
-                    stakePerProject[_projectId] = stakeAmount;
+                    
                 }
             }
             else{
-                (success, ) = payable(_msgSender()).call{value : refundPerProject[_projectId]}("");
-                require(success, "failed refund");
                 stakePerProject[_projectId] = stakeAmount;
+                uint256 refund = refundPerProject[_projectId];
                 delete refundPerProject[_projectId];
+                (success, ) = payable(_msgSender()).call{value : refund}("");
+                require(success, "failed refund");                
                 }
             return;
         }
+        stakePerProject[_projectId] = stakeAmount;
+        sponsorLevel[_projectId] = newSponsorLevel;
         if (stakeAmount <= pastAmount){
             if(status[_projectId] == ProjectStatus.PENDING){
                 (success, ) = payable(_msgSender()).call{value : pastAmount - stakeAmount}("");
@@ -230,9 +235,10 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
                 
             }
             else{
-                (success, ) = payable(_msgSender()).call{value : refundPerProject[_projectId]}("");
-                require(success, "failed refund");
+                uint256 refund = refundPerProject[_projectId];
                 delete refundPerProject[_projectId];
+                (success, ) = payable(_msgSender()).call{value : refund}("");
+                require(success, "failed refund");
             }
         }
         else{
@@ -246,8 +252,8 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
             (success, data) = sponsorSFTAddr.call(abi.encodeWithSelector(bytes4(keccak256("updateLevel(uint256,address,string,uint256)")), currLevel, projectWallets[_projectId], _projectId, newSponsorLevel));
             require(success);
         }
-        stakePerProject[_projectId] = stakeAmount;
-        sponsorLevel[_projectId] = newSponsorLevel;
+        // stakePerProject[_projectId] = stakeAmount;
+        // sponsorLevel[_projectId] = newSponsorLevel;
     }
 
     function addReviewer(address _reviewer) public onlyReviewer {
@@ -265,15 +271,13 @@ contract ProjectNFT is ERC721URIStorage, Ownable{
         require(!projectMinted[_projectId], "project already minted");
         bool isAllowed = reviewers[_msgSender()];
         bool notContributor = true;
-        if(!isAllowed){
-            address[] memory currContributors = contributors[_projectId];
-            for(uint i=0; i<currContributors.length; i++){
-                if(_msgSender() == currContributors[i]){
-                    isAllowed = true;
-                }
-                if(newContributor == currContributors[i]){
-                    notContributor = false;
-                }
+        address[] memory currContributors = contributors[_projectId];
+        for(uint i=0; i<currContributors.length; i++){
+            if(!isAllowed && _msgSender() == currContributors[i]){
+                isAllowed = true;
+            }
+            if(newContributor == currContributors[i]){
+                notContributor = false;
             }
         }
         require(isAllowed, "must be a project contributor or reviewer");

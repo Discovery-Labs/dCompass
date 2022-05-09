@@ -1,96 +1,77 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { ethers } from 'ethers';
-import { ForbiddenError } from 'apollo-server-express';
+import { Resolver, Mutation, Args } from "@nestjs/graphql";
+import { ForbiddenError } from "apollo-server-express";
 
-import ABIS from '@discovery-dao/hardhat/abis.json';
+import ABIS from "@discovery-dao/hardhat/abis.json";
 
-import { UseThreadDBClient } from '../../../core/utils/types';
-import { Pathway } from '../Pathway.entity';
-import { ApprovePathwayInput } from '../dto/ApprovePathway.input';
-import { Squad } from '../../Squads/Squad.entity';
-import { verifyNFTInfo } from '../../../core/utils/security/verify';
-import { AppService } from '../../../app.service';
-import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
-import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
+import { Pathway } from "../Pathway.entity";
+import { ApprovePathwayInput } from "../dto/ApprovePathway.input";
+
+import { verifyNFTInfo } from "../../../core/utils/security/verify";
+import { AppService } from "../../../app.service";
+
+import { PathwayService } from "../Pathway.service";
+import { NotFoundException } from "@nestjs/common";
+import removeNulls from "../../../core/utils/helpers";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
+import { SiweMessage } from "siwe";
 
 @Resolver(() => Pathway)
 export class ApprovePathwayResolver {
   constructor(
     public readonly appService: AppService,
-    private readonly threadDBService: ThreadDBService,
+    private readonly pathwayService: PathwayService
   ) {}
 
   @Mutation(() => Pathway, {
     nullable: true,
-    description: 'Approve a new Pathway in dCompass',
-    name: 'approvePathway',
+    description: "Approve a new Pathway in dCompass",
+    name: "approvePathway",
   })
   async approvePathway(
-    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
-    @Args('input')
-    { id, pathwayApproverSignature, chainId }: ApprovePathwayInput,
+    @UseSiwe() siwe: SiweMessage,
+    @Args("input")
+    { id }: ApprovePathwayInput
   ): Promise<Pathway | null | undefined> {
-    const foundPathway = await this.threadDBService.getPathwayById({
-      dbClient,
-      threadId: latestThreadId,
-      pathwayId: id,
+    const foundPathway = await this.pathwayService.pathwayWithProjectInfos({
+      id,
     });
-    const { projectId } = foundPathway;
-    const foundProject = await this.threadDBService.getProjectById({
-      dbClient,
-      threadId: latestThreadId,
-      projectId,
-    });
-    const projectStreamId = foundProject.streamId;
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: id, projectId }),
-      pathwayApproverSignature,
-    );
+
+    if (!foundPathway) {
+      throw new NotFoundException("Pathway not found!");
+    }
+    const { project } = foundPathway;
+
+    if (!project) {
+      throw new NotFoundException("Pathway has no parent project!");
+    }
+    const projectStreamId = project.streamId;
+    const { address, chainId } = siwe;
     // TODO: Keep track of address & network to avoid impersonation
-    const projectContributors = foundProject.squads
-      ? foundProject.squads.flatMap((squad: Squad) =>
-          squad.members.map((m) => m.toLowerCase()),
+    const projectContributors = project.squads
+      ? project.squads.flatMap((squad) =>
+          squad.members.map((m) => m.toLowerCase())
         )
       : [];
 
-    if (!projectContributors.includes(decodedAddress.toLowerCase())) {
-      throw new ForbiddenError('Unauthorized');
+    if (!projectContributors.includes(address.toLowerCase())) {
+      throw new ForbiddenError("Unauthorized");
     }
-
-    const existingPathways = foundProject.pathways ?? [];
-    // remove previously pending pathway and set it as approved
-
-    const updatedProject = {
-      _id: projectId,
-      ...foundProject,
-      pathways: [...new Set([...existingPathways, id])],
-      pendingPathways: foundProject.pendingPathways.filter(
-        (pathwayId: string) => pathwayId !== id,
-      ),
-    };
-
-    await this.threadDBService.update({
-      collectionName: 'Project',
-      dbClient,
-      threadId: latestThreadId,
-      values: [updatedProject],
-    });
 
     const chaindIdStr = chainId.toString();
     if (!Object.keys(ABIS).includes(chaindIdStr)) {
-      throw new Error('Unsupported Network');
+      throw new Error("Unsupported Network");
     }
 
-    const verifyContract = this.appService.getContract(chaindIdStr, 'Verify');
+    const verifyContract = this.appService.getContract(chaindIdStr, "Verify");
     const pathwayContract = this.appService.getContract(
       chaindIdStr,
-      'PathwayNFT',
+      "PathwayNFT"
     );
 
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
       verifyContract.noncesParentIdChildId(
         projectStreamId,
-        foundPathway.streamId,
+        foundPathway.streamId
       ),
       verifyContract.thresholdNoncesById(foundPathway.streamId),
     ]);
@@ -100,27 +81,36 @@ export class ApprovePathwayResolver {
         contractAddress: pathwayContract.address,
         nonceId: metadataNonceId,
         objectId: foundPathway.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
       }),
       verifyNFTInfo({
         contractAddress: pathwayContract.address,
         nonceId: thresholdNonceId,
         objectId: foundPathway.streamId,
-        senderAddress: decodedAddress,
+        senderAddress: address,
         verifyContract: verifyContract.address,
         votesNeeded: 1,
       }),
     ]);
 
-    return {
-      ...foundPathway,
+    const updatedPathway = await this.pathwayService.updatePathway({
+      where: {
+        id: foundPathway.id,
+      },
+      data: {
+        isPending: false,
+      },
+    });
+
+    return removeNulls({
+      ...updatedPathway,
       id,
       projectStreamId,
       expandedServerSignatures: [
         { r: metadataVerify.r, s: metadataVerify.s, v: metadataVerify.v },
         { r: tresholdVerify.r, s: tresholdVerify.s, v: tresholdVerify.v },
       ],
-    };
+    });
   }
 }

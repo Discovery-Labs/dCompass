@@ -109,20 +109,12 @@ const QuestCard = ({
 
   const handleApproveQuest = async () => {
     setIsApproving(true);
-    const signatureInput = {
-      id: quest.id,
-      pathwayId: quest.pathwayId,
-    };
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify(signatureInput),
-      account,
-    ]);
+
     const { data } = await approveQuestMutation({
       variables: {
         input: {
           id: quest.id,
-          questApproverSignature: signature.result,
-          chainId,
+          questType: quest.questType,
         },
       },
     });
@@ -190,21 +182,11 @@ const QuestCard = ({
         body: formData,
       });
 
-      const signatureInput = {
-        id: quest.id,
-        pathwayId: quest.pathwayId,
-      };
-      const signature = await library.provider.send("personal_sign", [
-        JSON.stringify(signatureInput),
-        account,
-      ]);
-
       const { data } = await verifyQuestMutation({
         variables: {
           input: {
             id: quest.id,
-            questMinterSignature: signature.result,
-            chainId,
+            questType: quest.questType,
           },
         },
       });

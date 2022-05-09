@@ -1,5 +1,5 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
+import { Field, InputType } from "@nestjs/graphql";
+import { IsString, IsDefined, IsNotEmpty } from "class-validator";
 
 @InputType()
 export class ProjectSquadsInput {
@@ -11,19 +11,19 @@ export class ProjectSquadsInput {
   // id: string;
 
   @Field()
-  @IsString({ message: 'wrong.type' })
-  @IsDefined({ message: 'not.defined' })
-  @IsNotEmpty({ message: 'not.empty' })
+  @IsString({ message: "wrong.type" })
+  @IsDefined({ message: "not.defined" })
+  @IsNotEmpty({ message: "not.empty" })
   name: string;
 
   @Field()
-  @IsString({ message: 'wrong.type' })
-  @IsDefined({ message: 'not.defined' })
-  @IsNotEmpty({ message: 'not.empty' })
+  @IsString({ message: "wrong.type" })
+  @IsDefined({ message: "not.defined" })
+  @IsNotEmpty({ message: "not.empty" })
   image: string;
 
   @Field(() => [String])
-  @IsDefined({ message: 'not.defined' })
-  @IsNotEmpty({ message: 'not.empty' })
+  @IsDefined({ message: "not.defined" })
+  @IsNotEmpty({ message: "not.empty" })
   members: string[];
 }

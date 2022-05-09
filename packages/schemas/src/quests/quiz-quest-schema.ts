@@ -10,7 +10,7 @@ export const QuizQuestSchema = {
     questions: {
       type: "array",
       title: "questions",
-      minItems: 3,
+      minItems: 1,
       items: {
         type: "object",
         title: "questionItem",

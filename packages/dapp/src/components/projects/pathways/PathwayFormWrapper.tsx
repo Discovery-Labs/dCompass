@@ -29,6 +29,7 @@ const pathwaysDefaultValues = {
 };
 
 function PathwayFormWrapper() {
+  const [submitStatus, setSubmitStatus] = useState<string>("Creating pathway");
   const toast = useToast();
   const router = useRouter();
   const [isWithRewards, setIsWithRewards] = useState<boolean>();
@@ -99,6 +100,7 @@ function PathwayFormWrapper() {
     // check if the native token is used
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
     const isNativeToken = tokenAddressOrSymbol ? false : true;
+    setSubmitStatus("Checking balance");
 
     let balance = 0;
     const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
@@ -151,6 +153,7 @@ function PathwayFormWrapper() {
         });
       }
     }
+    setSubmitStatus("Generating token URIs");
     // TODO: check prereqs
     const { prerequisites, ...pathwayOptions } = values;
     const prereqs = prerequisites
@@ -184,10 +187,14 @@ function PathwayFormWrapper() {
     });
 
     const { cids } = await cidsRes.json();
+
+    setSubmitStatus("Creating pathway");
+
     const finalValues = {
       ...serlializedValues,
       image: cids[values.title],
       projectId: router.query.projectId,
+      projectStreamId: data.getAllPathwaysByProjectId.streamId,
     };
 
     const pathwayDoc = await self.client.dataModel.createTile(
@@ -198,6 +205,7 @@ function PathwayFormWrapper() {
       }
     );
 
+    setSubmitStatus("Creating pathway on-chain");
     if (isNativeToken) {
       const createPathwayOnChainTx =
         await contracts.pathwayNFTContract.createPathway(
@@ -239,23 +247,17 @@ function PathwayFormWrapper() {
       await createPathwayOnChainTx.wait(1);
     }
 
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify({
-        id: pathwayDoc.id.toUrl(),
-        projectId: router.query.projectId,
-      }),
-      account,
-    ]);
+    setSubmitStatus("Signing pathway creation");
 
+    setSubmitStatus("Pathway validation");
     await addPathwayMutation({
       variables: {
         input: {
           id: pathwayDoc.id.toUrl(),
-          pathwayCreatorSignature: signature.result,
         },
       },
     });
-
+    setSubmitStatus("Pathway created!");
     return router.push(`/projects/${router.query.projectId}/`);
   }
 
@@ -297,6 +299,7 @@ function PathwayFormWrapper() {
         <Button
           isLoading={isSubmitting}
           colorScheme="accent"
+          loadingText={submitStatus}
           type="submit"
           onClick={handleSubmit(onSubmit)}
         >

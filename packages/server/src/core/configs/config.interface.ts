@@ -1,4 +1,4 @@
-import { RedisOptions } from 'ioredis';
+import { RedisOptions } from "ioredis";
 
 export interface Config {
   nest: NestConfig;
@@ -7,6 +7,7 @@ export interface Config {
   swagger: SwaggerConfig;
   graphql: GraphqlConfig;
   security: SecurityConfig;
+  infuraKey: string;
   api: {
     tracing: boolean;
     apiKey: string;
@@ -18,7 +19,7 @@ export interface Config {
     protocol: any;
     corsOptions: {
       credentials: boolean;
-      origin: ((origin: any, callback: any) => void) | string;
+      origin: (origin: any, callback: any) => void;
     };
     rateLimits?: {
       register: number;
@@ -33,6 +34,21 @@ export interface Config {
     url: string;
   };
   redisConfig: RedisOptions;
+  redisAuthConfig: RedisOptions;
+  sessionOptions: {
+    name: string;
+    secret: string;
+    resave: boolean;
+    saveUninitialized: boolean;
+    unset: "destroy" | "keep";
+    cookie: {
+      secure: boolean;
+      httpOnly: boolean;
+      sameSite: boolean | "lax" | "strict" | "none";
+      path: string;
+      maxAge: number;
+    };
+  };
 }
 
 export interface NestConfig {

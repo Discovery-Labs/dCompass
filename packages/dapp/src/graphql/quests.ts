@@ -1,18 +1,5 @@
 import { gql } from "@apollo/client";
 
-export const CREATE_QUEST_MUTATION = gql`
-  mutation CreateQuest($input: CreateQuestInput!) {
-    createQuest(input: $input) {
-      id
-      name
-      description
-      slogan
-      pathwayId
-      questType
-    }
-  }
-`;
-
 export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
   mutation CreateSnapshotVoterQuest($input: CreateQuestInput!) {
     createSnapshotVoterQuest(input: $input) {
@@ -67,6 +54,17 @@ export const CREATE_QUIZ_QUEST_MUTATION = gql`
     }
   }
 `;
+export const CREATE_QUEST_MUTATION = gql`
+  mutation CreateQuest($input: CreateQuestInput!) {
+    createQuest(input: $input) {
+      id
+      name
+      description
+      slogan
+      pathwayId
+    }
+  }
+`;
 
 export const APPROVE_QUEST_MUTATION = gql`
   mutation ApproveQuest($input: ApproveQuestInput!) {
@@ -82,6 +80,23 @@ export const APPROVE_QUEST_MUTATION = gql`
         r
         s
         v
+      }
+    }
+  }
+`;
+
+export const APPROVE_QUEST_SOLUTION_MUTATION = gql`
+  mutation ApproveQuestSolution($input: ApproveQuestSolutionInput!) {
+    approveQuestSolution(input: $input) {
+      id
+      name
+      description
+      submissions {
+        id
+        did
+        status
+        reviewComment
+        solution
       }
     }
   }
@@ -121,7 +136,22 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
       rewardUserCap
       isPending
       projectId
-      quests {
+      quizQuests {
+        id
+        streamId
+        name
+        description
+        slogan
+        pathwayId
+        questType
+        image
+        rewardCurrency
+        rewardAmount
+        rewardUserCap
+        isPending
+        completedBy
+      }
+      bountyQuests {
         id
         streamId
         name
@@ -140,6 +170,34 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
   }
 `;
 
+export const GET_BOUNTY_QUEST_BY_ID_QUERY = gql`
+  query GetBountyQuestById($input: GetBountyQuestByIdInput!) {
+    getBountyQuestById(input: $input) {
+      id
+      streamId
+      name
+      description
+      slogan
+      pathwayId
+      questType
+      image
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
+      isPending
+      completedBy
+      createdBy
+      submissions {
+        id
+        did
+        status
+        reviewComment
+        solution
+      }
+      isProjectContributor
+    }
+  }
+`;
 export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
   query GetQuizQuestById($questId: String!) {
     getQuizQuestById(questId: $questId) {
@@ -156,11 +214,9 @@ export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
       rewardUserCap
       isPending
       completedBy
-      createdBy {
-        did
-        name
-      }
+      createdBy
       questions {
+        id
         question
         choices
         answer
@@ -184,6 +240,12 @@ export const SUBMIT_QUEST_ANSWERS_MUTATION = gql`
         v
       }
     }
+  }
+`;
+
+export const SUBMIT_QUEST_SOLUTION_MUTATION = gql`
+  mutation SubmitQuestSolution($input: QuestSolutionSubmissionInput!) {
+    submitQuestSolution(input: $input)
   }
 `;
 

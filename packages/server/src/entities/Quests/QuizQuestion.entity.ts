@@ -1,7 +1,10 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field } from "@nestjs/graphql";
 
 @ObjectType()
 export class QuizQuestion {
+  @Field()
+  id: string;
+
   @Field()
   question: string;
 

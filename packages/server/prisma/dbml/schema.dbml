@@ -1,0 +1,204 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Contract {
+  id String [pk]
+  namespace String [default: 'eip155']
+  chainId String [default: '1']
+  contractAddress String [not null]
+  project Project
+  projectId String
+}
+
+Table QuizQuestion {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  answer String [not null]
+  choices String[] [not null]
+  question String [not null]
+  quest QuizQuest
+  questId String
+}
+
+Table SolutionSubmission {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  did String [not null]
+  reviewComment String
+  solution String [not null]
+  status String [not null]
+  quest BountyQuest
+  questId String
+}
+
+Table BountyQuest {
+  id String [pk]
+  streamId String [not null]
+  chainId Int [not null]
+  completedBy String[] [not null]
+  createdBy String [not null]
+  description String [not null]
+  image String [not null]
+  isPending Boolean [not null]
+  name String [not null]
+  namespace String [default: 'eip155']
+  pathway Pathway
+  pathwayId String
+  questType String [not null]
+  rewardAmount Float [not null]
+  rewardCurrency String [not null]
+  rewardUserCap Int [not null]
+  slogan String [not null]
+  submissions SolutionSubmission [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table QuizQuest {
+  id String [pk]
+  streamId String [not null]
+  chainId Int [not null]
+  completedBy String[] [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdBy String [not null]
+  description String [not null]
+  image String [not null]
+  isPending Boolean [not null]
+  name String [not null]
+  namespace String [default: 'eip155']
+  pathway Pathway
+  pathwayId String
+  questType String [not null]
+  rewardAmount Float [not null]
+  rewardCurrency String [not null]
+  rewardUserCap Int [not null]
+  slogan String [not null]
+  questions QuizQuestion [not null]
+}
+
+Table Pathway {
+  id String [pk]
+  streamId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdBy String [not null]
+  description String [not null]
+  difficulty PathwayDifficultyEnum [not null]
+  image String [not null]
+  isPending Boolean [not null]
+  prerequisites String[] [not null]
+  projectStreamId String [not null]
+  bountyQuests BountyQuest [not null]
+  quizQuests QuizQuest [not null]
+  rewardAmount Float [not null]
+  rewardCurrency String [not null]
+  rewardUserCap Int [not null]
+  slogan String [not null]
+  title String [not null]
+  project Project
+  projectId String
+}
+
+Table Tag {
+  id String [pk]
+  color String [not null]
+  value String [not null]
+  label String [not null]
+  projects Project [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ProjectSquad {
+  id String [pk]
+  name String [not null]
+  image String [not null]
+  members String[] [not null]
+  project Project
+  projectId String
+}
+
+Table Project {
+  id String [pk]
+  streamId String [not null]
+  squads ProjectSquad [not null]
+  name String [not null]
+  slogan String [not null]
+  sponsorTier SponsorTierEnum [not null]
+  description String [not null]
+  website String [not null]
+  projectWallet String [not null]
+  twitter String
+  discord String
+  github String
+  gitbook String
+  logo String
+  image String
+  tokenUris String[] [not null]
+  contracts Contract [not null]
+  isFeatured Boolean [not null, default: false]
+  pathways Pathway [not null]
+  parentProjectId String
+  subprojects Project [not null]
+  parentProject Project
+  tags Tag [not null]
+  users User [not null]
+  whitePaper String
+  demoVideo String
+  createdBy String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table User {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  did String [unique]
+  addresses String[] [not null]
+  projects Project [not null]
+}
+
+Table ProjectToTag {
+  projectsId String [ref: > Project.id]
+  tagsId String [ref: > Tag.id]
+}
+
+Table ProjectToUser {
+  usersId String [ref: > User.id]
+  projectsId String [ref: > Project.id]
+}
+
+Enum PathwayDifficultyEnum {
+  ADVANCED
+  BEGINNER
+  EXPERT
+  INTERMEDIATE
+  WIZARD
+}
+
+Enum SponsorTierEnum {
+  SILVER
+  GOLD
+  DIAMOND
+}
+
+Ref: Contract.projectId > Project.id
+
+Ref: QuizQuestion.questId > QuizQuest.id
+
+Ref: SolutionSubmission.questId > BountyQuest.id
+
+Ref: BountyQuest.pathwayId > Pathway.id
+
+Ref: QuizQuest.pathwayId > Pathway.id
+
+Ref: Pathway.projectId > Project.id
+
+Ref: ProjectSquad.projectId > Project.id
+
+Ref: Project.parentProjectId > Project.id

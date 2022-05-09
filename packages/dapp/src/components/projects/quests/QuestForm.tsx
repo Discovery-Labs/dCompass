@@ -37,6 +37,7 @@ import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
 import { GET_APP_DID } from "../../../graphql/app";
 import {
+  CREATE_QUEST_MUTATION,
   CREATE_QUIZ_QUEST_MUTATION,
   GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
 } from "../../../graphql/quests";
@@ -45,7 +46,7 @@ import ControlledSelect from "../../Inputs/ControlledSelect";
 import DiscordMemberForm from "./discord/DiscordMemberForm";
 import GithubContributorForm from "./github/GithubContributorForm";
 import PoapOwnerForm from "./poap/PoapOwnerForm";
-import QuestionsForm from "./quizz/QuestionsForm";
+import QuestionsForm from "./quiz/QuestionsForm";
 import SnapshotForm from "./snapshot/SnapshotForm";
 import NFTOwnerForm from "./token/NFTOwnerForm";
 import TokenHolderForm from "./token/TokenHolderForm";
@@ -81,10 +82,10 @@ const questTypeOptions = [
   //   label: "Github contributor",
   //   value: "github-contributor",
   // },
-  // {
-  //   label: "NFT owner",
-  //   value: "nft-owner",
-  // },
+  {
+    label: "Bounty",
+    value: "bounty",
+  },
   {
     label: "Quiz",
     value: "quiz",
@@ -116,6 +117,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
     },
   });
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
+    refetchQueries: "all",
+  });
+  const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION, {
     refetchQueries: "all",
   });
 
@@ -186,6 +190,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     "nft-owner": <NFTOwnerForm />,
     "discord-member": <DiscordMemberForm />,
     quiz: <QuestionsForm />,
+    bounty: "",
     defaultOption: "",
   };
   const questType = (currentValues?.type?.value ||
@@ -325,6 +330,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             rewardAmount: rewardAmnt,
             rewardUserCap: parseInt(values.rewardUserCap, 10),
             pathwayId: router.query.pathwayId,
+            chainId,
           }
         : {
             ...values,
@@ -333,6 +339,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
             rewardAmount: rewardAmnt,
             rewardUserCap: parseInt(values.rewardUserCap, 10),
             pathwayId: router.query.pathwayId,
+            chainId,
           };
 
     const questDoc = await self.client.dataModel.createTile(
@@ -344,13 +351,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     );
 
     setSubmitStatus("Signing quest creation");
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify({
-        id: questDoc.id.toUrl(),
-        pathwayId: router.query.pathwayId,
-      }),
-      account,
-    ]);
 
     if (isNativeToken) {
       setSubmitStatus("Creating quest on-chain");
@@ -396,7 +396,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const createQuestMutationVariables = {
       input: {
         id: questDoc.id.toUrl(),
-        questCreatorSignature: signature.result,
       },
     };
 
@@ -404,6 +403,12 @@ const CreateQuestForm: React.FunctionComponent = () => {
     setSubmitStatus("Quest validation");
     if (questType === "quiz") {
       const { data } = await createQuizQuestMutation({
+        variables: createQuestMutationVariables,
+      });
+      result = data.createQuizQuest;
+    }
+    if (questType === "bounty") {
+      const { data } = await createQuestMutation({
         variables: createQuestMutationVariables,
       });
       result = data.createQuizQuest;

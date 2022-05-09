@@ -20,9 +20,11 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
+
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
+import BountyForm from "components/projects/quests/bounty/BountyForm";
+import QuestSubmissionList from "components/projects/quests/bounty/QuestSubmissionList";
 import { Web3Context } from "contexts/Web3Provider";
 import { GET_PATHWAY_BY_ID_QUERY } from "graphql/pathways";
 import { GetServerSideProps } from "next";
@@ -39,7 +41,7 @@ import CardMedia from "../../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../../components/layout/BreadcrumbItems";
 // import GithubContributorQuestForm from "../../../../../../components/projects/quests/github/GithubContributorQuestForm";
 import QuestCompletedByList from "../../../../../../components/projects/quests/QuestCompletedByList";
-import QuizForm from "../../../../../../components/projects/quests/quizz/QuizForm";
+import QuizForm from "../../../../../../components/projects/quests/quiz/QuizForm";
 // import SnapshotVoterForm from "../../../../../../components/projects/quests/snapshot/SnapshotVoterForm";
 // import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
 // import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
@@ -88,7 +90,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       questId,
     },
   });
+
   const [tabIndex, setTabIndex] = useState(0);
+
   const [claimedBy, setClaimedBy] = useState<string[]>();
   const [isClaimed, setIsClaimed] = useState<boolean>(false);
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
@@ -100,7 +104,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
   const questMarkdownTheme = usePageMarkdownTheme();
   const toast = useToast();
   const { account, self, contracts } = useContext(Web3Context);
-  const { library, chainId: currentChainId } = useWeb3React();
 
   useEffect(() => {
     async function getClaimedBy() {
@@ -146,15 +149,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
   const handleClaimQuestRewards = async () => {
     setIsClaiming(true);
     setRewardStatus("Claiming rewards");
-    const signatureInput = {
-      id: questId,
-      pathwayId: pathwayId,
-    };
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify(signatureInput),
-      account,
-    ]);
-    setRewardStatus("Signing claim");
     const {
       name,
       streamId,
@@ -164,11 +158,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       rewardAmount,
       rewardCurrency,
       rewardUserCap,
-      type,
+      questType,
       projectId,
       questions,
-      proposalId,
-      githubOrgId,
       createdBy,
       collectionContractAddress,
       tokenContractAddress,
@@ -192,12 +184,10 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         rewardAmount,
         rewardCurrency,
         rewardUserCap,
-        type,
+        questType,
         pathwayId,
         projectId,
         questions,
-        proposalId,
-        githubOrgId,
         createdBy,
         collectionContractAddress,
         tokenContractAddress,
@@ -219,8 +209,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         input: {
           questId,
           did: self.id,
-          questAdventurerSignature: signature.result,
-          chainId: currentChainId,
+          questType: questType,
         },
       },
     });
@@ -250,7 +239,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         0
       );
     const currentUserHasClaimed = claimedByAddresses.includes(account);
-    console.log({ claimedByAddresses, currentUserHasClaimed });
+
     setIsClaimed(currentUserHasClaimed);
     setRewardStatus(
       currentUserHasClaimed ? "Rewards claimed" : "Claim rewards"
@@ -291,7 +280,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
     );
   if (error || projectError || quizError)
     return `Loading error! ${error?.message || projectError?.message}`;
-
+  const isContributor = projectRes.getProjectById.squads
+    .flatMap(({ members }: { members: string[] }) => members)
+    .includes(account);
   return (
     <Container>
       <BreadcrumbItems
@@ -333,6 +324,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
               <Tab>Guide</Tab>
               <Tab>Play</Tab>
               <Tab>Details&amp;Rewards</Tab>
+              {quizData?.getQuizQuestById.questType === "bounty" && (
+                <Tab>Submissions</Tab>
+              )}
               <Tab>Status</Tab>
             </TabList>
           </HStack>
@@ -360,6 +354,13 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                   {quizData?.getQuizQuestById.questType === "quiz" && (
                     <QuizForm
                       questions={quizData?.getQuizQuestById.questions}
+                      questId={questId}
+                      pathwayId={pathwayId}
+                      successCallback={() => handleTabsChange(2)}
+                    />
+                  )}
+                  {quizData?.getQuizQuestById.questType === "bounty" && (
+                    <BountyForm
                       questId={questId}
                       pathwayId={pathwayId}
                       successCallback={() => handleTabsChange(2)}
@@ -566,7 +567,19 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
               </CardMedia>
             </TabPanel>
 
-            {/* Status */}
+            {/* 3 Tab */}
+            {quizData?.getQuizQuestById.questType === "bounty" &&
+              isContributor && (
+                <TabPanel px="0">
+                  <VStack w="full" align="flex-start">
+                    <QuestSubmissionList
+                      questId={quizData.getQuizQuestById.id}
+                    />
+                  </VStack>
+                </TabPanel>
+              )}
+
+            {/* 4 Tab */}
             <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 {quizData?.getQuizQuestById.completedBy && (

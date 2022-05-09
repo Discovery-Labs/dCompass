@@ -4,34 +4,36 @@ import {
   registerEnumType,
   Float,
   Int,
-} from '@nestjs/graphql';
-import { BaseEntity } from '../../core/entities/BaseEntity';
-import { ExpandedServerSignature } from '../../core/utils/security/ExpandedServerSignature';
-import { Quest } from '../Quests/Quest.entity';
+} from "@nestjs/graphql";
+import { BaseEntity } from "../../core/entities/BaseEntity";
+import { ExpandedServerSignature } from "../../core/utils/security/ExpandedServerSignature";
+import { BountyQuest } from "../Quests/BountyQuest.entity";
+import { Quest } from "../Quests/Quest.entity";
+import { QuizQuest } from "../Quests/QuizQuest.entity";
 
 export enum PathwayTypeEnum {
-  BRANCHED = 'branched',
-  DECRYPTED = 'decrypted',
+  BRANCHED = "branched",
+  DECRYPTED = "decrypted",
 }
 
 export enum PathwayDifficultyEnum {
-  BEGINNER = 'beginner',
-  INTERMEDIATE = 'intermediate',
-  ADVANCED = 'advanced',
-  EXPERT = 'expert',
-  WIZARD = 'wizard',
+  BEGINNER = "BEGINNER",
+  INTERMEDIATE = "INTERMEDIATE",
+  ADVANCED = "ADVANCED",
+  EXPERT = "EXPERT",
+  WIZARD = "WIZARD",
 }
 
 registerEnumType(PathwayTypeEnum, {
-  name: 'PathwayTypeEnum',
+  name: "PathwayTypeEnum",
   description:
-    'Branched = theorical lessons and Decrypted = technical hands on lessons',
+    "Branched = theorical lessons and Decrypted = technical hands on lessons",
 });
 
 registerEnumType(PathwayDifficultyEnum, {
-  name: 'PathwayDifficultyEnum',
+  name: "PathwayDifficultyEnum",
   description:
-    'The difficulty of a pathway, from beginner to wizard where wizard is the most difficult mode',
+    "The difficulty of a pathway, from beginner to wizard where wizard is the most difficult mode",
 });
 
 export type CeramicStreamId = string;
@@ -78,6 +80,12 @@ export class Pathway extends BaseEntity {
 
   @Field(() => [Quest])
   quests?: Quest[];
+
+  @Field(() => [QuizQuest])
+  quizQuests?: QuizQuest[];
+
+  @Field(() => [BountyQuest])
+  bountyQuests?: BountyQuest[];
 
   @Field(() => [ExpandedServerSignature])
   expandedServerSignatures?: ExpandedServerSignature[];

@@ -112,8 +112,10 @@ function ReviewProjectPage({
   });
   const [status, setStatus] = useState<string>();
   const [hasVoted, setHasVoted] = useState(false);
+  const [isApprovingProject, setIsApprovingProject] = useState(false);
+  const [isCreatingToken, setIsCreatingToken] = useState(false);
   const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
-  const { getColoredText } = useCustomColor();
+
   const projectMarkdownTheme = usePageMarkdownTheme();
 
   const isPendingOrNonExistent =
@@ -147,6 +149,7 @@ function ReviewProjectPage({
   }, [projectNFTContract, streamId, account]);
 
   const handleApproveProject = async () => {
+    setIsApprovingProject(true);
     if (projectNFTContract && chainId && account && isPendingOrNonExistent) {
       try {
         const contributors = squads.flatMap(
@@ -161,6 +164,7 @@ function ReviewProjectPage({
         // get return values or events
         await voteForApprovalTx.wait(1);
       } catch (e) {
+        setIsApprovingProject(false);
         console.log("Approve Failed:", e);
       }
       const statusInt = await projectNFTContract.status(streamId);
@@ -170,23 +174,19 @@ function ReviewProjectPage({
         const mutationInput = {
           id,
           tokenUris,
-          chainId: chainId.toString(),
         };
-        const signature = await library.provider.send("personal_sign", [
-          JSON.stringify(mutationInput),
-          account,
-        ]);
+
+        setIsApprovingProject(false);
         return approveProjectMutation({
           variables: {
-            input: {
-              ...mutationInput,
-              reviewerSignature: signature.result,
-            },
+            input: mutationInput,
           },
         });
       }
+      setIsApprovingProject(false);
       return statusString;
     }
+    setIsApprovingProject(false);
     return null;
   };
   const handleRejectProject = async () => {
@@ -211,6 +211,7 @@ function ReviewProjectPage({
     return null;
   };
   const handleCreateToken = async () => {
+    setIsCreatingToken(true);
     if (chainId && account) {
       const cids = tokenUris.map(
         (uri: string) => uri.split("://")[1].split("/")[0]
@@ -229,6 +230,7 @@ function ReviewProjectPage({
       setStatus("MINTED");
       console.log({ receipt, isMinted });
     }
+    setIsCreatingToken(false);
     return null;
   };
 
@@ -260,6 +262,8 @@ function ReviewProjectPage({
                 onClick={handleApproveProject}
                 leftIcon={<CheckIcon />}
                 disabled={!isPendingOrNonExistent || hasVoted}
+                isLoading={isApprovingProject}
+                loadingText={"Approving project"}
               >
                 {t("approve-project")}
               </Button>
@@ -276,7 +280,12 @@ function ReviewProjectPage({
           )}
           {status && status === "APPROVED" && (
             <HStack>
-              <Button onClick={handleCreateToken} leftIcon={<CheckIcon />}>
+              <Button
+                onClick={handleCreateToken}
+                isLoading={isCreatingToken}
+                loadingText={"Minting project"}
+                leftIcon={<CheckIcon />}
+              >
                 {t("create-token")}
               </Button>
             </HStack>

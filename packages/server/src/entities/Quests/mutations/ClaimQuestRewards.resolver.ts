@@ -1,109 +1,107 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { ethers } from 'ethers';
-import ABIS from '@discovery-dao/hardhat/abis.json';
-import { Where } from '@textile/hub';
+import { Resolver, Mutation, Args } from "@nestjs/graphql";
+import ABIS from "@discovery-dao/hardhat/abis.json";
 
-import { UseCeramicClient, UseThreadDBClient } from '../../../core/utils/types';
-import { Quest } from '../Quest.entity';
-import { verifyAdventurerClaimInfo } from '../../../core/utils/security/verify';
-import { AppService } from '../../../app.service';
+import { UseCeramicClient } from "../../../core/utils/types";
+import { Quest } from "../Quest.entity";
+import { verifyAdventurerClaimInfo } from "../../../core/utils/security/verify";
+import { AppService } from "../../../app.service";
 
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
-import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
-import { ClaimQuestRewardsInput } from '../dto/ClaimQuestRewards.input';
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { ForbiddenError } from 'apollo-server-express';
+import { ForbiddenException, NotFoundException } from "@nestjs/common";
+
+import { ClaimQuestRewardsInput } from "../dto/ClaimQuestRewards.input";
+import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
+import { ForbiddenError } from "apollo-server-express";
+import { QuestService } from "../Quest.service";
+import removeNulls from "../../../core/utils/helpers";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Quest)
 export class ClaimQuestRewardsResolver {
   constructor(
     public readonly appService: AppService,
-    private readonly threadDBService: ThreadDBService,
+    private readonly questService: QuestService
   ) {}
 
   @Mutation(() => Quest, {
     nullable: true,
-    description: 'Verify a new Quest right before minting in dCompass',
-    name: 'claimQuestRewards',
+    description: "Verify a new Quest right before minting in dCompass",
+    name: "claimQuestRewards",
   })
   async claimQuestRewards(
-    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
+    @UseSiwe() siwe: SiweMessage,
     @UseCeramic() { ceramicClient }: UseCeramicClient,
-    @Args('input')
-    { questId, did, questAdventurerSignature, chainId }: ClaimQuestRewardsInput,
+    @Args("input")
+    { questId, questType, did }: ClaimQuestRewardsInput
   ): Promise<Quest | null | undefined> {
-    const [foundQuest] = await this.threadDBService.query({
-      collectionName: 'Quest',
-      dbClient,
-      threadId: latestThreadId,
-      query: new Where('_id').eq(questId),
-    });
-    if (!foundQuest) {
-      throw new NotFoundException('Quest not found by back-end');
+    let foundQuest = null;
+    if (questType === "quiz") {
+      foundQuest = await this.questService.quizQuestWithPathwayAndProjectSquads(
+        {
+          id: questId,
+        }
+      );
     }
-    const quest = foundQuest as Quest;
-    const { pathwayId } = quest;
+    if (questType === "bounty") {
+      foundQuest =
+        await this.questService.bountyQuestWithPathwayAndProjectSquads({
+          id: questId,
+        });
+    }
 
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id: questId, pathwayId }),
-      questAdventurerSignature,
-    );
+    if (!foundQuest) {
+      throw new NotFoundException("Quest not found by back-end");
+    }
 
-    if (!decodedAddress) {
-      throw new ForbiddenException('Unauthorized');
+    const { address, chainId } = siwe;
+
+    if (!address) {
+      throw new ForbiddenException("Unauthorized");
     }
 
     // Check that the quest Adventurer is the person he claims to be
     const adventurerAccounts = await ceramicClient.dataStore.get(
-      'cryptoAccounts',
-      did,
+      "cryptoAccounts",
+      did
     );
-    console.log({ adventurerAccounts, decodedAddress });
-    if (!adventurerAccounts) throw new ForbiddenError('Unauthorized');
+    console.log({ adventurerAccounts, address });
+    if (!adventurerAccounts) throw new ForbiddenError("Unauthorized");
     const formattedAccounts = Object.keys(adventurerAccounts).map(
-      (account) => account.split('@')[0],
+      (account) => account.split("@")[0]
     );
-    if (!formattedAccounts.includes(decodedAddress)) {
-      throw new ForbiddenError('Unauthorized');
+    if (!formattedAccounts.includes(address)) {
+      throw new ForbiddenError("Unauthorized");
     }
 
     // Check that the user has already completed the quest
-    const isCompleted = quest.completedBy?.includes(did);
+    const isCompleted = foundQuest.completedBy?.includes(did);
     if (!isCompleted) {
-      throw new ForbiddenError('Quest not completed yet!');
+      throw new ForbiddenError("Quest not completed yet!");
     }
 
     const chainIdStr = chainId.toString();
     if (!Object.keys(ABIS).includes(chainIdStr)) {
-      throw new Error('Unsupported Network');
+      throw new Error("Unsupported Network");
     }
 
-    // const pathway = await this.threadDBService.getPathwayById({
-    //   dbClient,
-    //   threadId: latestThreadId,
-    //   pathwayId: quest.pathwayId,
-    // });
-    // const verifyContract = this.appService.getContract(chainIdStr, 'Verify');
-    const questContract = this.appService.getContract(chainIdStr, 'BadgeNFT');
+    const questContract = this.appService.getContract(chainIdStr, "BadgeNFT");
     const metadataNonceId = await questContract.nonces(
-      quest.streamId,
-      decodedAddress,
+      foundQuest.streamId,
+      address
     );
     console.log({ metadataNonceId });
     const { r, s, v } = await verifyAdventurerClaimInfo({
       contractAddress: questContract.address,
       nonceId: metadataNonceId,
-      objectId: quest.streamId,
-      senderAddress: decodedAddress,
+      objectId: foundQuest.streamId,
+      senderAddress: address,
       chainId,
       verifyContract: questContract.address,
     });
 
-    return {
-      ...quest,
-      id: questId,
+    return removeNulls({
+      ...foundQuest,
       expandedServerSignatures: [{ r, s, v }],
-    };
+    });
   }
 }

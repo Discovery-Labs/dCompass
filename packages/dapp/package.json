@@ -75,6 +75,7 @@
     "key-did-provider-ed25519": "^1.1.0",
     "key-did-resolver": "^1.4.0",
     "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
     "multiparty": "^4.2.2",
     "next": "^11.1.2",
     "next-i18next": "^10.2.0",
@@ -92,6 +93,7 @@
     "react-icons": "^4.3.1",
     "react-markdown": "^7.0.0",
     "react-parallax-tilt": "^1.5.73",
+    "siwe": "^1.1.6",
     "states-cities-db": "^1.4.1",
     "tiny-invariant": "^1.2.0",
     "uint8arrays": "^3.0.0",
@@ -101,6 +103,7 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^13.2.0",
+    "@types/mime-types": "^2.1.1",
     "@types/multiparty": "^0.0.33",
     "@types/react": "^17.0.30",
     "@types/react-blockies": "^1.4.1",
@@ -116,8 +119,5 @@
     "prettier": "^2.5.1",
     "standard-version": "^9.3.1",
     "typescript": "^4.4.4"
-  },
-  "engines": {
-    "node": "14.x"
   }
 }

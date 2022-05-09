@@ -17,7 +17,7 @@ Ceramic is our main data store in conjunction with Filecoin & IPFS for file stor
 │ ├── dapp # Web3 app for the projects, quests, etc
 │ ├── hardhat # Contracts compiled & deployed using hardhat.js
 │ ├── ui # Our custom Chakra UI theme
-│ └── server # A NodeJS server storing data on a Ceramic instance with a private key
+│ └── server # A NodeJS server storing user data on a Ceramic instance with a private key and utilizing Thread DB app
 └── ... config ...
 ```
 
