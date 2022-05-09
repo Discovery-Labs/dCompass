@@ -18,12 +18,13 @@ import {
   NumberInputStepper,
   Tag,
   Text,
+  Textarea,
   VStack,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
-import useCustomColor from "core/hooks/useCustomColor";
-import dynamic from "next/dynamic";
+// import useCustomColor from "core/hooks/useCustomColor";
+// import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import {
@@ -34,13 +35,13 @@ import useTokenList from "../../../core/hooks/useTokenList";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
 
-const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
-  ssr: false,
-});
+// const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+//   ssr: false,
+// });
 
 export default function PathwayForm({ isWithRewards, withRewards }: any) {
   const [code, setCode] = useState<string>();
-  const { codeEditorScheme } = useCustomColor();
+  // const { codeEditorScheme } = useCustomColor();
 
   const { chainId } = useWeb3React();
   const { tokens } = useTokenList();
@@ -161,7 +162,18 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-        <CodeEditor
+        <Textarea
+          placeholder="Pathway description"
+          {...register("description", {
+            required: REQUIRED_FIELD_LABEL,
+          })}
+          onChange={(e) => {
+            const { name } = e.target;
+            setCode(e.target.value);
+            setValue(name, e.target.value);
+          }}
+        />
+        {/* <CodeEditor
           value={code}
           language="markdown"
           placeholder="Pathway description (markdown)"
@@ -178,7 +190,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
           }}
           className={codeEditorScheme}
           padding={15}
-        />
+        /> */}
         <FormErrorMessage>
           {errors.description && errors.description.message}
         </FormErrorMessage>

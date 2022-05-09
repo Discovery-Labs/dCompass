@@ -14,10 +14,11 @@ import {
   InputGroup,
   InputLeftAddon,
   Text,
+  Textarea,
 } from "@chakra-ui/react";
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
-import useCustomColor from "core/hooks/useCustomColor";
-import dynamic from "next/dynamic";
+// import useCustomColor from "core/hooks/useCustomColor";
+// import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -29,12 +30,12 @@ import ControlledSelect from "../Inputs/ControlledSelect";
 
 import LogoDropzone from "./LogoDropzone";
 
-const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
-  ssr: false,
-});
+// const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+//   ssr: false,
+// });
 const CreateProjectForm = () => {
   const [code, setCode] = useState<string>();
-  const { codeEditorScheme } = useCustomColor();
+  // const { codeEditorScheme } = useCustomColor();
   const { data, loading, error } = useQuery(ALL_TAGS_QUERY);
   const {
     register,
@@ -106,7 +107,8 @@ const CreateProjectForm = () => {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Markdown Description</FormLabel>
-        <CodeEditor
+        {/* TODO: fix types for CodeEditor
+         <CodeEditor
           value={code}
           language="markdown"
           placeholder="Project description"
@@ -123,6 +125,18 @@ const CreateProjectForm = () => {
           }}
           className={codeEditorScheme}
           padding={15}
+        />
+         */}
+        <Textarea
+          placeholder="Project description"
+          {...register("description", {
+            required: REQUIRED_FIELD_LABEL,
+          })}
+          onChange={(e) => {
+            const { name } = e.target;
+            setCode(e.target.value);
+            setValue(name, e.target.value);
+          }}
         />
         <FormErrorMessage>
           {errors.description && errors.description.message}

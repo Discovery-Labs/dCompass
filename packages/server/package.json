@@ -63,7 +63,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "siwe": "^2.0.1",
+    "siwe": "^1.1.6",
     "subscriptions-transport-ws": "^0.9.19",
     "swagger-ui-express": "^4.1.6",
     "uint8arrays": "^2.1.10",
