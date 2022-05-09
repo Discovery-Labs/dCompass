@@ -39,6 +39,7 @@ export class ApprovePathwayResolver {
     if (!foundPathway) {
       throw new NotFoundException("Pathway not found!");
     }
+
     const { project } = foundPathway;
 
     if (!project) {
