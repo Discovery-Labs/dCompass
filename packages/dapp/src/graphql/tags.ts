@@ -2,7 +2,7 @@
 import { gql } from "@apollo/client";
 
 export const ALL_TAGS_QUERY = gql`
-  query {
+  query GetAllTags {
     getAllTags {
       id
       label

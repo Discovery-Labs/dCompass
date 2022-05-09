@@ -53,7 +53,7 @@ export const APPROVE_PROJECT_MUTATION = gql`
 `;
 
 export const ALL_PROJECTS_QUERY = gql`
-  query getAllProjects {
+  query GetAllProjects {
     getAllProjects {
       id
       name

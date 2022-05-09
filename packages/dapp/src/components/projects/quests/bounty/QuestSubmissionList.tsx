@@ -70,7 +70,7 @@ function QuestSubmissionList({ questId }: { questId: string }) {
     },
   });
 
-  const handleOpenReview = async (submission: SolutionSubmission): void => {
+  const handleOpenReview = async (submission: SolutionSubmission) => {
     setSolutionReview(submission);
     const solutionBlob = dataURLtoBlob(
       JSON.parse(submission.solution).solution
@@ -100,7 +100,8 @@ function QuestSubmissionList({ questId }: { questId: string }) {
     return onClose();
   };
 
-  const handleRejectSolution = (solution: SolutionSubmission): void => {
+  const handleRejectSolution = (solution: SolutionSubmission) => {
+    console.log({ solution });
     setSolutionReview(null);
     return onClose();
   };

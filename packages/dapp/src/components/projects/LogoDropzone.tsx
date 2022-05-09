@@ -76,7 +76,7 @@ const LogoDropzone = ({
       const logoValues = getValues("logo");
 
       if (logoValues) {
-        const logoFiles = [];
+        const logoFiles = [] as any[];
         logoFiles.push(logoValues[0]);
         setFiles(
           logoFiles.map((file: File) =>

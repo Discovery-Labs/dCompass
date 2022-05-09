@@ -42,7 +42,7 @@
     "@nestjs/swagger": "^5.0.9",
     "@nestjs/terminus": "^8.0.4",
     "@prisma/client": "^3.13.0",
-    "@self.id/core": "^0.2.0",
+    "@self.id/core": "^0.4.0",
     "@stablelib/random": "^1.0.1",
     "apollo-server-express": "^2",
     "bcrypt": "^5.0.1",

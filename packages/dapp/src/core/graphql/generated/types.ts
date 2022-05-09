@@ -18,31 +18,22 @@ export type Scalars = {
 };
 
 export type ApprovePathwayInput = {
-  chainId: Scalars['Int'];
   id: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  pathwayApproverSignature: Scalars['String'];
 };
 
 export type ApproveProjectInput = {
-  chainId: Scalars['String'];
   id: Scalars['String'];
-  reviewerSignature: Scalars['String'];
   tokenUris: Array<Scalars['String']>;
 };
 
 export type ApproveQuestInput = {
-  chainId: Scalars['Int'];
   id: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questApproverSignature: Scalars['String'];
   questType: Scalars['String'];
 };
 
 export type ApproveQuestSolutionInput = {
   adventurerDID: Scalars['String'];
   id: Scalars['String'];
-  solutionApproverSignature: Scalars['String'];
   solutionId: Scalars['String'];
 };
 
@@ -74,18 +65,12 @@ export type BountyQuest = {
 };
 
 export type ClaimPathwayRewardsInput = {
-  chainId: Scalars['Int'];
   did: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
   pathwayId: Scalars['String'];
-  questAdventurerSignature: Scalars['String'];
 };
 
 export type ClaimQuestRewardsInput = {
-  chainId: Scalars['Int'];
   did: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questAdventurerSignature: Scalars['String'];
   questId: Scalars['String'];
   questType: Scalars['String'];
 };
@@ -96,21 +81,18 @@ export type CreatePathwayInput = {
 };
 
 export type CreateProjectInput = {
-  creatorSignature: Scalars['String'];
   id: Scalars['String'];
   tokenUris: Array<Scalars['String']>;
 };
 
 export type CreateQuestInput = {
   id: Scalars['String'];
-  questCreatorSignature: Scalars['String'];
 };
 
 export type EditProjectInput = {
   color?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
   discord?: InputMaybe<Scalars['String']>;
-  editorSignature: Scalars['String'];
   github?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
   logo?: InputMaybe<Scalars['String']>;
@@ -132,33 +114,6 @@ export type ExpandedServerSignature = {
 export type GetBountyQuestByIdInput = {
   did: Scalars['String'];
   questId: Scalars['String'];
-  signature: Scalars['String'];
-};
-
-export type GithubContributorQuest = {
-  __typename?: 'GithubContributorQuest';
-  chainId: Scalars['Int'];
-  completedBy: Array<Scalars['String']>;
-  /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
-  expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  githubOrgId: Scalars['String'];
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  questType: Scalars['String'];
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
-  /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
 };
 
 export type Mutation = {
@@ -175,10 +130,6 @@ export type Mutation = {
   claimPathwayRewards?: Maybe<Pathway>;
   /** Verify a new Quest right before minting in dCompass */
   claimQuestRewards?: Maybe<Quest>;
-  /** Create a new Github Contributor Quest in dCompass */
-  createGithubContributorQuest?: Maybe<GithubContributorQuest>;
-  /** Create a new NFT Owner Quest in dCompass */
-  createNFTOwnerQuest?: Maybe<NftOwnerQuest>;
   /** Create a new Pathway in dCompass */
   createPathway?: Maybe<Pathway>;
   /** Create a new Project in dCompass */
@@ -187,8 +138,6 @@ export type Mutation = {
   createQuest?: Maybe<Quest>;
   /** Create a new Quiz quest in dCompass */
   createQuizQuest?: Maybe<QuizQuest>;
-  /** Create a new Snapshot Voter Quest in dCompass */
-  createSnapshotVoterQuest?: Maybe<SnapshotVoterQuest>;
   /** Edit project in dCompass */
   editProject?: Maybe<Project>;
   /** Sign in a user and notifies the connected clients */
@@ -236,16 +185,6 @@ export type MutationClaimQuestRewardsArgs = {
 };
 
 
-export type MutationCreateGithubContributorQuestArgs = {
-  input: CreateQuestInput;
-};
-
-
-export type MutationCreateNftOwnerQuestArgs = {
-  input: CreateQuestInput;
-};
-
-
 export type MutationCreatePathwayArgs = {
   input: CreatePathwayInput;
 };
@@ -262,11 +201,6 @@ export type MutationCreateQuestArgs = {
 
 
 export type MutationCreateQuizQuestArgs = {
-  input: CreateQuestInput;
-};
-
-
-export type MutationCreateSnapshotVoterQuestArgs = {
   input: CreateQuestInput;
 };
 
@@ -298,32 +232,6 @@ export type MutationVerifyPathwayArgs = {
 
 export type MutationVerifyQuestArgs = {
   input: VerifyQuestInput;
-};
-
-export type NftOwnerQuest = {
-  __typename?: 'NFTOwnerQuest';
-  chainId: Scalars['Int'];
-  collectionContractAddress: Scalars['String'];
-  completedBy: Array<Scalars['String']>;
-  /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
-  expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  questType: Scalars['String'];
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
-  /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
 };
 
 export type Pathway = {
@@ -484,10 +392,7 @@ export type Quest = {
 };
 
 export type QuestAnswersSubmitionInput = {
-  chainId: Scalars['Int'];
   did: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questAdventurerSignature: Scalars['String'];
   questId: Scalars['String'];
   questionAnswers: Array<QuestQuestionAnswerInput>;
 };
@@ -498,10 +403,7 @@ export type QuestQuestionAnswerInput = {
 };
 
 export type QuestSolutionSubmissionInput = {
-  chainId: Scalars['Int'];
   did: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questAdventurerSignature: Scalars['String'];
   questId: Scalars['String'];
   solution: Scalars['String'];
 };
@@ -565,32 +467,6 @@ export type SiweMessageInput = {
 export type SiweRegisterInput = {
   ens?: InputMaybe<Scalars['String']>;
   message: SiweMessageInput;
-};
-
-export type SnapshotVoterQuest = {
-  __typename?: 'SnapshotVoterQuest';
-  chainId: Scalars['Int'];
-  completedBy: Array<Scalars['String']>;
-  /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
-  expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  proposalId: Scalars['String'];
-  questType: Scalars['String'];
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
-  /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
 };
 
 export type SolutionSubmission = {
@@ -659,17 +535,11 @@ export type User = {
 };
 
 export type VerifyPathwayInput = {
-  chainId: Scalars['Int'];
   id: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  pathwayMinterSignature: Scalars['String'];
 };
 
 export type VerifyQuestInput = {
-  chainId: Scalars['Int'];
   id: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questMinterSignature: Scalars['String'];
   questType: Scalars['String'];
 };
 
@@ -753,27 +623,6 @@ export type GetProjectByIdQueryVariables = Exact<{
 
 export type GetProjectByIdQuery = { __typename?: 'Query', getProjectById?: { __typename?: 'Project', id: string, streamId: string, name: string, createdBy: string, createdAt: any, description: string, slogan: string, tokenUris: Array<string>, isFeatured: boolean, website: string, whitepaper?: string | null, discord?: string | null, twitter?: string | null, github?: string | null, gitbook?: string | null, logo?: string | null, squads: Array<{ __typename?: 'Squad', name: string, image?: string | null, members: Array<string> }>, tags?: Array<{ __typename?: 'Tag', id: string, label: string, color: string }> | null } | null };
 
-export type CreateSnapshotVoterQuestMutationVariables = Exact<{
-  input: CreateQuestInput;
-}>;
-
-
-export type CreateSnapshotVoterQuestMutation = { __typename?: 'Mutation', createSnapshotVoterQuest?: { __typename?: 'SnapshotVoterQuest', id: string, name: string, description: string, slogan: string, pathwayId: string, proposalId: string } | null };
-
-export type CreateNftOwnerQuestMutationVariables = Exact<{
-  input: CreateQuestInput;
-}>;
-
-
-export type CreateNftOwnerQuestMutation = { __typename?: 'Mutation', createNFTOwnerQuest?: { __typename?: 'NFTOwnerQuest', id: string, name: string, description: string, slogan: string, pathwayId: string, collectionContractAddress: string } | null };
-
-export type CreateGithubContributorQuestMutationVariables = Exact<{
-  input: CreateQuestInput;
-}>;
-
-
-export type CreateGithubContributorQuestMutation = { __typename?: 'Mutation', createGithubContributorQuest?: { __typename?: 'GithubContributorQuest', id: string, name: string, description: string, slogan: string, pathwayId: string, githubOrgId: string } | null };
-
 export type CreateQuizQuestMutationVariables = Exact<{
   input: CreateQuestInput;
 }>;
@@ -851,10 +700,10 @@ export type ClaimQuestRewardsMutationVariables = Exact<{
 
 export type ClaimQuestRewardsMutation = { __typename?: 'Mutation', claimQuestRewards?: { __typename?: 'Quest', id: string, streamId: string, name: string, rewardCurrency: string, completedBy: Array<string>, expandedServerSignatures?: Array<{ __typename?: 'ExpandedServerSignature', r: string, s: string, v: number }> | null } | null };
 
-export type Unnamed_1_QueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type Unnamed_1_Query = { __typename?: 'Query', getAllTags?: Array<{ __typename?: 'Tag', id: string, label: string, color: string, value: string }> | null };
+export type GetAllTagsQuery = { __typename?: 'Query', getAllTags?: Array<{ __typename?: 'Tag', id: string, label: string, color: string, value: string }> | null };
 
 export type SignInMutationVariables = Exact<{
   input: SiweRegisterInput;
@@ -1320,7 +1169,7 @@ export type ApproveProjectMutationHookResult = ReturnType<typeof useApproveProje
 export type ApproveProjectMutationResult = Apollo.MutationResult<ApproveProjectMutation>;
 export type ApproveProjectMutationOptions = Apollo.BaseMutationOptions<ApproveProjectMutation, ApproveProjectMutationVariables>;
 export const GetAllProjectsDocument = gql`
-    query getAllProjects {
+    query GetAllProjects {
   getAllProjects {
     id
     name
@@ -1437,120 +1286,6 @@ export function useGetProjectByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetProjectByIdQueryHookResult = ReturnType<typeof useGetProjectByIdQuery>;
 export type GetProjectByIdLazyQueryHookResult = ReturnType<typeof useGetProjectByIdLazyQuery>;
 export type GetProjectByIdQueryResult = Apollo.QueryResult<GetProjectByIdQuery, GetProjectByIdQueryVariables>;
-export const CreateSnapshotVoterQuestDocument = gql`
-    mutation CreateSnapshotVoterQuest($input: CreateQuestInput!) {
-  createSnapshotVoterQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-    proposalId
-  }
-}
-    `;
-export type CreateSnapshotVoterQuestMutationFn = Apollo.MutationFunction<CreateSnapshotVoterQuestMutation, CreateSnapshotVoterQuestMutationVariables>;
-
-/**
- * __useCreateSnapshotVoterQuestMutation__
- *
- * To run a mutation, you first call `useCreateSnapshotVoterQuestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateSnapshotVoterQuestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createSnapshotVoterQuestMutation, { data, loading, error }] = useCreateSnapshotVoterQuestMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateSnapshotVoterQuestMutation(baseOptions?: Apollo.MutationHookOptions<CreateSnapshotVoterQuestMutation, CreateSnapshotVoterQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateSnapshotVoterQuestMutation, CreateSnapshotVoterQuestMutationVariables>(CreateSnapshotVoterQuestDocument, options);
-      }
-export type CreateSnapshotVoterQuestMutationHookResult = ReturnType<typeof useCreateSnapshotVoterQuestMutation>;
-export type CreateSnapshotVoterQuestMutationResult = Apollo.MutationResult<CreateSnapshotVoterQuestMutation>;
-export type CreateSnapshotVoterQuestMutationOptions = Apollo.BaseMutationOptions<CreateSnapshotVoterQuestMutation, CreateSnapshotVoterQuestMutationVariables>;
-export const CreateNftOwnerQuestDocument = gql`
-    mutation CreateNFTOwnerQuest($input: CreateQuestInput!) {
-  createNFTOwnerQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-    collectionContractAddress
-  }
-}
-    `;
-export type CreateNftOwnerQuestMutationFn = Apollo.MutationFunction<CreateNftOwnerQuestMutation, CreateNftOwnerQuestMutationVariables>;
-
-/**
- * __useCreateNftOwnerQuestMutation__
- *
- * To run a mutation, you first call `useCreateNftOwnerQuestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateNftOwnerQuestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createNftOwnerQuestMutation, { data, loading, error }] = useCreateNftOwnerQuestMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateNftOwnerQuestMutation(baseOptions?: Apollo.MutationHookOptions<CreateNftOwnerQuestMutation, CreateNftOwnerQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateNftOwnerQuestMutation, CreateNftOwnerQuestMutationVariables>(CreateNftOwnerQuestDocument, options);
-      }
-export type CreateNftOwnerQuestMutationHookResult = ReturnType<typeof useCreateNftOwnerQuestMutation>;
-export type CreateNftOwnerQuestMutationResult = Apollo.MutationResult<CreateNftOwnerQuestMutation>;
-export type CreateNftOwnerQuestMutationOptions = Apollo.BaseMutationOptions<CreateNftOwnerQuestMutation, CreateNftOwnerQuestMutationVariables>;
-export const CreateGithubContributorQuestDocument = gql`
-    mutation CreateGithubContributorQuest($input: CreateQuestInput!) {
-  createGithubContributorQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-    githubOrgId
-  }
-}
-    `;
-export type CreateGithubContributorQuestMutationFn = Apollo.MutationFunction<CreateGithubContributorQuestMutation, CreateGithubContributorQuestMutationVariables>;
-
-/**
- * __useCreateGithubContributorQuestMutation__
- *
- * To run a mutation, you first call `useCreateGithubContributorQuestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateGithubContributorQuestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createGithubContributorQuestMutation, { data, loading, error }] = useCreateGithubContributorQuestMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateGithubContributorQuestMutation(baseOptions?: Apollo.MutationHookOptions<CreateGithubContributorQuestMutation, CreateGithubContributorQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateGithubContributorQuestMutation, CreateGithubContributorQuestMutationVariables>(CreateGithubContributorQuestDocument, options);
-      }
-export type CreateGithubContributorQuestMutationHookResult = ReturnType<typeof useCreateGithubContributorQuestMutation>;
-export type CreateGithubContributorQuestMutationResult = Apollo.MutationResult<CreateGithubContributorQuestMutation>;
-export type CreateGithubContributorQuestMutationOptions = Apollo.BaseMutationOptions<CreateGithubContributorQuestMutation, CreateGithubContributorQuestMutationVariables>;
 export const CreateQuizQuestDocument = gql`
     mutation CreateQuizQuest($input: CreateQuestInput!) {
   createQuizQuest(input: $input) {
@@ -2062,8 +1797,8 @@ export function useClaimQuestRewardsMutation(baseOptions?: Apollo.MutationHookOp
 export type ClaimQuestRewardsMutationHookResult = ReturnType<typeof useClaimQuestRewardsMutation>;
 export type ClaimQuestRewardsMutationResult = Apollo.MutationResult<ClaimQuestRewardsMutation>;
 export type ClaimQuestRewardsMutationOptions = Apollo.BaseMutationOptions<ClaimQuestRewardsMutation, ClaimQuestRewardsMutationVariables>;
-export const Document = gql`
-    {
+export const GetAllTagsDocument = gql`
+    query GetAllTags {
   getAllTags {
     id
     label
@@ -2074,31 +1809,31 @@ export const Document = gql`
     `;
 
 /**
- * __useQuery__
+ * __useGetAllTagsQuery__
  *
- * To run a query within a React component, call `useQuery` and pass it any options that fit your needs.
- * When your component renders, `useQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetAllTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useQuery({
+ * const { data, loading, error } = useGetAllTagsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useQuery(baseOptions?: Apollo.QueryHookOptions<Query, QueryVariables>) {
+export function useGetAllTagsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllTagsQuery, GetAllTagsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Query, QueryVariables>(Document, options);
+        return Apollo.useQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(GetAllTagsDocument, options);
       }
-export function useLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Query, QueryVariables>) {
+export function useGetAllTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllTagsQuery, GetAllTagsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Query, QueryVariables>(Document, options);
+          return Apollo.useLazyQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(GetAllTagsDocument, options);
         }
-export type QueryHookResult = ReturnType<typeof useQuery>;
-export type LazyQueryHookResult = ReturnType<typeof useLazyQuery>;
-export type QueryResult = Apollo.QueryResult<Query, QueryVariables>;
+export type GetAllTagsQueryHookResult = ReturnType<typeof useGetAllTagsQuery>;
+export type GetAllTagsLazyQueryHookResult = ReturnType<typeof useGetAllTagsLazyQuery>;
+export type GetAllTagsQueryResult = Apollo.QueryResult<GetAllTagsQuery, GetAllTagsQueryVariables>;
 export const SignInDocument = gql`
     mutation SignIn($input: SiweRegisterInput!) {
   signIn(input: $input) {
