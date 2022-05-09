@@ -35,13 +35,13 @@ const config: Config = {
   api: {
     apiKey: process.env.API_KEY!,
     environment: process.env.NODE_ENV!,
-    hostname: `${process.env.API_HOST}:${process.env.API_PORT}`,
+    hostname: `${process.env.HOST}:${process.env.PORT}`,
     confirmationTokenExpiration: parseInt(
       process.env.CONFIRMATION_TOKEN_EXPIRATION || "120",
       10
     ),
     tracing: false,
-    port: parseInt(process.env.API_PORT!),
+    port: parseInt(process.env.PORT!),
     logLevel: process.env.LOG_LEVEL!,
     protocol: function () {
       return `http${process.env.NODE_ENV! === "development" ? "" : "s"}`;

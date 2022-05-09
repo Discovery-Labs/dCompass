@@ -10,7 +10,7 @@ import { AppService } from "../../app.service";
 import { ApproveProjectResolver } from "./mutations/ApproveProject.resolver";
 import { EditProjectResolver } from "./mutations/EditProject.resolver";
 import { CeramicProjectService } from "./CeramicProject.service";
-import { ThreadDBService } from "../../services/thread-db/thread-db.service";
+
 import { ProjectService } from "./Project.service";
 import { PrismaService } from "../../services/prisma/Prisma.service";
 
@@ -30,7 +30,6 @@ import { PrismaService } from "../../services/prisma/Prisma.service";
     ApproveProjectResolver,
     AppService,
     CeramicProjectService,
-    ThreadDBService,
     ProjectService,
     PrismaService,
   ],

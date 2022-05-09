@@ -4,7 +4,6 @@ import CeramicClient from "@ceramicnetwork/http-client";
 import { DIDDataStore } from "@glazed/did-datastore";
 import { DataModel } from "@glazed/datamodel";
 import { Core } from "@self.id/core";
-import { Client, ThreadID } from "@textile/hub";
 
 export interface Ceramic {
   ceramic: CeramicClient;
@@ -16,8 +15,6 @@ export interface Context {
     session: any;
     ceramicClient: Ceramic;
     ceramicCore: Core;
-    dbClient: Client;
-    latestThreadId: ThreadID;
   } & Request;
   res: Response;
   connection: ExecutionParams;
@@ -33,9 +30,4 @@ export interface RateLimitOptionsType {
 export interface UseCeramicClient {
   ceramicCore: Core;
   ceramicClient: Ceramic;
-}
-
-export interface UseThreadDBClient {
-  dbClient: Client;
-  latestThreadId: ThreadID;
 }

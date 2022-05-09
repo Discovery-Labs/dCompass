@@ -6,7 +6,7 @@ import { AppModule } from "./app.module";
 import { NestExpressApplication } from "@nestjs/platform-express";
 // import { sessionMiddleware } from './core/resources/Redis/redis';
 import { Context } from "./core/utils/types";
-import { ThreadID } from "@textile/hub";
+
 import { NextFunction } from "express";
 import {
   BadRequestException,
@@ -23,7 +23,7 @@ import {
   ceramicCoreFactory,
   ceramicDataModelFactory,
 } from "./services/ceramic/data-models";
-import { getDBClient } from "./core/resources/ThreadDB/thread-db";
+
 import { sessionMiddleware } from "./core/resources/Redis/redis";
 // import { PrismaService } from "./services/prisma/Prisma.service";
 
@@ -63,15 +63,9 @@ async function bootstrap() {
 
   app.use(
     async (req: Context["req"], _res: Context["res"], next: NextFunction) => {
-      const dbClient = await getDBClient();
-      const appThreads = await dbClient.listThreads();
-      const latestThreadId = ThreadID.fromString(
-        appThreads[appThreads.length - 1].id
-      );
       const ceramicCore = ceramicCoreFactory();
       req.ceramicClient = ceramicClient;
-      req.dbClient = dbClient;
-      req.latestThreadId = latestThreadId;
+
       req.ceramicCore = ceramicCore;
       next();
     }

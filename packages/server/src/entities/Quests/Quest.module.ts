@@ -3,7 +3,7 @@ import { AppService } from "../../app.service";
 
 import { RedisModule } from "../../core/resources/Redis/Redis.module";
 import { PrismaService } from "../../services/prisma/Prisma.service";
-import { ThreadDBService } from "../../services/thread-db/thread-db.service";
+
 import { PathwayService } from "../Pathways/Pathway.service";
 import { ApproveQuestResolver } from "./mutations/ApproveQuest.resolver";
 import { ApproveQuestSolutionResolver } from "./mutations/ApproveQuestSolution.resolver";
@@ -36,7 +36,6 @@ import { QuestService } from "./Quest.service";
     GetQuizQuestByIdResolver,
     SubmitQuestAnswersResolver,
     SubmitQuestSolutionResolver,
-    ThreadDBService,
     AppService,
     ClaimQuestRewardsResolver,
     GetBountyQuestByIdResolver,

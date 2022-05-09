@@ -5,15 +5,12 @@ import { SiweMessage } from "siwe";
 
 import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
 import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
-// import { UseThreadDB } from "../../../core/decorators/UseThreadDB.decorator";
 import removeNulls from "../../../core/utils/helpers";
 import { UseCeramicClient } from "../../../core/utils/types";
-// import { ThreadDBService } from "../../../services/thread-db/thread-db.service";
 import { Squad } from "../../Squads/Squad.entity";
 import { CreateProjectInput } from "../dto/CreateProject.input";
 import { Project } from "../Project.entity";
 import { ProjectService } from "../Project.service";
-// import { Project } from '../Project.entity';
 
 @Resolver(() => [String])
 export class CreateProjectResolver {
@@ -27,8 +24,6 @@ export class CreateProjectResolver {
     @UseSiwe() siwe: SiweMessage,
     @UseCeramic()
     { ceramicClient }: UseCeramicClient,
-    // @UseThreadDB()
-    // { dbClient, latestThreadId }: UseThreadDBClient,
     @Args("input") { id, tokenUris }: CreateProjectInput
   ): Promise<Project | null> {
     // Check that the current user is the owner of the project
