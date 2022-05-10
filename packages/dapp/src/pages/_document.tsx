@@ -29,7 +29,6 @@ class MyDocument extends Document {
 
     ctx.renderPage = () =>
       originalRenderPage({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         // eslint-disable-next-line react/display-name
         enhanceApp: (App: any) => (props) => <App {...props} />,
       });

@@ -64,7 +64,7 @@ const QuestCard = ({
   const { getRewardCurrency } = useTokenList();
   const [status, setStatus] = useState<string>();
 
-  const { chainId, library } = useWeb3React();
+  const { chainId } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION);
 
@@ -332,9 +332,9 @@ const QuestCard = ({
             {withRequisites ? (
               <Popover isLazy>
                 {/* <PopoverTrigger> */}
-                  <Button w="full" variant="outline">
-                    3 Requisites
-                  </Button>
+                <Button w="full" variant="outline">
+                  3 Requisites
+                </Button>
                 {/* </PopoverTrigger> */}
                 <PopoverContent>
                   <PopoverBody>

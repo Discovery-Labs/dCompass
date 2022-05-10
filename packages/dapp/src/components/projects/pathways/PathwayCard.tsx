@@ -28,8 +28,8 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Card from "components/custom/Card";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import { FaCheckCircle } from "react-icons/fa";
+import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useCustomColor from "../../../core/hooks/useCustomColor";
@@ -112,7 +112,7 @@ function PathwayCard({
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
   const [rewardStatus, setRewardStatus] = useState<string>();
   const { account, contracts, self } = useContext(Web3Context);
-  const { chainId, library } = useWeb3React();
+  const { chainId } = useWeb3React();
   const router = useRouter();
 
   useEffect(() => {

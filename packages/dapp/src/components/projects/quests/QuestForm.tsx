@@ -5,6 +5,7 @@ import {
   AlertIcon,
   AlertTitle,
   Button,
+  Checkbox,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -22,13 +23,11 @@ import {
   Text,
   useToast,
   VStack,
-  Checkbox,
-  Textarea,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
-import { Contract, ethers } from "ethers";
 import useCustomColor from "core/hooks/useCustomColor";
+import { Contract, ethers } from "ethers";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
@@ -499,7 +498,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-      
+
         <CodeEditor
           value={code}
           language="markdown"

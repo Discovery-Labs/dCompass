@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { EditIcon, AddIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Button,
@@ -22,7 +22,6 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
@@ -545,7 +544,7 @@ function PathwayPage({
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color="text-weak" textStyle="small" >
+                    <Text color="text-weak" textStyle="small">
                       {t("creation-date")}{" "}
                       {new Date(createdAt).toLocaleString()}
                     </Text>

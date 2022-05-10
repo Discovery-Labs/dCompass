@@ -1,6 +1,6 @@
 import { ApolloError, useMutation } from "@apollo/client";
 import { Button, useToast, VStack } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
+// import { useWeb3React } from "@web3-react/core";
 import { useContext, useState } from "react";
 import { Web3Context } from "../../../../contexts/Web3Context";
 import {
@@ -8,13 +8,12 @@ import {
   GET_QUIZ_QUEST_BY_ID_QUERY,
   SUBMIT_QUEST_ANSWERS_MUTATION,
 } from "../../../../graphql/quests";
-
 import CheckboxButtons from "../../../custom/quiz/CheckboxButtons";
 
 function QuizForm({ questions, questId, pathwayId, successCallback }: any) {
   const toast = useToast();
-  const { self, account } = useContext(Web3Context);
-  const { chainId, library } = useWeb3React();
+  const { self } = useContext(Web3Context);
+  // const { chainId, library } = useWeb3React();
 
   const [questionAnswers, setQuestionAnswer] =
     useState<Array<Record<string, string[]>>>();
@@ -58,10 +57,10 @@ function QuizForm({ questions, questId, pathwayId, successCallback }: any) {
         data.submitQuestAnswers.isSuccess;
       setIsLoading(false);
       if (isValid) {
-        const questStreamId = data.submitQuestAnswers.streamId;
-        const [, tokenAddressOrSymbol] =
-          data.submitQuestAnswers.rewardCurrency.split(":");
-        const isNativeToken = tokenAddressOrSymbol ? false : true;
+        // const questStreamId = data.submitQuestAnswers.streamId;
+        // const [, tokenAddressOrSymbol] =
+        //   data.submitQuestAnswers.rewardCurrency.split(":");
+        // const isNativeToken = tokenAddressOrSymbol ? false : true;
         toast({
           title: "Well done!",
           description: `You did submit the correct answers!`,

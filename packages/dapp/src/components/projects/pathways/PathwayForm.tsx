@@ -18,7 +18,6 @@ import {
   NumberInputStepper,
   Tag,
   Text,
-  Textarea,
   VStack,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
@@ -162,7 +161,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-    
+
         <CodeEditor
           value={code}
           language="markdown"
