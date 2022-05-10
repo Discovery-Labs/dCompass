@@ -6,7 +6,7 @@ const CheckboxCard = (props: any) => {
   const { state, getInputProps, getCheckboxProps, getLabelProps, htmlProps } =
     useCheckbox(props);
 
-  const input = getInputProps();
+  const { style, ...input } = getInputProps();
   const checkbox = getCheckboxProps();
   const label = getLabelProps();
   const { children } = props;
