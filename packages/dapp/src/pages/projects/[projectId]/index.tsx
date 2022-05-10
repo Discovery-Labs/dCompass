@@ -409,10 +409,10 @@ function ProjectPage({
                   <Blockies seed={createdBy} className="blockies" />
                 )}
                 <VStack align="flex-start" ml="2">
-                  <Text color="text-weak" textStyle="small" isTruncated>
+                  <Text color="text-weak" textStyle="small">
                     {t("creation-date")} {new Date(createdAt).toLocaleString()}
                   </Text>
-                  <Text fontSize="sm" isTruncated>
+                  <Text fontSize="sm">
                     {t("by")}{" "}
                     <NextLink href={`/profile/${createdBy}/`} passHref>
                       <Link>{getShortenedAddress(createdBy)}</Link>

@@ -306,10 +306,10 @@ function ReviewProjectPage({
         <VStack w="full" align="flex-start" ml="2">
           <VStack align="flex-start">
             {createdBy && <Blockies seed={createdBy} className="blockies" />}
-            <Text color="text-weak" textStyle="small" isTruncated>
+            <Text color="text-weak" textStyle="small">
               {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
-            <Text fontSize="sm" isTruncated>
+            <Text fontSize="sm">
               {t("by")} {createdBy}
             </Text>
           </VStack>
@@ -408,7 +408,7 @@ function ReviewProjectPage({
                 {squad.members.map((member: string) => (
                   <HStack w="full" key={member}>
                     {member && <Blockies seed={member} className="blockies" />}
-                    <Text ml="2" fontSize="sm" isTruncated>
+                    <Text ml="2" fontSize="sm">
                       {member}
                     </Text>
                   </HStack>

@@ -481,14 +481,14 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color="text-weak" textStyle="small" isTruncated>
+                    <Text color="text-weak" textStyle="small">
                       {t("creation-date")}{" "}
                       {new Date(
                         quizData?.getQuizQuestById.createdAt || Date.now()
                       ).toLocaleString()}
                     </Text>
                     {quizData?.getQuizQuestById.createdBy && (
-                      <Text fontSize="sm" isTruncated>
+                      <Text fontSize="sm">
                         {t("by")}{" "}
                         {getShortenedAddress(
                           quizData?.getQuizQuestById.createdBy.name ||

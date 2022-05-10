@@ -545,11 +545,11 @@ function PathwayPage({
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color="text-weak" textStyle="small" isTruncated>
+                    <Text color="text-weak" textStyle="small" >
                       {t("creation-date")}{" "}
                       {new Date(createdAt).toLocaleString()}
                     </Text>
-                    <Text fontSize="sm" isTruncated>
+                    <Text fontSize="sm">
                       {t("by")} {getShortenedAddress(createdBy)}
                     </Text>
                     {isOwner && (
