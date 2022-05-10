@@ -10,24 +10,21 @@ import {
   FormLabel,
   Heading,
   Input,
-  Spinner,
   InputGroup,
   InputLeftAddon,
+  Spinner,
   Text,
-  Textarea,
 } from "@chakra-ui/react";
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import useCustomColor from "core/hooks/useCustomColor";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
-
 import { REQUIRED_FIELD_LABEL } from "../../core/constants";
 import { Tag } from "../../core/types";
 import { ALL_TAGS_QUERY } from "../../graphql/tags";
 import IconWithState from "../custom/IconWithState";
 import ControlledSelect from "../Inputs/ControlledSelect";
-
 import LogoDropzone from "./LogoDropzone";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {

@@ -10,7 +10,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useTranslation } from "next-i18next";
+// import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { BsGlobe } from "react-icons/bs";
 import { MdCheckCircle, MdRateReview } from "react-icons/md";
@@ -29,7 +29,7 @@ const ProjectCard = ({
   isReviewMode = false,
   showStatus = false,
 }: Props) => {
-  const { t } = useTranslation("common");
+  // const { t } = useTranslation("common");
   const router = useRouter();
   console.log({ pId: project.id });
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;

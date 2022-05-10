@@ -1,4 +1,4 @@
-import { VStack, Box } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import React from "react";
 
 interface Children {

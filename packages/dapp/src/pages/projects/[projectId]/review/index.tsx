@@ -41,7 +41,6 @@ import CenteredFrame from "../../../../components/layout/CenteredFrame";
 import Container from "../../../../components/layout/Container";
 import { Web3Context } from "../../../../contexts/Web3Provider";
 import { splitCIDS } from "../../../../core/helpers";
-import useCustomColor from "../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../core/hooks/useMarkdownTheme";
 // import useTokenList from "../../../../core/hooks/useTokenList";
 import { Tag as TagType } from "../../../../core/types";
@@ -106,7 +105,7 @@ function ReviewProjectPage({
 }: any) {
   const { t } = useTranslation("common");
   const { isReviewer, contracts } = useContext(Web3Context);
-  const { chainId, account, library } = useWeb3React();
+  const { chainId, account } = useWeb3React();
   const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
     refetchQueries: "all",
   });

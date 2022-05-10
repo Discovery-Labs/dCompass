@@ -4,32 +4,26 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { Web3Provider as EthersProvider } from "@ethersproject/providers";
-import { Web3ReactProvider } from "@web3-react/core";
-
 import "@fontsource/poppins";
 import "@fontsource/space-mono";
+import { Web3ReactProvider } from "@web3-react/core";
+import Layout from "components/layout";
 import { getDefaultProvider } from "ethers";
 import { appWithTranslation } from "next-i18next";
 import { DefaultSeo } from "next-seo";
 import { AppProps } from "next/app";
+import dynamic from "next/dynamic";
 import Head from "next/head";
-
 import theme from "styles/customTheme";
-
 import "styles/globals.css";
-import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
-
+import "tippy.js/dist/tippy.css";
 import { NftProvider } from "use-nft";
-
 import { createApolloClient } from "../../lib/apolloClient";
 import defaultSEOConfig from "../../next-seo.config";
 import Web3ReactManager from "../contexts/Web3Manager";
 import { Web3Provider } from "../contexts/Web3Provider";
 import createEmotionCache from "../styles/createEmotionCache";
-import Layout from "components/layout";
-
-import dynamic from "next/dynamic";
 
 interface DcompassAppProps extends AppProps {
   emotionCache?: EmotionCache;
