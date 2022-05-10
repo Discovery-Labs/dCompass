@@ -22,7 +22,7 @@ import "tippy.js/animations/shift-away.css";
 
 import { NftProvider } from "use-nft";
 
-import { useApollo } from "../../lib/apolloClient";
+import { createApolloClient } from "../../lib/apolloClient";
 import defaultSEOConfig from "../../next-seo.config";
 import Web3ReactManager from "../contexts/Web3Manager";
 import { Web3Provider } from "../contexts/Web3Provider";
@@ -42,6 +42,7 @@ const getLibrary = (provider: any): EthersProvider => {
   return library;
 };
 
+const client = createApolloClient();
 const NETWORK = "rinkeby";
 const Web3ReactProviderDefault = dynamic(
   () => import("../contexts/Web3ProviderNetwork"),
@@ -53,7 +54,7 @@ const MyApp = ({
   pageProps,
   emotionCache = clientSideEmotionCache,
 }: DcompassAppProps) => {
-  const apolloClient = useApollo(pageProps);
+  // const apolloClient = useApollo(pageProps);
   return (
     <NftProvider
       fetcher={[
@@ -63,7 +64,7 @@ const MyApp = ({
         },
       ]}
     >
-      <ApolloProvider client={apolloClient}>
+      <ApolloProvider client={client}>
         <Web3ReactProvider getLibrary={getLibrary}>
           <Web3ReactProviderDefault getLibrary={getLibrary}>
             <Web3Provider>

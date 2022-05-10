@@ -11,11 +11,10 @@ import {
   AlertIcon,
   AlertTitle,
   Spinner,
-  Textarea,
 } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
-// import dynamic from "next/dynamic";
-// import useCustomColor from "core/hooks/useCustomColor";
+import dynamic from "next/dynamic";
+import useCustomColor from "core/hooks/useCustomColor";
 import { useState, useEffect } from "react";
 
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
@@ -26,12 +25,12 @@ import ControlledSelect from "../Inputs/ControlledSelect";
 
 import LogoDropzone from "./LogoDropzone";
 
-// const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
-//   ssr: false,
-// });
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+});
 const EditProjectForm: React.FunctionComponent = () => {
   const [code, setCode] = useState<string>();
-  // const { codeEditorScheme } = useCustomColor();
+  const { codeEditorScheme } = useCustomColor();
   const {
     register,
     setValue,
@@ -84,16 +83,8 @@ const EditProjectForm: React.FunctionComponent = () => {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-        <Textarea
-          placeholder="Project description"
-          {...register("description")}
-          onChange={(e) => {
-            const { name } = e.target;
-            setCode(e.target.value);
-            setValue(name, e.target.value);
-          }}
-        />
-        {/* <CodeEditor
+
+        <CodeEditor
           value={code}
           language="markdown"
           placeholder="Project description"
@@ -113,7 +104,7 @@ const EditProjectForm: React.FunctionComponent = () => {
           }}
           className={codeEditorScheme}
           padding={15}
-        /> */}
+        />
         <FormErrorMessage>
           {errors.description && errors.description.message}
         </FormErrorMessage>

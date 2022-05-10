@@ -20,12 +20,9 @@ export const CERAMIC_LOCAL_NODE_URL = "http://localhost:7007";
 
 // READ ONLY CLIENT
 export const ceramicCoreFactory = () => {
-  // connect to a known URL
-  // const core = new Core({ ceramic: "http://localhost:7007" });
-  // or use one of the preconfigured option
   const core = new Core({
     ceramic: CERAMIC_TESTNET,
-    aliases: publishedModel,
+    model: publishedModel,
   });
   return core;
 };

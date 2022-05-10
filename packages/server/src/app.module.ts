@@ -13,7 +13,7 @@ import { ApolloComplexityPlugin } from "./core/utils/security/ApolloComplexity.p
 import { pubSub } from "./core/resources/Redis/redis";
 import { HealthController } from "./core/controllers/health.controller";
 import config from "./core/configs/config";
-import { CeramicController } from "./core/controllers/validate-quest-completion.controller";
+
 import { GraphqlConfig } from "./core/configs/config.interface";
 import { ProjectModule } from "./entities/Projects/Project.module";
 import { PathwayModule } from "./entities/Pathways/Pathway.module";
@@ -60,7 +60,7 @@ import { UserModule } from "./entities/Users/User.module";
     TagModule,
     UserModule,
   ],
-  controllers: [AppController, HealthController, CeramicController],
+  controllers: [AppController, HealthController],
   providers: [AppService, ConfigService, GetAppDIDResolver, PrismaService],
 })
 export class AppModule {}
