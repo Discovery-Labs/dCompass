@@ -203,8 +203,8 @@ export default function ThreeTierPricing() {
                 everything from Gold tier
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accent.500" />1 custom
-                quest development
+                <ListIcon as={FaCheckCircle} color="accent.500" />1 custom quest
+                development
               </ListItem>
               <ListItem>
                 <ListIcon as={FaCheckCircle} color="accent.500" />1 custom

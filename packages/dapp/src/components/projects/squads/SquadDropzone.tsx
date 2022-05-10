@@ -42,7 +42,10 @@ const SquadDropzone = ({
   );
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
+    accept: {
+      "image/png": [".png"],
+      "image/jpeg": [".jpeg", "jpg"],
+    },
     onDrop,
   });
 
