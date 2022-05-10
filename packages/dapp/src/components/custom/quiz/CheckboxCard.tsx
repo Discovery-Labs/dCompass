@@ -5,11 +5,11 @@ const CheckboxCard = (props: any) => {
   const { getAccentColor } = useCustomColor();
   const { state, getInputProps, getCheckboxProps, getLabelProps, htmlProps } =
     useCheckbox(props);
-
-  const { style, ...input } = getInputProps();
+    
+    const { children } = props;
+    const { style, children: inputChild, ...input } = getInputProps();
   const checkbox = getCheckboxProps();
   const label = getLabelProps();
-  const { children } = props;
   return (
     <Box as="label" margin="5" {...htmlProps}>
       <Input {...input} />

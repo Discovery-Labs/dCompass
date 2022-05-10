@@ -30,7 +30,7 @@ function PriceWrapper(props: any) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
   const { children } = props;
 
-  const { style, ...input } = getInputProps();
+  const { style, children: inputChild, ...input } = getInputProps();
   const checkbox = getCheckboxProps();
 
   return (
