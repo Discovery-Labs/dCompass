@@ -9,7 +9,7 @@ import {
 import config from "../../../core/configs/config";
 import { PUB_SUB } from "../../../core/constants/redis";
 import { User } from "../User.entity";
-import { ErrorTypes, SiweMessage } from "siwe";
+import { SiweErrorType, SiweMessage } from "siwe";
 import { SiweRegisterInput } from "../dto/SignInInput";
 import { providers } from "ethers";
 import { ApolloError } from "apollo-server-errors";
@@ -60,15 +60,15 @@ export class SignInResolver {
       );
       await infuraProvider.ready;
 
-      const fields = await siweMsg.validate(undefined, infuraProvider);
-      console.log({ ctxNonce: ctx.req.session.nonce });
-      if (fields.nonce !== ctx.req.session.nonce) {
+      siweMsg.validate();
+
+      if (siweMsg.nonce !== ctx.req.session.nonce) {
         throw new BadRequestException({
           message: "Invalid nonce.",
         });
       }
 
-      const chainSpecificAddress = `${fields.address}@eip155:${fields.chainId}`;
+      const chainSpecificAddress = `${siweMsg.address}@eip155:${siweMsg.chainId}`;
       const userDID = await ceramicCore.getAccountDID(chainSpecificAddress);
       // Check if the user already exists
       const [foundUser] = await this.userService.users({
@@ -95,11 +95,11 @@ export class SignInResolver {
         });
       }
 
-      ctx.req.session.siwe = fields;
+      ctx.req.session.siwe = siweMsg;
       ctx.req.session.ens = ens;
       ctx.req.session.nonce = null;
-      if (fields.expirationTime) {
-        ctx.req.session.cookie.expires = new Date(fields.expirationTime);
+      if (siweMsg.expirationTime) {
+        ctx.req.session.cookie.expires = new Date(siweMsg.expirationTime);
       }
       await ctx.req.session.save();
 
@@ -116,13 +116,13 @@ export class SignInResolver {
       ctx.req.session.nonce = null;
       ctx.req.session.ens = null;
       switch (error) {
-        case ErrorTypes.EXPIRED_MESSAGE: {
+        case SiweErrorType.EXPIRED_MESSAGE: {
           ctx.req.session.save(() => {
             throw new ApolloError(error.message, "440");
           });
           break;
         }
-        case ErrorTypes.INVALID_SIGNATURE: {
+        case SiweErrorType.INVALID_SIGNATURE: {
           ctx.req.session.save(() => {
             throw new ApolloError(error.message, "422");
           });
