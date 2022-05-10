@@ -70,7 +70,7 @@ const ProjectCard = ({
           ))}
         </Stack>
 
-        <Heading w="full" as="h2" size="lg" color="text" isTruncated>
+        <Heading w="full" as="h2" size="lg" color="text">
           {project.name}
         </Heading>
 
