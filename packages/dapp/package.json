@@ -95,6 +95,16 @@
     "web3.storage": "^3.5.4",
     "web3modal": "^1.9.4"
   },
+  "overrides": {
+    "chakra-ui-markdown-renderer": {
+      "@chakra-ui/react": "2.0.0-next.4"
+    }
+  },
+  "resolutions": {
+    "chakra-ui-markdown-renderer": {
+      "@chakra-ui/react": "2.0.0-next.4"
+    }
+  },
   "devDependencies": {
     "@commitlint/config-conventional": "^13.2.0",
     "@types/mime-types": "^2.1.1",
