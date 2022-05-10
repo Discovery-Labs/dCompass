@@ -14,8 +14,7 @@ import {
   Center,
   FormControl,
   FormErrorMessage,
-  FormLabel,
-  Input,
+  FormLabel
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -35,7 +34,7 @@ function PriceWrapper(props: any) {
 
   return (
     <Box as="label">
-      <Input {...input} />
+      <input {...input} />
       <Box
         {...checkbox}
         cursor="pointer"
