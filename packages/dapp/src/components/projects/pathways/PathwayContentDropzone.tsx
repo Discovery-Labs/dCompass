@@ -40,10 +40,7 @@ const PathwayImageDropzone = ({
   );
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "image/png": [".png"],
-      "image/jpeg": [".jpeg", "jpg"],
-    },
+    accept: "image/*",
     onDrop,
   });
 

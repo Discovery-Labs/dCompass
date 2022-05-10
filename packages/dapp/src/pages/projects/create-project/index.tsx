@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from "@apollo/client";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Link, Stack, useToast } from "@chakra-ui/react";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
@@ -20,7 +20,7 @@ import CenteredFrame from "../../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { CREATE_PROJECT_MUTATION } from '../../../graphql/projects';
+import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 // import { schemaAliases } from "../../../core/ceramic";
 
 // const { PROJECTS_ALIAS } = schemaAliases;
@@ -114,7 +114,7 @@ function CreateProjectStepper() {
       }
     });
 
-    console.log({formData})
+    console.log({ formData });
 
     const cidsRes = await fetch("/api/image-storage", {
       method: "POST",
@@ -122,7 +122,7 @@ function CreateProjectStepper() {
     });
     const { cids } = await cidsRes.json();
 
-    console.log({cids})
+    console.log({ cids });
 
     const serializedProject = {
       ...values,
