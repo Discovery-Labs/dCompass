@@ -50,8 +50,9 @@ const config: Config = {
       credentials: true,
       origin: function (origin, callback) {
         const validPatternRegexes = [
-          /^(.*).coordination.party(\/(.*)|)$/,
-          /^(www.|)coordination.party(\/(.*)|)$/,
+          /^(.*).dcompass.xyz(\/(.*)|)$/,
+          /^(www.*).dcompass.xyz(\/(.*)|)$/,
+          /^(www.|)dcompass.xyz(\/(.*)|)$/,
           /^http:\/\/localhost:[0-9]{4}$/,
         ];
         if (validPatternRegexes.some((rx) => rx.test(origin)) || !origin) {

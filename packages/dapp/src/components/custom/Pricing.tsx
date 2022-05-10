@@ -15,7 +15,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Input,
+  Input
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -31,7 +31,7 @@ function PriceWrapper(props: any) {
   const { children } = props;
 
   const { style, children: inputChild, ...input } = getInputProps();
-  const checkbox = getCheckboxProps();
+  const { style: checkboxDefaultStyle, ...checkbox} = getCheckboxProps();
 
   return (
     <Box as="label">
@@ -75,7 +75,7 @@ export default function ThreeTierPricing() {
     onChange: selectPlan,
   });
 
-  const group = getRootProps();
+  const { style: groupStyle, ...group} = getRootProps();
   const radioSilver = getRadioProps({ value: "SILVER" });
   const radioGold = getRadioProps({ value: "GOLD" });
   const radioDiamond = getRadioProps({ value: "DIAMOND" });
