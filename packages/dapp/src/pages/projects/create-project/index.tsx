@@ -1,4 +1,4 @@
-// import { useMutation } from "@apollo/client";
+import { useMutation } from '@apollo/client';
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Link, Stack, useToast } from "@chakra-ui/react";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
@@ -20,8 +20,8 @@ import CenteredFrame from "../../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
 import { Web3Context } from "../../../contexts/Web3Provider";
+import { CREATE_PROJECT_MUTATION } from '../../../graphql/projects';
 // import { schemaAliases } from "../../../core/ceramic";
-// import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 
 // const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
@@ -48,9 +48,9 @@ function CreateProjectStepper() {
   const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
   const [sponsorPassSFT, setSponsorPassSFT] = useState<SponsorPassSFT>();
 
-  // const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
-  //   refetchQueries: "all",
-  // });
+  const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
+    refetchQueries: "all",
+  });
   const { nextStep, prevStep, activeStep } = useSteps({
     initialStep: 0,
   });
@@ -114,11 +114,15 @@ function CreateProjectStepper() {
       }
     });
 
+    console.log({formData})
+
     const cidsRes = await fetch("/api/image-storage", {
       method: "POST",
       body: formData,
     });
     const { cids } = await cidsRes.json();
+
+    console.log({cids})
 
     const serializedProject = {
       ...values,
@@ -155,20 +159,12 @@ function CreateProjectStepper() {
       })
     );
 
-    // const nftCidRes = await fetch("/api/squad-nft-storage", {
-    //   method: "POST",
-    //   body: formData,
-    // });
+    const nftCidRes = await fetch("/api/squad-nft-storage", {
+      method: "POST",
+      body: formData,
+    });
 
-    // const { metadataCids } = await nftCidRes.json();
-
-    // const signature = await library.provider.send("personal_sign", [
-    //   JSON.stringify({
-    //     id: projectId,
-    //     tokenUris: metadataCids,
-    //   }),
-    //   account,
-    // ]);
+    const { metadataCids } = await nftCidRes.json();
 
     const stakeAmountsIndex = {
       SILVER: 1,
@@ -189,15 +185,14 @@ function CreateProjectStepper() {
       }
     );
 
-    // const allProjects = await createProjectMutation({
-    //   variables: {
-    //     input: {
-    //       id: projectId,
-    //       tokenUris: metadataCids,
-    //       creatorSignature: signature.result,
-    //     },
-    //   },
-    // });
+    const allProjects = await createProjectMutation({
+      variables: {
+        input: {
+          id: projectId,
+          tokenUris: metadataCids,
+        },
+      },
+    });
     toast({
       title: "Project submitted!",
       description: `Your project will be reviewed soon!`,
