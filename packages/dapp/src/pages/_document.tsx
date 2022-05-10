@@ -14,9 +14,7 @@ import Document, {
 } from "next/document";
 import * as React from "react";
 
-import createEmotionCache from "../styles/createEmotionCache";
-
-// import createEmotionCache from "styles/createEmotionCache";
+import createEmotionCache from "styles/createEmotionCache";
 
 const APP_NAME = "quadratic-diplomacy";
 const APP_DESCRIPTION =
