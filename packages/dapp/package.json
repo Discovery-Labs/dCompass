@@ -98,10 +98,16 @@
   "overrides": {
     "chakra-ui-markdown-renderer": {
       "@chakra-ui/react": "2.0.0-next.4"
+    },
+    "chakra-ui-steps": {
+      "@chakra-ui/react": "2.0.0-next.4"
     }
   },
   "resolutions": {
     "chakra-ui-markdown-renderer": {
+      "@chakra-ui/react": "2.0.0-next.4"
+    },
+    "chakra-ui-steps": {
       "@chakra-ui/react": "2.0.0-next.4"
     }
   },
