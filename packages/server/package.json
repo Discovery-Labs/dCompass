@@ -5,7 +5,6 @@
   "author": "Super Shadowy Coders",
   "private": true,
   "license": "GPL-3.0-or-later",
-  "type": "commonjs",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
