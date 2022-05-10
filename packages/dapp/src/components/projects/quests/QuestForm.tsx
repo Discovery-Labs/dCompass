@@ -28,8 +28,8 @@ import {
 import { useWeb3React } from "@web3-react/core";
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import { Contract, ethers } from "ethers";
-// import useCustomColor from "core/hooks/useCustomColor";
-// import dynamic from "next/dynamic";
+import useCustomColor from "core/hooks/useCustomColor";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -93,9 +93,9 @@ const questTypeOptions = [
   },
 ];
 
-// const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
-//   ssr: false,
-// });
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+});
 
 const CreateQuestForm: React.FunctionComponent = () => {
   const router = useRouter();
@@ -103,7 +103,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const [code, setCode] = useState<string>();
   const [isWithRewards, setIsWithRewards] = useState<boolean>();
   const [submitStatus, setSubmitStatus] = useState<string>("Creating quest");
-  // const { codeEditorScheme } = useCustomColor();
+  const { codeEditorScheme } = useCustomColor();
   const { tokens } = useTokenList();
   const { library, chainId } = useWeb3React();
   const { self, account, contracts } = useContext(Web3Context);
@@ -499,18 +499,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
-        <Textarea
-          placeholder="Quest description"
-          {...register("description", {
-            required: REQUIRED_FIELD_LABEL,
-          })}
-          onChange={(e) => {
-            const { name } = e.target;
-            setCode(e.target.value);
-            setValue(name, e.target.value);
-          }}
-        />
-        {/* <CodeEditor
+      
+        <CodeEditor
           value={code}
           language="markdown"
           placeholder="Quest description (markdown)"
@@ -527,7 +517,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           }}
           className={codeEditorScheme}
           padding={15}
-        /> */}
+        />
         <FormErrorMessage>
           {errors.description && errors.description.message}
         </FormErrorMessage>

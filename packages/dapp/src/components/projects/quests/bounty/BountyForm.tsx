@@ -22,7 +22,7 @@ import { REQUIRED_FIELD_LABEL } from "core/constants";
 import { blobToDataURL } from "core/helpers";
 import useCustomColor from "core/hooks/useCustomColor";
 import { GET_APP_DID } from "graphql/app";
-// import dynamic from "next/dynamic";
+import dynamic from "next/dynamic";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Web3Context } from "../../../../contexts/Web3Context";
@@ -32,9 +32,9 @@ import {
   SUBMIT_QUEST_SOLUTION_MUTATION,
 } from "../../../../graphql/quests";
 
-// const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
-//   ssr: false,
-// });
+const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
+  ssr: false,
+});
 
 function BountyForm({ questId, pathwayId, successCallback }: any) {
   const toast = useToast();
@@ -47,7 +47,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
   const { self } = useContext(Web3Context);
 
   const [code, setCode] = useState<string>();
-  // const { codeEditorScheme } = useCustomColor();
+  const { codeEditorScheme } = useCustomColor();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -191,7 +191,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
             setValue(name, e.target.value);
           }}
         />
-        {/* <CodeEditor
+        <CodeEditor
           value={code}
           language="markdown"
           placeholder="Quest solution (markdown)"
@@ -208,7 +208,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
           }}
           className={codeEditorScheme}
           padding={15}
-        /> */}
+        />
         <FormErrorMessage>
           {errors.solution && errors.solution.message}
         </FormErrorMessage>

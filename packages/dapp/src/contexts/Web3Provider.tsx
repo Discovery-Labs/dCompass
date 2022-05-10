@@ -147,20 +147,6 @@ const Web3Provider = ({ children }: { children: any }) => {
     });
   };
 
-  // const setPrivateIdentity = (identity: null | any) => {
-  //   dispatch({
-  //     type: "SET_PRIVATE_IDENTITY",
-  //     payload: identity,
-  //   });
-  // };
-
-  // const setThreadDBAuthorizedClient = (client: null | Client) => {
-  //   dispatch({
-  //     type: "SET_THREAD_DB_AUTHORIZED_CLIENT",
-  //     payload: client,
-  //   });
-  // };
-
   const logout = async () => {
     await signOut();
     setAccount(null);
@@ -251,7 +237,7 @@ const Web3Provider = ({ children }: { children: any }) => {
           ),
           ceramic: CERAMIC_TESTNET,
           connectNetwork: CERAMIC_TESTNET,
-          model: publishedModel,
+          aliases: publishedModel,
         });
         setSelf(mySelf);
         const identityLinkService = new IdentityLink(
@@ -399,7 +385,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       ),
       ceramic: CERAMIC_TESTNET,
       connectNetwork: CERAMIC_TESTNET,
-      model: publishedModel,
+      aliases: publishedModel,
     });
     setSelf(mySelf);
 

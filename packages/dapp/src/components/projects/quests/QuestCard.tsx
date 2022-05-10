@@ -17,7 +17,7 @@ import {
   Popover,
   PopoverBody,
   PopoverContent,
-  PopoverTrigger,
+  // PopoverTrigger,
   Spacer,
   Tag,
   TagLabel,
@@ -331,11 +331,11 @@ const QuestCard = ({
 
             {withRequisites ? (
               <Popover isLazy>
-                <PopoverTrigger>
+                {/* <PopoverTrigger> */}
                   <Button w="full" variant="outline">
                     3 Requisites
                   </Button>
-                </PopoverTrigger>
+                {/* </PopoverTrigger> */}
                 <PopoverContent>
                   <PopoverBody>
                     <UnorderedList>

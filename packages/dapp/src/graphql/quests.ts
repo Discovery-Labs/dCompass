@@ -1,42 +1,42 @@
 import { gql } from "@apollo/client";
 
-export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
-  mutation CreateSnapshotVoterQuest($input: CreateQuestInput!) {
-    createSnapshotVoterQuest(input: $input) {
-      id
-      name
-      description
-      slogan
-      pathwayId
-      proposalId
-    }
-  }
-`;
+// export const CREATE_SNAPSHOT_VOTER_QUEST_MUTATION = gql`
+//   mutation CreateSnapshotVoterQuest($input: CreateQuestInput!) {
+//     createSnapshotVoterQuest(input: $input) {
+//       id
+//       name
+//       description
+//       slogan
+//       pathwayId
+//       proposalId
+//     }
+//   }
+// `;
 
-export const CREATE_NFT_OWNER_QUEST_MUTATION = gql`
-  mutation CreateNFTOwnerQuest($input: CreateQuestInput!) {
-    createNFTOwnerQuest(input: $input) {
-      id
-      name
-      description
-      slogan
-      pathwayId
-      collectionContractAddress
-    }
-  }
-`;
-export const CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION = gql`
-  mutation CreateGithubContributorQuest($input: CreateQuestInput!) {
-    createGithubContributorQuest(input: $input) {
-      id
-      name
-      description
-      slogan
-      pathwayId
-      githubOrgId
-    }
-  }
-`;
+// export const CREATE_NFT_OWNER_QUEST_MUTATION = gql`
+//   mutation CreateNFTOwnerQuest($input: CreateQuestInput!) {
+//     createNFTOwnerQuest(input: $input) {
+//       id
+//       name
+//       description
+//       slogan
+//       pathwayId
+//       collectionContractAddress
+//     }
+//   }
+// `;
+// export const CREATE_GITHUB_CONTRIBUTOR_QUEST_MUTATION = gql`
+//   mutation CreateGithubContributorQuest($input: CreateQuestInput!) {
+//     createGithubContributorQuest(input: $input) {
+//       id
+//       name
+//       description
+//       slogan
+//       pathwayId
+//       githubOrgId
+//     }
+//   }
+// `;
 
 export const CREATE_QUIZ_QUEST_MUTATION = gql`
   mutation CreateQuizQuest($input: CreateQuestInput!) {
