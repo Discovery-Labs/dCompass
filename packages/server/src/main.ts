@@ -34,10 +34,9 @@ const {
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bodyParser: true,
-    cors: false,
+    cors: corsOptions,
   });
 
-  app.enableCors(corsOptions);
   app.disable("x-powered-by");
 
   // if we add cloudflare on a proxy
