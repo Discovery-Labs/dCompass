@@ -35,7 +35,7 @@ function PriceWrapper(props: any) {
 
   return (
     <Box as="label">
-      <input {...input} />
+      <Input {...input} />
       <Box
         {...checkbox}
         cursor="pointer"

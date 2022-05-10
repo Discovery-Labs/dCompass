@@ -1,4 +1,4 @@
-import { useCheckbox, Box, Text } from "@chakra-ui/react";
+import { useCheckbox, Box, Text, Input } from "@chakra-ui/react";
 import useCustomColor from "core/hooks/useCustomColor";
 
 const CheckboxCard = (props: any) => {
@@ -12,7 +12,7 @@ const CheckboxCard = (props: any) => {
   const { children } = props;
   return (
     <Box as="label" margin="5" {...htmlProps}>
-      <input {...input} />
+      <Input {...input} />
       {state.isChecked ? (
         <Box
           {...checkbox}
