@@ -13,6 +13,7 @@ import {
   InputGroup,
   InputLeftAddon,
   Spinner,
+  Stack,
   Text,
 } from "@chakra-ui/react";
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
@@ -64,9 +65,19 @@ const CreateProjectForm = () => {
   return (
     <>
       <Heading>Create project</Heading>
-      <LogoDropzone
+      {/* <LogoDropzone
         {...{ register, setValue, getValues, errors, isRequired: true }}
-      />
+      /> */}
+
+      <FormControl isInvalid={errors.logo}>
+        <FormLabel htmlFor="logo">Logo</FormLabel>
+
+        <Input type="file" placeholder="Logo" {...register("logo")} />
+
+        <FormErrorMessage>
+          {errors.logo && errors.logo.message}
+        </FormErrorMessage>
+      </FormControl>
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Project name</FormLabel>

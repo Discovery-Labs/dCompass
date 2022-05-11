@@ -10,7 +10,9 @@ type Form = {
 };
 
 function parseForm(req: NextApiRequest): Promise<Form> {
-  const form = new multiparty.Form();
+  const form = new multiparty.Form({
+    autoFiles: true,
+  });
   return new Promise((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
@@ -35,6 +37,7 @@ const web3Storage = new Web3Storage({ token: getWeb3Token() });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const form = await parseForm(req);
+  console.log({ files: form.files, fields: form.fields });
   const cids = await Promise.all(
     Object.values(form.files)
       .flatMap((file) => file)

@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from "@apollo/client";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Link, Stack, useToast } from "@chakra-ui/react";
 import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
@@ -20,7 +20,7 @@ import CenteredFrame from "../../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { CREATE_PROJECT_MUTATION } from '../../../graphql/projects';
+import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 // import { schemaAliases } from "../../../core/ceramic";
 
 // const { PROJECTS_ALIAS } = schemaAliases;
@@ -106,15 +106,15 @@ function CreateProjectStepper() {
 
     const formData = new FormData();
     if (values.logo) {
-      formData.append("logo", values.logo[0]);
+      const logo = values.logo[0] as any;
+      formData.append("logo", logo, logo.name);
     }
     values.squads.forEach((squad) => {
       if (squad.image) {
-        formData.append(squad.name, squad.image[0]);
+        const squadImage = squad.image[0] as any;
+        formData.append(squad.name, squad.image[0], squadImage.name);
       }
     });
-
-    console.log({formData})
 
     const cidsRes = await fetch("/api/image-storage", {
       method: "POST",
@@ -122,7 +122,7 @@ function CreateProjectStepper() {
     });
     const { cids } = await cidsRes.json();
 
-    console.log({cids})
+    console.log({ cids });
 
     const serializedProject = {
       ...values,
