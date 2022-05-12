@@ -121,6 +121,16 @@ export class ProjectService {
       where,
     });
   }
+  async updateProjectAndSquads(params: {
+    where: Prisma.ProjectWhereUniqueInput;
+    data: Prisma.ProjectUpdateInput;
+  }): Promise<Project> {
+    const { data, where } = params;
+    return this.prisma.project.update({
+      data,
+      where,
+    });
+  }
 
   async deleteProject(where: Prisma.ProjectWhereUniqueInput): Promise<Project> {
     return this.prisma.project.delete({

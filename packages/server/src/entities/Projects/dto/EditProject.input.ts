@@ -20,6 +20,9 @@ export class EditProjectInput {
   name?: string;
 
   @Field()
+  slogan?: string;
+
+  @Field()
   description?: string;
 
   @Field(() => [ProjectSquadsInput])
@@ -42,4 +45,10 @@ export class EditProjectInput {
 
   @Field()
   github?: string;
+
+  @Field()
+  gitbook?: string;
+
+  @Field(() => [String])
+  tags?: string[];
 }

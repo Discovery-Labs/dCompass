@@ -29,6 +29,7 @@ export const EDIT_PROJECT_MUTATION = gql`
       isFeatured
       logo
       squads {
+        id
         name
         image
         members
@@ -36,6 +37,7 @@ export const EDIT_PROJECT_MUTATION = gql`
       tags {
         id
         label
+        value
         color
       }
     }
@@ -71,6 +73,7 @@ export const ALL_PROJECTS_QUERY = gql`
       isFeatured
       logo
       squads {
+        id
         name
         image
         members
@@ -78,6 +81,7 @@ export const ALL_PROJECTS_QUERY = gql`
       tags {
         id
         label
+        value
         color
       }
     }
@@ -104,6 +108,7 @@ export const PROJECT_BY_ID_QUERY = gql`
       gitbook
       logo
       squads {
+        id
         name
         image
         members
@@ -111,6 +116,7 @@ export const PROJECT_BY_ID_QUERY = gql`
       tags {
         id
         label
+        value
         color
       }
     }

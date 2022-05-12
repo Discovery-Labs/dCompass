@@ -18,6 +18,7 @@ import {
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
 import CreateProjectWallet from "components/custom/CreateProjectWallet";
+import { Tag } from "../../../../core/types";
 
 type Props = {
   projectId: string | null;
@@ -40,7 +41,7 @@ export const getServerSideProps: GetServerSideProps<
     const { data } = await client.query({
       query: PROJECT_BY_ID_QUERY,
       variables: {
-        projectId: `ceramic://${id}`,
+        projectId: id,
       },
     });
     return {
@@ -110,11 +111,15 @@ function EditProjectStepper(project: Project) {
       }
     });
 
-    const currentProjectDoc = await self.client.ceramic.loadStream(id);
-
-    let serializedProject = {
-      ...values,
-    };
+    let {
+      createdAt,
+      createdBy,
+      _nextI18Next,
+      squads,
+      isFeatured,
+      streamId,
+      ...serializedProject
+    } = values;
 
     let cids = {} as Record<string, string>;
 
@@ -129,6 +134,7 @@ function EditProjectStepper(project: Project) {
     serializedProject = {
       ...serializedProject,
       logo: cids.logo ?? serializedProject.logo,
+      tags: values.tags.map((tag: any) => tag.value),
       squads: values.squads.map((squad: any) => {
         const members = squad.members.map(
           (member: Record<string, any>) => member.value ?? member
@@ -141,7 +147,6 @@ function EditProjectStepper(project: Project) {
       }),
     };
 
-    await currentProjectDoc.update(serializedProject);
     const allProjects = await editProjectMutation({
       variables: {
         input: {
@@ -159,10 +164,8 @@ function EditProjectStepper(project: Project) {
         <CenteredFrame>
           <Card layerStyle="solid-card" h="full" w="full">
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
-              {id && <CreateProjectWallet id={id} />}
-
               <EditProjectForm />
-              <SquadsForm />
+              {/* <SquadsForm /> */}
               <Button isLoading={methods.formState.isSubmitting} type="submit">
                 {t("submit")}
               </Button>

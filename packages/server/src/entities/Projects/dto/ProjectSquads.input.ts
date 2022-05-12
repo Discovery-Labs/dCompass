@@ -3,12 +3,11 @@ import { IsString, IsDefined, IsNotEmpty } from "class-validator";
 
 @InputType()
 export class ProjectSquadsInput {
-  // TODO: create a squad schema
-  // @Field()
-  // @IsString({ message: 'wrong.type' })
-  // @IsDefined({ message: 'not.defined' })
-  // @IsNotEmpty({ message: 'not.empty' })
-  // id: string;
+  @Field()
+  @IsString({ message: "wrong.type" })
+  @IsDefined({ message: "not.defined" })
+  @IsNotEmpty({ message: "not.empty" })
+  id: string;
 
   @Field()
   @IsString({ message: "wrong.type" })

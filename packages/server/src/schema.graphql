@@ -83,11 +83,14 @@ input EditProjectInput {
   color: String
   description: String
   discord: String
+  gitbook: String
   github: String
   id: String!
   logo: String
   name: String
+  slogan: String
   squads: [ProjectSquadsInput!]
+  tags: [String!]
   tokenUris: [String!]
   twitter: String
   website: String
@@ -233,6 +236,7 @@ type Project {
 }
 
 input ProjectSquadsInput {
+  id: String!
   image: String!
   members: [String!]!
   name: String!
@@ -388,6 +392,7 @@ type SolutionSubmission {
 type Squad {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
+  id: String!
   image: String
   members: [String!]!
   name: String!

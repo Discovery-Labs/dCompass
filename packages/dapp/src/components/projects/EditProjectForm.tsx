@@ -128,22 +128,6 @@ const EditProjectForm: React.FunctionComponent = () => {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.whitepaper}>
-        <FormLabel htmlFor="whitepaper">Whitepaper</FormLabel>
-        <Input
-          placeholder="Whitepaper"
-          {...register("whitepaper", {
-            maxLength: {
-              value: 150,
-              message: "Maximum length should be 150",
-            },
-          })}
-        />
-        <FormErrorMessage>
-          {errors.whitepaper && errors.whitepaper.message}
-        </FormErrorMessage>
-      </FormControl>
-
       <ControlledSelect
         control={control}
         name="tags"
