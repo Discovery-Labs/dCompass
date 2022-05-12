@@ -5,9 +5,8 @@ import { IsString, IsDefined, IsNotEmpty } from "class-validator";
 export class ProjectSquadsInput {
   @Field()
   @IsString({ message: "wrong.type" })
-  @IsDefined({ message: "not.defined" })
   @IsNotEmpty({ message: "not.empty" })
-  id: string;
+  id?: string;
 
   @Field()
   @IsString({ message: "wrong.type" })

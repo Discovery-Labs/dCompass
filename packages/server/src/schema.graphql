@@ -236,7 +236,7 @@ type Project {
 }
 
 input ProjectSquadsInput {
-  id: String!
+  id: String
   image: String!
   members: [String!]!
   name: String!

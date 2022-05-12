@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Stack, Button } from "@chakra-ui/react";
+import { Stack, Button, Heading } from "@chakra-ui/react";
 
 import Card from "components/custom/Card";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
@@ -69,7 +69,7 @@ type Project = {
   tokenUris?: string[];
 };
 
-function EditProjectStepper(project: Project) {
+function EditProjectSquads(project: Project) {
   const { t } = useTranslation("common");
 
   const [editProjectMutation] = useMutation(EDIT_PROJECT_MUTATION, {
@@ -107,11 +107,14 @@ function EditProjectStepper(project: Project) {
     console.log({ values });
 
     const formData = new FormData();
+    let squadImagesToUpload = 0;
     if (values.logo) {
       formData.append("logo", values.logo[0]);
     }
     values.squads.forEach((squad: Record<string, any>) => {
       if (squad.image) {
+        squadImagesToUpload++;
+        console.log("sqImage", squad.image);
         formData.append(squad.name, squad.image[0]);
       }
     });
@@ -128,13 +131,17 @@ function EditProjectStepper(project: Project) {
 
     let cids = {} as Record<string, string>;
 
-    if (formData.keys.length > 0) {
+    console.log(formData.values.length);
+    if (squadImagesToUpload > 0) {
+      console.log("form data");
       const cidsRes = await fetch("/api/image-storage", {
         method: "POST",
         body: formData,
       });
-      cids = await cidsRes.json();
+      const newCids = await cidsRes.json();
+      cids = newCids.cids;
     }
+    console.log(cids);
 
     serializedProject = {
       ...serializedProject,
@@ -144,9 +151,10 @@ function EditProjectStepper(project: Project) {
         const members = squad.members.map(
           (member: Record<string, any>) => member.value ?? member
         ) as string[];
+        const squadImage = cids[squad.name] ?? squad.image;
         return {
           ...squad,
-          image: cids[squad.name] ?? squad.image,
+          image: squadImage,
           members,
         };
       }),
@@ -169,8 +177,8 @@ function EditProjectStepper(project: Project) {
         <CenteredFrame>
           <Card layerStyle="solid-card" h="full" w="full">
             <Stack w="full" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
-              <EditProjectForm />
-              {/* <SquadsForm /> */}
+              <Heading>Manage squads</Heading>
+              <SquadsForm />
               <Button isLoading={methods.formState.isSubmitting} type="submit">
                 {t("submit")}
               </Button>
@@ -182,4 +190,4 @@ function EditProjectStepper(project: Project) {
   );
 }
 
-export default EditProjectStepper;
+export default EditProjectSquads;

@@ -41,6 +41,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
+import { BsPeopleFill } from "react-icons/bs";
 import { MdPersonAddAlt1 } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { initializeApollo } from "../../../../lib/apolloClient";
@@ -292,6 +293,13 @@ function ProjectPage({
               <NextLink href={`/projects/${id}/edit-project/`} passHref>
                 <Button variant="outline" leftIcon={<EditIcon />}>
                   Edit Project
+                </Button>
+              </NextLink>
+            )}
+            {canEdit && (
+              <NextLink href={`/projects/${id}/edit-project/squads`} passHref>
+                <Button variant="outline" leftIcon={<BsPeopleFill />}>
+                  Manage Squads
                 </Button>
               </NextLink>
             )}

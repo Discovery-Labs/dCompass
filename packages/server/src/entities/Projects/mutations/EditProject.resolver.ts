@@ -30,38 +30,91 @@ export class EditProjectResolver {
       id,
       projectValues,
     });
-    const foundProject = await this.projectService.project({ id });
+    const foundProject = await this.projectService.projectWithSquadsAndTags({
+      id,
+    });
 
     if (!foundProject) {
       throw new NotFoundException("Project not found");
     }
 
-    // const updatedSquads = squads
-    //   ? {
-    //       updateMany: {
-    //         data: squads,
-    //         where: {
-    //           id: {
-    //             in: squads?.map((s) => s.id),
-    //           },
-    //           projectId: foundProject.id,
-    //         },
-    //       },
-    //     }
-    //   : undefined;
-    // const newTags = tags
-    //   ? {
-    //       connect: tags.map((tag) => ({ id: tag })),
-    //     }
-    //   : undefined;
+    const currentSquadsIds = foundProject.squads.map((squad) => squad.id);
+
+    // TODO: handle edge case where there was a squad that gets deleted, throw err
+    if (squads) {
+      const squadsToAdd = squads.filter((squad) => !squad.id);
+      if (squadsToAdd) {
+        const createdSquads = await this.projectService.createSquads(
+          squadsToAdd.map((squad) => ({
+            ...squad,
+            projectId: foundProject.id,
+          })) as any
+        );
+        console.log({ createdSquads });
+      }
+
+      const squadsIdsToRemove = currentSquadsIds.filter(
+        (squadId) => !squads.map((squad) => squad.id).includes(squadId)
+      );
+
+      if (squadsIdsToRemove) {
+        await this.projectService.deleteSquads({
+          where: {
+            id: {
+              in: squadsIdsToRemove,
+            },
+            projectId: foundProject.id,
+          },
+        });
+        console.log({ squadsIdsToRemove });
+      }
+
+      const existingSquadsToUpdate = squads
+        .filter((squad) => squad.id && !squadsIdsToRemove.includes(squad.id))
+        .map((squad) => ({
+          id: squad.id!,
+          name: squad.name,
+          image: squad.image,
+          members: squad.members,
+        }));
+      await Promise.all(
+        existingSquadsToUpdate.map(async (squadToUpdate) =>
+          this.projectService.updateSquad({
+            data: squadToUpdate,
+            where: {
+              id: squadToUpdate.id,
+            },
+          })
+        )
+      );
+    }
+
+    const currentTagIds = foundProject.tags.map((tag) => tag.id);
+    const tagsToRemove =
+      tags && currentTagIds
+        ? {
+            disconnect: currentTagIds
+              .filter((tag) => !tags.includes(tag))
+              .map((tag) => ({ id: tag })),
+          }
+        : undefined;
+
+    const tagsToAdd = tags
+      ? {
+          connect: tags.map((tag) => ({ id: tag })),
+        }
+      : undefined;
+
     await this.projectService.updateProject({
       where: {
         id: foundProject.id,
       },
       data: {
-        ...foundProject,
         ...projectValues,
-        // tags: newTags,
+        tags: {
+          ...tagsToAdd,
+          ...tagsToRemove,
+        },
       },
     });
 
