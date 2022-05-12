@@ -39,8 +39,8 @@ type BountyQuest {
   namespace: String
   pathwayId: String!
   questType: String!
-  rewardAmount: Float!
-  rewardCurrency: String!
+  rewardAmount: Float
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!
@@ -63,7 +63,6 @@ input ClaimQuestRewardsInput {
 
 input CreatePathwayInput {
   id: String!
-  pathwayCreatorSignature: String!
 }
 
 input CreateProjectInput {
@@ -176,8 +175,8 @@ type Pathway {
   projectStreamId: String!
   quests: [Quest!]
   quizQuests: [QuizQuest!]
-  rewardAmount: Float!
-  rewardCurrency: String!
+  rewardAmount: Float
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!
@@ -290,8 +289,8 @@ type Quest {
   namespace: String
   pathwayId: String!
   questType: String!
-  rewardAmount: Float!
-  rewardCurrency: String!
+  rewardAmount: Float
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!
@@ -334,8 +333,8 @@ type QuizQuest {
   pathwayId: String!
   questType: String!
   questions: [QuizQuestion!]
-  rewardAmount: Float!
-  rewardCurrency: String!
+  rewardAmount: Float
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!
@@ -414,8 +413,8 @@ type SubmitQuestAnswersOutput {
   namespace: String
   pathwayId: String!
   questType: String!
-  rewardAmount: Int!
-  rewardCurrency: String!
+  rewardAmount: Int
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!

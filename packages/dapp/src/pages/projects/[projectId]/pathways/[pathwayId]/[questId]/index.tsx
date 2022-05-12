@@ -263,6 +263,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
   }, [quizData?.getQuizQuestById.completedBy, self?.id]);
 
   const getShortenedAddress = (address: string) => {
+    if (!address) {
+      return "Anonymous";
+    }
     let displayAddress = address.slice(0, 6);
     displayAddress += `...${address.slice(-4)}`;
 
@@ -491,8 +494,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                       <Text fontSize="sm">
                         {t("by")}{" "}
                         {getShortenedAddress(
-                          quizData?.getQuizQuestById.createdBy.name ||
-                            quizData?.getQuizQuestById.createdBy.did
+                          quizData?.getQuizQuestById.createdBy.did
                         )}
                       </Text>
                     )}

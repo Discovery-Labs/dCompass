@@ -63,11 +63,11 @@ export class Pathway extends BaseEntity {
   @Field()
   slogan: string;
 
-  @Field()
-  rewardCurrency: string;
+  @Field({ nullable: true })
+  rewardCurrency?: string;
 
-  @Field(() => Float)
-  rewardAmount: number;
+  @Field(() => Float, { nullable: true })
+  rewardAmount?: number;
 
   @Field(() => Int)
   rewardUserCap: number;

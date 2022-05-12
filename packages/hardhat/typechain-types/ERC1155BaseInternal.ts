@@ -11,24 +11,25 @@ export interface ERC1155BaseInternalInterface extends utils.Interface {
   functions: {};
 
   events: {
-    "ApprovalForAll(address,address,bool)": EventFragment;
-    "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
-    "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
+    "InternalApprovalForAll(address,address,bool)": EventFragment;
+    "InternalTransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
+    "InternalTransferSingle(address,address,address,uint256,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InternalApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InternalTransferBatch"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InternalTransferSingle"): EventFragment;
 }
 
-export type ApprovalForAllEvent = TypedEvent<
+export type InternalApprovalForAllEvent = TypedEvent<
   [string, string, boolean],
   { account: string; operator: string; approved: boolean }
 >;
 
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+export type InternalApprovalForAllEventFilter =
+  TypedEventFilter<InternalApprovalForAllEvent>;
 
-export type TransferBatchEvent = TypedEvent<
+export type InternalTransferBatchEvent = TypedEvent<
   [string, string, string, BigNumber[], BigNumber[]],
   {
     operator: string;
@@ -39,9 +40,10 @@ export type TransferBatchEvent = TypedEvent<
   }
 >;
 
-export type TransferBatchEventFilter = TypedEventFilter<TransferBatchEvent>;
+export type InternalTransferBatchEventFilter =
+  TypedEventFilter<InternalTransferBatchEvent>;
 
-export type TransferSingleEvent = TypedEvent<
+export type InternalTransferSingleEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber],
   {
     operator: string;
@@ -52,7 +54,8 @@ export type TransferSingleEvent = TypedEvent<
   }
 >;
 
-export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>;
+export type InternalTransferSingleEventFilter =
+  TypedEventFilter<InternalTransferSingleEvent>;
 
 export interface ERC1155BaseInternal extends BaseContract {
   contractName: "ERC1155BaseInternal";
@@ -86,46 +89,46 @@ export interface ERC1155BaseInternal extends BaseContract {
   callStatic: {};
 
   filters: {
-    "ApprovalForAll(address,address,bool)"(
+    "InternalApprovalForAll(address,address,bool)"(
       account?: string | null,
       operator?: string | null,
       approved?: null
-    ): ApprovalForAllEventFilter;
-    ApprovalForAll(
+    ): InternalApprovalForAllEventFilter;
+    InternalApprovalForAll(
       account?: string | null,
       operator?: string | null,
       approved?: null
-    ): ApprovalForAllEventFilter;
+    ): InternalApprovalForAllEventFilter;
 
-    "TransferBatch(address,address,address,uint256[],uint256[])"(
+    "InternalTransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: string | null,
       from?: string | null,
       to?: string | null,
       ids?: null,
       values?: null
-    ): TransferBatchEventFilter;
-    TransferBatch(
+    ): InternalTransferBatchEventFilter;
+    InternalTransferBatch(
       operator?: string | null,
       from?: string | null,
       to?: string | null,
       ids?: null,
       values?: null
-    ): TransferBatchEventFilter;
+    ): InternalTransferBatchEventFilter;
 
-    "TransferSingle(address,address,address,uint256,uint256)"(
+    "InternalTransferSingle(address,address,address,uint256,uint256)"(
       operator?: string | null,
       from?: string | null,
       to?: string | null,
       id?: null,
       value?: null
-    ): TransferSingleEventFilter;
-    TransferSingle(
+    ): InternalTransferSingleEventFilter;
+    InternalTransferSingle(
       operator?: string | null,
       from?: string | null,
       to?: string | null,
       id?: null,
       value?: null
-    ): TransferSingleEventFilter;
+    ): InternalTransferSingleEventFilter;
   };
 
   estimateGas: {};

@@ -92,12 +92,18 @@ export interface BadgeFacetInterface extends utils.Interface {
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "InternalApprovalForAll(address,address,bool)": EventFragment;
+    "InternalTransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
+    "InternalTransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InternalApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InternalTransferBatch"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InternalTransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
@@ -109,6 +115,42 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export type InternalApprovalForAllEvent = TypedEvent<
+  [string, string, boolean],
+  { account: string; operator: string; approved: boolean }
+>;
+
+export type InternalApprovalForAllEventFilter =
+  TypedEventFilter<InternalApprovalForAllEvent>;
+
+export type InternalTransferBatchEvent = TypedEvent<
+  [string, string, string, BigNumber[], BigNumber[]],
+  {
+    operator: string;
+    from: string;
+    to: string;
+    ids: BigNumber[];
+    values: BigNumber[];
+  }
+>;
+
+export type InternalTransferBatchEventFilter =
+  TypedEventFilter<InternalTransferBatchEvent>;
+
+export type InternalTransferSingleEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber],
+  {
+    operator: string;
+    from: string;
+    to: string;
+    id: BigNumber;
+    value: BigNumber;
+  }
+>;
+
+export type InternalTransferSingleEventFilter =
+  TypedEventFilter<InternalTransferSingleEvent>;
 
 export type TransferBatchEvent = TypedEvent<
   [string, string, string, BigNumber[], BigNumber[]],
@@ -359,6 +401,47 @@ export interface BadgeFacet extends BaseContract {
       operator?: string | null,
       approved?: null
     ): ApprovalForAllEventFilter;
+
+    "InternalApprovalForAll(address,address,bool)"(
+      account?: string | null,
+      operator?: string | null,
+      approved?: null
+    ): InternalApprovalForAllEventFilter;
+    InternalApprovalForAll(
+      account?: string | null,
+      operator?: string | null,
+      approved?: null
+    ): InternalApprovalForAllEventFilter;
+
+    "InternalTransferBatch(address,address,address,uint256[],uint256[])"(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      ids?: null,
+      values?: null
+    ): InternalTransferBatchEventFilter;
+    InternalTransferBatch(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      ids?: null,
+      values?: null
+    ): InternalTransferBatchEventFilter;
+
+    "InternalTransferSingle(address,address,address,uint256,uint256)"(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      id?: null,
+      value?: null
+    ): InternalTransferSingleEventFilter;
+    InternalTransferSingle(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      id?: null,
+      value?: null
+    ): InternalTransferSingleEventFilter;
 
     "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: string | null,

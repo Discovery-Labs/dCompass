@@ -48,8 +48,8 @@ Table BountyQuest {
   pathway Pathway
   pathwayId String
   questType String [not null]
-  rewardAmount Float [not null]
-  rewardCurrency String [not null]
+  rewardAmount Float
+  rewardCurrency String
   rewardUserCap Int [not null]
   slogan String [not null]
   submissions SolutionSubmission [not null]
@@ -73,8 +73,8 @@ Table QuizQuest {
   pathway Pathway
   pathwayId String
   questType String [not null]
-  rewardAmount Float [not null]
-  rewardCurrency String [not null]
+  rewardAmount Float
+  rewardCurrency String
   rewardUserCap Int [not null]
   slogan String [not null]
   questions QuizQuestion [not null]
@@ -94,8 +94,8 @@ Table Pathway {
   projectStreamId String [not null]
   bountyQuests BountyQuest [not null]
   quizQuests QuizQuest [not null]
-  rewardAmount Float [not null]
-  rewardCurrency String [not null]
+  rewardAmount Float
+  rewardCurrency String
   rewardUserCap Int [not null]
   slogan String [not null]
   title String [not null]

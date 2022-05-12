@@ -69,7 +69,12 @@ export class SignInResolver {
       }
 
       const chainSpecificAddress = `${siweMsg.address}@eip155:${siweMsg.chainId}`;
-      const userDID = await ceramicCore.getAccountDID(chainSpecificAddress);
+      let userDID = null as string | null;
+      try {
+        userDID = await ceramicCore.getAccountDID(chainSpecificAddress);
+      } catch (error) {
+        console.log("User has no DID");
+      }
       // Check if the user already exists
       const [foundUser] = await this.userService.users({
         where: {

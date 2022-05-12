@@ -150,6 +150,8 @@ function CreateProjectStepper() {
       }
     );
 
+    console.log({ cnt: newProjectDoc.content });
+
     const projectId = newProjectDoc.id.toUrl();
     formData.append(
       "metadata",

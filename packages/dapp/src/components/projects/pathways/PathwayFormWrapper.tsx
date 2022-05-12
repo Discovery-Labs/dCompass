@@ -96,66 +96,76 @@ function PathwayFormWrapper() {
   async function onSubmit(values: Record<string, any>) {
     // TODO: add a field for this
     const isRewardProvider = isWithRewards;
-
-    // check if the native token is used
+    const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
     const isNativeToken = tokenAddressOrSymbol ? false : true;
-    setSubmitStatus("Checking balance");
-
     let balance = 0;
-    const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
     const feeAmount = (rewardAmnt * 15) / 100;
     const totalToPay = rewardAmnt + feeAmount;
-    if (!isNativeToken) {
-      const { tokenContract, tokenInfos } = getSelectedTokenContract(
-        values.rewardCurrency.value
-      );
 
-      balance = parseFloat(
-        ethers.utils.formatUnits(
-          await tokenContract.balanceOf(account),
-          tokenInfos.decimals
-        )
-      );
-      const isValidBalance = balance >= totalToPay;
+    if (isRewardProvider) {
+      // check if the native token is used
+      setSubmitStatus("Checking balance");
+      if (!isNativeToken) {
+        const { tokenContract, tokenInfos } = getSelectedTokenContract(
+          values.rewardCurrency.value
+        );
 
-      if (!isValidBalance) {
-        toast({
-          title: "Insufficient funds",
-          description: `You don't have enough funds to provide the pathway rewards in this currency`,
-          status: "error",
-          position: "bottom-right",
-          duration: 6000,
-          isClosable: true,
-          variant: "subtle",
-        });
-        return setError("rewardAmount", {
-          message: "Insufficient funds",
-        });
-      }
-    } else {
-      balance = parseFloat(
-        ethers.utils.formatEther(await library.getBalance(account))
-      );
-      const isValidBalance = balance >= totalToPay;
-      if (!isValidBalance) {
-        toast({
-          title: "Insufficient funds",
-          description: "You don't have enough funds to provide pathway rewards",
-          status: "error",
-          position: "bottom-right",
-          duration: 6000,
-          isClosable: true,
-          variant: "subtle",
-        });
-        return setError("rewardAmount", {
-          message: "Insufficient funds",
-        });
+        balance = parseFloat(
+          ethers.utils.formatUnits(
+            await tokenContract.balanceOf(account),
+            tokenInfos.decimals
+          )
+        );
+        const isValidBalance = balance >= totalToPay;
+
+        if (!isValidBalance) {
+          toast({
+            title: "Insufficient funds",
+            description: `You don't have enough funds to provide the pathway rewards in this currency`,
+            status: "error",
+            position: "bottom-right",
+            duration: 6000,
+            isClosable: true,
+            variant: "subtle",
+          });
+          return setError("rewardAmount", {
+            message: "Insufficient funds",
+          });
+        }
+      } else {
+        balance = parseFloat(
+          ethers.utils.formatEther(await library.getBalance(account))
+        );
+        const isValidBalance = balance >= totalToPay;
+        if (!isValidBalance) {
+          toast({
+            title: "Insufficient funds",
+            description:
+              "You don't have enough funds to provide pathway rewards",
+            status: "error",
+            position: "bottom-right",
+            duration: 6000,
+            isClosable: true,
+            variant: "subtle",
+          });
+          return setError("rewardAmount", {
+            message: "Insufficient funds",
+          });
+        }
       }
     }
+
     setSubmitStatus("Generating token URIs");
     // TODO: check prereqs
-    const { prerequisites, ...pathwayOptions } = values;
+    const {
+      prerequisites,
+      image,
+      rewardAmount,
+      rewardCurrency,
+      ...pathwayOptions
+    } = values;
+    console.log({ rewardAmount });
     const prereqs = prerequisites
       ? {
           prerequisites: prerequisites.map(
@@ -164,22 +174,31 @@ function PathwayFormWrapper() {
         }
       : {};
 
+    const erc20rewards = isRewardProvider
+      ? {
+          rewardCurrency: rewardCurrency.value,
+          rewardAmount: rewardAmnt,
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
+        }
+      : {
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
+        };
     const serlializedValues = {
       ...pathwayOptions,
       difficulty: values.difficulty.value,
-      rewardCurrency: values.rewardCurrency.value,
-      rewardAmount: rewardAmnt,
-      rewardUserCap: parseInt(values.rewardUserCap, 10),
+      ...erc20rewards,
       ...prereqs,
       createdBy: account,
       createdAt: new Date().toISOString(),
     };
 
+    console.log({ serlializedValues });
+
     const formData = new FormData();
     formData.append("metadata", JSON.stringify(serlializedValues));
 
-    if (values.image) {
-      formData.append(values.title, values.image[0]);
+    if (image) {
+      formData.append(values.title, image[0], image[0].name);
     }
     const cidsRes = await fetch("/api/image-storage", {
       method: "POST",
@@ -196,6 +215,8 @@ function PathwayFormWrapper() {
       projectId: router.query.projectId,
       projectStreamId: data.getAllPathwaysByProjectId.streamId,
     };
+
+    console.log({ finalValues });
 
     const pathwayDoc = await self.client.dataModel.createTile(
       "Pathway",
@@ -284,7 +305,7 @@ function PathwayFormWrapper() {
       </Alert>
     );
   return (
-    <>
+    <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
       <Heading>Add Pathway</Heading>
       <PathwayForm isWithRewards={isWithRewards} withRewards={withRewards} />
 
@@ -306,7 +327,7 @@ function PathwayFormWrapper() {
           Submit
         </Button>
       </Flex>
-    </>
+    </Stack>
   );
 }
 
