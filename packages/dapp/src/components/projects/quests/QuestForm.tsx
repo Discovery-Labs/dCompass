@@ -221,8 +221,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
   async function onSubmit(values: Record<string, any>) {
     console.log("submitted", values);
-    // TODO: add a field for this
-    const isRewardProvider = isWithRewards;
 
     // check if the native token is used
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
@@ -358,7 +356,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
         parseInt(values.rewardUserCap, 10),
-        isRewardProvider,
+        isWithRewards,
         // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
         account,
         true,
@@ -383,7 +381,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
         parseInt(values.rewardUserCap, 10),
-        isRewardProvider,
+        isWithRewards,
         // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
         values.rewardCurrency.value.split(":")[1],
         false,

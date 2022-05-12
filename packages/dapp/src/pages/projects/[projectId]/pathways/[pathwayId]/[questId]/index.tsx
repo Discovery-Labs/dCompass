@@ -214,24 +214,41 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       },
     });
 
-    const [, tokenAddressOrSymbol] = rewardCurrency.split(":");
-    const isNativeToken = tokenAddressOrSymbol ? false : true;
-
+    const hasRewards = rewardAmount ? true : false;
+    console.log({ hasRewards });
     const [metadataVerify] = data.claimQuestRewards.expandedServerSignatures;
-    console.log({ metadataVerify });
     setRewardStatus("Claiming on-chain");
-    const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
-      streamId,
-      isNativeToken,
-      isNativeToken ? account : tokenAddressOrSymbol,
-      metadataVerify.r,
-      metadataVerify.s,
-      metadataVerify.v,
-      true,
-      url,
-      0
-    );
-    await claimRewardsTx.wait(1);
+    if (hasRewards) {
+      const [, tokenAddressOrSymbol] = rewardCurrency.split(":");
+      const isNativeToken = tokenAddressOrSymbol ? false : true;
+      const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
+        streamId,
+        isNativeToken,
+        isNativeToken ? account : tokenAddressOrSymbol,
+        metadataVerify.r,
+        metadataVerify.s,
+        metadataVerify.v,
+        true,
+        url,
+        0
+      );
+      await claimRewardsTx.wait(1);
+    } else {
+      const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
+        streamId,
+        false,
+        account,
+        metadataVerify.r,
+        metadataVerify.s,
+        metadataVerify.v,
+        false,
+        url,
+        0
+      );
+      await claimRewardsTx.wait(1);
+    }
+
+    console.log({ metadataVerify });
 
     const claimedByAddresses =
       await contracts.BadgeNFT.getAllAddrsByBadgeIDVersion(

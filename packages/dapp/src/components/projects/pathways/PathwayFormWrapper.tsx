@@ -95,7 +95,6 @@ function PathwayFormWrapper() {
 
   async function onSubmit(values: Record<string, any>) {
     // TODO: add a field for this
-    const isRewardProvider = isWithRewards;
     const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
     const isNativeToken = tokenAddressOrSymbol ? false : true;
@@ -103,7 +102,7 @@ function PathwayFormWrapper() {
     const feeAmount = (rewardAmnt * 15) / 100;
     const totalToPay = rewardAmnt + feeAmount;
 
-    if (isRewardProvider) {
+    if (isWithRewards) {
       // check if the native token is used
       setSubmitStatus("Checking balance");
       if (!isNativeToken) {
@@ -174,7 +173,7 @@ function PathwayFormWrapper() {
         }
       : {};
 
-    const erc20rewards = isRewardProvider
+    const erc20rewards = isWithRewards
       ? {
           rewardCurrency: rewardCurrency.value,
           rewardAmount: rewardAmnt,
@@ -233,7 +232,7 @@ function PathwayFormWrapper() {
           pathwayDoc.id.toUrl(),
           data.getAllPathwaysByProjectId.streamId,
           parseInt(values.rewardUserCap, 10),
-          isRewardProvider,
+          isWithRewards,
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
           account,
           true,
@@ -258,7 +257,7 @@ function PathwayFormWrapper() {
           pathwayDoc.id.toUrl(),
           data.getAllPathwaysByProjectId.streamId,
           parseInt(values.rewardUserCap, 10),
-          isRewardProvider,
+          isWithRewards,
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
           values.rewardCurrency.value.split(":")[1],
           false,
