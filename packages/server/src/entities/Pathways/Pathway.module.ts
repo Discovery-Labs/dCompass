@@ -14,6 +14,7 @@ import { ClaimPathwayRewardsResolver } from "./mutations/ClaimPathwayRewards.res
 import { PrismaService } from "../../services/prisma/Prisma.service";
 import { ProjectService } from "../Projects/Project.service";
 import { PathwayService } from "./Pathway.service";
+import { EditPathwayResolver } from "./mutations/EditPathway.resolver";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PathwayService } from "./Pathway.service";
     CreatePathwayResolver,
     ApprovePathwayResolver,
     GetPathwayByIdResolver,
+    EditPathwayResolver,
     GetAllPathwaysByProjectIdResolver,
     VerifyPathwayResolver,
     ClaimPathwayRewardsResolver,

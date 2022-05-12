@@ -85,6 +85,27 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
   }
 `;
 
+export const EDIT_PATHWAY_MUTATION = gql`
+  mutation EditPathway($input: EditPathwayInput!) {
+    editPathway(input: $input) {
+      id
+      streamId
+      title
+      createdBy
+      createdAt
+      difficulty
+      description
+      slogan
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
+      image
+      projectId
+      prerequisites
+    }
+  }
+`;
+
 export const GET_PATHWAY_BY_ID_QUERY = gql`
   query GetPathwayById($pathwayId: String!) {
     getPathwayById(pathwayId: $pathwayId) {

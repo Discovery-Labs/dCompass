@@ -79,6 +79,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input EditPathwayInput {
+  description: String
+  difficulty: String
+  id: String!
+  slogan: String
+  title: String
+}
+
 input EditProjectInput {
   color: String
   description: String
@@ -138,6 +146,9 @@ type Mutation {
 
   """Create a new Quiz quest in dCompass"""
   createQuizQuest(input: CreateQuestInput!): QuizQuest
+
+  """Edit a Pathway in dCompass"""
+  editPathway(input: EditPathwayInput!): Pathway
 
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project

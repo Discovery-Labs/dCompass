@@ -369,9 +369,7 @@ function PathwayPage({
               passHref
             >
               {/** TODO: Edit pathway form or page **/}
-              <Button disabled leftIcon={<AddIcon />}>
-                {t("edit-pathway")}
-              </Button>
+              <Button leftIcon={<AddIcon />}>{t("edit-pathway")}</Button>
             </NextLink>
           )}
         </HStack>
