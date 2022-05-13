@@ -75,7 +75,11 @@ export class SignInResolver {
           throw new ForbiddenException("Invalid SIWE message");
         }
       }
-
+      console.log({
+        siweNonce: siweMsg.nonce,
+        reqNonce: ctx.req.session.nonce,
+        session: ctx.req.session,
+      });
       if (siweMsg.nonce !== ctx.req.session.nonce) {
         throw new BadRequestException({
           message: "Invalid nonce.",
@@ -149,7 +153,7 @@ export class SignInResolver {
         }
         default: {
           ctx.req.session.save(() => {
-            throw new ApolloError(error.message, "500");
+            throw new ApolloError(error.message, "400");
           });
           break;
         }
