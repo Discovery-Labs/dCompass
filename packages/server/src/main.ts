@@ -8,12 +8,7 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { Context } from "./core/utils/types";
 
 import { NextFunction } from "express";
-import {
-  BadRequestException,
-  Logger,
-  ValidationError,
-  ValidationPipe,
-} from "@nestjs/common";
+import { Logger, ValidationPipe } from "@nestjs/common";
 import config from "./core/configs/config";
 // import { makeCeramicClient } from './services/ceramic/ceramic.service';
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
