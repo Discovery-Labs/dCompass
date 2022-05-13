@@ -76,6 +76,8 @@ export class SignInResolver {
         }
       }
 
+      console.log({ nonce: ctx.req.session.nonce });
+
       if (siweMsg.nonce !== ctx.req.session.nonce) {
         throw new BadRequestException({
           message: "Invalid nonce.",
@@ -149,7 +151,7 @@ export class SignInResolver {
         }
         default: {
           ctx.req.session.save(() => {
-            throw new ApolloError(error.message, "500");
+            throw new ApolloError(error.message, "400");
           });
           break;
         }
