@@ -47,7 +47,9 @@ const LogoDropzone = ({
   );
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
+    accept: {
+      "image/*": [],
+    },
     onDrop,
   });
 
