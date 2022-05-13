@@ -20,10 +20,12 @@ import {
 } from "./services/ceramic/data-models";
 
 import { sessionMiddleware } from "./core/resources/Redis/redis";
+import cookieParser from "cookie-parser";
 // import { PrismaService } from "./services/prisma/Prisma.service";
 
 const {
   api: { protocol, hostname, port, corsOptions },
+  sessionOptions,
 } = config();
 
 async function bootstrap() {
@@ -41,11 +43,11 @@ async function bootstrap() {
   // const prismaService = app.get(PrismaService);
   // await prismaService.enableShutdownHooks(app);
   app.enableShutdownHooks(["SIGINT", "SIGTERM"]);
+  app.use(cookieParser(sessionOptions.secret));
   app.use(sessionMiddleware);
 
   const ceramicClient = await ceramicDataModelFactory();
 
-  // app.use(cookieParser(sessionOptions.secret));
   // app.use(sessionMiddleware);
   /* Cookie & Session cleaner */
   // app.use((req: Context['req'], res: Context['res'], next: NextFunction) => {
