@@ -1,5 +1,9 @@
 import { Resolver, Mutation, Args, Context } from "@nestjs/graphql";
-import { BadRequestException, Inject } from "@nestjs/common";
+import {
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+} from "@nestjs/common";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 
 import {
@@ -60,7 +64,17 @@ export class SignInResolver {
       );
       await infuraProvider.ready;
 
-      siweMsg.validate();
+      if (message.signature) {
+        const isValid = await siweMsg.verify({
+          signature: message.signature,
+          domain: message.domain,
+          nonce: message.nonce,
+          time: message.issuedAt,
+        });
+        if (!isValid.success || isValid.error) {
+          throw new ForbiddenException("Invalid SIWE message");
+        }
+      }
 
       if (siweMsg.nonce !== ctx.req.session.nonce) {
         throw new BadRequestException({
