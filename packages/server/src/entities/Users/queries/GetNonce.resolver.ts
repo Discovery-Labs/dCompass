@@ -10,7 +10,6 @@ export class GetNonceResolver {
     name: "getNonce",
   })
   async getNonce(@Context() ctx: ContextType): Promise<string> {
-    // Get the data from your favorite data store
     const nonce = generateNonce();
     ctx.req.session.nonce = nonce;
     await ctx.req.session.save();

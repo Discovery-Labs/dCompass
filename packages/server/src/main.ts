@@ -40,7 +40,7 @@ async function bootstrap() {
   app.disable("x-powered-by");
 
   // if we add cloudflare on a proxy
-  // app.set('trust proxy', 1); // trust first proxy
+  app.set("trust proxy", 1); // trust first proxy
 
   // enable shutdown hooks
   // const prismaService = app.get(PrismaService);
@@ -91,8 +91,6 @@ async function bootstrap() {
         target: false,
         value: true,
       },
-      exceptionFactory: (errors: ValidationError[]) =>
-        new BadRequestException(errors),
       forbidNonWhitelisted: true,
     })
   );
