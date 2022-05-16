@@ -476,7 +476,7 @@ function PathwayCard({
           <Text>Under review</Text>
         </VStack>
       )}
-      {status == "MINTED" && (
+      {status && status === "MINTED" && (
         <>
           <Tooltip
             label={`${pathwayProgress?.ratio}% - ${pathwayProgress?.completedQuestCount}/${pathwayProgress?.totalQuestCount} quests completed`}
