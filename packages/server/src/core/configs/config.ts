@@ -97,13 +97,12 @@ const config: Config = {
     secret: process.env.COOKIE_SECRET!,
     resave: false,
     saveUninitialized: false,
-    unset: "destroy",
-    proxy: true,
+
     cookie: {
       secure: JSON.parse(process.env.IS_SECURE_COOKIE!), // casting the string to a boolean
       httpOnly: true,
       sameSite: "lax",
-      domain: "dcompass.xyz",
+      // domain: "dcompass.xyz",
       path: "/",
       maxAge: 144 * 60 * 60 * 1000, // 6 days
     },

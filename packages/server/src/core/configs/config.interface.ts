@@ -40,14 +40,13 @@ export interface Config {
     secret: string;
     resave: boolean;
     saveUninitialized: boolean;
-    unset: "destroy" | "keep";
-    proxy: boolean;
+
     cookie: {
       secure: boolean;
       httpOnly: boolean;
       sameSite: boolean | "lax" | "strict" | "none";
       path: string;
-      domain: string;
+      domain?: string;
       maxAge: number;
     };
   };
