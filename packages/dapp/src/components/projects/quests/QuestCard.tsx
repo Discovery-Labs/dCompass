@@ -14,19 +14,16 @@ import {
   HStack,
   Link,
   ListItem,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  // PopoverTrigger,
   Spacer,
   Tag,
   TagLabel,
   Text,
   Tooltip,
   UnorderedList,
-  useDisclosure,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -61,12 +58,11 @@ const QuestCard = ({
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isCreatingToken, setIsCreatingToken] = useState<boolean>(false);
   const [claimedBy, setClaimedBy] = useState<string[]>();
-  const [status, setStatus] = useState<string>();
 
   const toast = useToast();
   const router = useRouter();
   const { getRewardCurrency } = useTokenList();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [status, setStatus] = useState<string>();
 
   const { chainId } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);
@@ -334,50 +330,35 @@ const QuestCard = ({
             <Text color="accent">Requisites: </Text>
 
             {withRequisites ? (
-              <>
-                <Button w="full" variant="outline" onClick={onOpen}>
+              <Popover isLazy>
+                {/* <PopoverTrigger> */}
+                <Button w="full" variant="outline">
                   3 Requisites
                 </Button>
-                <Modal isOpen={isOpen} onClose={onClose}>
-                  <ModalOverlay />
-                  <ModalContent>
-                    <ModalHeader>Requisites</ModalHeader>
-                    <ModalBody>
-                      <UnorderedList>
-                        <ListItem>
-                          <Link
-                            href="http://localhost:3000/projects"
-                            isExternal
-                          >
-                            Complete the Quest TEST OF THE SUPER DEV{" "}
-                            <ExternalLinkIcon mx="2px" />
-                          </Link>
-                        </ListItem>
-                        <ListItem>
-                          <Link
-                            href="http://localhost:3000/projects"
-                            isExternal
-                          >
-                            Create one Quest <ExternalLinkIcon mx="2px" />
-                          </Link>
-                        </ListItem>
-                        <ListItem>
-                          <Link
-                            href="http://localhost:3000/projects"
-                            isExternal
-                          >
-                            Join one Guild <ExternalLinkIcon mx="2px" />
-                          </Link>
-                        </ListItem>
-                      </UnorderedList>
-                    </ModalBody>
-
-                    <ModalFooter>
-                      <Button onClick={onClose}>Close</Button>
-                    </ModalFooter>
-                  </ModalContent>
-                </Modal>
-              </>
+                {/* </PopoverTrigger> */}
+                <PopoverContent>
+                  <PopoverBody>
+                    <UnorderedList>
+                      <ListItem>
+                        <Link href="http://localhost:3000/projects" isExternal>
+                          Complete the Quest TEST OF THE SUPER DEV{" "}
+                          <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                      <ListItem>
+                        <Link href="http://localhost:3000/projects" isExternal>
+                          Create one Quest <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                      <ListItem>
+                        <Link href="http://localhost:3000/projects" isExternal>
+                          Join one Guild <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                    </UnorderedList>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
             ) : (
               <Button w="full" variant="outline">
                 None
