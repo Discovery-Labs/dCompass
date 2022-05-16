@@ -214,8 +214,14 @@ function PathwayCard({
       } catch (error) {
         console.error(error);
 
+        let toastTitle = "Error";
+        if (typeof error === "string") {
+          toastTitle = error;
+        } else if (error instanceof Error) {
+          toastTitle = error.message; // works, `e` narrowed to Error
+        }
         return toast({
-          title: "Error: Unsupported Network",
+          title: toastTitle,
           status: "warning",
           position: "bottom-right",
           duration: 6000,
