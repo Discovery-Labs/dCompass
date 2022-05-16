@@ -9,7 +9,6 @@ import {
   Icon,
   Progress,
   SimpleGrid,
-  Spacer,
   Stack,
   Tab,
   TabList,
@@ -36,7 +35,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Blockies from "react-blockies";
-import { BsBarChartFill, BsCheckCircleFill, BsPeople } from "react-icons/bs";
+import { BsCheckCircleFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { GoTasklist } from "react-icons/go";
 import { RiHandCoinFill } from "react-icons/ri";
@@ -101,7 +100,6 @@ function PathwayPage({
   image,
   quizQuests = [],
   bountyQuests = [],
-  difficulty,
   createdBy,
   createdAt,
   rewardAmount,
@@ -211,7 +209,6 @@ function PathwayPage({
         image,
         quizQuests,
         bountyQuests,
-        difficulty,
         createdBy,
         createdAt,
         rewardAmount,
@@ -454,21 +451,6 @@ function PathwayPage({
                 justify="space-between"
               >
                 <VStack align="left">
-                  <HStack>
-                    <Icon as={BsBarChartFill} />
-                    <Text
-                      fontWeight="bold"
-                      fontSize="xl"
-                      color="text"
-                      textTransform="uppercase"
-                    >
-                      Difficulty
-                    </Text>
-                    <Spacer />
-                    <Flex align="end" direction="column">
-                      <Tag>{difficulty}</Tag>
-                    </Flex>
-                  </HStack>
                   <Tooltip
                     label={`${pathwayProgress?.ratio}% - ${pathwayProgress?.completedQuestCount}/${pathwayProgress?.totalQuestCount} quests completed`}
                     hasArrow

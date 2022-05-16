@@ -1,5 +1,4 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { PathwayDifficultyEnum } from "@prisma/client";
 import { IsString, IsDefined, IsNotEmpty } from "class-validator";
 
 @InputType()
@@ -18,7 +17,4 @@ export class EditPathwayInput {
 
   @Field()
   description?: string;
-
-  @Field(() => String)
-  difficulty?: PathwayDifficultyEnum;
 }

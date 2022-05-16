@@ -1,26 +1,33 @@
 /* eslint-disable complexity */
-import { useLazyQuery, useMutation } from "@apollo/client";
-import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { useMutation, useQuery } from "@apollo/client";
+import { CheckIcon, CloseIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
   Flex,
   Heading,
   HStack,
+  ListItem,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   Progress,
   Spacer,
   Tag,
   TagLabel,
   Text,
   Tooltip,
+  UnorderedList,
   useDisclosure,
   useToast,
   VStack,
+  Link,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 // import { ethers } from "ethers";
@@ -96,7 +103,7 @@ function PathwayCard({
   const [claimPathwayRewardsMutation] = useMutation(
     CLAIM_PATHWAY_REWARDS_MUTATION
   );
-  const [getAllPathwaysByProjectId] = useLazyQuery(
+  const { data, refetch: getAllPathwaysByProjectId } = useQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
     {
       variables: {
@@ -104,12 +111,14 @@ function PathwayCard({
       },
     }
   );
+
   const [status, setStatus] = useState<string>();
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isCreatingToken, setIsCreatingToken] = useState<boolean>(false);
   const [claimedBy, setClaimedBy] = useState<string[]>();
   const [isClaimed, setIsClaimed] = useState<boolean>(false);
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
+  const [pathways, setPathways] = useState<Pathway[]>();
   const [rewardStatus, setRewardStatus] = useState<string>();
   const { account, contracts, self } = useContext(Web3Context);
   const { chainId } = useWeb3React();
@@ -155,11 +164,24 @@ function PathwayCard({
         setIsClaimed(currentUserHasClaimed);
         setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
         setClaimedBy(claimedByAddresses);
+        // const { data } = await getAllPathwaysByProjectId({
+        //   variables: {
+        //     projectId: pathway.projectId,
+        //   },
+        // });
+        setPathways(data.getAllPathwaysByProjectId.pathways);
       }
       null;
     }
     init();
-  }, [contracts, pathway.streamId, account]);
+  }, [
+    contracts,
+    pathway.streamId,
+    account,
+    getAllPathwaysByProjectId,
+    pathway.projectId,
+    data.getAllPathwaysByProjectId.pathways,
+  ]);
 
   const isContributor = account && projectContributors.includes(account);
   function openPathway() {
@@ -168,6 +190,34 @@ function PathwayCard({
 
   const handleApprovePathway = async () => {
     setIsApproving(true);
+    const isWithRewards = parseFloat(pathway.rewardAmount) > 0;
+
+    if (status === "NONEXISTENT" && !isWithRewards) {
+      console.log({ isWithRewards, status });
+      // TODO provide quest.createdBy instead of msg.sender?
+      console.log(
+        pathway.streamId,
+        data.getAllPathwaysByProjectId.streamId,
+        pathway.rewardUserCap,
+        isWithRewards,
+        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+        account,
+        false,
+        "0"
+      );
+      const createPathwayOnChainTx =
+        await contracts.pathwayNFTContract.createPathway(
+          pathway.streamId,
+          data.getAllPathwaysByProjectId.streamId,
+          pathway.rewardUserCap,
+          isWithRewards,
+          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+          account,
+          false,
+          "0"
+        );
+      await createPathwayOnChainTx.wait(1);
+    }
     if (chainId && account) {
       try {
         const { data } = await approvePathwayMutation({
@@ -286,11 +336,7 @@ function PathwayCard({
       }
     }
     // refetch pathways
-    await getAllPathwaysByProjectId({
-      variables: {
-        projectId: pathway.projectId,
-      },
-    });
+    await getAllPathwaysByProjectId();
     setIsCreatingToken(false);
     return toast({
       title: "Pathway minted!",
@@ -379,9 +425,6 @@ function PathwayCard({
         </Tag>
       </HStack>
       <Flex direction="column" w="full">
-        <Text pb="1" textStyle="small" color={getPrimaryColor}>
-          {pathway.difficulty}
-        </Text>
         <Tooltip label={pathway.title} hasArrow placement="top">
           <Heading noOfLines={2} as="h2" fontSize="2xl" color="text">
             {pathway.title}
@@ -429,6 +472,46 @@ function PathwayCard({
         </Text>
       </Flex>
 
+      <VStack w="full" align="start">
+        <Text color="accent">Requisites: </Text>
+
+        {pathway.prerequisites.length > 0 ? (
+          <Popover isLazy matchWidth>
+            <PopoverTrigger>
+              <Button w="full" variant="outline">
+                {pathway.prerequisites.length} Requisites
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent w="full">
+              <PopoverBody>
+                <UnorderedList>
+                  {pathway.prerequisites.map((prereqPathwayId) => {
+                    return (
+                      <ListItem key={prereqPathwayId}>
+                        <Link
+                          href={`http://localhost:3000/projects/${pathway.projectId}/pathways/${prereqPathwayId}`}
+                          isExternal
+                        >
+                          {
+                            pathways?.find(
+                              (pway) => pway.id === prereqPathwayId
+                            )?.title
+                          }{" "}
+                          <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                    );
+                  })}
+                </UnorderedList>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <Button w="full" variant="outline">
+            None
+          </Button>
+        )}
+      </VStack>
       {isContributor && status !== "MINTED" && (
         <VStack w="full" align="left">
           <Tag
@@ -488,7 +571,7 @@ function PathwayCard({
                 w="full"
                 size="md"
                 rounded="md"
-                value={pathwayProgress?.ratio}
+                value={pathwayProgress?.ratio || 0}
                 border={`solid 1px ${getAccentColor}`}
                 hasStripe
                 colorScheme="accent"

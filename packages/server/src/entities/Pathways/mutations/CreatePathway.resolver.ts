@@ -49,7 +49,6 @@ export class CreatePathwayResolver {
         },
       },
       ...ogPathwayInfos,
-      difficulty: ogPathway.content.difficulty.toUpperCase(),
       streamId: id,
       isPending: true,
     });

@@ -65,7 +65,7 @@ function QuestSubmissionList({ questId }: { questId: string }) {
     variables: {
       input: {
         questId,
-        did: self.id,
+        did: self?.id,
       },
     },
   });

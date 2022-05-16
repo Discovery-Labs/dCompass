@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   CheckIcon,
   CloseIcon,
@@ -17,7 +17,7 @@ import {
   Popover,
   PopoverBody,
   PopoverContent,
-  // PopoverTrigger,
+  PopoverTrigger,
   Spacer,
   Tag,
   TagLabel,
@@ -33,6 +33,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { GiSwordwoman } from "react-icons/gi";
 import { Web3Context } from "../../../contexts/Web3Provider";
+import useCustomColor from "../../../core/hooks/useCustomColor";
 import useTokenList from "../../../core/hooks/useTokenList";
 import { Quest } from "../../../core/types";
 import {
@@ -63,12 +64,13 @@ const QuestCard = ({
   const router = useRouter();
   const { getRewardCurrency } = useTokenList();
   const [status, setStatus] = useState<string>();
+  const { getPrimaryColor } = useCustomColor();
 
   const { chainId } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION);
 
-  const [getAllQuestsByPathwayId] = useLazyQuery(
+  const { data, refetch: getAllQuestsByPathwayId } = useQuery(
     GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
     {
       variables: {
@@ -109,8 +111,23 @@ const QuestCard = ({
 
   const handleApproveQuest = async () => {
     setIsApproving(true);
+    const isWithRewards = parseFloat(quest.rewardAmount) > 0;
 
-    const { data } = await approveQuestMutation({
+    if (status === "NONEXISTENT" && !isWithRewards) {
+      // TODO provide quest.createdBy instead of msg.sender?
+      const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
+        quest.streamId,
+        data.getAllQuestsByPathwayId.streamId,
+        quest.rewardUserCap,
+        isWithRewards,
+        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+        account,
+        false,
+        "0"
+      );
+      await createQuestOnChainTx.wait(1);
+    }
+    const { data: approveData } = await approveQuestMutation({
       variables: {
         input: {
           id: quest.id,
@@ -119,7 +136,7 @@ const QuestCard = ({
       },
     });
     const [metadataVerifySignature, thresholdVerifySignature] =
-      data.approveQuest.expandedServerSignatures;
+      approveData.approveQuest.expandedServerSignatures;
     console.log({ bId: quest.streamId, pId: pathwayStreamId });
     const voteForApprovalTx = await contracts.BadgeNFT.voteForApproval(
       projectContributors,
@@ -213,11 +230,7 @@ const QuestCard = ({
         setStatus("MINTED");
       }
     }
-    await getAllQuestsByPathwayId({
-      variables: {
-        pathwayId: quest.pathwayId,
-      },
-    });
+    await getAllQuestsByPathwayId();
     setIsCreatingToken(false);
     return toast({
       title: "Quest minted!",
@@ -253,7 +266,7 @@ const QuestCard = ({
   const isClaimed = account && claimedBy?.includes(account);
 
   const isLocked = quest.id === "01g0yjfgqrhc2q0f4nqtxtqy81";
-  const withRequisites = true;
+  const withRequisites = quest.prerequisites.length > 0;
 
   return (
     <Card position="relative" h="xl" spacing="6" py="4">
@@ -286,7 +299,7 @@ const QuestCard = ({
         <Flex w="full" minH="56px">
           <Flex w="full" justify="center" direction="column">
             <Text color="accent" textTransform="uppercase">
-              Quest type: {quest.questType}
+              {quest.difficulty} {quest.questType}
             </Text>
             <Heading
               noOfLines={2}
@@ -330,31 +343,33 @@ const QuestCard = ({
             <Text color="accent">Requisites: </Text>
 
             {withRequisites ? (
-              <Popover isLazy>
-                {/* <PopoverTrigger> */}
-                <Button w="full" variant="outline">
-                  3 Requisites
-                </Button>
-                {/* </PopoverTrigger> */}
-                <PopoverContent>
+              <Popover isLazy matchWidth>
+                <PopoverTrigger>
+                  <Button w="full" variant="outline">
+                    {quest.prerequisites.length} Requisites
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent w="full">
                   <PopoverBody>
                     <UnorderedList>
-                      <ListItem>
-                        <Link href="http://localhost:3000/projects" isExternal>
-                          Complete the Quest TEST OF THE SUPER DEV{" "}
-                          <ExternalLinkIcon mx="2px" />
-                        </Link>
-                      </ListItem>
-                      <ListItem>
-                        <Link href="http://localhost:3000/projects" isExternal>
-                          Create one Quest <ExternalLinkIcon mx="2px" />
-                        </Link>
-                      </ListItem>
-                      <ListItem>
-                        <Link href="http://localhost:3000/projects" isExternal>
-                          Join one Guild <ExternalLinkIcon mx="2px" />
-                        </Link>
-                      </ListItem>
+                      {quest.prerequisites.map((prereqQuestId) => {
+                        return (
+                          <ListItem key={prereqQuestId}>
+                            <Link
+                              href={`http://localhost:3000/projects/${data.getAllQuestsByPathwayId.projectId}/pathways/${data.getAllQuestsByPathwayId.id}/${prereqQuestId}`}
+                              isExternal
+                            >
+                              {
+                                [
+                                  ...data.getAllQuestsByPathwayId.quizQuests,
+                                  ...data.getAllQuestsByPathwayId.bountyQuests,
+                                ]?.find((qst) => qst.id === prereqQuestId)?.name
+                              }{" "}
+                              <ExternalLinkIcon mx="2px" />
+                            </Link>
+                          </ListItem>
+                        );
+                      })}
                     </UnorderedList>
                   </PopoverBody>
                 </PopoverContent>

@@ -29,6 +29,9 @@ import {
   TagLabel,
   Tag as TagStatus,
   Spacer,
+  AlertIcon,
+  Alert,
+  Icon,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
@@ -42,6 +45,7 @@ import NextLink from "next/link";
 import { useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import { BsPeopleFill } from "react-icons/bs";
+import { FiAlertCircle, FiCheckCircle } from "react-icons/fi";
 import { MdPersonAddAlt1 } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { initializeApollo } from "../../../../lib/apolloClient";
@@ -337,7 +341,18 @@ function ProjectPage({
               >
                 <TabList>
                   <Tab>{t("all-pathways")}</Tab>
-                  {canReviewPathways && <Tab>{t("pending-pathways")}</Tab>}
+                  {canReviewPathways && (
+                    <Tab>
+                      {t("pending-pathways")}
+                      {data.getAllPathwaysByProjectId.pathways.filter(
+                        (pathway: Pathway) => pathway.isPending
+                      ).length > 0 ? (
+                        <Icon as={FiAlertCircle} size="sm" color="error" />
+                      ) : (
+                        <Icon as={FiCheckCircle} size="sm" color="success" />
+                      )}
+                    </Tab>
+                  )}
                   <Tab>{t("my-pathways")}</Tab>
                 </TabList>
                 <NextLink

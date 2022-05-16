@@ -18,6 +18,7 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useTokenList from "../../../core/hooks/useTokenList";
+import { Pathway } from "../../../core/types";
 import {
   CREATE_PATHWAY_MUTATION,
   GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
@@ -184,7 +185,6 @@ function PathwayFormWrapper() {
         };
     const serlializedValues = {
       ...pathwayOptions,
-      difficulty: values.difficulty.value,
       ...erc20rewards,
       ...prereqs,
       createdBy: account,
@@ -226,49 +226,48 @@ function PathwayFormWrapper() {
     );
 
     setSubmitStatus("Creating pathway on-chain");
-    if (isNativeToken) {
-      const createPathwayOnChainTx =
-        await contracts.pathwayNFTContract.createPathway(
-          pathwayDoc.id.toUrl(),
-          data.getAllPathwaysByProjectId.streamId,
-          parseInt(values.rewardUserCap, 10),
-          isWithRewards,
-          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-          account,
-          true,
-          (rewardAmnt * 1e18).toString(),
-          {
-            value: (totalToPay * 1e18).toString(),
-          }
+    if (isWithRewards) {
+      if (isNativeToken) {
+        const createPathwayOnChainTx =
+          await contracts.pathwayNFTContract.createPathway(
+            pathwayDoc.id.toUrl(),
+            data.getAllPathwaysByProjectId.streamId,
+            parseInt(values.rewardUserCap, 10),
+            isWithRewards,
+            // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+            account,
+            true,
+            (rewardAmnt * 1e18).toString(),
+            {
+              value: (totalToPay * 1e18).toString(),
+            }
+          );
+        await createPathwayOnChainTx.wait(1);
+      } else {
+        // TODO: check balance first
+        const tokenDetails = await approveTokenAllowance(
+          values.rewardCurrency.value,
+          totalToPay.toString()
         );
-      await createPathwayOnChainTx.wait(1);
-    } else {
-      // TODO: check balance first
-      const tokenDetails = await approveTokenAllowance(
-        values.rewardCurrency.value,
-        totalToPay.toString()
-      );
-      const rewardAmount = ethers.utils.parseUnits(
-        rewardAmnt.toString(),
-        tokenDetails.decimals
-      );
-      const createPathwayOnChainTx =
-        await contracts.pathwayNFTContract.createPathway(
-          pathwayDoc.id.toUrl(),
-          data.getAllPathwaysByProjectId.streamId,
-          parseInt(values.rewardUserCap, 10),
-          isWithRewards,
-          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-          values.rewardCurrency.value.split(":")[1],
-          false,
-          rewardAmount
+        const rewardAmount = ethers.utils.parseUnits(
+          rewardAmnt.toString(),
+          tokenDetails.decimals
         );
+        const createPathwayOnChainTx =
+          await contracts.pathwayNFTContract.createPathway(
+            pathwayDoc.id.toUrl(),
+            data.getAllPathwaysByProjectId.streamId,
+            parseInt(values.rewardUserCap, 10),
+            isWithRewards,
+            // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+            values.rewardCurrency.value.split(":")[1],
+            false,
+            rewardAmount
+          );
 
-      await createPathwayOnChainTx.wait(1);
+        await createPathwayOnChainTx.wait(1);
+      }
     }
-
-    setSubmitStatus("Signing pathway creation");
-
     setSubmitStatus("Pathway validation");
     await addPathwayMutation({
       variables: {
@@ -306,7 +305,25 @@ function PathwayFormWrapper() {
   return (
     <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
       <Heading>Add Pathway</Heading>
-      <PathwayForm isWithRewards={isWithRewards} withRewards={withRewards} />
+      <PathwayForm
+        isWithRewards={isWithRewards}
+        withRewards={withRewards}
+        existingPathways={
+          data?.getAllPathwaysByProjectId?.pathways?.length &&
+          data.getAllPathwaysByProjectId.pathways
+            .filter(
+              (pathway: Pathway) =>
+                [...pathway.quizQuests, ...pathway.bountyQuests].length > 0
+            )
+            .map((pathway: Pathway) => {
+              return {
+                label: pathway.title,
+                value: pathway.id,
+                colorScheme: "purple",
+              };
+            })
+        }
+      />
 
       <Flex w="full" justify="space-between">
         <Button

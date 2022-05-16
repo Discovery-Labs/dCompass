@@ -33,8 +33,12 @@ import { useRouter } from "next/router";
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
+import {
+  difficultyOptions,
+  REQUIRED_FIELD_LABEL,
+} from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
+import { Quest } from "../../../core/types";
 import { GET_APP_DID } from "../../../graphql/app";
 import {
   CREATE_QUEST_MUTATION,
@@ -280,7 +284,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     }
 
     setSubmitStatus("Generating token URIs");
-
     const formData = new FormData();
     if (values.image) {
       formData.append(values.name, values.image[0]);
@@ -294,12 +297,49 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     setSubmitStatus("Creating quest");
 
+    const {
+      prerequisites,
+      image,
+      rewardAmount,
+      rewardCurrency,
+      ...questOptions
+    } = values;
+    console.log({ rewardAmount });
+    const prereqs = prerequisites
+      ? {
+          prerequisites: prerequisites.map(
+            (prereq: { value: string; label: string }) => prereq.value
+          ),
+        }
+      : {};
+    const erc20rewards = isWithRewards
+      ? {
+          rewardCurrency: rewardCurrency.value,
+          rewardAmount: rewardAmnt,
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
+        }
+      : {
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
+        };
+
+    const serlializedValues = {
+      ...questOptions,
+      ...erc20rewards,
+      ...prereqs,
+      difficulty: values.difficulty.value.toUpperCase(),
+      image: cids[values.name],
+      pathwayId: router.query.pathwayId,
+      chainId,
+      createdBy: account,
+      createdAt: new Date().toISOString(),
+    };
+
     const appDid = data.getAppDID;
     console.log({ appDid });
     const finalValues =
       questType === "quiz"
         ? {
-            ...values,
+            ...serlializedValues,
             questions: await Promise.all(
               values.questions.map(
                 async ({
@@ -323,23 +363,10 @@ const CreateQuestForm: React.FunctionComponent = () => {
                 })
               )
             ),
-            image: cids[values.name],
-            rewardCurrency: values.rewardCurrency.value,
-            rewardAmount: rewardAmnt,
-            rewardUserCap: parseInt(values.rewardUserCap, 10),
-            pathwayId: router.query.pathwayId,
-            chainId,
           }
-        : {
-            ...values,
-            rewardCurrency: values.rewardCurrency.value,
-            image: cids[values.name],
-            rewardAmount: rewardAmnt,
-            rewardUserCap: parseInt(values.rewardUserCap, 10),
-            pathwayId: router.query.pathwayId,
-            chainId,
-          };
+        : serlializedValues;
 
+    console.log({ finalValues });
     const questDoc = await self.client.dataModel.createTile(
       "Quest",
       { ...finalValues, createdAt: new Date().toISOString() },
@@ -348,9 +375,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       }
     );
 
-    setSubmitStatus("Signing quest creation");
-
-    if (isNativeToken) {
+    if (isNativeToken && isWithRewards) {
       setSubmitStatus("Creating quest on-chain");
       const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
         questDoc.id.toUrl(),
@@ -367,7 +392,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       );
       await createQuestOnChainTx.wait(1);
       setSubmitStatus("Quest created on-chain");
-    } else {
+    } else if (!isNativeToken && isWithRewards) {
       const tokenDetails = await approveTokenAllowance(
         values.rewardCurrency.value,
         totalToPay.toString()
@@ -493,6 +518,37 @@ const CreateQuestForm: React.FunctionComponent = () => {
           {errors.slogan && errors.slogan.message}
         </FormErrorMessage>
       </FormControl>
+
+      <ControlledSelect
+        control={control}
+        name="difficulty"
+        label="Difficulty"
+        rules={{
+          required: REQUIRED_FIELD_LABEL,
+        }}
+        options={difficultyOptions}
+      />
+      <ControlledSelect
+        control={control}
+        name="prerequisites"
+        label="Prerequisites"
+        isMulti
+        options={
+          (pathwayData?.getAllQuestsByPathwayId?.bountyQuests?.length ||
+            pathwayData?.getAllQuestsByPathwayId?.quizQuests?.length) &&
+          [
+            ...pathwayData?.getAllQuestsByPathwayId?.bountyQuests,
+            ...pathwayData?.getAllQuestsByPathwayId?.quizQuests,
+          ].map((quest: Quest) => {
+            return {
+              label: quest.name,
+              value: quest.id,
+              colorScheme: "purple",
+            };
+          })
+        }
+        hasStickyGroupHeaders
+      />
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>

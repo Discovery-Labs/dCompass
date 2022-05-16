@@ -19,6 +19,10 @@ export const questBaseProperties = {
   description: {
     type: "string",
   },
+  difficulty: {
+    type: "string",
+    enum: ["beginner", "intermediate", "advanced", "expert", "wizard"],
+  },
   completedBy: {
     type: "array",
     title: "completedBy",

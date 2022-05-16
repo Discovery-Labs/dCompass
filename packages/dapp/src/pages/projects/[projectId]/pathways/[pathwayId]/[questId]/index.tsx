@@ -9,6 +9,7 @@ import {
   HStack,
   Icon,
   Progress,
+  Spacer,
   Stack,
   Tab,
   TabList,
@@ -33,7 +34,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useCallback, useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
-import { BsCheckCircleFill, BsPeople } from "react-icons/bs";
+import { BsBarChartFill, BsCheckCircleFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
@@ -208,7 +209,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       variables: {
         input: {
           questId,
-          did: self.id,
+          did: self?.id,
           questType: questType,
         },
       },
@@ -425,6 +426,21 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                 justifyContent="space-between"
               >
                 <VStack align="left">
+                  <HStack>
+                    <Icon as={BsBarChartFill} />
+                    <Text
+                      fontWeight="bold"
+                      fontSize="xl"
+                      color="text"
+                      textTransform="uppercase"
+                    >
+                      Difficulty
+                    </Text>
+                    <Spacer />
+                    <Flex align="end" direction="column">
+                      <Tag>{quizData?.getQuizQuestById.difficulty}</Tag>
+                    </Flex>
+                  </HStack>
                   <HStack>
                     <Icon as={RiSwordLine} />
                     <Text

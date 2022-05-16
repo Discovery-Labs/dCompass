@@ -44,7 +44,7 @@ model SolutionSubmission {
   questId  String?
 }
 
-enum PathwayDifficultyEnum {
+enum QuestDifficultyEnum {
   ADVANCED
   BEGINNER
   EXPERT
@@ -61,6 +61,7 @@ enum SponsorTierEnum {
 model BountyQuest {
   id         String           @id @default(cuid())
   streamId   String
+  difficulty QuestDifficultyEnum @default(BEGINNER)
   chainId Int
   completedBy String[]
   createdBy String
@@ -71,6 +72,7 @@ model BountyQuest {
   namespace String? @default("eip155")
   pathway    Pathway?         @relation(fields: [pathwayId], references: [id])
   pathwayId  String?
+  prerequisites String[]
   questType String
   rewardAmount Float?
   rewardCurrency String?
@@ -84,6 +86,7 @@ model BountyQuest {
 model QuizQuest {
   id         String           @id @default(cuid())
   streamId   String
+  difficulty QuestDifficultyEnum @default(BEGINNER)
   chainId Int
   completedBy String[]
   createdAt           DateTime            @default(now())
@@ -97,6 +100,7 @@ model QuizQuest {
   pathway    Pathway?         @relation(fields: [pathwayId], references: [id])
   pathwayId  String?
   questType String
+  prerequisites String[]
   rewardAmount Float?
   rewardCurrency String?
   rewardUserCap Int
@@ -111,7 +115,6 @@ model Pathway {
   updatedAt  DateTime         @updatedAt
   createdBy String
   description String
-  difficulty PathwayDifficultyEnum
   image String
   isPending Boolean
   prerequisites String[]

@@ -5,7 +5,6 @@ export const CREATE_PATHWAY_MUTATION = gql`
     createPathway(input: $input) {
       id
       title
-      difficulty
       description
       slogan
     }
@@ -17,7 +16,6 @@ export const APPROVE_PATHWAY_MUTATION = gql`
     approvePathway(input: $input) {
       id
       title
-      difficulty
       image
       description
       slogan
@@ -37,7 +35,6 @@ export const VERIFY_PATHWAY_MUTATION = gql`
     verifyPathway(input: $input) {
       id
       title
-      difficulty
       image
       projectStreamId
       description
@@ -64,12 +61,12 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
         description
         slogan
         image
-        difficulty
         rewardCurrency
         rewardAmount
         rewardUserCap
         isPending
         projectId
+        prerequisites
         quizQuests {
           id
           isPending
@@ -93,7 +90,6 @@ export const EDIT_PATHWAY_MUTATION = gql`
       title
       createdBy
       createdAt
-      difficulty
       description
       slogan
       rewardCurrency
@@ -114,7 +110,6 @@ export const GET_PATHWAY_BY_ID_QUERY = gql`
       title
       createdBy
       createdAt
-      difficulty
       description
       slogan
       rewardCurrency

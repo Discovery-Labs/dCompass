@@ -44,6 +44,7 @@ export const CREATE_QUIZ_QUEST_MUTATION = gql`
       id
       name
       description
+      difficulty
       slogan
       pathwayId
       questions {
@@ -60,6 +61,7 @@ export const CREATE_QUEST_MUTATION = gql`
       id
       name
       description
+      difficulty
       slogan
       pathwayId
     }
@@ -72,6 +74,7 @@ export const APPROVE_QUEST_MUTATION = gql`
       id
       name
       description
+      difficulty
       slogan
       pathwayId
       image
@@ -91,6 +94,7 @@ export const APPROVE_QUEST_SOLUTION_MUTATION = gql`
       id
       name
       description
+      difficulty
       submissions {
         id
         did
@@ -108,6 +112,7 @@ export const VERIFY_QUEST_MUTATION = gql`
       id
       name
       description
+      difficulty
       slogan
       pathwayId
       image
@@ -130,7 +135,6 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
       description
       slogan
       image
-      difficulty
       rewardCurrency
       rewardAmount
       rewardUserCap
@@ -139,6 +143,8 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
       quizQuests {
         id
         streamId
+        prerequisites
+        difficulty
         name
         description
         slogan
@@ -154,7 +160,9 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
       bountyQuests {
         id
         streamId
+        prerequisites
         name
+        difficulty
         description
         slogan
         pathwayId
@@ -177,6 +185,8 @@ export const GET_BOUNTY_QUEST_BY_ID_QUERY = gql`
       streamId
       name
       description
+      difficulty
+      prerequisites
       slogan
       pathwayId
       questType
@@ -205,6 +215,8 @@ export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
       streamId
       name
       description
+      difficulty
+      prerequisites
       slogan
       pathwayId
       questType

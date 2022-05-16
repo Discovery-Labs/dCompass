@@ -13,12 +13,8 @@ import dynamic from "next/dynamic";
 import useCustomColor from "core/hooks/useCustomColor";
 import { useState, useEffect } from "react";
 
-import {
-  difficultyOptions,
-  REQUIRED_FIELD_LABEL,
-} from "../../../core/constants";
+import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import CodeEditorPreview from "../../custom/CodeEditorPreview";
-import ControlledSelect from "../../Inputs/ControlledSelect";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
@@ -30,7 +26,6 @@ const EditPathwayForm: React.FunctionComponent = () => {
     register,
     setValue,
     getValues,
-    control,
     formState: { errors },
   } = useFormContext();
 
@@ -90,16 +85,6 @@ const EditPathwayForm: React.FunctionComponent = () => {
             {errors.slogan && errors.slogan.message}
           </FormErrorMessage>
         </FormControl>
-
-        <ControlledSelect
-          control={control}
-          name="difficulty"
-          label="Difficulty"
-          rules={{
-            required: REQUIRED_FIELD_LABEL,
-          }}
-          options={difficultyOptions}
-        />
 
         <FormControl isInvalid={errors.description}>
           <FormLabel htmlFor="description">Description</FormLabel>

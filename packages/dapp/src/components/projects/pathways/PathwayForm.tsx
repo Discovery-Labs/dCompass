@@ -26,10 +26,7 @@ import useCustomColor from "core/hooks/useCustomColor";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import {
-  difficultyOptions,
-  REQUIRED_FIELD_LABEL,
-} from "../../../core/constants";
+import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
@@ -38,7 +35,11 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
 });
 
-export default function PathwayForm({ isWithRewards, withRewards }: any) {
+export default function PathwayForm({
+  isWithRewards,
+  withRewards,
+  existingPathways,
+}: any) {
   const [code, setCode] = useState<string>();
   const { codeEditorScheme } = useCustomColor();
 
@@ -107,19 +108,6 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
   //     options: existingGitcoinQuestsOptions,
   //   },
   // ];
-
-  // const existingPathwaysOptions = data.getAllPathwaysByProjectId
-  //   .filter((pathway: Pathway) => pathway.quests?.length > 0)
-  //   .map((pathway: Pathway) => {
-  //     return {
-  //       label: pathway.title,
-  //       options: pathway.quests.map((quest) => ({
-  //         label: quest.name,
-  //         value: quest.id,
-  //         colorScheme: "purple",
-  //       })),
-  //     };
-  //   });
 
   return (
     <VStack w="full" align="start">
@@ -312,22 +300,12 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
 
       <ControlledSelect
         control={control}
-        name="difficulty"
-        label="Difficulty"
-        rules={{
-          required: REQUIRED_FIELD_LABEL,
-        }}
-        options={difficultyOptions}
-      />
-
-      {/* <ControlledSelect
-        control={control}
         name="prerequisites"
         label="Prerequisites"
         isMulti
-        options={existingPathwaysOptions}
+        options={existingPathways}
         hasStickyGroupHeaders
-      /> */}
+      />
       <Divider bg="none" py="5" />
     </VStack>
   );

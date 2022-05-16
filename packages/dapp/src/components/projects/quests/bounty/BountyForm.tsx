@@ -4,10 +4,12 @@ import {
   AlertDescription,
   AlertIcon,
   AlertTitle,
+  Box,
   Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  HStack,
   Progress,
   Stack,
   Text,
@@ -180,17 +182,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
     <VStack as="form">
       <FormControl isInvalid={errors.solution}>
         <FormLabel htmlFor="solution">Your Solution</FormLabel>
-        <Textarea
-          placeholder="Quest solution"
-          {...register("solution", {
-            required: REQUIRED_FIELD_LABEL,
-          })}
-          onChange={(e) => {
-            const { name } = e.target;
-            setCode(e.target.value);
-            setValue(name, e.target.value);
-          }}
-        />
+
         <CodeEditor
           value={code}
           language="markdown"
@@ -209,6 +201,11 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
           className={codeEditorScheme}
           padding={15}
         />
+        {code && (
+          <Box w="full" py="2">
+            <CodeEditorPreview code={code} />
+          </Box>
+        )}
         <FormErrorMessage>
           {errors.solution && errors.solution.message}
         </FormErrorMessage>
@@ -225,7 +222,6 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         }}
       />
 
-      {code && <CodeEditorPreview code={code} />}
       <Button
         isLoading={isLoading}
         loadingText="Submitting answers..."

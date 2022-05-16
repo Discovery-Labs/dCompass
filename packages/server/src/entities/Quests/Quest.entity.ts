@@ -1,9 +1,28 @@
-import { ObjectType, Field, Float, Int } from "@nestjs/graphql";
+import {
+  ObjectType,
+  Field,
+  Float,
+  Int,
+  registerEnumType,
+} from "@nestjs/graphql";
 import { BaseEntity } from "../../core/entities/BaseEntity";
 import { ExpandedServerSignature } from "../../core/utils/security/ExpandedServerSignature";
 // TODO: eventually query the basic profile of the creator
 // import { CreatedBy } from "./dto/CreatedBy";
 
+export enum QuestDifficultyEnum {
+  BEGINNER = "BEGINNER",
+  INTERMEDIATE = "INTERMEDIATE",
+  ADVANCED = "ADVANCED",
+  EXPERT = "EXPERT",
+  WIZARD = "WIZARD",
+}
+
+registerEnumType(QuestDifficultyEnum, {
+  name: "QuestDifficultyEnum",
+  description:
+    "The difficulty of a quest, from beginner to wizard where wizard is the most difficult mode",
+});
 export type CeramicStreamId = string;
 @ObjectType({ isAbstract: true })
 export abstract class Quest extends BaseEntity {
@@ -18,6 +37,9 @@ export abstract class Quest extends BaseEntity {
 
   @Field()
   description: string;
+
+  @Field(() => QuestDifficultyEnum)
+  difficulty: QuestDifficultyEnum;
 
   @Field()
   slogan: string;
@@ -39,6 +61,9 @@ export abstract class Quest extends BaseEntity {
 
   @Field()
   pathwayId: string;
+
+  @Field(() => [String])
+  prerequisites?: string[];
 
   @Field(() => [String], { defaultValue: [] })
   completedBy?: string[];

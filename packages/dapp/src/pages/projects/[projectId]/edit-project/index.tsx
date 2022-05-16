@@ -1,24 +1,20 @@
 import { useMutation } from "@apollo/client";
-import { Stack, Button } from "@chakra-ui/react";
+import { Stack, Button, useToast } from "@chakra-ui/react";
 
 import Card from "components/custom/Card";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
 import CenteredFrame from "components/layout/CenteredFrame";
 import EditProjectForm from "components/projects/EditProjectForm";
-import SquadsForm from "components/projects/squads/SquadsForm";
-import { Web3Context } from "contexts/Web3Provider";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { initializeApollo } from "../../../../../lib/apolloClient";
 import {
   EDIT_PROJECT_MUTATION,
   PROJECT_BY_ID_QUERY,
 } from "../../../../graphql/projects";
-import CreateProjectWallet from "components/custom/CreateProjectWallet";
-import { Tag } from "../../../../core/types";
+import { useRouter } from "next/router";
 
 type Props = {
   projectId: string | null;
@@ -71,6 +67,8 @@ type Project = {
 
 function EditProjectStepper(project: Project) {
   const { t } = useTranslation("common");
+  const router = useRouter();
+  const toast = useToast();
 
   const [editProjectMutation] = useMutation(EDIT_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -152,7 +150,7 @@ function EditProjectStepper(project: Project) {
       }),
     };
 
-    const allProjects = await editProjectMutation({
+    await editProjectMutation({
       variables: {
         input: {
           id,
@@ -160,7 +158,16 @@ function EditProjectStepper(project: Project) {
         },
       },
     });
-    console.log({ allProjects });
+    toast({
+      title: "Project updated!",
+      description: `Project informations updated successfully!`,
+      status: "success",
+      position: "bottom-right",
+      duration: 6000,
+      isClosable: true,
+      variant: "subtle",
+    });
+    return router.push(`/projects/${id}`);
   }
 
   return (

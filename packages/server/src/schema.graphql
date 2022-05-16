@@ -30,6 +30,7 @@ type BountyQuest {
   createdAt: DateTime!
   createdBy: String!
   description: String!
+  difficulty: QuestDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -38,6 +39,7 @@ type BountyQuest {
   name: String!
   namespace: String
   pathwayId: String!
+  prerequisites: [String!]
   questType: String!
   rewardAmount: Float
   rewardCurrency: String
@@ -81,7 +83,6 @@ scalar DateTime
 
 input EditPathwayInput {
   description: String
-  difficulty: String
   id: String!
   slogan: String
   title: String
@@ -179,7 +180,6 @@ type Pathway {
   createdAt: DateTime!
   createdBy: String!
   description: String!
-  difficulty: PathwayDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -198,17 +198,6 @@ type Pathway {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
-}
-
-"""
-The difficulty of a pathway, from beginner to wizard where wizard is the most difficult mode
-"""
-enum PathwayDifficultyEnum {
-  ADVANCED
-  BEGINNER
-  EXPERT
-  INTERMEDIATE
-  WIZARD
 }
 
 type Project {
@@ -296,6 +285,7 @@ type Quest {
   createdAt: DateTime!
   createdBy: String!
   description: String!
+  difficulty: QuestDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -303,6 +293,7 @@ type Quest {
   name: String!
   namespace: String
   pathwayId: String!
+  prerequisites: [String!]
   questType: String!
   rewardAmount: Float
   rewardCurrency: String
@@ -318,6 +309,17 @@ input QuestAnswersSubmitionInput {
   did: String!
   questId: String!
   questionAnswers: [QuestQuestionAnswerInput!]!
+}
+
+"""
+The difficulty of a quest, from beginner to wizard where wizard is the most difficult mode
+"""
+enum QuestDifficultyEnum {
+  ADVANCED
+  BEGINNER
+  EXPERT
+  INTERMEDIATE
+  WIZARD
 }
 
 input QuestQuestionAnswerInput {
@@ -339,6 +341,7 @@ type QuizQuest {
   createdAt: DateTime!
   createdBy: String!
   description: String!
+  difficulty: QuestDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -346,6 +349,7 @@ type QuizQuest {
   name: String!
   namespace: String
   pathwayId: String!
+  prerequisites: [String!]
   questType: String!
   questions: [QuizQuestion!]
   rewardAmount: Float
@@ -420,6 +424,7 @@ type SubmitQuestAnswersOutput {
   createdAt: DateTime!
   createdBy: String!
   description: String!
+  difficulty: QuestDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -428,6 +433,7 @@ type SubmitQuestAnswersOutput {
   name: String!
   namespace: String
   pathwayId: String!
+  prerequisites: [String!]
   questType: String!
   rewardAmount: Int
   rewardCurrency: String

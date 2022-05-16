@@ -8,6 +8,7 @@ import { Link, Box } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import useCustomColor from "core/hooks/useCustomColor";
 import { useRouter } from "next/router";
+import { Quest } from "../../../../../core/types";
 
 export const questDefaultValues = {
   name: "",

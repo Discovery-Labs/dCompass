@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Stack, Button } from "@chakra-ui/react";
+import { Stack, Button, useToast } from "@chakra-ui/react";
 
 import Card from "components/custom/Card";
 import NotConnectedWrapper from "components/custom/NotConnectedWrapper";
@@ -7,10 +7,10 @@ import CenteredFrame from "components/layout/CenteredFrame";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
 import { initializeApollo } from "../../../../../../lib/apolloClient";
 import EditPathwayForm from "../../../../../components/projects/pathways/EditPathwayForm";
-import { difficultyOptions } from "../../../../../core/constants";
 import { Pathway } from "../../../../../core/types";
 import {
   EDIT_PATHWAY_MUTATION,
@@ -57,30 +57,20 @@ export const getServerSideProps: GetServerSideProps<
 
 function EditPathway(pathway: Pathway) {
   const { t } = useTranslation("common");
+  const router = useRouter();
+  const toast = useToast();
 
   const [editPathwayMutation] = useMutation(EDIT_PATHWAY_MUTATION, {
     refetchQueries: "all",
   });
 
-  const {
-    id,
-    slogan,
-    description,
-    title,
-    image,
-    difficulty,
-    ...initialValues
-  } = pathway;
+  const { id, slogan, description, title, image, ...initialValues } = pathway;
   console.log({ initialTags: initialValues });
   const methods = useForm({
     defaultValues: {
       slogan,
       description,
       title,
-      difficulty: difficultyOptions.find(
-        (lvl) =>
-          lvl.value.toLocaleLowerCase() === difficulty.toLocaleLowerCase()
-      ),
     } as Record<string, any>,
   });
 
@@ -88,14 +78,36 @@ function EditPathway(pathway: Pathway) {
     const values = methods.getValues();
     console.log({ values });
 
-    return editPathwayMutation({
-      variables: {
-        input: {
-          id,
-          ...values,
+    try {
+      await editPathwayMutation({
+        variables: {
+          input: {
+            id,
+            ...values,
+          },
         },
-      },
-    });
+      });
+      toast({
+        title: "Pathway updated!",
+        description: `Pathway informations updated successfully!`,
+        status: "success",
+        position: "bottom-right",
+        duration: 6000,
+        isClosable: true,
+        variant: "subtle",
+      });
+      return router.push(`/projects/${pathway.projectId}/pathways/${id}`);
+    } catch (error) {
+      toast({
+        title: "Error on pathway update!",
+        description: `An error occured while updating the pathway!`,
+        status: "error",
+        position: "bottom-right",
+        duration: 6000,
+        isClosable: true,
+        variant: "subtle",
+      });
+    }
   }
 
   return (
