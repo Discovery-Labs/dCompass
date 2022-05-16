@@ -140,7 +140,7 @@ function QuestSubmissionList({ questId }: { questId: string }) {
 
                   <HStack>
                     <Button
-                      colorScheme={"accentDark"}
+                      colorScheme={"accent"}
                       onClick={() => handleApproveSolution(solutionReview)}
                       leftIcon={<CheckIcon />}
                     >
@@ -233,7 +233,7 @@ function QuestSubmissionList({ questId }: { questId: string }) {
                     <Td>
                       <Tag
                         colorScheme={
-                          status === "approved" ? "accentDark" : "orange"
+                          status === "approved" ? "accent" : "orange"
                         }
                       >
                         {status === "approved" ? "Approved" : "Under review"}

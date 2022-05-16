@@ -169,48 +169,63 @@ function PathwayCard({
   const handleApprovePathway = async () => {
     setIsApproving(true);
     if (chainId && account) {
-      const { data } = await approvePathwayMutation({
-        variables: {
-          input: {
-            id: pathway.id,
+      try {
+        const { data } = await approvePathwayMutation({
+          variables: {
+            input: {
+              id: pathway.id,
+            },
           },
-        },
-      });
+        });
 
-      const [metadataVerifySignature, thresholdVerifySignature] =
-        data.approvePathway.expandedServerSignatures;
+        const [metadataVerifySignature, thresholdVerifySignature] =
+          data.approvePathway.expandedServerSignatures;
 
-      const voteForApprovalTx =
-        await contracts.pathwayNFTContract.voteForApproval(
-          projectContributors,
-          pathway.streamId,
-          data.approvePathway.projectStreamId,
-          [metadataVerifySignature.r, thresholdVerifySignature.r],
-          [metadataVerifySignature.s, thresholdVerifySignature.s],
-          [metadataVerifySignature.v, thresholdVerifySignature.v],
-          1
+        const voteForApprovalTx =
+          await contracts.pathwayNFTContract.voteForApproval(
+            projectContributors,
+            pathway.streamId,
+            data.approvePathway.projectStreamId,
+            [metadataVerifySignature.r, thresholdVerifySignature.r],
+            [metadataVerifySignature.s, thresholdVerifySignature.s],
+            [metadataVerifySignature.v, thresholdVerifySignature.v],
+            1
+          );
+
+        // get return values or events
+        const receipt = await voteForApprovalTx.wait(1);
+        console.log({ receipt });
+        const statusInt = await contracts.pathwayNFTContract.status(
+          pathway.streamId
         );
+        const statusString: string =
+          await contracts.pathwayNFTContract.statusStrings(statusInt);
+        setStatus(statusString);
 
-      // get return values or events
-      const receipt = await voteForApprovalTx.wait(1);
-      console.log({ receipt });
-      const statusInt = await contracts.pathwayNFTContract.status(
-        pathway.streamId
-      );
-      const statusString: string =
-        await contracts.pathwayNFTContract.statusStrings(statusInt);
-      setStatus(statusString);
+        return toast({
+          title: "Pathway approved!",
+          description: `Approval vote submitted successfully!`,
+          status: "success",
+          position: "bottom-right",
+          duration: 6000,
+          isClosable: true,
+          variant: "subtle",
+        });
+      } catch (error) {
+        console.error(error);
+
+        return toast({
+          title: "Error: Unsupported Network",
+          status: "warning",
+          position: "bottom-right",
+          duration: 6000,
+          isClosable: true,
+          variant: "subtle",
+        });
+      } finally {
+        setIsApproving(false);
+      }
     }
-    setIsApproving(false);
-    return toast({
-      title: "Pathway approved!",
-      description: `Approval vote submitted successfully!`,
-      status: "success",
-      position: "bottom-right",
-      duration: 6000,
-      isClosable: true,
-      variant: "subtle",
-    });
   };
 
   const handleCreateToken = async () => {

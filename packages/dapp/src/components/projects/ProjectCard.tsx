@@ -54,7 +54,7 @@ const ProjectCard = ({
         {showStatus && (
           <Badge
             key={project.id}
-            colorScheme={project.isFeatured ? "accentDark" : "orange"}
+            colorScheme={project.isFeatured ? "accent" : "orange"}
           >
             <HStack w="full">
               {project.isFeatured ? <MdCheckCircle /> : <MdRateReview />}
