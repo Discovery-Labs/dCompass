@@ -66,7 +66,7 @@ function QuizForm({ questions, questId, pathwayId, successCallback }: any) {
           description: `You did submit the correct answers!`,
           status: "success",
           position: "bottom-right",
-          duration: 6000,
+          duration: 3000,
           isClosable: true,
           variant: "subtle",
         });
@@ -88,7 +88,7 @@ function QuizForm({ questions, questId, pathwayId, successCallback }: any) {
         description: `You didn't submit the correct answers!`,
         status: "error",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });
@@ -99,7 +99,7 @@ function QuizForm({ questions, questId, pathwayId, successCallback }: any) {
         description: (error as ApolloError).message,
         status: "error",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });

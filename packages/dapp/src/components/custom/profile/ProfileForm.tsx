@@ -224,7 +224,7 @@ const ProfileForm = ({
         : `Changes successfuly saved.`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });

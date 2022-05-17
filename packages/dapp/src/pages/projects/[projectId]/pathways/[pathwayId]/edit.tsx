@@ -92,7 +92,7 @@ function EditPathway(pathway: Pathway) {
         description: `Pathway informations updated successfully!`,
         status: "success",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });
@@ -103,7 +103,7 @@ function EditPathway(pathway: Pathway) {
         description: `An error occured while updating the pathway!`,
         status: "error",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });

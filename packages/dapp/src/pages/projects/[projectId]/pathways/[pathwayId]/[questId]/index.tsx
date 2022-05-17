@@ -269,7 +269,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       description: `Rewards claimed successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
