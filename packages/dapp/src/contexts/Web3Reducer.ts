@@ -1,3 +1,10 @@
+import {
+  PathwayNFT,
+  ProjectNFT,
+  SponsorPassSFT,
+  BadgeNFT,
+} from "@discovery-dao/hardhat/typechain-types";
+
 export type State = {
   isSignedIn: boolean;
   loading: boolean;
@@ -6,7 +13,12 @@ export type State = {
   self: null | any;
   core: null | any;
   identityLink: null | any;
-  contracts: null | any;
+  contracts: null | {
+    projectNFTContract: ProjectNFT;
+    pathwayNFTContract: PathwayNFT;
+    SponsorPassSFT: SponsorPassSFT;
+    BadgeNFT: BadgeNFT;
+  };
   isReviewer: boolean;
   connectWeb3?: any;
   logout?: any;

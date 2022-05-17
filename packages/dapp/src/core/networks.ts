@@ -1,5 +1,10 @@
-const INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
-const NETWORKS = {
+import { ethers } from "ethers";
+import { Chain, chain } from "wagmi";
+
+export const INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
+export const defaultChain = chain.polygonMumbai;
+
+export const NETWORKS = {
   "31337": {
     name: "localhost",
     color: "#666666",
@@ -183,4 +188,13 @@ const NETWORKS = {
   },
 };
 
-export default NETWORKS;
+export const getStaticProvider = (activeChain?: Chain) =>
+  new ethers.providers.StaticJsonRpcProvider(
+    activeChain
+      ? `${activeChain.rpcUrls.infura}/${INFURA_ID}`
+      : `${defaultChain.rpcUrls.infura}/${INFURA_ID}`,
+    {
+      chainId: activeChain?.id || defaultChain.id,
+      name: NETWORKS[activeChain?.id || defaultChain.id].name,
+    }
+  );

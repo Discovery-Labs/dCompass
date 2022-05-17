@@ -38,7 +38,9 @@ export abstract class Quest extends BaseEntity {
   @Field()
   description: string;
 
-  @Field(() => QuestDifficultyEnum)
+  @Field(() => QuestDifficultyEnum, {
+    defaultValue: QuestDifficultyEnum.BEGINNER,
+  })
   difficulty: QuestDifficultyEnum;
 
   @Field()
