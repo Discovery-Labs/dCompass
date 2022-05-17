@@ -373,13 +373,25 @@ function PathwayPage({
         <Tabs w="full">
           <HStack w="full">
             <TabList w="full">
+              <Tab w="full">Overview</Tab>
               <Tab w="full">Quests</Tab>
-              <Tab w="full">Guide</Tab>
               <Tab w="full">Details&amp;Rewards</Tab>
             </TabList>
           </HStack>
 
           <TabPanels>
+            {/* Overview */}
+            <TabPanel px="0">
+              <VStack w="full" align="flex-start">
+                <ReactMarkdown
+                  components={ChakraUIRenderer(pathwayMarkdownTheme)}
+                  skipHtml
+                >
+                  {description}
+                </ReactMarkdown>
+              </VStack>
+            </TabPanel>
+
             {/* Quests */}
             <TabPanel px="0">
               <Tabs w="full" variant="unstyled">
@@ -428,18 +440,6 @@ function PathwayPage({
                   </TabPanel>
                 </TabPanels>
               </Tabs>
-            </TabPanel>
-
-            {/* Guide */}
-            <TabPanel px="0">
-              <VStack w="full" align="flex-start">
-                <ReactMarkdown
-                  components={ChakraUIRenderer(pathwayMarkdownTheme)}
-                  skipHtml
-                >
-                  {description}
-                </ReactMarkdown>
-              </VStack>
             </TabPanel>
 
             {/* Details */}
