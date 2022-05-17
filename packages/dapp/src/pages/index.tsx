@@ -51,6 +51,7 @@ const fuseOptions = {
 
 // eslint-disable-next-line complexity
 function Projects() {
+  const [tabIndex, setTabIndex] = useState(0);
   const { t } = useTranslation("common");
   const {
     data: tagsData,
@@ -61,7 +62,6 @@ function Projects() {
     fetchPolicy: "cache-and-network",
   });
 
-  console.log({ loadingTags, loading });
   const [filteredProjects, setFilteredProjects] = useState<Array<Project>>([]);
 
   const [searchedProjects, setSearchedProjects] = useState<
@@ -76,6 +76,10 @@ function Projects() {
   const [query, setQuery] = useState<string>("");
 
   const { account } = useContext(Web3Context);
+
+  function handleTabsChange(index: number) {
+    return setTabIndex(index);
+  }
 
   function filterWithTags(e: Array<string>) {
     const newFilteredProjects = data.getAllProjects.filter(
@@ -119,7 +123,11 @@ function Projects() {
           {searchedProjects
             .filter((project) => project.item.createdBy === account)
             .map((project) => (
-              <ProjectCard key={project.item.name} project={project.item} />
+              <ProjectCard
+                key={project.item.name}
+                project={project.item}
+                showStatus={true}
+              />
             ))}
         </>
       );
@@ -146,12 +154,20 @@ function Projects() {
             ? filteredProjects
                 .filter((project) => project.createdBy === account)
                 .map((project) => (
-                  <ProjectCard key={project.name} project={project} />
+                  <ProjectCard
+                    key={project.name}
+                    project={project}
+                    showStatus={true}
+                  />
                 ))
             : data.getAllProjects
                 .filter((project: Project) => project.createdBy === account)
                 .map((project: Project) => (
-                  <ProjectCard key={project.name} project={project} />
+                  <ProjectCard
+                    key={project.name}
+                    project={project}
+                    showStatus={true}
+                  />
                 ))}
         </>
       );
@@ -232,7 +248,12 @@ function Projects() {
         </Menu>
       </HStack>
 
-      <Tabs w="full" variant="unstyled">
+      <Tabs
+        w="full"
+        variant="unstyled"
+        index={tabIndex}
+        onChange={handleTabsChange}
+      >
         <TabList>
           <Tab>{t("all-projects")}</Tab>
           <Tab>{t("my-projects")}</Tab>

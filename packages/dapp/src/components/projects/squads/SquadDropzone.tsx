@@ -42,7 +42,9 @@ const SquadDropzone = ({
   );
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
+    accept: {
+      "image/*": [],
+    },
     onDrop,
   });
 
@@ -70,7 +72,7 @@ const SquadDropzone = ({
     const squadsImage = getValues(`squads[${nestIndex}].image`);
 
     if (squadsImage && typeof squadsImage !== "string") {
-      const logoFiles = [];
+      const logoFiles = [] as any[];
       logoFiles.push(squadsImage[0]);
       // console.log("logoFiles", squadsImage);
       setFiles(

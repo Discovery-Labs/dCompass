@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { EditIcon, AddIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Button,
@@ -9,7 +9,6 @@ import {
   Icon,
   Progress,
   SimpleGrid,
-  Spacer,
   Stack,
   Tab,
   TabList,
@@ -22,7 +21,6 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
@@ -35,9 +33,9 @@ import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Blockies from "react-blockies";
-import { BsBarChartFill, BsCheckCircleFill, BsPeople } from "react-icons/bs";
+import { BsCheckCircleFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { GoTasklist } from "react-icons/go";
 import { RiHandCoinFill } from "react-icons/ri";
@@ -49,7 +47,6 @@ import QuestCard from "../../../../../components/projects/quests/QuestCard";
 import useCustomColor from "../../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../core/hooks/useTokenList";
-import { Quest } from "../../../../../core/types";
 import { PROJECT_BY_ID_QUERY } from "../../../../../graphql/projects";
 
 type Props = {
@@ -101,8 +98,8 @@ function PathwayPage({
   description,
   slogan,
   image,
-  quests = [],
-  difficulty,
+  quizQuests = [],
+  bountyQuests = [],
   createdBy,
   createdAt,
   rewardAmount,
@@ -127,7 +124,7 @@ function PathwayPage({
   const pathwayMarkdownTheme = usePageMarkdownTheme();
 
   const { account, isReviewer, contracts, self } = useContext(Web3Context);
-  const { chainId, library } = useWeb3React();
+
   const { getAccentColor } = useCustomColor();
   const [claimPathwayRewardsMutation] = useMutation(
     CLAIM_PATHWAY_REWARDS_MUTATION
@@ -150,12 +147,21 @@ function PathwayPage({
     },
   });
 
+  const allQuests = useMemo(
+    () => [
+      ...(data?.getAllQuestsByPathwayId?.quizQuests || []),
+      ...(data?.getAllQuestsByPathwayId?.bountyQuests || []),
+    ],
+    [
+      data?.getAllQuestsByPathwayId?.quizQuests,
+      data?.getAllQuestsByPathwayId?.bountyQuests,
+    ]
+  );
   useEffect(() => {
-    const totalQuestCount = quests.length;
+    const totalQuestCount = allQuests.length;
     const completedQuestCount = self?.id
-      ? quests.filter(
-          (q: Quest) => q.completedBy.includes(self.id) && !q.isPending
-        ).length
+      ? allQuests.filter((q) => q.completedBy.includes(self.id) && !q.isPending)
+          .length
       : 0;
     const ratio = (completedQuestCount / totalQuestCount) * 100;
 
@@ -164,7 +170,7 @@ function PathwayPage({
       completedQuestCount,
       ratio,
     });
-  }, [quests, self?.id]);
+  }, [allQuests, self?.id]);
 
   useEffect(() => {
     async function init() {
@@ -187,15 +193,6 @@ function PathwayPage({
   const handleClaimPathwayRewards = async () => {
     setIsClaiming(true);
     setRewardStatus("Claiming rewards");
-    const signatureInput = {
-      id,
-      projectId,
-    };
-    setRewardStatus("Signing claim");
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify(signatureInput),
-      account,
-    ]);
 
     setRewardStatus("Generating tokenURI");
     const formData = new FormData();
@@ -210,8 +207,8 @@ function PathwayPage({
         description,
         slogan,
         image,
-        quests,
-        difficulty,
+        quizQuests,
+        bountyQuests,
         createdBy,
         createdAt,
         rewardAmount,
@@ -233,8 +230,6 @@ function PathwayPage({
         input: {
           pathwayId: id,
           did: self.id,
-          questAdventurerSignature: signature.result,
-          chainId,
         },
       },
     });
@@ -280,7 +275,48 @@ function PathwayPage({
     });
   };
 
+  const getShortenedAddress = (address: string) => {
+    let displayAddress = address.slice(0, 6);
+    displayAddress += `...${address.slice(-4)}`;
+
+    return displayAddress;
+  };
+
   const isOwner = createdBy === account;
+  const isProjectContributor = useMemo(
+    () =>
+      projectRes?.getProjectById?.squads &&
+      projectRes.getProjectById.squads
+        .flatMap(({ members }: { members: string[] }) => members)
+        .includes(account),
+    [projectRes?.getProjectById, account]
+  );
+  const canEdit = isProjectContributor || isOwner;
+
+  const canReviewQuests = isProjectContributor || isOwner || isReviewer;
+
+  const renderQuests = useCallback(
+    (questsToRender: Record<string, unknown>[]) => {
+      return (
+        data?.getAllQuestsByPathwayId &&
+        projectRes?.getProjectById &&
+        questsToRender.map((quest: any) => (
+          <QuestCard
+            key={quest.id}
+            quest={quest}
+            canReviewQuests={canReviewQuests}
+            pathwayStreamId={data.getAllQuestsByPathwayId.streamId}
+            projectContributors={
+              projectRes.getProjectById.squads.flatMap(
+                ({ members }: { members: string[] }) => members
+              ) || []
+            }
+          />
+        ))
+      );
+    },
+    [data?.getAllQuestsByPathwayId, canReviewQuests, projectRes?.getProjectById]
+  );
 
   if (loading || projectLoading || !projectRes?.getProjectById)
     return (
@@ -293,27 +329,6 @@ function PathwayPage({
     );
   if (error || projectError)
     return `Loading error! ${error?.message || projectError?.message}`;
-  const isProjectContributor = projectRes.getProjectById.squads
-    .flatMap(({ members }: { members: string[] }) => members)
-    .includes(account);
-  const canEdit = isProjectContributor || isOwner;
-  console.log({ canEdit, isOwner, isProjectContributor });
-  const canReviewQuests = isProjectContributor || isOwner || isReviewer;
-  const renderQuests = (questsToRender: Record<string, unknown>[]) => {
-    return questsToRender.map((quest: any) => (
-      <QuestCard
-        key={quest.id}
-        quest={quest}
-        canReviewQuests={canReviewQuests}
-        pathwayStreamId={data.getAllQuestsByPathwayId.streamId}
-        projectContributors={
-          projectRes.getProjectById.squads.flatMap(
-            ({ members }: { members: string[] }) => members
-          ) || []
-        }
-      />
-    ));
-  };
 
   return (
     <Container>
@@ -351,18 +366,16 @@ function PathwayPage({
               passHref
             >
               {/** TODO: Edit pathway form or page **/}
-              <Button disabled leftIcon={<AddIcon />}>
-                {t("edit-pathway")}
-              </Button>
+              <Button leftIcon={<AddIcon />}>{t("edit-pathway")}</Button>
             </NextLink>
           )}
         </HStack>
         <Tabs w="full">
-          <HStack justifyContent="space-between">
-            <TabList>
-              <Tab>Quests</Tab>
-              <Tab>Guide</Tab>
-              <Tab>Details &amp; rewards</Tab>
+          <HStack w="full">
+            <TabList w="full">
+              <Tab w="full">Quests</Tab>
+              <Tab w="full">Guide</Tab>
+              <Tab w="full">Details&amp;Rewards</Tab>
             </TabList>
           </HStack>
 
@@ -372,7 +385,7 @@ function PathwayPage({
               <Tabs w="full" variant="unstyled">
                 <Flex
                   w="full"
-                  direction={["column-reverse", "column-reverse", "row"]}
+                  direction={["column", "column", "row"]}
                   justify="space-between"
                 >
                   <TabList>
@@ -385,7 +398,7 @@ function PathwayPage({
                     href={`/projects/${projectId}/pathways/${id}/add-quest`}
                     passHref
                   >
-                    <Flex py="2" w="full" justify={["start", "start", "end"]}>
+                    <Flex pt="4" w="full" justify={["center", "center", "end"]}>
                       <Button variant="outline" leftIcon={<AddIcon />}>
                         {t("add-quest")}
                       </Button>
@@ -397,9 +410,7 @@ function PathwayPage({
                   <TabPanel>
                     <SimpleGrid columns={[1, 2]} spacing={10}>
                       {renderQuests(
-                        data.getAllQuestsByPathwayId.quests.filter(
-                          (quest: any) => !quest.isPending
-                        )
+                        allQuests.filter((quest: any) => !quest.isPending)
                       )}
                     </SimpleGrid>
                   </TabPanel>
@@ -407,9 +418,7 @@ function PathwayPage({
                     <TabPanel>
                       <SimpleGrid columns={[1, 2]} spacing={10}>
                         {renderQuests(
-                          data.getAllQuestsByPathwayId.quests.filter(
-                            (quest: any) => quest.isPending
-                          )
+                          allQuests.filter((quest: any) => quest.isPending)
                         )}
                       </SimpleGrid>
                     </TabPanel>
@@ -442,21 +451,6 @@ function PathwayPage({
                 justify="space-between"
               >
                 <VStack align="left">
-                  <HStack>
-                    <Icon as={BsBarChartFill} />
-                    <Text
-                      fontWeight="bold"
-                      fontSize="xl"
-                      color="text"
-                      textTransform="uppercase"
-                    >
-                      Difficulty
-                    </Text>
-                    <Spacer />
-                    <Flex align="end" direction="column">
-                      <Tag>{difficulty}</Tag>
-                    </Flex>
-                  </HStack>
                   <Tooltip
                     label={`${pathwayProgress?.ratio}% - ${pathwayProgress?.completedQuestCount}/${pathwayProgress?.totalQuestCount} quests completed`}
                     hasArrow
@@ -481,7 +475,7 @@ function PathwayPage({
                           value={pathwayProgress?.ratio}
                           border={`solid 1px ${getAccentColor}`}
                           hasStripe
-                          colorScheme="accentDark"
+                          colorScheme="accent"
                           bgColor="bg"
                         />
                       </HStack>
@@ -530,12 +524,12 @@ function PathwayPage({
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color="text-weak" textStyle="small" isTruncated>
+                    <Text color="text-weak" textStyle="small">
                       {t("creation-date")}{" "}
                       {new Date(createdAt).toLocaleString()}
                     </Text>
-                    <Text fontSize="sm" isTruncated>
-                      {t("by")} {createdBy}
+                    <Text fontSize="sm">
+                      {t("by")} {getShortenedAddress(createdBy)}
                     </Text>
                     {isOwner && (
                       // TODO: edit pathway form
@@ -551,85 +545,49 @@ function PathwayPage({
                   </VStack>
                 </Flex>
               </Flex>
-              {quests && (
+              {allQuests && (
                 <Text pt="8" fontSize="xs">
-                  {quests.length} Quest{quests.length > 1 ? "s" : ""}
+                  {allQuests.length} Quest{allQuests.length > 1 ? "s" : ""}
                 </Text>
               )}
-
-              <CardMedia
-                h="xs"
-                src={`https://ipfs.io/ipfs/${image}`}
-                imageHeight="160px"
-              >
-                <Stack
-                  w="full"
-                  justifyContent="space-between"
-                  direction="row"
-                  spacing={4}
-                  align="center"
+              <SimpleGrid columns={[1, 2]} spacing={10}>
+                <CardMedia
+                  h="xs"
+                  src={`https://ipfs.io/ipfs/${image}`}
+                  imageHeight="120px"
                 >
-                  <Avatar
-                    boxSize="4.5rem"
-                    src={`https://ipfs.io/ipfs/${image}`}
-                    position="relative"
-                    zIndex={2}
-                    _before={{
-                      content: '""',
-                      width: "full",
-                      height: "full",
-                      rounded: "full",
-                      transform: "scale(1.125)",
-                      bg: "purple.500",
-                      position: "absolute",
-                      zIndex: -1,
-                      top: 0,
-                      left: 0,
-                    }}
-                  />
-                  <Text color="purple.500" fontSize="3xl" fontWeight="bold">
-                    NFT
-                  </Text>
-                  <Text
-                    fontFamily="heading"
-                    fontSize={{ base: "4xl", md: "6xl" }}
-                  >
-                    +
-                  </Text>
-                  <Flex
-                    align="center"
-                    justify="center"
-                    fontFamily="heading"
-                    fontWeight="bold"
-                    fontSize={{ base: "sm", md: "lg" }}
-                    bg="violet.100"
-                    color="text"
-                    rounded="full"
-                    position="relative"
-                    _before={{
-                      content: '""',
-                      width: "full",
-                      height: "full",
-                      rounded: "full",
-                      transform: "scale(1.125)",
-                      bgGradient: "linear(to-bl, purple.400,purple.500)",
-                      position: "absolute",
-                      zIndex: -1,
-                      top: 0,
-                      left: 0,
-                    }}
-                  >
-                    <Text fontSize="3xl" fontWeight="bold">
-                      {rewardAmount / rewardUserCap}{" "}
-                      {getRewardCurrency(rewardCurrency)}
-                    </Text>
-                  </Flex>
-                  <HStack w="40%">
+                  <VStack w="full" align="start">
+                    <Text color="accent">Rewards</Text>
+                    <HStack pb="2">
+                      <Avatar
+                        boxSize="3rem"
+                        src={`https://ipfs.io/ipfs/${image}`}
+                        position="relative"
+                        zIndex={2}
+                        _before={{
+                          content: '""',
+                          width: "full",
+                          height: "full",
+                          rounded: "full",
+                          transform: "scale(1.125)",
+                          bg: "purple.500",
+                          position: "absolute",
+                          zIndex: -1,
+                          top: 0,
+                          left: 0,
+                        }}
+                      />
+                      <Text>+</Text>
+                      <Tag variant="outline" size="lg">
+                        {rewardAmount} {getRewardCurrency(rewardCurrency)}
+                      </Tag>
+                    </HStack>
+
                     <Button
                       w="full"
                       fontSize="md"
                       disabled={isClaiming || isClaimed}
-                      colorScheme={isClaimed ? "accentDark" : "primary"}
+                      colorScheme={isClaimed ? "accent" : "primary"}
                       loadingText={rewardStatus}
                       isLoading={isClaiming}
                       variant="outline"
@@ -640,9 +598,9 @@ function PathwayPage({
                     >
                       {rewardStatus}
                     </Button>
-                  </HStack>
-                </Stack>
-              </CardMedia>
+                  </VStack>
+                </CardMedia>
+              </SimpleGrid>
             </TabPanel>
           </TabPanels>
         </Tabs>

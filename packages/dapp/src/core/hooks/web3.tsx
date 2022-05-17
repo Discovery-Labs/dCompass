@@ -1,9 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { Web3Provider } from "@ethersproject/providers";
-import {
-  useSafeAppConnection,
-  SafeAppConnector,
-} from "@gnosis.pm/safe-apps-web3-react";
+
 import { useWeb3React as useWeb3ReactCore } from "@web3-react/core";
 import { Web3ReactContextInterface } from "@web3-react/core/dist/types";
 import { useContext, useEffect, useState } from "react";
@@ -25,10 +22,8 @@ export function useEagerConnect() {
     return null;
   }
 
-  const triedToConnectToSafe = useSafeAppConnection(new SafeAppConnector());
-
   useEffect(() => {
-    if (triedToConnectToSafe && !active) {
+    if (!active) {
       injected.isAuthorized().then((isAuthorized) => {
         if (isAuthorized || (isMobile && window.ethereum)) {
           activate(injected, undefined, true).catch(() => {
@@ -39,14 +34,14 @@ export function useEagerConnect() {
         }
       });
     }
-  }, [activate, active, triedToConnectToSafe]); // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate, active]); // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
-    if (active && triedToConnectToSafe) {
+    if (active) {
       setTried(true);
     }
-  }, [active, triedToConnectToSafe]);
+  }, [active]);
 
   return tried;
 }

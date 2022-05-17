@@ -10,7 +10,7 @@ export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
 let apolloClient;
 
-function createApolloClient() {
+export function createApolloClient() {
   // const cacheOptions = {
   //   typePolicies: {
   //     Query: {
@@ -24,7 +24,7 @@ function createApolloClient() {
     ssrMode: typeof window === "undefined",
     link: new HttpLink({
       uri: `${process.env.NEXT_PUBLIC_API_URL}/graphql`, // Server URL (must be absolute)
-      // credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
+      credentials: "include", // Additional fetch() options like `credentials` or `headers`
     }),
     cache: new InMemoryCache({
       addTypename: false,

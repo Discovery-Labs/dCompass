@@ -1,20 +1,14 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsString, IsDefined, IsNotEmpty } from 'class-validator';
-import { ProjectSquadsInput } from './ProjectSquads.input';
+import { Field, InputType } from "@nestjs/graphql";
+import { IsString, IsDefined, IsNotEmpty } from "class-validator";
+import { ProjectSquadsInput } from "./ProjectSquads.input";
 
 @InputType()
 export class EditProjectInput {
   @Field()
-  @IsString({ message: 'wrong.type' })
-  @IsDefined({ message: 'not.defined' })
-  @IsNotEmpty({ message: 'not.empty' })
+  @IsString({ message: "wrong.type" })
+  @IsDefined({ message: "not.defined" })
+  @IsNotEmpty({ message: "not.empty" })
   id: string;
-
-  @Field()
-  @IsString({ message: 'wrong.type' })
-  @IsDefined({ message: 'not.defined' })
-  @IsNotEmpty({ message: 'not.empty' })
-  editorSignature: string;
 
   @Field(() => [String], { nullable: true })
   tokenUris?: string[];
@@ -24,6 +18,9 @@ export class EditProjectInput {
 
   @Field()
   name?: string;
+
+  @Field()
+  slogan?: string;
 
   @Field()
   description?: string;
@@ -48,4 +45,10 @@ export class EditProjectInput {
 
   @Field()
   github?: string;
+
+  @Field()
+  gitbook?: string;
+
+  @Field(() => [String])
+  tags?: string[];
 }

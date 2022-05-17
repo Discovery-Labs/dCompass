@@ -1,38 +1,14 @@
-import {
-  ObjectType,
-  Field,
-  registerEnumType,
-  Float,
-  Int,
-} from '@nestjs/graphql';
-import { BaseEntity } from '../../core/entities/BaseEntity';
-import { ExpandedServerSignature } from '../../core/utils/security/ExpandedServerSignature';
-import { Quest } from '../Quests/Quest.entity';
+import { ObjectType, Field, Float, Int } from "@nestjs/graphql";
+import { BaseEntity } from "../../core/entities/BaseEntity";
+import { ExpandedServerSignature } from "../../core/utils/security/ExpandedServerSignature";
+import { BountyQuest } from "../Quests/BountyQuest.entity";
+import { Quest } from "../Quests/Quest.entity";
+import { QuizQuest } from "../Quests/QuizQuest.entity";
 
 export enum PathwayTypeEnum {
-  BRANCHED = 'branched',
-  DECRYPTED = 'decrypted',
+  BRANCHED = "branched",
+  DECRYPTED = "decrypted",
 }
-
-export enum PathwayDifficultyEnum {
-  BEGINNER = 'beginner',
-  INTERMEDIATE = 'intermediate',
-  ADVANCED = 'advanced',
-  EXPERT = 'expert',
-  WIZARD = 'wizard',
-}
-
-registerEnumType(PathwayTypeEnum, {
-  name: 'PathwayTypeEnum',
-  description:
-    'Branched = theorical lessons and Decrypted = technical hands on lessons',
-});
-
-registerEnumType(PathwayDifficultyEnum, {
-  name: 'PathwayDifficultyEnum',
-  description:
-    'The difficulty of a pathway, from beginner to wizard where wizard is the most difficult mode',
-});
 
 export type CeramicStreamId = string;
 @ObjectType()
@@ -61,11 +37,11 @@ export class Pathway extends BaseEntity {
   @Field()
   slogan: string;
 
-  @Field()
-  rewardCurrency: string;
+  @Field({ nullable: true })
+  rewardCurrency?: string;
 
-  @Field(() => Float)
-  rewardAmount: number;
+  @Field(() => Float, { nullable: true })
+  rewardAmount?: number;
 
   @Field(() => Int)
   rewardUserCap: number;
@@ -73,11 +49,14 @@ export class Pathway extends BaseEntity {
   @Field(() => [String])
   prerequisites?: string[];
 
-  @Field(() => PathwayDifficultyEnum)
-  difficulty: PathwayDifficultyEnum;
-
   @Field(() => [Quest])
   quests?: Quest[];
+
+  @Field(() => [QuizQuest])
+  quizQuests?: QuizQuest[];
+
+  @Field(() => [BountyQuest])
+  bountyQuests?: BountyQuest[];
 
   @Field(() => [ExpandedServerSignature])
   expandedServerSignatures?: ExpandedServerSignature[];

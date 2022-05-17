@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Config } from './config.interface';
+import { Config } from "./config.interface";
 
 const config: Config = {
   nest: {
     port: 5000,
   },
+  infuraKey: process.env.INFURA_ID!,
   ceramic: {
     apiUrl: process.env.CERAMIC_API_URL!,
     seed: process.env.CERAMIC_SEED!,
@@ -15,20 +16,20 @@ const config: Config = {
   },
   swagger: {
     enabled: true,
-    title: 'discovery-rest-api',
-    description: 'REST endpoints of the Discovery API',
-    version: '1.5',
-    path: 'api',
+    title: "scaffold-api",
+    description: "REST endpoints of the Scaffold API",
+    version: "1.5",
+    path: "api",
   },
   graphql: {
     playgroundEnabled: true,
     debug: true,
-    schemaDestination: './src/schema.graphql',
+    schemaDestination: "./src/schema.graphql",
     sortSchema: true,
   },
   security: {
-    expiresIn: '2m',
-    refreshIn: '7d',
+    expiresIn: "2m",
+    refreshIn: "7d",
     bcryptSaltOrRound: 10,
   },
   api: {
@@ -36,21 +37,33 @@ const config: Config = {
     environment: process.env.NODE_ENV!,
     hostname: `${process.env.HOST}:${process.env.PORT}`,
     confirmationTokenExpiration: parseInt(
-      process.env.CONFIRMATION_TOKEN_EXPIRATION || '120',
-      10,
+      process.env.CONFIRMATION_TOKEN_EXPIRATION || "120",
+      10
     ),
     tracing: false,
-    port: parseInt(process.env.PORT!, 10) || 5000,
+    port: parseInt(process.env.PORT!),
     logLevel: process.env.LOG_LEVEL!,
     protocol: function () {
-      return `http${process.env.NODE_ENV! === 'development' ? '' : 's'}`;
+      return `http${process.env.NODE_ENV! === "development" ? "" : "s"}`;
     },
     corsOptions: {
       credentials: true,
-      origin: '*',
+      origin: function (origin, callback) {
+        const validPatternRegexes = [
+          /^(.*).dcompass.xyz(\/(.*)|)$/,
+          /^(www.*).dcompass.xyz(\/(.*)|)$/,
+          /^(www.|)dcompass.xyz(\/(.*)|)$/,
+          /^http:\/\/localhost:[0-9]{4}$/,
+        ];
+        if (validPatternRegexes.some((rx) => rx.test(origin)) || !origin) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
     },
     // rateLimits: {
-    //   register: 1,
+    //   register: 5,
     // },
   },
   apolloServerOptions: {
@@ -70,20 +83,30 @@ const config: Config = {
     showFriendlyErrorStack: true,
     autoResubscribe: true,
   },
-  // sessionOptions: {
-  //   name: process.env.COOKIE_NAME!,
-  //   secret: process.env.COOKIE_SECRET!,
-  //   resave: false,
-  //   saveUninitialized: false,
-  //   unset: 'destroy',
-  //   cookie: {
-  //     secure: JSON.parse(process.env.IS_SECURE_COOKIE!),
-  //     httpOnly: true,
-  //     sameSite: 'lax',
-  //     path: '/',
-  //     maxAge: 144 * 60 * 60 * 1000, // 6 days
-  //   },
-  // },
+  redisAuthConfig: {
+    port: +process.env.REDIS_PORT!,
+    host: process.env.REDIS_HOST,
+    password: process.env.REDIS_PASSWORD,
+    connectTimeout: 15000,
+    enableReadyCheck: true,
+    showFriendlyErrorStack: true,
+    autoResubscribe: true,
+  },
+  sessionOptions: {
+    name: process.env.COOKIE_NAME!,
+    secret: process.env.COOKIE_SECRET!,
+    resave: false,
+    saveUninitialized: false,
+
+    cookie: {
+      secure: JSON.parse(process.env.IS_SECURE_COOKIE!), // casting the string to a boolean
+      httpOnly: true,
+      sameSite: "lax",
+      // domain: "dcompass.xyz",
+      path: "/",
+      maxAge: 144 * 60 * 60 * 1000, // 6 days
+    },
+  },
 };
 
 export default (): Config => config;

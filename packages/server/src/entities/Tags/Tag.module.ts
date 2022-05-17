@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
+import { Module } from "@nestjs/common";
+import { HttpModule } from "@nestjs/axios";
 
-import { RedisModule } from '../../core/resources/Redis/Redis.module';
+import { RedisModule } from "../../core/resources/Redis/Redis.module";
 
-import { GetAllTagsResolver } from './queries/GetAllTags.resolver';
+import { GetAllTagsResolver } from "./queries/GetAllTags.resolver";
 // import { CreateTagResolver } from './mutations/CreateTag.resolver';
 // import { CreateTagsResolver } from './mutations/CreateTags.resolver';
-import { ThreadDBService } from '../../services/thread-db/thread-db.service';
+import { TagService } from "./Tag.service";
+import { PrismaService } from "../../services/prisma/Prisma.service";
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { ThreadDBService } from '../../services/thread-db/thread-db.service';
     GetAllTagsResolver,
     // CreateTagResolver,
     // CreateTagsResolver,
-    ThreadDBService,
+    PrismaService,
+    TagService,
   ],
   exports: [],
 })

@@ -1,4 +1,4 @@
-version: '2.4'
+version: "3.7"
 
 services:
   redis:
@@ -10,17 +10,18 @@ services:
     networks:
       - decryptnet
   api:
-    image: discovery:dev
+    image: dcompass:dev
     container_name: api
     build:
       context: .
       dockerfile: Dockerfile
       target: dev
     depends_on:
+      - postgres
       redis:
         condition: service_started
     ports:
-      - ${API_PORT}:${API_PORT}
+      - ${PORT}:${PORT}
       # - 9229:9229  Debug port
     environment:
       NODE_ENV: development
@@ -39,3 +40,6 @@ services:
 
 networks:
   decryptnet:
+volumes:
+  postgres:
+    name: dcompass-db

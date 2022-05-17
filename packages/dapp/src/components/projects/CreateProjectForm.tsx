@@ -10,9 +10,10 @@ import {
   FormLabel,
   Heading,
   Input,
-  Spinner,
   InputGroup,
   InputLeftAddon,
+  Spinner,
+  Stack,
   Text,
 } from "@chakra-ui/react";
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
@@ -20,13 +21,11 @@ import useCustomColor from "core/hooks/useCustomColor";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
-
 import { REQUIRED_FIELD_LABEL } from "../../core/constants";
 import { Tag } from "../../core/types";
 import { ALL_TAGS_QUERY } from "../../graphql/tags";
 import IconWithState from "../custom/IconWithState";
 import ControlledSelect from "../Inputs/ControlledSelect";
-
 import LogoDropzone from "./LogoDropzone";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
@@ -66,9 +65,19 @@ const CreateProjectForm = () => {
   return (
     <>
       <Heading>Create project</Heading>
-      <LogoDropzone
+      {/* <LogoDropzone
         {...{ register, setValue, getValues, errors, isRequired: true }}
-      />
+      /> */}
+
+      <FormControl isInvalid={errors.logo}>
+        <FormLabel htmlFor="logo">Logo</FormLabel>
+
+        <Input type="file" placeholder="Logo" {...register("logo")} />
+
+        <FormErrorMessage>
+          {errors.logo && errors.logo.message}
+        </FormErrorMessage>
+      </FormControl>
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Project name</FormLabel>
@@ -124,6 +133,7 @@ const CreateProjectForm = () => {
           className={codeEditorScheme}
           padding={15}
         />
+
         <FormErrorMessage>
           {errors.description && errors.description.message}
         </FormErrorMessage>

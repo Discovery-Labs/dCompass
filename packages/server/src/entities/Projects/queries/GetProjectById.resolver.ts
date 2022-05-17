@@ -1,57 +1,29 @@
-import { NotFoundException } from '@nestjs/common';
-import { Resolver, Query, Args } from '@nestjs/graphql';
-import { Where } from '@textile/hub';
+import { NotFoundException } from "@nestjs/common";
+import { Resolver, Query, Args } from "@nestjs/graphql";
 
-import { UseThreadDB } from '../../../core/decorators/UseThreadDB.decorator';
-import { UseThreadDBClient } from '../../../core/utils/types';
-import { ThreadDBService } from '../../../services/thread-db/thread-db.service';
-import { Tag } from '../../Tags/Tag.entity';
-
-import { Project } from '../Project.entity';
+import { Project } from "../Project.entity";
+import { ProjectService } from "../Project.service";
 
 @Resolver(() => Project)
 export class GetProjectByIdResolver {
-  constructor(private readonly threadDBService: ThreadDBService) {}
+  constructor(private readonly projectService: ProjectService) {}
 
   @Query(() => Project, {
     nullable: true,
-    description: 'Gets a project by its document ID',
-    name: 'getProjectById',
+    description: "Gets a project by its document ID",
+    name: "getProjectById",
   })
   async getProjectById(
-    @UseThreadDB() { dbClient, latestThreadId }: UseThreadDBClient,
-    @Args('projectId') projectId: string,
+    @Args("projectId") projectId: string
   ): Promise<Project | null | undefined> {
-    console.log({ projectId });
-    const [foundProjects, allTags] = await Promise.all([
-      this.threadDBService.query({
-        collectionName: 'Project',
-        dbClient,
-        threadId: latestThreadId,
-        query: new Where('_id').eq(projectId),
-      }),
-      this.threadDBService.query({
-        collectionName: 'Tag',
-        threadId: latestThreadId,
-        dbClient,
-      }),
-    ]);
+    const projectWithSquadsAndTags =
+      await this.projectService.projectWithAllNestedRel({
+        id: projectId,
+      });
 
-    if (!foundProjects || foundProjects.length === 0) {
-      throw new NotFoundException('Project not found');
+    if (!projectWithSquadsAndTags) {
+      throw new NotFoundException("Project not found");
     }
-    console.log({ isFound: foundProjects });
-    const [project] = foundProjects as any[];
-    const { _id, _mod, ...rest } = project;
-    console.log({ project });
-    return {
-      id: _id,
-      ...rest,
-      tags: allTags
-        .map((t: any) => ({ id: t._id, ...t }))
-        .filter((tag: any) =>
-          project.tags.map((pjTag: Tag) => pjTag.id).includes(tag.id),
-        ),
-    } as Project;
+    return projectWithSquadsAndTags as Project;
   }
 }

@@ -11,14 +11,14 @@ function useCustomColor() {
     colors.neutralDarker
   );
   const getAccentColor = useColorModeValue(
-    colors.accentLight[500],
-    colors.accentDark[500]
+    colors.accent[500],
+    colors.accent[500]
   );
   const getColoredText = useColorModeValue(
     colors.neutralDark,
     colors.neutralLight
   );
-  const accentColorScheme = useColorModeValue("accentLight", "accentDark");
+  const accentColorScheme = useColorModeValue("accent", "accent");
 
   const codeEditorPreviewScheme = useColorModeValue("light", "dark");
 

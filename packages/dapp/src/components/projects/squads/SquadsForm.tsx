@@ -25,7 +25,6 @@ function SquadsForm() {
 
   return (
     <>
-      <Heading>Create squads &amp; add members</Heading>
       <Squads
         {...{
           control,

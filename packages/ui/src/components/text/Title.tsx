@@ -10,8 +10,8 @@ export { TextProps } from '@chakra-ui/react';
 
 export const Title = (args: TextProps & { children?: React.ReactNode }) => {
   const titleColor = useColorModeValue(
-    colors.accentLight[500],
-    colors.accentDark[500]
+    colors.accent[500],
+    colors.accent[500]
   );
 
   return (

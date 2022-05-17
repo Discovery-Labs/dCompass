@@ -1,13 +1,11 @@
-import { Client } from "@textile/hub";
 export type State = {
+  isSignedIn: boolean;
   loading: boolean;
   account: null | string;
   ens?: string;
   self: null | any;
   core: null | any;
   identityLink: null | any;
-  privateIdentity: null | any;
-  authorizedClient: null | Client;
   contracts: null | any;
   isReviewer: boolean;
   connectWeb3?: any;
@@ -25,6 +23,11 @@ export const Web3Reducer = (state: State, action: Record<string, any>) => {
         ...state,
         ens: action.payload,
       };
+    case "SET_IS_SIGNED_IN":
+      return {
+        ...state,
+        isSignedIn: action.payload,
+      };
     case "SET_SELF":
       return {
         ...state,
@@ -39,11 +42,6 @@ export const Web3Reducer = (state: State, action: Record<string, any>) => {
       return {
         ...state,
         identityLink: action.payload,
-      };
-    case "SET_PRIVATE_IDENTITY":
-      return {
-        ...state,
-        identity: action.payload,
       };
     case "SET_IS_REVIEWER":
       return {

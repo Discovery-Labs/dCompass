@@ -12,23 +12,111 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import {
-  SkillGroupDataType,
+  // SkillGroupDataType,
   SkillProvider,
   SkillTree,
   SkillTreeGroup,
   SkillType,
 } from "@discovery-dao/tree";
-import { Web3Context } from "contexts/Web3Provider";
+// import { Web3Context } from "contexts/Web3Provider";
+// import { useContext } from "react";
 import useCustomColor from "core/hooks/useCustomColor";
 import { useResolveEnsName } from "core/hooks/useResolveEnsName";
 import { useRouter } from "next/router";
-import { useContext } from "react";
 import { MdCheckCircle, MdContentCopy } from "react-icons/md";
 import { SiGithub, SiTwitter } from "react-icons/si";
 
 const gitcoinPath: SkillType[] = [
   {
     id: "gitcoin",
+    title: "Get Started",
+    tooltip: { content: "" },
+    children: [
+      {
+        id: "g1",
+        title: "Moonshot Collective",
+        tooltip: { content: "" },
+        children: [],
+      },
+      {
+        id: "g2",
+        title: "Memes, Merch and Marketing",
+        tooltip: { content: "" },
+        children: [],
+      },
+      {
+        id: "g3",
+        title: "Workstream X",
+        tooltip: { content: "" },
+        children: [
+          {
+            id: "g4",
+            title: "squad x",
+            tooltip: { content: "" },
+            children: [],
+          },
+          {
+            id: "g5",
+            title: "squad y",
+            tooltip: { content: "" },
+            children: [],
+          },
+        ],
+      },
+      {
+        id: "g6",
+        title: "DAO OPS",
+        tooltip: { content: "" },
+        children: [],
+      },
+    ],
+  },
+  {
+    id: "gitcoin2",
+    title: "Get Started",
+    tooltip: { content: "" },
+    children: [
+      {
+        id: "g1",
+        title: "Moonshot Collective",
+        tooltip: { content: "" },
+        children: [],
+      },
+      {
+        id: "g2",
+        title: "Memes, Merch and Marketing",
+        tooltip: { content: "" },
+        children: [],
+      },
+      {
+        id: "g3",
+        title: "Workstream X",
+        tooltip: { content: "" },
+        children: [
+          {
+            id: "g4",
+            title: "squad x",
+            tooltip: { content: "" },
+            children: [],
+          },
+          {
+            id: "g5",
+            title: "squad y",
+            tooltip: { content: "" },
+            children: [],
+          },
+        ],
+      },
+      {
+        id: "g6",
+        title: "DAO OPS",
+        tooltip: { content: "" },
+        children: [],
+      },
+    ],
+  },
+  {
+    id: "gitcoin3",
     title: "Get Started",
     tooltip: { content: "" },
     children: [
@@ -129,47 +217,6 @@ const theGraphPath: SkillType[] = [
   },
 ];
 
-const projectIdPath: SkillType[] = [
-  {
-    id: "thegraph",
-    title: "Get Started",
-    tooltip: { content: "" },
-    children: [
-      {
-        id: "msc",
-        title: "Moonshot Collective",
-        tooltip: { content: "" },
-        children: [],
-      },
-      {
-        id: "fdd",
-        title: "Workstream X",
-        tooltip: { content: "" },
-        children: [
-          {
-            id: "sx",
-            title: "squad x",
-            tooltip: { content: "" },
-            children: [],
-          },
-          {
-            id: "sy",
-            title: "squad y",
-            tooltip: { content: "" },
-            children: [],
-          },
-        ],
-      },
-      {
-        id: "daoops",
-        title: "DAO OPS",
-        tooltip: { content: "" },
-        children: [],
-      },
-    ],
-  },
-];
-
 type BadgeObject = {
   contract: {
     address: string;
@@ -263,15 +310,9 @@ function AccountProfile() {
       },
     ],
   };
-  const { account } = useContext(Web3Context);
-  const {
-    getOverBgColor,
-    getBorderColor,
-    getPrimaryColor,
-    getTextColor,
-    getBgColor,
-    getColoredText,
-  } = useCustomColor();
+  // const { account } = useContext(Web3Context);
+  const { getOverBgColor, getBorderColor, getPrimaryColor, getTextColor } =
+    useCustomColor();
 
   const treeTheme = {
     // : SkillThemeType
@@ -286,10 +327,10 @@ function AccountProfile() {
     nodeHoverBorder: "2px solid",
   };
 
-  const fetchBadgesBody = {
-    ownerAddr: account || "",
-    contractAddr: "0xc718EBf4A7B5eE42a5D0c152e5303fEe25C066AC",
-  };
+  // const fetchBadgesBody = {
+  //   ownerAddr: account || "",
+  //   contractAddr: "0xc718EBf4A7B5eE42a5D0c152e5303fEe25C066AC",
+  // };
 
   // const getBadges = async () => {
   //   const badgesResponse = await fetch(`/api/user-badges`, {
@@ -364,7 +405,8 @@ function AccountProfile() {
       <Heading>Skill Trees</Heading>
       <SkillProvider>
         <SkillTreeGroup theme={treeTheme}>
-          {({ skillCount }: SkillGroupDataType) => (
+          {/* {({ skillCount }: SkillGroupDataType) => ( */}
+          {() => (
             <>
               <SkillTree
                 treeId="gitcoin-tree"

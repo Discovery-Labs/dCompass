@@ -27,16 +27,16 @@ module.exports = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
-      chainId: 1337
+      chainId: 1337,
     },
     localhost: {
       url: "http://localhost:8545",
       // accounts: [DEPLOYER_PRIVATE_KEY],
     },
     mumbai: {
-      url: /*INFURA_ID
+      url: INFURA_ID
         ? `https://polygon-mumbai.infura.io/v3/${INFURA_ID}`
-        :*/ "https://rpc-mumbai.maticvigil.com",
+        : "https://rpc-mumbai.matic.today",
       accounts: [DEPLOYER_PRIVATE_KEY],
       chainId: 80001,
     },
@@ -45,6 +45,7 @@ module.exports = {
         ? `https://polygon-mainnet.infura.io/v3/${INFURA_ID}`
         : "https://rpc-mainnet.maticvigil.com",
       accounts: [DEPLOYER_PRIVATE_KEY],
+      chainId: 137,
     },
     kovan: {
       url: INFURA_ID ? `https://kovan.infura.io/v3/${INFURA_ID}` : ``,
@@ -76,9 +77,9 @@ module.exports = {
       },
     },
   },
-  etherscan: {
-    apiKey: `${process.env.ETHERSCAN_API_KEY}`,
-  },
+  // etherscan: {
+  //   apiKey: `${process.env.ETHERSCAN_API_KEY}`,
+  // },
   gasReporter: {
     enabled: process.env.REPORT_GAS ? true : false,
   },

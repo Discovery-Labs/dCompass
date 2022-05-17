@@ -262,7 +262,7 @@ function AddTwitterAccountScreen({ onCloseModal }: Props) {
                 disabled={challenge == null}
                 onClick={verify}
                 ml="0.5rem"
-                colorScheme="accentDark"
+                colorScheme="accent"
                 loadingText="Verifying..."
                 type="submit"
                 px="1.25rem"

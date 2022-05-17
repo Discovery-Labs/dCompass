@@ -1,35 +1,32 @@
 import {
+  Alert,
+  AlertIcon,
+  Box,
+  Checkbox,
+  Divider,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   HStack,
   Input,
-  VStack,
-  Divider,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Text,
-  Alert,
-  AlertIcon,
   Tag,
-  Heading,
-  Box,
-  Flex,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import useCustomColor from "core/hooks/useCustomColor";
 import { useWeb3React } from "@web3-react/core";
-import dynamic from "next/dynamic";
-import { useMemo, useEffect, useState } from "react";
-import { useFormContext } from "react-hook-form";
-
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
-import {
-  difficultyOptions,
-  REQUIRED_FIELD_LABEL,
-} from "../../../core/constants";
+import useCustomColor from "core/hooks/useCustomColor";
+import dynamic from "next/dynamic";
+import { useEffect, useMemo, useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
@@ -38,7 +35,11 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
 });
 
-export default function PathwayForm() {
+export default function PathwayForm({
+  isWithRewards,
+  withRewards,
+  existingPathways,
+}: any) {
   const [code, setCode] = useState<string>();
   const { codeEditorScheme } = useCustomColor();
 
@@ -108,19 +109,6 @@ export default function PathwayForm() {
   //   },
   // ];
 
-  // const existingPathwaysOptions = data.getAllPathwaysByProjectId
-  //   .filter((pathway: Pathway) => pathway.quests?.length > 0)
-  //   .map((pathway: Pathway) => {
-  //     return {
-  //       label: pathway.title,
-  //       options: pathway.quests.map((quest) => ({
-  //         label: quest.name,
-  //         value: quest.id,
-  //         colorScheme: "purple",
-  //       })),
-  //     };
-  //   });
-
   return (
     <VStack w="full" align="start">
       <FormControl isInvalid={errors.title}>
@@ -161,6 +149,7 @@ export default function PathwayForm() {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
+
         <CodeEditor
           value={code}
           language="markdown"
@@ -190,83 +179,96 @@ export default function PathwayForm() {
         </Box>
       )}
 
-      <ImageDropzone
-        isRequired
-        fieldName="image"
-        label="NFT image reward"
-        {...{ register, setValue, errors }}
-      />
+      <FormControl isInvalid={errors.image}>
+        <FormLabel htmlFor="image">NFT reward image</FormLabel>
 
-      <VStack w="full">
-        <Flex w="full" direction={["column", "column", "row"]} gap="2">
-          <FormControl isInvalid={errors.rewardAmount}>
-            <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
-            <NumberInput
-              step={nativeToken.isMatic ? 10_000 : 5}
-              defaultValue={nativeToken.isMatic ? 10_000 : 5}
+        <Input
+          type="file"
+          placeholder="NFT reward image"
+          {...register("image")}
+        />
+
+        <FormErrorMessage>
+          {errors.image && errors.image.message}
+        </FormErrorMessage>
+      </FormControl>
+
+      <Checkbox onChange={(e) => withRewards(e)}>ERC20 Rewards</Checkbox>
+      {isWithRewards ? (
+        <VStack w="full">
+          <Flex w="full" direction={["column", "column", "row"]} gap="2">
+            <FormControl isInvalid={errors.rewardAmount}>
+              <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
+              <NumberInput
+                step={nativeToken.isMatic ? 10_000 : 5}
+                defaultValue={nativeToken.isMatic ? 10_000 : 5}
+              >
+                <NumberInputField
+                  placeholder=""
+                  {...register(`rewardAmount`, {
+                    required: REQUIRED_FIELD_LABEL,
+                  })}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+              <FormErrorMessage>
+                {errors.rewardAmount && errors.rewardAmount.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <ControlledSelect
+              control={control}
+              name="rewardCurrency"
+              label="Reward currency"
+              rules={{
+                required: REQUIRED_FIELD_LABEL,
+              }}
+              options={[nativeToken.token, ...erc20Options]}
+              placeholder="WETH, DAI,..."
+            />
+          </Flex>
+          {rewardAmount && (
+            <Alert
+              rounded="lg"
+              w="full"
+              status={errors.rewardAmount ? "error" : "warning"}
             >
-              <NumberInputField
-                placeholder=""
-                {...register(`rewardAmount`, {
-                  required: REQUIRED_FIELD_LABEL,
-                })}
-              />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-            <FormErrorMessage>
-              {errors.rewardAmount && errors.rewardAmount.message}
-            </FormErrorMessage>
-          </FormControl>
+              <VStack pr="4" w="30%">
+                <AlertIcon />
+                <Text fontSize={"sm"}>Total with fee</Text>
+                <Tag colorScheme={errors.rewardAmount ? "red" : "primary"}>
+                  {parseFloat(rewardAmount) +
+                    (parseFloat(rewardAmount) * 15) / 100}{" "}
+                  {rewardCurrency.label}
+                </Tag>
+              </VStack>
 
-          <ControlledSelect
-            control={control}
-            name="rewardCurrency"
-            label="Reward currency"
-            rules={{
-              required: REQUIRED_FIELD_LABEL,
-            }}
-            options={[nativeToken.token, ...erc20Options]}
-            placeholder="WETH, DAI,..."
-          />
-        </Flex>
-        {rewardAmount && (
-          <Alert
-            rounded="lg"
-            w="full"
-            status={errors.rewardAmount ? "error" : "warning"}
-          >
-            <VStack pr="4" w="30%">
-              <AlertIcon />
-              <Text fontSize={"sm"}>Total with fee</Text>
-              <Tag colorScheme={errors.rewardAmount ? "red" : "primary"}>
-                {parseFloat(rewardAmount) +
-                  (parseFloat(rewardAmount) * 15) / 100}{" "}
-                {rewardCurrency.label}
-              </Tag>
-            </VStack>
-
-            <VStack w="70%">
-              <Heading as="h4" size="md">
-                dCompass takes a fee of 15% on the total of the pathway rewards.
-              </Heading>
-              <Text fontSize="md">
-                10% goes to the dCompass treasury and 5% goes to the Gitcoin DAO
-                treasury.
-              </Text>
-            </VStack>
-          </Alert>
-        )}
-      </VStack>
+              <VStack w="70%">
+                <Heading as="h4" size="md">
+                  dCompass takes a fee of 15% on the total of the pathway
+                  rewards.
+                </Heading>
+                <Text fontSize="md">
+                  10% goes to the dCompass treasury and 5% goes to the Gitcoin
+                  DAO treasury.
+                </Text>
+              </VStack>
+            </Alert>
+          )}
+        </VStack>
+      ) : (
+        <></>
+      )}
 
       <VStack alignItems="center" w="full">
         <FormControl isInvalid={errors.rewardUserCap}>
           <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
           <NumberInput step={1_000} defaultValue={1_000}>
             <NumberInputField
-              roundedBottom="none"
+              roundedBottom={isWithRewards ? "none" : "auto"}
               placeholder="Number of max. claims"
               {...register(`rewardUserCap`, {
                 required: REQUIRED_FIELD_LABEL,
@@ -277,7 +279,7 @@ export default function PathwayForm() {
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          {rewardCurrency && (
+          {rewardCurrency && isWithRewards && (
             <Alert roundedBottom="lg" w="full" status="info">
               <AlertIcon />
               <Text fontSize="md">
@@ -298,22 +300,12 @@ export default function PathwayForm() {
 
       <ControlledSelect
         control={control}
-        name="difficulty"
-        label="Difficulty"
-        rules={{
-          required: REQUIRED_FIELD_LABEL,
-        }}
-        options={difficultyOptions}
-      />
-
-      {/* <ControlledSelect
-        control={control}
         name="prerequisites"
         label="Prerequisites"
         isMulti
-        options={existingPathwaysOptions}
+        options={existingPathways}
         hasStickyGroupHeaders
-      /> */}
+      />
       <Divider bg="none" py="5" />
     </VStack>
   );

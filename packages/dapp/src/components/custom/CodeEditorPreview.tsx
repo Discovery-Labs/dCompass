@@ -19,7 +19,7 @@ function CodeEditorPreview(props: CodeEditorPreviewProps) {
             onClick={setIsPreview.toggle}
             size="xs"
           >
-            Preview
+            Preview markdown
           </Button>
         </Box>
       )}

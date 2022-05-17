@@ -172,7 +172,8 @@ const variantSoftRounded: PartsStyleFunction<typeof parts> = (props) => {
       borderRadius: borderRadius,
       fontWeight: 'semibold',
       margin: "2px",
-      color: mode(`${c}.500`, `${c}.500`)(props),
+      color: mode(colors.neutralLighter, colors.neutralLighter)(props),
+      bg: mode(colors.neutralDarker, colors.neutralDarker)(props),
       _hover: {
         color: mode(colors.neutralLightest, colors.neutralLightest)(props),
         bg: mode(`${c}.300`, `${c}.300`)(props),
@@ -184,10 +185,10 @@ const variantSoftRounded: PartsStyleFunction<typeof parts> = (props) => {
     },
     tablist: {
       // bg: mode(colors.neutralLighter, colors.neutralDarker)(props),
-      border: '1px solid',
-      padding: "2px",
-      borderRadius: borderRadius,
-      borderColor: mode(colors.borderLight, colors.borderDark)(props),
+      // border: '1px solid',
+      // padding: "2px",
+      // borderRadius: borderRadius,
+      // borderColor: mode(colors.borderLight, colors.borderDark)(props),
     },
   };
 };

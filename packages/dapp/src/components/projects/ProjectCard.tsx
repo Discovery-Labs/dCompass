@@ -1,7 +1,5 @@
-import { ViewIcon } from "@chakra-ui/icons";
 import {
   Badge,
-  Button,
   Flex,
   Heading,
   HStack,
@@ -12,25 +10,29 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useTranslation } from "next-i18next";
+// import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { BsGlobe } from "react-icons/bs";
+import { MdCheckCircle, MdRateReview } from "react-icons/md";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
 import { Project } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
 
+interface Props {
+  project: Project;
+  isReviewMode?: boolean;
+  showStatus?: boolean;
+}
+
 const ProjectCard = ({
   project,
   isReviewMode = false,
-}: {
-  project: Project;
-  isReviewMode?: boolean;
-}) => {
-  const { t } = useTranslation("common");
-
+  showStatus = false,
+}: Props) => {
+  // const { t } = useTranslation("common");
   const router = useRouter();
-
   console.log({ pId: project.id });
+  const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
 
   function openProject() {
     router.push(
@@ -39,11 +41,27 @@ const ProjectCard = ({
         : `/projects/${project.id}`
     );
   }
-  const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
 
   return (
-    <CardMedia src={imgSrc} h="xl">
+    <CardMedia
+      src={imgSrc}
+      h="xl"
+      onClick={openProject}
+      _hover={{ cursor: "pointer", transform: "scale(1.05)" }}
+      _active={{ transform: "scale(0.95)" }}
+    >
       <VStack h="full">
+        {showStatus && (
+          <Badge
+            key={project.id}
+            colorScheme={project.isFeatured ? "accent" : "orange"}
+          >
+            <HStack w="full">
+              {project.isFeatured ? <MdCheckCircle /> : <MdRateReview />}
+              <Text>{project.isFeatured ? "Approved" : "review pending"}</Text>
+            </HStack>
+          </Badge>
+        )}
         <Stack w="full" overflow="hidden" direction="row">
           {project.tags.map((tag) => (
             <Badge key={tag.id} colorScheme={tag.color}>
@@ -52,7 +70,7 @@ const ProjectCard = ({
           ))}
         </Stack>
 
-        <Heading w="full" as="h2" size="lg" color="text" isTruncated>
+        <Heading w="full" as="h2" size="lg" color="text">
           {project.name}
         </Heading>
 
@@ -120,13 +138,6 @@ const ProjectCard = ({
               </Text>
             </HStack>
           )}
-          <Button
-            w="full"
-            onClick={() => openProject()}
-            leftIcon={<ViewIcon />}
-          >
-            {!isReviewMode ? t("view-project") : t("review-project")}
-          </Button>
         </Flex>
       </VStack>
     </CardMedia>

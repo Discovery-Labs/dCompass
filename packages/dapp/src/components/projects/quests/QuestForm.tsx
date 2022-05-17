@@ -5,6 +5,7 @@ import {
   AlertIcon,
   AlertTitle,
   Button,
+  Checkbox,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -29,13 +30,18 @@ import useCustomColor from "core/hooks/useCustomColor";
 import { Contract, ethers } from "ethers";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
+import {
+  difficultyOptions,
+  REQUIRED_FIELD_LABEL,
+} from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
+import { Quest } from "../../../core/types";
 import { GET_APP_DID } from "../../../graphql/app";
 import {
+  CREATE_QUEST_MUTATION,
   CREATE_QUIZ_QUEST_MUTATION,
   GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
 } from "../../../graphql/quests";
@@ -44,7 +50,7 @@ import ControlledSelect from "../../Inputs/ControlledSelect";
 import DiscordMemberForm from "./discord/DiscordMemberForm";
 import GithubContributorForm from "./github/GithubContributorForm";
 import PoapOwnerForm from "./poap/PoapOwnerForm";
-import QuestionsForm from "./quizz/QuestionsForm";
+import QuestionsForm from "./quiz/QuestionsForm";
 import SnapshotForm from "./snapshot/SnapshotForm";
 import NFTOwnerForm from "./token/NFTOwnerForm";
 import TokenHolderForm from "./token/TokenHolderForm";
@@ -80,10 +86,10 @@ const questTypeOptions = [
   //   label: "Github contributor",
   //   value: "github-contributor",
   // },
-  // {
-  //   label: "NFT owner",
-  //   value: "nft-owner",
-  // },
+  {
+    label: "Bounty",
+    value: "bounty",
+  },
   {
     label: "Quiz",
     value: "quiz",
@@ -98,6 +104,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const router = useRouter();
   const toast = useToast();
   const [code, setCode] = useState<string>();
+  const [isWithRewards, setIsWithRewards] = useState<boolean>();
   const [submitStatus, setSubmitStatus] = useState<string>("Creating quest");
   const { codeEditorScheme } = useCustomColor();
   const { tokens } = useTokenList();
@@ -114,6 +121,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
     },
   });
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
+    refetchQueries: "all",
+  });
+  const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION, {
     refetchQueries: "all",
   });
 
@@ -184,6 +194,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     "nft-owner": <NFTOwnerForm />,
     "discord-member": <DiscordMemberForm />,
     quiz: <QuestionsForm />,
+    bounty: "",
     defaultOption: "",
   };
   const questType = (currentValues?.type?.value ||
@@ -214,8 +225,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
   async function onSubmit(values: Record<string, any>) {
     console.log("submitted", values);
-    // TODO: add a field for this
-    const isRewardProvider = true;
 
     // check if the native token is used
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
@@ -223,7 +232,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     setSubmitStatus("Checking balance");
     let balance = 0;
-    const rewardAmnt = parseFloat(values.rewardAmount);
+    const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
     const feeAmount = (rewardAmnt * 15) / 100;
     const totalToPay = rewardAmnt + feeAmount;
     if (!isNativeToken) {
@@ -275,7 +284,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     }
 
     setSubmitStatus("Generating token URIs");
-
     const formData = new FormData();
     if (values.image) {
       formData.append(values.name, values.image[0]);
@@ -289,12 +297,49 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     setSubmitStatus("Creating quest");
 
+    const {
+      prerequisites,
+      image,
+      rewardAmount,
+      rewardCurrency,
+      ...questOptions
+    } = values;
+    console.log({ rewardAmount });
+    const prereqs = prerequisites
+      ? {
+          prerequisites: prerequisites.map(
+            (prereq: { value: string; label: string }) => prereq.value
+          ),
+        }
+      : {};
+    const erc20rewards = isWithRewards
+      ? {
+          rewardCurrency: rewardCurrency.value,
+          rewardAmount: rewardAmnt,
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
+        }
+      : {
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
+        };
+
+    const serlializedValues = {
+      ...questOptions,
+      ...erc20rewards,
+      ...prereqs,
+      difficulty: values.difficulty.value.toUpperCase(),
+      image: cids[values.name],
+      pathwayId: router.query.pathwayId,
+      chainId,
+      createdBy: account,
+      createdAt: new Date().toISOString(),
+    };
+
     const appDid = data.getAppDID;
     console.log({ appDid });
     const finalValues =
       questType === "quiz"
         ? {
-            ...values,
+            ...serlializedValues,
             questions: await Promise.all(
               values.questions.map(
                 async ({
@@ -318,21 +363,10 @@ const CreateQuestForm: React.FunctionComponent = () => {
                 })
               )
             ),
-            image: cids[values.name],
-            rewardCurrency: values.rewardCurrency.value,
-            rewardAmount: parseFloat(values.rewardAmount),
-            rewardUserCap: parseInt(values.rewardUserCap, 10),
-            pathwayId: router.query.pathwayId,
           }
-        : {
-            ...values,
-            rewardCurrency: values.rewardCurrency.value,
-            image: cids[values.name],
-            rewardAmount: parseFloat(values.rewardAmount),
-            rewardUserCap: parseInt(values.rewardUserCap, 10),
-            pathwayId: router.query.pathwayId,
-          };
+        : serlializedValues;
 
+    console.log({ finalValues });
     const questDoc = await self.client.dataModel.createTile(
       "Quest",
       { ...finalValues, createdAt: new Date().toISOString() },
@@ -341,22 +375,13 @@ const CreateQuestForm: React.FunctionComponent = () => {
       }
     );
 
-    setSubmitStatus("Signing quest creation");
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify({
-        id: questDoc.id.toUrl(),
-        pathwayId: router.query.pathwayId,
-      }),
-      account,
-    ]);
-
-    if (isNativeToken) {
+    if (isNativeToken && isWithRewards) {
       setSubmitStatus("Creating quest on-chain");
       const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
         parseInt(values.rewardUserCap, 10),
-        isRewardProvider,
+        isWithRewards,
         // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
         account,
         true,
@@ -367,7 +392,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       );
       await createQuestOnChainTx.wait(1);
       setSubmitStatus("Quest created on-chain");
-    } else {
+    } else if (!isNativeToken && isWithRewards) {
       const tokenDetails = await approveTokenAllowance(
         values.rewardCurrency.value,
         totalToPay.toString()
@@ -381,7 +406,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
         parseInt(values.rewardUserCap, 10),
-        isRewardProvider,
+        isWithRewards,
         // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
         values.rewardCurrency.value.split(":")[1],
         false,
@@ -394,7 +419,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     const createQuestMutationVariables = {
       input: {
         id: questDoc.id.toUrl(),
-        questCreatorSignature: signature.result,
       },
     };
 
@@ -402,6 +426,12 @@ const CreateQuestForm: React.FunctionComponent = () => {
     setSubmitStatus("Quest validation");
     if (questType === "quiz") {
       const { data } = await createQuizQuestMutation({
+        variables: createQuestMutationVariables,
+      });
+      result = data.createQuizQuest;
+    }
+    if (questType === "bounty") {
+      const { data } = await createQuestMutation({
         variables: createQuestMutationVariables,
       });
       result = data.createQuizQuest;
@@ -425,6 +455,14 @@ const CreateQuestForm: React.FunctionComponent = () => {
     label: `${token.symbol} - ${token.name}`,
     value: `${token.chainId}:${token.address}`,
   }));
+
+  const withRewards = (e: ChangeEvent<HTMLInputElement>) => {
+    // console.log(e.target.checked);
+    setIsWithRewards(e.target.checked);
+  };
+  useEffect(() => {
+    setIsWithRewards(false);
+  }, []);
 
   if (loading || pathwayLoading) {
     <Stack>
@@ -481,8 +519,40 @@ const CreateQuestForm: React.FunctionComponent = () => {
         </FormErrorMessage>
       </FormControl>
 
+      <ControlledSelect
+        control={control}
+        name="difficulty"
+        label="Difficulty"
+        rules={{
+          required: REQUIRED_FIELD_LABEL,
+        }}
+        options={difficultyOptions}
+      />
+      <ControlledSelect
+        control={control}
+        name="prerequisites"
+        label="Prerequisites"
+        isMulti
+        options={
+          (pathwayData?.getAllQuestsByPathwayId?.bountyQuests?.length ||
+            pathwayData?.getAllQuestsByPathwayId?.quizQuests?.length) &&
+          [
+            ...pathwayData?.getAllQuestsByPathwayId?.bountyQuests,
+            ...pathwayData?.getAllQuestsByPathwayId?.quizQuests,
+          ].map((quest: Quest) => {
+            return {
+              label: quest.name,
+              value: quest.id,
+              colorScheme: "purple",
+            };
+          })
+        }
+        hasStickyGroupHeaders
+      />
+
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
+
         <CodeEditor
           value={code}
           language="markdown"
@@ -507,16 +577,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
       </FormControl>
 
       {code && <CodeEditorPreview code={code} />}
-      <ControlledSelect
-        control={control}
-        name="type"
-        id="type"
-        label="Type"
-        rules={{
-          required: REQUIRED_FIELD_LABEL,
-        }}
-        options={questTypeOptions}
-      />
 
       <ImageDropzone
         {...{
@@ -529,76 +589,81 @@ const CreateQuestForm: React.FunctionComponent = () => {
         }}
       />
 
-      <VStack w="full">
-        <Flex w="full" direction={["column", "column", "row"]} gap="2">
-          <FormControl isInvalid={errors.rewardAmount}>
-            <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
-            <NumberInput
-              step={nativeToken.isMatic ? 10_000 : 5}
-              defaultValue={nativeToken.isMatic ? 10_000 : 5}
+      <Checkbox onChange={(e) => withRewards(e)}>ERC20 Rewards</Checkbox>
+      {isWithRewards ? (
+        <VStack w="full">
+          <Flex w="full" direction={["column", "column", "row"]} gap="2">
+            <FormControl isInvalid={errors.rewardAmount}>
+              <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
+              <NumberInput
+                step={nativeToken.isMatic ? 10_000 : 5}
+                defaultValue={nativeToken.isMatic ? 10_000 : 5}
+              >
+                <NumberInputField
+                  placeholder=""
+                  {...register(`rewardAmount`, {
+                    required: REQUIRED_FIELD_LABEL,
+                  })}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+              <FormErrorMessage>
+                {errors.rewardAmount && errors.rewardAmount.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <ControlledSelect
+              control={control}
+              name="rewardCurrency"
+              label="Reward currency"
+              rules={{
+                required: REQUIRED_FIELD_LABEL,
+              }}
+              options={[nativeToken.token, ...erc20Options]}
+              placeholder="WETH, DAI,..."
+            />
+          </Flex>
+          {rewardAmount && (
+            <Alert
+              rounded="lg"
+              w="full"
+              status={errors.rewardAmount ? "error" : "warning"}
             >
-              <NumberInputField
-                placeholder=""
-                {...register(`rewardAmount`, {
-                  required: REQUIRED_FIELD_LABEL,
-                })}
-              />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-            <FormErrorMessage>
-              {errors.rewardAmount && errors.rewardAmount.message}
-            </FormErrorMessage>
-          </FormControl>
+              <VStack pr="4" w="30%">
+                <AlertIcon />
+                <Text fontSize={"sm"}>Total with fee</Text>
+                <Tag colorScheme={errors.rewardAmount ? "red" : "primary"}>
+                  {parseFloat(rewardAmount) +
+                    (parseFloat(rewardAmount) * 15) / 100}{" "}
+                  {rewardCurrency.label}
+                </Tag>
+              </VStack>
 
-          <ControlledSelect
-            control={control}
-            name="rewardCurrency"
-            label="Reward currency"
-            rules={{
-              required: REQUIRED_FIELD_LABEL,
-            }}
-            options={[nativeToken.token, ...erc20Options]}
-            placeholder="WETH, DAI,..."
-          />
-        </Flex>
-        {rewardAmount && (
-          <Alert
-            rounded="lg"
-            w="full"
-            status={errors.rewardAmount ? "error" : "warning"}
-          >
-            <VStack pr="4" w="30%">
-              <AlertIcon />
-              <Text fontSize={"sm"}>Total with fee</Text>
-              <Tag colorScheme={errors.rewardAmount ? "red" : "primary"}>
-                {parseFloat(rewardAmount) +
-                  (parseFloat(rewardAmount) * 15) / 100}{" "}
-                {rewardCurrency.label}
-              </Tag>
-            </VStack>
+              <VStack w="70%">
+                <Heading as="h4" size="md">
+                  dCompass takes a fee of 15% on top of the total quest rewards.
+                </Heading>
+                <Text fontSize="md">
+                  10% goes to the dCompass treasury and 5% goes to the Gitcoin
+                  DAO treasury.
+                </Text>
+              </VStack>
+            </Alert>
+          )}
+        </VStack>
+      ) : (
+        <></>
+      )}
 
-            <VStack w="70%">
-              <Heading as="h4" size="md">
-                dCompass takes a fee of 15% on top of the total quest rewards.
-              </Heading>
-              <Text fontSize="md">
-                10% goes to the dCompass treasury and 5% goes to the Gitcoin DAO
-                treasury.
-              </Text>
-            </VStack>
-          </Alert>
-        )}
-      </VStack>
-
-      <VStack alignItems="center" w="full">
+      <VStack>
         <FormControl isInvalid={errors.rewardUserCap}>
           <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
           <NumberInput step={1_000} defaultValue={1_000}>
             <NumberInputField
-              roundedBottom="none"
+              roundedBottom={isWithRewards ? "none" : "auto"}
               placeholder="Number of max. claims"
               {...register(`rewardUserCap`, {
                 required: REQUIRED_FIELD_LABEL,
@@ -609,7 +674,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          {rewardCurrency && (
+          {rewardCurrency && isWithRewards && (
             <Alert roundedBottom="lg" w="full" status="info">
               <AlertIcon />
               <Text fontSize="md">
@@ -627,7 +692,18 @@ const CreateQuestForm: React.FunctionComponent = () => {
         </FormControl>
       </VStack>
 
+      <ControlledSelect
+        control={control}
+        name="type"
+        id="type"
+        label="Type"
+        rules={{
+          required: REQUIRED_FIELD_LABEL,
+        }}
+        options={questTypeOptions}
+      />
       {questDetails[questType]}
+
       <Flex w="full" pt="8" justify="space-between">
         <Button colorScheme="secondary" type="button" onClick={() => reset()}>
           Reset Form

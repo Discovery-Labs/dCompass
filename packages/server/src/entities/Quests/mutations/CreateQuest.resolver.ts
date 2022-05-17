@@ -1,84 +1,61 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { ethers } from 'ethers';
-import { ForbiddenError } from 'apollo-server-express';
+import { Resolver, Mutation, Args } from "@nestjs/graphql";
 
-import { UseCeramic } from '../../../core/decorators/UseCeramic.decorator';
-import { UseCeramicClient } from '../../../core/utils/types';
-import { Quest } from '../Quest.entity';
-import { schemaAliases } from '../../../core/constants/idx';
-import { CreateQuestInput } from '../dto/CreateQuest.input';
+import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
+import { UseCeramicClient } from "../../../core/utils/types";
+import { CreateQuestInput } from "../dto/CreateQuest.input";
+import { Quest } from "../Quest.entity";
+import { ForbiddenError } from "apollo-server-express";
+import { QuestService } from "../Quest.service";
+import removeNulls from "../../../core/utils/helpers";
+import { SiweMessage } from "siwe";
+import { UseSiwe } from "../../../core/decorators/UseSiwe.decorator";
 
 @Resolver(() => Quest)
 export class CreateQuestResolver {
+  constructor(private readonly questService: QuestService) {}
+
   @Mutation(() => Quest, {
     nullable: true,
-    description: 'Create a new Quest in dCompass',
-    name: 'createQuest',
+    description: "Create a new Quest in dCompass",
+    name: "createQuest",
   })
   async createQuest(
+    @UseSiwe() siwe: SiweMessage,
     @UseCeramic() { ceramicClient }: UseCeramicClient,
-    @Args('input') { id, questCreatorSignature }: CreateQuestInput,
+    @Args("input") { id }: CreateQuestInput
   ): Promise<Quest | null | undefined> {
     // Check that the current user is the owner of the quest
     const ogQuest = await ceramicClient.ceramic.loadStream(id);
-    const pathwayId = ogQuest.content.pathwayId;
-    const decodedAddress = ethers.utils.verifyMessage(
-      JSON.stringify({ id, pathwayId }),
-      questCreatorSignature,
-    );
+    const { pathwayId, type, ...ogQuestInfos } = ogQuest.content;
+
+    const { address } = siwe;
 
     const ownerAccounts = await ceramicClient.dataStore.get(
-      'cryptoAccounts',
-      ogQuest.controllers[0],
+      "cryptoAccounts",
+      ogQuest.controllers[0]
     );
-    if (!ownerAccounts) throw new ForbiddenError('Unauthorized');
+    if (!ownerAccounts) throw new ForbiddenError("Unauthorized");
     const formattedAccounts = Object.keys(ownerAccounts).map(
-      (account) => account.split('@')[0],
+      (account) => account.split("@")[0]
     );
-    if (!formattedAccounts.includes(decodedAddress)) {
-      throw new ForbiddenError('Unauthorized');
+
+    if (!formattedAccounts.includes(address)) {
+      throw new ForbiddenError("Unauthorized");
     }
 
-    const allPathways = await ceramicClient.dataStore.get(
-      schemaAliases.PATHWAYS_ALIAS,
-    );
-    const pathways = allPathways?.pathways ?? [];
-
-    const pathwayIndexedFields = pathways.find(
-      (pathway: { id: string }) => pathway.id === pathwayId,
-    );
-    if (!pathwayIndexedFields) {
-      return null;
-    }
-
-    console.log({ pathwayIndexedFields });
-
-    // remove previously indexed pathway and recreate it as with the new pending quest
-    const existingPathways = pathways.filter(
-      (pathway: { id: string }) => pathway.id !== pathwayIndexedFields.id,
-    );
-
-    console.log({ existingPathways });
-    // Add the new quest for review
-    const appPathwaysUpdated = [
-      {
-        id,
-        ...pathwayIndexedFields,
-        pendingQuests: [
-          ...(pathwayIndexedFields.pendingQuests ?? []),
-          ogQuest.id.toUrl(),
-        ],
+    const createdQuest = await this.questService.createBountyQuest({
+      pathway: {
+        connect: {
+          id: pathwayId,
+        },
       },
-      ...existingPathways,
-    ];
-
-    await ceramicClient.dataStore.set(schemaAliases.PATHWAYS_ALIAS, {
-      pathways: appPathwaysUpdated,
+      ...ogQuestInfos,
+      questType: type.value,
+      streamId: id,
+      isPending: true,
+      createdBy: ogQuest.controllers[0],
     });
 
-    return {
-      id,
-      ...ogQuest.content,
-    };
+    return removeNulls(createdQuest);
   }
 }

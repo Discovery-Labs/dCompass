@@ -41,7 +41,6 @@ import CenteredFrame from "../../../../components/layout/CenteredFrame";
 import Container from "../../../../components/layout/Container";
 import { Web3Context } from "../../../../contexts/Web3Provider";
 import { splitCIDS } from "../../../../core/helpers";
-import useCustomColor from "../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../core/hooks/useMarkdownTheme";
 // import useTokenList from "../../../../core/hooks/useTokenList";
 import { Tag as TagType } from "../../../../core/types";
@@ -106,14 +105,16 @@ function ReviewProjectPage({
 }: any) {
   const { t } = useTranslation("common");
   const { isReviewer, contracts } = useContext(Web3Context);
-  const { chainId, account, library } = useWeb3React();
+  const { chainId, account } = useWeb3React();
   const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
     refetchQueries: "all",
   });
   const [status, setStatus] = useState<string>();
   const [hasVoted, setHasVoted] = useState(false);
+  const [isApprovingProject, setIsApprovingProject] = useState(false);
+  const [isCreatingToken, setIsCreatingToken] = useState(false);
   const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
-  const { getColoredText } = useCustomColor();
+
   const projectMarkdownTheme = usePageMarkdownTheme();
 
   const isPendingOrNonExistent =
@@ -147,6 +148,7 @@ function ReviewProjectPage({
   }, [projectNFTContract, streamId, account]);
 
   const handleApproveProject = async () => {
+    setIsApprovingProject(true);
     if (projectNFTContract && chainId && account && isPendingOrNonExistent) {
       try {
         const contributors = squads.flatMap(
@@ -161,6 +163,7 @@ function ReviewProjectPage({
         // get return values or events
         await voteForApprovalTx.wait(1);
       } catch (e) {
+        setIsApprovingProject(false);
         console.log("Approve Failed:", e);
       }
       const statusInt = await projectNFTContract.status(streamId);
@@ -170,23 +173,19 @@ function ReviewProjectPage({
         const mutationInput = {
           id,
           tokenUris,
-          chainId: chainId.toString(),
         };
-        const signature = await library.provider.send("personal_sign", [
-          JSON.stringify(mutationInput),
-          account,
-        ]);
+
+        setIsApprovingProject(false);
         return approveProjectMutation({
           variables: {
-            input: {
-              ...mutationInput,
-              reviewerSignature: signature.result,
-            },
+            input: mutationInput,
           },
         });
       }
+      setIsApprovingProject(false);
       return statusString;
     }
+    setIsApprovingProject(false);
     return null;
   };
   const handleRejectProject = async () => {
@@ -211,6 +210,7 @@ function ReviewProjectPage({
     return null;
   };
   const handleCreateToken = async () => {
+    setIsCreatingToken(true);
     if (chainId && account) {
       const cids = tokenUris.map(
         (uri: string) => uri.split("://")[1].split("/")[0]
@@ -229,6 +229,7 @@ function ReviewProjectPage({
       setStatus("MINTED");
       console.log({ receipt, isMinted });
     }
+    setIsCreatingToken(false);
     return null;
   };
 
@@ -260,6 +261,8 @@ function ReviewProjectPage({
                 onClick={handleApproveProject}
                 leftIcon={<CheckIcon />}
                 disabled={!isPendingOrNonExistent || hasVoted}
+                isLoading={isApprovingProject}
+                loadingText={"Approving project"}
               >
                 {t("approve-project")}
               </Button>
@@ -276,7 +279,12 @@ function ReviewProjectPage({
           )}
           {status && status === "APPROVED" && (
             <HStack>
-              <Button onClick={handleCreateToken} leftIcon={<CheckIcon />}>
+              <Button
+                onClick={handleCreateToken}
+                isLoading={isCreatingToken}
+                loadingText={"Minting project"}
+                leftIcon={<CheckIcon />}
+              >
                 {t("create-token")}
               </Button>
             </HStack>
@@ -297,10 +305,10 @@ function ReviewProjectPage({
         <VStack w="full" align="flex-start" ml="2">
           <VStack align="flex-start">
             {createdBy && <Blockies seed={createdBy} className="blockies" />}
-            <Text color="text-weak" textStyle="small" isTruncated>
+            <Text color="text-weak" textStyle="small">
               {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
-            <Text fontSize="sm" isTruncated>
+            <Text fontSize="sm">
               {t("by")} {createdBy}
             </Text>
           </VStack>
@@ -399,7 +407,7 @@ function ReviewProjectPage({
                 {squad.members.map((member: string) => (
                   <HStack w="full" key={member}>
                     {member && <Blockies seed={member} className="blockies" />}
-                    <Text ml="2" fontSize="sm" isTruncated>
+                    <Text ml="2" fontSize="sm">
                       {member}
                     </Text>
                   </HStack>

@@ -14,10 +14,10 @@ import {
 } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 import dynamic from "next/dynamic";
+import useCustomColor from "core/hooks/useCustomColor";
 import { useState, useEffect } from "react";
 
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
-import useCustomColor from "core/hooks/useCustomColor";
 import { Tag } from "../../core/types";
 import { ALL_TAGS_QUERY } from "../../graphql/tags";
 import IconWithState from "../custom/IconWithState";
@@ -83,6 +83,7 @@ const EditProjectForm: React.FunctionComponent = () => {
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
+
         <CodeEditor
           value={code}
           language="markdown"
@@ -124,22 +125,6 @@ const EditProjectForm: React.FunctionComponent = () => {
         />
         <FormErrorMessage>
           {errors.website && errors.website.message}
-        </FormErrorMessage>
-      </FormControl>
-
-      <FormControl isInvalid={errors.whitepaper}>
-        <FormLabel htmlFor="whitepaper">Whitepaper</FormLabel>
-        <Input
-          placeholder="Whitepaper"
-          {...register("whitepaper", {
-            maxLength: {
-              value: 150,
-              message: "Maximum length should be 150",
-            },
-          })}
-        />
-        <FormErrorMessage>
-          {errors.whitepaper && errors.whitepaper.message}
         </FormErrorMessage>
       </FormControl>
 

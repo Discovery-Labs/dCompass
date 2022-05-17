@@ -40,7 +40,9 @@ const PathwayImageDropzone = ({
   );
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
+    accept: {
+      "image/*": [],
+    },
     onDrop,
   });
 
@@ -52,7 +54,7 @@ const PathwayImageDropzone = ({
         boxSize="150px"
         src={file.preview}
       />
-      <Flex pl="4" d="column" w="full" alignSelf="center">
+      <Flex pl="4" direction="column" w="full" alignSelf="center">
         <IconButton
           colorScheme="secondary"
           onClick={() => setFiles([])}

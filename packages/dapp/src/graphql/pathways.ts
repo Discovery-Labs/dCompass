@@ -5,7 +5,6 @@ export const CREATE_PATHWAY_MUTATION = gql`
     createPathway(input: $input) {
       id
       title
-      difficulty
       description
       slogan
     }
@@ -17,7 +16,6 @@ export const APPROVE_PATHWAY_MUTATION = gql`
     approvePathway(input: $input) {
       id
       title
-      difficulty
       image
       description
       slogan
@@ -37,7 +35,6 @@ export const VERIFY_PATHWAY_MUTATION = gql`
     verifyPathway(input: $input) {
       id
       title
-      difficulty
       image
       projectStreamId
       description
@@ -64,35 +61,43 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
         description
         slogan
         image
-        difficulty
         rewardCurrency
         rewardAmount
         rewardUserCap
         isPending
         projectId
-        quests {
+        prerequisites
+        quizQuests {
+          id
+          isPending
+          completedBy
+        }
+        bountyQuests {
           id
           isPending
           completedBy
         }
       }
-      pendingPathways {
-        id
-        streamId
-        title
-        description
-        slogan
-        image
-        difficulty
-        rewardCurrency
-        rewardAmount
-        rewardUserCap
-        isPending
-        projectId
-        quests {
-          id
-        }
-      }
+    }
+  }
+`;
+
+export const EDIT_PATHWAY_MUTATION = gql`
+  mutation EditPathway($input: EditPathwayInput!) {
+    editPathway(input: $input) {
+      id
+      streamId
+      title
+      createdBy
+      createdAt
+      description
+      slogan
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
+      image
+      projectId
+      prerequisites
     }
   }
 `;
@@ -105,7 +110,6 @@ export const GET_PATHWAY_BY_ID_QUERY = gql`
       title
       createdBy
       createdAt
-      difficulty
       description
       slogan
       rewardCurrency

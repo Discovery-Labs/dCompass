@@ -7,7 +7,7 @@ const styles: Styles = {
   global: (props) => ({
     body: {
       fontFamily: 'body',
-      fontSize: ['16px', '110%', '120%', '140%'],
+      fontSize: ['16px', '110%', '120%', '130%'],
       color: getTextColor(props),
       bg: getBgColor(props),
       transitionProperty: 'background-color',

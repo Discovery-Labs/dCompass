@@ -8,8 +8,10 @@ export type Quest = {
   id: string;
   streamId: string;
   image: string;
+  difficulty: string;
   completedBy: string[];
   projectId: string;
+  prerequisites: string[];
   pathwayId: string;
   owner: string;
   name: string;
@@ -34,8 +36,9 @@ export type Pathway = {
   slogan: string;
   projectId: string;
   projectStreamId: string;
-  quests: Quest[];
-  difficulty: string;
+  quizQuests: Quest[];
+  prerequisites: string[];
+  bountyQuests: Quest[];
   rewardCurrency: string;
   rewardAmount: string;
   rewardUserCap: number;

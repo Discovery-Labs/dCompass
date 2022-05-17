@@ -41,10 +41,6 @@ export const PathwaySchema = {
     createdBy: {
       type: "string",
     },
-    difficulty: {
-      type: "string",
-      enum: ["beginner", "intermediate", "advanced", "expert", "wizard"],
-    },
     isFeatured: {
       type: "boolean",
     },

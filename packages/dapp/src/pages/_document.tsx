@@ -14,9 +14,7 @@ import Document, {
 } from "next/document";
 import * as React from "react";
 
-import createEmotionCache from "../styles/createEmotionCache";
-
-// import createEmotionCache from "styles/createEmotionCache";
+import createEmotionCache from "styles/createEmotionCache";
 
 const APP_NAME = "quadratic-diplomacy";
 const APP_DESCRIPTION =
@@ -31,7 +29,6 @@ class MyDocument extends Document {
 
     ctx.renderPage = () =>
       originalRenderPage({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         // eslint-disable-next-line react/display-name
         enhanceApp: (App: any) => (props) => <App {...props} />,
       });

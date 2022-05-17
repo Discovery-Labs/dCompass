@@ -32,7 +32,7 @@ const _abi = [
         type: "bool",
       },
     ],
-    name: "ApprovalForAll",
+    name: "InternalApprovalForAll",
     type: "event",
   },
   {
@@ -69,7 +69,7 @@ const _abi = [
         type: "uint256[]",
       },
     ],
-    name: "TransferBatch",
+    name: "InternalTransferBatch",
     type: "event",
   },
   {
@@ -106,7 +106,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "TransferSingle",
+    name: "InternalTransferSingle",
     type: "event",
   },
 ];

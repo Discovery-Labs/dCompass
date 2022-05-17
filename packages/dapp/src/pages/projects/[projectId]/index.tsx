@@ -26,6 +26,12 @@ import {
   useDisclosure,
   VStack,
   Box,
+  TagLabel,
+  Tag as TagStatus,
+  Spacer,
+  AlertIcon,
+  Alert,
+  Icon,
 } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
@@ -36,8 +42,10 @@ import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
+import { BsPeopleFill } from "react-icons/bs";
+import { FiAlertCircle, FiCheckCircle } from "react-icons/fi";
 import { MdPersonAddAlt1 } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { initializeApollo } from "../../../../lib/apolloClient";
@@ -93,6 +101,7 @@ export const getServerSideProps: GetServerSideProps<
 
 function ProjectPage({
   id,
+  streamId,
   name,
   createdBy,
   description,
@@ -107,6 +116,7 @@ function ProjectPage({
   github,
   gitbook,
 }: any) {
+  const [status, setStatus] = useState<string>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenSquad,
@@ -117,8 +127,7 @@ function ProjectPage({
 
   const { t } = useTranslation("common");
   const { accentColorScheme } = useCustomColor();
-  const { account, isReviewer } = useContext(Web3Context);
-  console.log({ isReviewer });
+  const { account, isReviewer, contracts } = useContext(Web3Context);
   const { data, loading, error } = useQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
     {
@@ -134,6 +143,24 @@ function ProjectPage({
   const canEdit = isProjectContributor || isOwner;
   const canReviewPathways = isProjectContributor || isOwner || isReviewer;
 
+  useEffect(() => {
+    async function init() {
+      if (contracts.projectNFTContract && streamId && account) {
+        const statusInt = await contracts.projectNFTContract.status(streamId);
+        const isMinted = await contracts.projectNFTContract.projectMinted(
+          streamId
+        );
+        const statusString = await contracts.projectNFTContract.statusStrings(
+          statusInt
+        );
+        setStatus(isMinted ? "MINTED" : statusString);
+      }
+    }
+    if (contracts?.projectNFTContract) {
+      init();
+    }
+  }, [contracts?.projectNFTContract, streamId, account]);
+
   if (loading)
     return (
       <Stack pt="30" px="8">
@@ -144,6 +171,13 @@ function ProjectPage({
       </Stack>
     );
   if (error) return `Loading error! ${error.message}`;
+
+  const getShortenedAddress = (address: string) => {
+    let displayAddress = address.slice(0, 6);
+    displayAddress += `...${address.slice(-4)}`;
+
+    return displayAddress;
+  };
 
   const renderPathways = (pathways: Pathway[]) => {
     return pathways.map((pathway) => (
@@ -171,7 +205,13 @@ function ProjectPage({
           },
         ]}
       />
-      <Flex direction={["column", "column", "row"]} w="full" gap="8">
+      <Flex
+        pt="4"
+        direction={["column", "column", "row"]}
+        w="full"
+        gap="8"
+        align="center"
+      >
         <Box>
           <Box
             border="2px solid #6F3FF5"
@@ -191,23 +231,46 @@ function ProjectPage({
             />
           </Box>
         </Box>
-        <VStack w="full" align="start" justify="center">
-          <Flex w="full" direction="row" wrap="wrap" gap="2">
+        <VStack w="full" align={["center", "center", "start"]} justify="center">
+          <Flex
+            w="full"
+            direction="row"
+            wrap="wrap"
+            gap="2"
+            justify={["center", "center", "start"]}
+          >
             {tags.map((tag: Tag) => (
               <Badge key={tag.id} fontSize="lg" colorScheme={tag.color}>
                 {tag.label}
               </Badge>
             ))}
           </Flex>
-          <Heading as="h1" size="3xl" color="text">
-            {name}
-          </Heading>
-
-          {/* Short description */}
+          <Flex w="full">
+            <Heading as="h1" size="3xl" color="text">
+              {name}
+            </Heading>
+            <Spacer />
+            <VStack>
+              {status && createdBy === account && (
+                <TagStatus
+                  variant="outline"
+                  w="fit-content"
+                  colorScheme={
+                    status === "APPROVED" || status === "MINTED"
+                      ? "green"
+                      : "orange"
+                  }
+                  size="md"
+                >
+                  <TagLabel>{status}</TagLabel>
+                </TagStatus>
+              )}
+            </VStack>
+            {/* Short description */}
+          </Flex>
           <Text color="text-weak">{slogan}</Text>
-
           {/* Apply and Edit Buttons */}
-          <HStack w="full" align="start">
+          <HStack w="full" justify={["center", "center", "start"]}>
             <Button
               colorScheme={accentColorScheme}
               leftIcon={<MdPersonAddAlt1 />}
@@ -237,11 +300,18 @@ function ProjectPage({
                 </Button>
               </NextLink>
             )}
+            {canEdit && (
+              <NextLink href={`/projects/${id}/edit-project/squads`} passHref>
+                <Button variant="outline" leftIcon={<BsPeopleFill />}>
+                  Manage Squads
+                </Button>
+              </NextLink>
+            )}
           </HStack>
         </VStack>
       </Flex>
 
-      <HStack w="full" py="4">
+      <HStack w="full" py="4" justify={["center", "center", "start"]}>
         <SocialLinks
           website={website}
           discord={discord}
@@ -252,11 +322,11 @@ function ProjectPage({
       </HStack>
 
       <Tabs w="full">
-        <HStack w="full" justify="start">
-          <TabList>
-            <Tab>{t("pathways")}</Tab>
-            <Tab>{t("guilds")}</Tab>
-            <Tab>{t("about")}</Tab>
+        <HStack w="full">
+          <TabList w="full">
+            <Tab w="full">{t("pathways")}</Tab>
+            <Tab w="full">{t("guilds")}</Tab>
+            <Tab w="full">{t("about")}</Tab>
           </TabList>
         </HStack>
 
@@ -266,19 +336,30 @@ function ProjectPage({
             <Tabs w="full" variant="unstyled">
               <Flex
                 w="full"
-                direction={["column-reverse", "column-reverse", "row"]}
+                direction={["column", "column", "row"]}
                 justify="space-between"
               >
                 <TabList>
                   <Tab>{t("all-pathways")}</Tab>
-                  {canReviewPathways && <Tab>{t("pending-pathways")}</Tab>}
+                  {canReviewPathways && (
+                    <Tab>
+                      {t("pending-pathways")}
+                      {data.getAllPathwaysByProjectId.pathways.filter(
+                        (pathway: Pathway) => pathway.isPending
+                      ).length > 0 ? (
+                        <Icon as={FiAlertCircle} size="sm" color="error" />
+                      ) : (
+                        <Icon as={FiCheckCircle} size="sm" color="success" />
+                      )}
+                    </Tab>
+                  )}
                   <Tab>{t("my-pathways")}</Tab>
                 </TabList>
                 <NextLink
                   href={`/projects/${id}/pathways/add-pathway/`}
                   passHref
                 >
-                  <Flex py="2" w="full" justify={["start", "start", "end"]}>
+                  <Flex pt="4" w="full" justify={["center", "center", "end"]}>
                     <Button variant="outline" leftIcon={<AddIcon />}>
                       {t("add-pathway")}
                     </Button>
@@ -289,14 +370,20 @@ function ProjectPage({
               <TabPanels>
                 <TabPanel>
                   <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
-                    {renderPathways(data.getAllPathwaysByProjectId.pathways)}
+                    {renderPathways(
+                      data.getAllPathwaysByProjectId.pathways.filter(
+                        (pathway: Pathway) => !pathway.isPending
+                      )
+                    )}
                   </SimpleGrid>
                 </TabPanel>
                 {canReviewPathways && (
                   <TabPanel>
                     <SimpleGrid columns={[1, 1, 2, 3]} spacing={10}>
                       {renderPathways(
-                        data.getAllPathwaysByProjectId.pendingPathways
+                        data.getAllPathwaysByProjectId.pathways.filter(
+                          (pathway: Pathway) => pathway.isPending
+                        )
                       )}
                     </SimpleGrid>
                   </TabPanel>
@@ -345,13 +432,13 @@ function ProjectPage({
                   <Blockies seed={createdBy} className="blockies" />
                 )}
                 <VStack align="flex-start" ml="2">
-                  <Text color="text-weak" textStyle="small" isTruncated>
+                  <Text color="text-weak" textStyle="small">
                     {t("creation-date")} {new Date(createdAt).toLocaleString()}
                   </Text>
-                  <Text fontSize="sm" isTruncated>
+                  <Text fontSize="sm">
                     {t("by")}{" "}
-                    <NextLink href={`/badges/${createdBy}/`} passHref>
-                      <Link>{createdBy}</Link>
+                    <NextLink href={`/profile/${createdBy}/`} passHref>
+                      <Link>{getShortenedAddress(createdBy)}</Link>
                     </NextLink>
                   </Text>
                 </VStack>
