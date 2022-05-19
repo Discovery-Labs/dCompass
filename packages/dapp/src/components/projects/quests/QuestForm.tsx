@@ -215,7 +215,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       tokenInfos.decimals
     );
     const res = await tokenContract.approve(
-      contracts.BadgeNFT.address,
+      contracts?.BadgeNFT.address,
       newAllowance
     );
     await res.wait(1);
@@ -226,6 +226,17 @@ const CreateQuestForm: React.FunctionComponent = () => {
   async function onSubmit(values: Record<string, any>) {
     console.log("submitted", values);
 
+    if (!account) {
+      return toast({
+        title: "Not connected",
+        description: "You're not connected with your wallet'",
+        status: "error",
+        position: "bottom-right",
+        duration: 3000,
+        isClosable: true,
+        variant: "subtle",
+      });
+    }
     // check if the native token is used
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
     const isNativeToken = tokenAddressOrSymbol ? false : true;
@@ -297,13 +308,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     setSubmitStatus("Creating quest");
 
-    const {
-      prerequisites,
-      image,
-      rewardAmount,
-      rewardCurrency,
-      ...questOptions
-    } = values;
+    const { prerequisites, rewardAmount, rewardCurrency, ...questOptions } =
+      values;
     console.log({ rewardAmount });
     const prereqs = prerequisites
       ? {
@@ -369,7 +375,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     console.log({ finalValues });
     const questDoc = await self.client.dataModel.createTile(
       "Quest",
-      { ...finalValues, createdAt: new Date().toISOString() },
+      finalValues,
       {
         pin: true,
       }
@@ -377,7 +383,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     if (isNativeToken && isWithRewards) {
       setSubmitStatus("Creating quest on-chain");
-      const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
+      const createQuestOnChainTx = await contracts?.BadgeNFT.createBadge(
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
         parseInt(values.rewardUserCap, 10),
@@ -386,11 +392,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
         account,
         true,
         (rewardAmnt * 1e18).toString(),
-        {
-          value: (totalToPay * 1e18).toString(),
-        }
+        account
       );
-      await createQuestOnChainTx.wait(1);
+      await createQuestOnChainTx?.wait(1);
       setSubmitStatus("Quest created on-chain");
     } else if (!isNativeToken && isWithRewards) {
       const tokenDetails = await approveTokenAllowance(
@@ -402,7 +406,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         tokenDetails.decimals
       );
       setSubmitStatus("Creating quest on-chain");
-      const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
+      const createQuestOnChainTx = await contracts?.BadgeNFT.createBadge(
         questDoc.id.toUrl(),
         pathwayData.getAllQuestsByPathwayId.streamId,
         parseInt(values.rewardUserCap, 10),
@@ -410,9 +414,10 @@ const CreateQuestForm: React.FunctionComponent = () => {
         // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
         values.rewardCurrency.value.split(":")[1],
         false,
-        rewardAmount
+        rewardAmount,
+        account
       );
-      await createQuestOnChainTx.wait(1);
+      await createQuestOnChainTx?.wait(1);
       setSubmitStatus("Quest created on-chain");
     }
 

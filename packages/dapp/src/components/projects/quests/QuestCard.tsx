@@ -33,7 +33,6 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { GiSwordwoman } from "react-icons/gi";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import useCustomColor from "../../../core/hooks/useCustomColor";
 import useTokenList from "../../../core/hooks/useTokenList";
 import { Quest } from "../../../core/types";
 import {
@@ -64,7 +63,6 @@ const QuestCard = ({
   const router = useRouter();
   const { getRewardCurrency } = useTokenList();
   const [status, setStatus] = useState<string>();
-  const { getPrimaryColor } = useCustomColor();
 
   const { chainId } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);
@@ -85,13 +83,13 @@ const QuestCard = ({
     console.log({ streamId: quest.streamId });
     async function init() {
       if (contracts && quest.streamId) {
-        const statusInt = await contracts.BadgeNFT.status(quest.streamId);
+        const statusInt = await contracts?.BadgeNFT.status(quest.streamId);
         console.log({ statusInt });
-        const isMinted = await contracts.BadgeNFT.badgeMinted(quest.streamId);
-        const statusString = await contracts.BadgeNFT.statusStrings(statusInt);
+        const isMinted = await contracts?.BadgeNFT.badgeMinted(quest.streamId);
+        const statusString = await contracts?.BadgeNFT.statusStrings(statusInt);
         setStatus(isMinted ? "MINTED" : statusString);
         const claimedByAddresses =
-          await contracts.BadgeNFT.getAllAddrsByBadgeIDVersion(
+          await contracts?.BadgeNFT.getAllAddrsByBadgeIDVersion(
             quest.streamId,
             0
           );
@@ -115,17 +113,18 @@ const QuestCard = ({
 
     if (status === "NONEXISTENT" && !isWithRewards) {
       // TODO provide quest.createdBy instead of msg.sender?
-      const createQuestOnChainTx = await contracts.BadgeNFT.createBadge(
+      const createQuestOnChainTx = await contracts?.BadgeNFT.createBadge(
         quest.streamId,
         data.getAllQuestsByPathwayId.streamId,
         quest.rewardUserCap,
         isWithRewards,
         // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-        account,
+        account || "",
         false,
-        "0"
+        "0",
+        quest.createdBy
       );
-      await createQuestOnChainTx.wait(1);
+      await createQuestOnChainTx?.wait(1);
     }
     const { data: approveData } = await approveQuestMutation({
       variables: {
@@ -138,7 +137,7 @@ const QuestCard = ({
     const [metadataVerifySignature, thresholdVerifySignature] =
       approveData.approveQuest.expandedServerSignatures;
     console.log({ bId: quest.streamId, pId: pathwayStreamId });
-    const voteForApprovalTx = await contracts.BadgeNFT.voteForApproval(
+    const voteForApprovalTx = await contracts?.BadgeNFT.voteForApproval(
       projectContributors,
       quest.streamId,
       pathwayStreamId,
@@ -149,10 +148,21 @@ const QuestCard = ({
     );
 
     // get return values or events
-    const receipt = await voteForApprovalTx.wait(1);
+    const receipt = await voteForApprovalTx?.wait(1);
     console.log({ receipt });
-    const statusInt = await contracts.BadgeNFT.status(quest.streamId);
-    const statusString = await contracts.BadgeNFT.statusStrings(statusInt);
+    const statusInt = await contracts?.BadgeNFT.status(quest.streamId);
+    if (!statusInt) {
+      return toast({
+        title: "Quest has no status!",
+        description: `Approval vote submitted successfully!`,
+        status: "success",
+        position: "bottom-right",
+        duration: 3000,
+        isClosable: true,
+        variant: "subtle",
+      });
+    }
+    const statusString = await contracts?.BadgeNFT.statusStrings(statusInt);
     console.log({ statusString });
     switch (statusString) {
       case "NONEXISTENT":
@@ -212,7 +222,7 @@ const QuestCard = ({
         data.verifyQuest.expandedServerSignatures;
 
       const { url } = await nftCidRes.json();
-      const createTokenTx = await contracts.BadgeNFT.createToken(
+      const createTokenTx = await contracts?.BadgeNFT.createToken(
         url,
         quest.streamId,
         pathwayStreamId,
@@ -223,9 +233,9 @@ const QuestCard = ({
       );
 
       // get return values or events
-      const receipt = await createTokenTx.wait(1);
+      const receipt = await createTokenTx?.wait(1);
       console.log({ receipt });
-      const isMinted = await contracts.BadgeNFT.badgeMinted(quest.streamId);
+      const isMinted = await contracts?.BadgeNFT.badgeMinted(quest.streamId);
       if (isMinted) {
         setStatus("MINTED");
       }

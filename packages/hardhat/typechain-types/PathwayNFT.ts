@@ -27,7 +27,8 @@ export interface PathwayNFTInterface extends utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "claimPathwayRewards(string,bool,address,bytes32,bytes32,uint8,bool,string,uint256)": FunctionFragment;
     "claimRejectionRefund(string,bool,address)": FunctionFragment;
-    "createPathway(string,string,uint256,bool,address,bool,uint256)": FunctionFragment;
+    "createPathway(string,string,uint256,bool,address,bool,uint256,address)": FunctionFragment;
+    "createPathwayAndVote(address[],string,string,bytes32[2],bytes32[2],uint8[2],uint256,uint256,bool[2],address,uint256,address)": FunctionFragment;
     "createToken(string,string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
     "creator(string)": FunctionFragment;
     "creatorFee()": FunctionFragment;
@@ -115,7 +116,25 @@ export interface PathwayNFTInterface extends utils.Interface {
       boolean,
       string,
       boolean,
-      BigNumberish
+      BigNumberish,
+      string
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createPathwayAndVote",
+    values: [
+      string[],
+      string,
+      string,
+      [BytesLike, BytesLike],
+      [BytesLike, BytesLike],
+      [BigNumberish, BigNumberish],
+      BigNumberish,
+      BigNumberish,
+      [boolean, boolean],
+      string,
+      BigNumberish,
+      string
     ]
   ): string;
   encodeFunctionData(
@@ -318,6 +337,10 @@ export interface PathwayNFTInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "createPathway",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createPathwayAndVote",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -612,7 +635,24 @@ export interface PathwayNFT extends BaseContract {
       _ERC20Address: string,
       useNative: boolean,
       amount: BigNumberish,
+      sender: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    createPathwayAndVote(
+      _contributors: string[],
+      _pathwayId: string,
+      _projectId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      numUsersRewarded: BigNumberish,
+      rewardsNative: [boolean, boolean],
+      _ERC20Address: string,
+      amount: BigNumberish,
+      sender: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     createToken(
@@ -897,7 +937,24 @@ export interface PathwayNFT extends BaseContract {
     _ERC20Address: string,
     useNative: boolean,
     amount: BigNumberish,
+    sender: string,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  createPathwayAndVote(
+    _contributors: string[],
+    _pathwayId: string,
+    _projectId: string,
+    r: [BytesLike, BytesLike],
+    s: [BytesLike, BytesLike],
+    v: [BigNumberish, BigNumberish],
+    votesNeeded: BigNumberish,
+    numUsersRewarded: BigNumberish,
+    rewardsNative: [boolean, boolean],
+    _ERC20Address: string,
+    amount: BigNumberish,
+    sender: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   createToken(
@@ -1164,6 +1221,23 @@ export interface PathwayNFT extends BaseContract {
       _ERC20Address: string,
       useNative: boolean,
       amount: BigNumberish,
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    createPathwayAndVote(
+      _contributors: string[],
+      _pathwayId: string,
+      _projectId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      numUsersRewarded: BigNumberish,
+      rewardsNative: [boolean, boolean],
+      _ERC20Address: string,
+      amount: BigNumberish,
+      sender: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1508,7 +1582,24 @@ export interface PathwayNFT extends BaseContract {
       _ERC20Address: string,
       useNative: boolean,
       amount: BigNumberish,
+      sender: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    createPathwayAndVote(
+      _contributors: string[],
+      _pathwayId: string,
+      _projectId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      numUsersRewarded: BigNumberish,
+      rewardsNative: [boolean, boolean],
+      _ERC20Address: string,
+      amount: BigNumberish,
+      sender: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     createToken(
@@ -1792,7 +1883,24 @@ export interface PathwayNFT extends BaseContract {
       _ERC20Address: string,
       useNative: boolean,
       amount: BigNumberish,
+      sender: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createPathwayAndVote(
+      _contributors: string[],
+      _pathwayId: string,
+      _projectId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      numUsersRewarded: BigNumberish,
+      rewardsNative: [boolean, boolean],
+      _ERC20Address: string,
+      amount: BigNumberish,
+      sender: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     createToken(

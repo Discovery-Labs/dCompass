@@ -67,6 +67,7 @@ export const GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY = gql`
         isPending
         projectId
         prerequisites
+        createdBy
         quizQuests {
           id
           isPending
@@ -88,13 +89,13 @@ export const EDIT_PATHWAY_MUTATION = gql`
       id
       streamId
       title
-      createdBy
       createdAt
       description
       slogan
       rewardCurrency
       rewardAmount
       rewardUserCap
+      createdBy
       image
       projectId
       prerequisites

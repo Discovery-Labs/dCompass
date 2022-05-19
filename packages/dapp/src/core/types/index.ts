@@ -24,6 +24,7 @@ export type Quest = {
   rewardAmount: string;
   rewardUserCap: number;
   rewardCurrency: string;
+  createdBy: string;
   // unlocked: boolean;
 };
 
