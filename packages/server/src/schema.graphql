@@ -113,7 +113,6 @@ type ExpandedServerSignature {
 }
 
 input GetBountyQuestByIdInput {
-  did: String!
   questId: String!
 }
 

@@ -151,6 +151,7 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
         pathwayId
         questType
         image
+        createdBy
         rewardCurrency
         rewardAmount
         rewardUserCap
@@ -168,6 +169,7 @@ export const GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY = gql`
         pathwayId
         questType
         image
+        createdBy
         rewardCurrency
         rewardAmount
         rewardUserCap

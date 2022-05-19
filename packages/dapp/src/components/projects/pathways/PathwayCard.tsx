@@ -34,7 +34,7 @@ import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Card from "components/custom/Card";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
@@ -49,8 +49,6 @@ import {
   GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
   VERIFY_PATHWAY_MUTATION,
 } from "../../../graphql/pathways";
-
-// import { PathwayNFT } from "@discovery-dao/hardhat/typechain-types/PathwayNFT";
 
 const ModalDetails = ({ pathway }: { pathway: Pathway }) => {
   const { getTextColor, getOverBgColor } = useCustomColor();
@@ -97,7 +95,7 @@ function PathwayCard({
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getRewardCurrency } = useTokenList();
-  const { getPrimaryColor, getAccentColor } = useCustomColor();
+  const { getAccentColor } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION);
   const [verifyPathwayMutation] = useMutation(VERIFY_PATHWAY_MUTATION);
   const [claimPathwayRewardsMutation] = useMutation(
@@ -143,24 +141,25 @@ function PathwayCard({
   }, [pathway.quizQuests, pathway.bountyQuests, self?.id]);
   useEffect(() => {
     async function init() {
-      if (contracts && pathway.streamId) {
+      if (contracts?.pathwayNFTContract && pathway.streamId) {
         const statusInt = await contracts.pathwayNFTContract.status(
           pathway.streamId
         );
+        console.log({ statusInt });
         const isMinted = await contracts.pathwayNFTContract.pathwayMinted(
           pathway.streamId
         );
         const statusString: string =
           await contracts.pathwayNFTContract.statusStrings(statusInt);
-        console.log({ statusString });
         setStatus(isMinted ? "MINTED" : statusString);
         const claimedByAddresses =
           await contracts.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
             pathway.streamId,
             0
           );
-        const currentUserHasClaimed = claimedByAddresses.includes(account);
-        console.log({ claimedByAddresses, currentUserHasClaimed });
+        const currentUserHasClaimed = claimedByAddresses.includes(
+          account || ""
+        );
         setIsClaimed(currentUserHasClaimed);
         setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
         setClaimedBy(claimedByAddresses);
@@ -175,15 +174,17 @@ function PathwayCard({
     }
     init();
   }, [
-    contracts,
     pathway.streamId,
     account,
-    getAllPathwaysByProjectId,
+    contracts?.pathwayNFTContract,
     pathway.projectId,
     data.getAllPathwaysByProjectId.pathways,
   ]);
 
-  const isContributor = account && projectContributors.includes(account);
+  const isContributor = useMemo(
+    () => (account ? projectContributors.includes(account) : false),
+    [account, projectContributors]
+  );
   function openPathway() {
     return router.push(`/projects/${pathway.projectId}/pathways/${pathway.id}`);
   }
@@ -193,30 +194,19 @@ function PathwayCard({
     const isWithRewards = parseFloat(pathway.rewardAmount) > 0;
 
     if (status === "NONEXISTENT" && !isWithRewards) {
-      console.log({ isWithRewards, status });
-      // TODO provide quest.createdBy instead of msg.sender?
-      console.log(
-        pathway.streamId,
-        data.getAllPathwaysByProjectId.streamId,
-        pathway.rewardUserCap,
-        isWithRewards,
-        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-        account,
-        false,
-        "0"
-      );
       const createPathwayOnChainTx =
-        await contracts.pathwayNFTContract.createPathway(
+        await contracts?.pathwayNFTContract.createPathway(
           pathway.streamId,
           data.getAllPathwaysByProjectId.streamId,
           pathway.rewardUserCap,
           isWithRewards,
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-          account,
+          account || "",
           false,
-          "0"
+          "0",
+          pathway.createdBy
         );
-      await createPathwayOnChainTx.wait(1);
+      await createPathwayOnChainTx?.wait(1);
     }
     if (chainId && account) {
       try {
@@ -232,7 +222,7 @@ function PathwayCard({
           data.approvePathway.expandedServerSignatures;
 
         const voteForApprovalTx =
-          await contracts.pathwayNFTContract.voteForApproval(
+          await contracts?.pathwayNFTContract.voteForApproval(
             projectContributors,
             pathway.streamId,
             data.approvePathway.projectStreamId,
@@ -243,24 +233,26 @@ function PathwayCard({
           );
 
         // get return values or events
-        const receipt = await voteForApprovalTx.wait(1);
+        const receipt = await voteForApprovalTx?.wait(1);
         console.log({ receipt });
-        const statusInt = await contracts.pathwayNFTContract.status(
+        const statusInt = await contracts?.pathwayNFTContract.status(
           pathway.streamId
         );
-        const statusString: string =
-          await contracts.pathwayNFTContract.statusStrings(statusInt);
-        setStatus(statusString);
+        if (statusInt) {
+          const statusString =
+            await contracts?.pathwayNFTContract.statusStrings(statusInt);
+          setStatus(statusString);
 
-        return toast({
-          title: "Pathway approved!",
-          description: `Approval vote submitted successfully!`,
-          status: "success",
-          position: "bottom-right",
-          duration: 3000,
-          isClosable: true,
-          variant: "subtle",
-        });
+          return toast({
+            title: "Pathway approved!",
+            description: `Approval vote submitted successfully!`,
+            status: "success",
+            position: "bottom-right",
+            duration: 6000,
+            isClosable: true,
+            variant: "subtle",
+          });
+        }
       } catch (error) {
         console.error(error);
 
@@ -314,7 +306,7 @@ function PathwayCard({
       const [metadataVerifySignature, thresholdVerifySignature] =
         data.verifyPathway.expandedServerSignatures;
 
-      const createTokenTx = await contracts.pathwayNFTContract.createToken(
+      const createTokenTx = await contracts?.pathwayNFTContract.createToken(
         url,
         pathway.streamId,
         data.verifyPathway.projectStreamId,
@@ -325,10 +317,10 @@ function PathwayCard({
       );
 
       // get return values or events
-      const receipt = await createTokenTx.wait(1);
+      const receipt = await createTokenTx?.wait(1);
       // TODO: receipt tx hash in the toast body
       console.log({ receipt });
-      const isMinted = await contracts.pathwayNFTContract.pathwayMinted(
+      const isMinted = await contracts?.pathwayNFTContract.pathwayMinted(
         pathway.id
       );
       if (isMinted) {
@@ -383,10 +375,10 @@ function PathwayCard({
     console.log({ metadataVerify });
     setRewardStatus("Claiming on-chain");
     const claimRewardsTx =
-      await contracts.pathwayNFTContract.claimPathwayRewards(
+      await contracts?.pathwayNFTContract.claimPathwayRewards(
         pathway.streamId,
         isNativeToken,
-        isNativeToken ? account : tokenAddressOrSymbol,
+        isNativeToken ? account || "" : tokenAddressOrSymbol,
         metadataVerify.r,
         metadataVerify.s,
         metadataVerify.v,
@@ -394,14 +386,17 @@ function PathwayCard({
         url,
         0
       );
-    await claimRewardsTx.wait(1);
+    await claimRewardsTx?.wait(1);
 
     const claimedByAddresses =
-      await contracts.PathwayNFTContract.getAllAddrsByPathwayIDVersion(
+      await contracts?.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
         pathway.streamId,
         0
       );
-    const currentUserHasClaimed = claimedByAddresses.includes(account);
+    const currentUserHasClaimed =
+      claimedByAddresses && account
+        ? claimedByAddresses.includes(account)
+        : false;
     setIsClaimed(currentUserHasClaimed);
     setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
     setClaimedBy(claimedByAddresses);

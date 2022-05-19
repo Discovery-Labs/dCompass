@@ -87,7 +87,7 @@ function PathwayFormWrapper() {
       tokenInfos.decimals
     );
     const res = await tokenContract.approve(
-      contracts.pathwayNFTContract.address,
+      contracts?.pathwayNFTContract.address,
       newAllowance
     );
     await res.wait(1);
@@ -95,6 +95,17 @@ function PathwayFormWrapper() {
   };
 
   async function onSubmit(values: Record<string, any>) {
+    if (!account) {
+      return toast({
+        title: "Not connected",
+        description: "You're not connected with your wallet'",
+        status: "error",
+        position: "bottom-right",
+        duration: 3000,
+        isClosable: true,
+        variant: "subtle",
+      });
+    }
     // TODO: add a field for this
     const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
@@ -229,7 +240,7 @@ function PathwayFormWrapper() {
     if (isWithRewards) {
       if (isNativeToken) {
         const createPathwayOnChainTx =
-          await contracts.pathwayNFTContract.createPathway(
+          await contracts?.pathwayNFTContract.createPathway(
             pathwayDoc.id.toUrl(),
             data.getAllPathwaysByProjectId.streamId,
             parseInt(values.rewardUserCap, 10),
@@ -238,11 +249,9 @@ function PathwayFormWrapper() {
             account,
             true,
             (rewardAmnt * 1e18).toString(),
-            {
-              value: (totalToPay * 1e18).toString(),
-            }
+            account
           );
-        await createPathwayOnChainTx.wait(1);
+        await createPathwayOnChainTx?.wait(1);
       } else {
         // TODO: check balance first
         const tokenDetails = await approveTokenAllowance(
@@ -254,7 +263,7 @@ function PathwayFormWrapper() {
           tokenDetails.decimals
         );
         const createPathwayOnChainTx =
-          await contracts.pathwayNFTContract.createPathway(
+          await contracts?.pathwayNFTContract.createPathway(
             pathwayDoc.id.toUrl(),
             data.getAllPathwaysByProjectId.streamId,
             parseInt(values.rewardUserCap, 10),
@@ -262,10 +271,11 @@ function PathwayFormWrapper() {
             // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
             values.rewardCurrency.value.split(":")[1],
             false,
-            rewardAmount
+            rewardAmount,
+            account
           );
 
-        await createPathwayOnChainTx.wait(1);
+        await createPathwayOnChainTx?.wait(1);
       }
     }
     setSubmitStatus("Pathway validation");

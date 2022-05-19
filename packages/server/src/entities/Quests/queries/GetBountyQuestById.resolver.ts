@@ -29,7 +29,7 @@ export class GetBountyQuestByIdResolver {
   async getBountyQuestById(
     @UseSiwe() siwe: SiweMessage,
     @UseCeramic() { ceramicClient, ceramicCore }: UseCeramicClient,
-    @Args("input") { questId, did }: GetBountyQuestByIdInput
+    @Args("input") { questId }: GetBountyQuestByIdInput
   ): Promise<BountyQuest | null | undefined> {
     const foundQuest =
       await this.questService.bountyQuestWithPathwayAndProjectSquads({

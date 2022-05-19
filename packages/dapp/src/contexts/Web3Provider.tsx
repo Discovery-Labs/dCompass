@@ -1,4 +1,10 @@
 import ABIS from "@discovery-dao/hardhat/abis.json";
+import {
+  PathwayNFT,
+  ProjectNFT,
+  SponsorPassSFT,
+  BadgeNFT,
+} from "@discovery-dao/hardhat/typechain-types";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
 // import { Client, ThreadID, Where } from "@textile/hub";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
@@ -26,7 +32,7 @@ import {
   useSignOutMutation,
 } from "../core/graphql/generated/types";
 import { useActiveWeb3React } from "../core/hooks/web3";
-import NETWORKS from "../core/networks";
+import { defaultChain, getStaticProvider, NETWORKS } from "../core/networks";
 // import {
 //   getAuthorizedUserClient,
 //   getDBClient,
@@ -37,6 +43,7 @@ import NETWORKS from "../core/networks";
 
 import { initialState, Web3Context } from "./Web3Context";
 import { Web3Reducer } from "./Web3Reducer";
+import { useContract, useNetwork } from "wagmi";
 
 export const supportedNetworks = Object.keys(ABIS);
 
@@ -67,6 +74,38 @@ const providerOptions = {
 };
 
 const Web3Provider = ({ children }: { children: any }) => {
+  const { activeChain, pendingChainId } = useNetwork();
+  console.log({ activeChain, pendingChainId });
+
+  const staticProvider = useMemo(
+    () => getStaticProvider(activeChain),
+    [activeChain]
+  );
+
+  const abiForCurrentNetwork =
+    ABIS[defaultChain.id][NETWORKS[defaultChain.id].name];
+
+  const PathwayNFTContractRead = useContract({
+    addressOrName: abiForCurrentNetwork.contracts.PathwayNFT.address,
+    contractInterface: abiForCurrentNetwork.contracts.PathwayNFT.abi,
+    signerOrProvider: staticProvider,
+  }) as PathwayNFT;
+  const ProjectNFTContractRead = useContract({
+    addressOrName: abiForCurrentNetwork.contracts.ProjectNFT.address,
+    contractInterface: abiForCurrentNetwork.contracts.ProjectNFT.abi,
+    signerOrProvider: staticProvider,
+  }) as ProjectNFT;
+  const SponsorPassSFTContractRead = useContract({
+    addressOrName: abiForCurrentNetwork.contracts.SponsorPassSFT.address,
+    contractInterface: abiForCurrentNetwork.contracts.SponsorPassSFT.abi,
+    signerOrProvider: staticProvider,
+  }) as SponsorPassSFT;
+  const BadgeNFTContractRead = useContract({
+    addressOrName: abiForCurrentNetwork.contracts.BadgeNFT.address,
+    contractInterface: abiForCurrentNetwork.contracts.BadgeNFT.abi,
+    signerOrProvider: staticProvider,
+  }) as BadgeNFT;
+
   const [signIn] = useSignInMutation({
     fetchPolicy: "network-only",
   });
@@ -80,6 +119,7 @@ const Web3Provider = ({ children }: { children: any }) => {
     fetchPolicy: "network-only",
   });
   const [state, dispatch] = useReducer(Web3Reducer, initialState);
+
   const { activate, chainId, library } = useWeb3React();
   const { active, account } = useActiveWeb3React();
   const web3Modal = useMemo<Web3Modal>(
@@ -153,7 +193,12 @@ const Web3Provider = ({ children }: { children: any }) => {
     setSelf(null);
     setCore(null);
     setIsReviewer(false);
-    setContracts(null);
+    setContracts({
+      projectNFTContract: ProjectNFTContractRead,
+      pathwayNFTContract: PathwayNFTContractRead,
+      SponsorPassSFT: SponsorPassSFTContractRead,
+      BadgeNFT: BadgeNFTContractRead,
+    });
     setIsSignedIn(false);
     // TODO: better way to handle this ? https://github.com/NoahZinsmeister/web3-react/issues/228
     localStorage.setItem("defaultWallet", "");
@@ -162,6 +207,18 @@ const Web3Provider = ({ children }: { children: any }) => {
   useEffect(() => {
     const coreCeramic = ceramicCoreFactory();
     setCore(coreCeramic);
+  }, []);
+
+  useEffect(() => {
+    async function initReadContracts() {
+      setContracts({
+        projectNFTContract: ProjectNFTContractRead,
+        pathwayNFTContract: PathwayNFTContractRead,
+        SponsorPassSFT: SponsorPassSFTContractRead,
+        BadgeNFT: BadgeNFTContractRead,
+      });
+    }
+    initReadContracts();
   }, []);
 
   useEffect(() => {
