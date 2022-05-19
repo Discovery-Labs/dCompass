@@ -194,18 +194,6 @@ function PathwayCard({
     const isWithRewards = parseFloat(pathway.rewardAmount) > 0;
 
     if (status === "NONEXISTENT" && !isWithRewards) {
-      console.log({ isWithRewards, status });
-      // TODO provide quest.createdBy instead of msg.sender?
-      console.log(
-        pathway.streamId,
-        data.getAllPathwaysByProjectId.streamId,
-        pathway.rewardUserCap,
-        isWithRewards,
-        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-        account,
-        false,
-        "0"
-      );
       const createPathwayOnChainTx =
         await contracts?.pathwayNFTContract.createPathway(
           pathway.streamId,
@@ -215,7 +203,8 @@ function PathwayCard({
           // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
           account || "",
           false,
-          "0"
+          "0",
+          pathway.createdBy
         );
       await createPathwayOnChainTx?.wait(1);
     }
