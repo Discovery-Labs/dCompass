@@ -174,7 +174,7 @@ const QuestCard = ({
       description: `Approval vote submitted successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
@@ -237,7 +237,7 @@ const QuestCard = ({
       description: `Quest minted and created successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });

@@ -125,7 +125,7 @@ function PathwayFormWrapper() {
             description: `You don't have enough funds to provide the pathway rewards in this currency`,
             status: "error",
             position: "bottom-right",
-            duration: 6000,
+            duration: 3000,
             isClosable: true,
             variant: "subtle",
           });
@@ -145,7 +145,7 @@ function PathwayFormWrapper() {
               "You don't have enough funds to provide pathway rewards",
             status: "error",
             position: "bottom-right",
-            duration: 6000,
+            duration: 3000,
             isClosable: true,
             variant: "subtle",
           });

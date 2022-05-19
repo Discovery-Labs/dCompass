@@ -82,7 +82,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         description: `Try to refresh the page or disconnect & connect`,
         status: "error",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });
@@ -136,7 +136,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
           description: `Thanks for your submission, your solution will be reviewed soon!`,
           status: "success",
           position: "bottom-right",
-          duration: 6000,
+          duration: 3000,
           isClosable: true,
           variant: "subtle",
         });
@@ -149,7 +149,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         description: `There was an issue with your solution submission..`,
         status: "error",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });
@@ -160,7 +160,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         description: `You already submitted a solution or you didn't sign your solution submission`,
         status: "error",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });

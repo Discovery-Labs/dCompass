@@ -277,7 +277,7 @@ function PathwayCard({
           title: toastTitle,
           status: "warning",
           position: "bottom-right",
-          duration: 6000,
+          duration: 3000,
           isClosable: true,
           variant: "subtle",
         });
@@ -346,7 +346,7 @@ function PathwayCard({
       description: `Pathway minted and created successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
@@ -417,7 +417,7 @@ function PathwayCard({
       description: `Rewards claimed successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });

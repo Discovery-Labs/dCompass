@@ -254,7 +254,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           description: `You don't have enough funds to provide the quest rewards in this currency`,
           status: "error",
           position: "bottom-right",
-          duration: 6000,
+          duration: 3000,
           isClosable: true,
           variant: "subtle",
         });
@@ -273,7 +273,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           description: "You don't have enough funds to provide quest rewards",
           status: "error",
           position: "bottom-right",
-          duration: 6000,
+          duration: 3000,
           isClosable: true,
           variant: "subtle",
         });

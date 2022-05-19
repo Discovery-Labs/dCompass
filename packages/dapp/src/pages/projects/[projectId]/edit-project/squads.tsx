@@ -171,7 +171,7 @@ function EditProjectSquads(project: Project) {
       description: `Squads updated successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });

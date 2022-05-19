@@ -124,7 +124,7 @@ describe("BadgeNFT", function() {
 
     let nonce = await verify.noncesParentIdChildId("firstTestProject", "firstCourseProject");
     let nonceById = await verify.thresholdNoncesById("firstCourseProject");
-    await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", 200, true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", {value : "0xff59ee833b30000"});
+    await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", 200, true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", `${addrs[0].address}`, {value : "0xff59ee833b30000"});
     let r = Array(2);
       let s = Array(2);
       let v = Array(2);
@@ -188,7 +188,7 @@ describe("BadgeNFT", function() {
       expect(await badgeNFT.reviewerVotes("firstBadgeProject", `${owner.address}`)).to.be.false;
 
       //await pathwayNFT.createPathway("firstCourseProject", "firstTestProject", false, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", false, "0xff");
-      await badgeNFT.createBadge("firstBadgeProject", "firstCourseProject", 200, true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", {value : "0xa3c2057b1d9c0000"});
+      await badgeNFT.createBadge("firstBadgeProject", "firstCourseProject", 200, true, "0xd0A1E359811322d97991E03f863a0C30C2cF029C", true, "0xde0b6b3a7640000", `${addrs[0].address}`, {value : "0xa3c2057b1d9c0000"});
       expect(await badgeNFT.status("firstBadgeProject")).to.be.equal(1);
       nativeAmtTest = await badgeNFT.nativeRewards("firstBadgeProject");
       expect(nativeAmtTest.toString()).to.be.equal('1000000000000000000');

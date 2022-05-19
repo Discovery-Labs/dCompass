@@ -163,7 +163,7 @@ function EditProjectStepper(project: Project) {
       description: `Project informations updated successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
