@@ -8,10 +8,4 @@ export class GetBountyQuestByIdInput {
   @IsDefined({ message: "not.defined" })
   @IsNotEmpty({ message: "not.empty" })
   questId: string;
-
-  @Field()
-  @IsString({ message: "wrong.type" })
-  @IsDefined({ message: "not.defined" })
-  @IsNotEmpty({ message: "not.empty" })
-  did: string;
 }

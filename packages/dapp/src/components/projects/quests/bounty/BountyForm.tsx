@@ -88,18 +88,21 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
       });
     }
     const files = values.medias;
+
     const markdownBlob = new Blob([values.solution], {
       type: "text/markdown",
     });
     const markdownDataUrl = await blobToDataURL(markdownBlob);
     const attachments = [] as string[];
-    for await (const file of files as FileList) {
-      const dataUrl = await blobToDataURL(
-        new Blob([file], {
-          type: file.type,
-        })
-      );
-      attachments.push(dataUrl);
+    if (files) {
+      for await (const file of files as FileList) {
+        const dataUrl = await blobToDataURL(
+          new Blob([file], {
+            type: file.type,
+          })
+        );
+        attachments.push(dataUrl);
+      }
     }
 
     const solutionDag = await self.client.ceramic.did.createDagJWE(

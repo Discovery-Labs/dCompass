@@ -114,7 +114,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
             quizData.getQuizQuestById.streamId,
             0
           );
-        const currentUserHasClaimed = claimedByAddresses.includes(account);
+        const currentUserHasClaimed = claimedByAddresses.includes(
+          account || ""
+        );
         console.log({ claimedByAddresses, currentUserHasClaimed });
         setIsClaimed(currentUserHasClaimed);
         setRewardStatus(
@@ -169,6 +171,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       chainId,
       namespace,
     } = quizData?.getQuizQuestById;
+
     setRewardStatus("Generating tokenURI");
     const formData = new FormData();
     const ogFile = await fetch(`https://ipfs.io/ipfs/${image}`);
@@ -222,7 +225,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
     if (hasRewards) {
       const [, tokenAddressOrSymbol] = rewardCurrency.split(":");
       const isNativeToken = tokenAddressOrSymbol ? false : true;
-      const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
+      const claimRewardsTx = await contracts?.BadgeNFT.claimBadgeRewards(
         streamId,
         isNativeToken,
         isNativeToken ? account : tokenAddressOrSymbol,
@@ -233,12 +236,12 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         url,
         0
       );
-      await claimRewardsTx.wait(1);
+      await claimRewardsTx?.wait(1);
     } else {
-      const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
+      const claimRewardsTx = await contracts?.BadgeNFT.claimBadgeRewards(
         streamId,
         false,
-        account,
+        account || "",
         metadataVerify.r,
         metadataVerify.s,
         metadataVerify.v,
@@ -246,17 +249,20 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         url,
         0
       );
-      await claimRewardsTx.wait(1);
+      await claimRewardsTx?.wait(1);
     }
 
     console.log({ metadataVerify });
 
     const claimedByAddresses =
-      await contracts.BadgeNFT.getAllAddrsByBadgeIDVersion(
+      await contracts?.BadgeNFT.getAllAddrsByBadgeIDVersion(
         quizData.getQuizQuestById.streamId,
         0
       );
-    const currentUserHasClaimed = claimedByAddresses.includes(account);
+    const currentUserHasClaimed =
+      claimedByAddresses && account
+        ? claimedByAddresses.includes(account)
+        : false;
 
     setIsClaimed(currentUserHasClaimed);
     setRewardStatus(
