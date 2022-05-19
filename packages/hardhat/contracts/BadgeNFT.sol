@@ -108,6 +108,24 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         emit ReceiveCalled(msg.sender, msg.value);
     }
 
+    function createBadgeAndVote(
+        address[] memory _contributors,
+        string memory _badgeId, 
+        string memory _pathwayId,
+        bytes32[2] memory r,
+        bytes32[2] memory s, 
+        uint8[2] memory v,
+        uint votesNeeded,
+        uint numUsersRewarded,
+        bool[2] memory rewardsNative,
+        address _ERC20Address,
+        uint amount,
+        address sender
+    ) external {
+        createBadge(_badgeId, _pathwayId, numUsersRewarded, rewardsNative[0], _ERC20Address, rewardsNative[1], amount, sender);
+        voteForApproval(_contributors, _badgeId, _pathwayId, r, s, v, votesNeeded);
+    }
+
     function createBadge(
         string memory _badgeId,
         string memory _pathwayId,
@@ -115,20 +133,22 @@ contract BadgeNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         bool callRewards,
         address _ERC20Address,
         bool useNative,
-        uint256 amount
-    ) external payable {
-        require(status[_badgeId] == BadgeStatus.NONEXISTENT);
-        status[_badgeId] = BadgeStatus.PENDING;
-        pathwayIdforBadge[_badgeId] = _pathwayId;
-        numUsersRewardPerBadge[_badgeId] = numUsersRewarded;
-        creator[_badgeId] = _msgSender();
-        if (callRewards) {
-            addBadgeCreationReward(_badgeId, _ERC20Address, useNative, amount);
-        }
+        uint amount,
+        address sender
+    ) public payable {
+            require(status[_badgeId] == BadgeStatus.NONEXISTENT);
+            status[_badgeId] = BadgeStatus.PENDING;
+            pathwayIdforBadge[_badgeId] = _pathwayId;
+            numUsersRewardPerBadge[_badgeId] = numUsersRewarded;
+            creator[_badgeId] = sender;
+            if (callRewards){
+                addBadgeCreationReward(_badgeId, _ERC20Address, useNative, amount);
+            }
     }
 
     function voteForApproval(
         address[] memory _contributors,
+
         string memory _badgeId,
         string memory _pathwayId,
         bytes32[2] memory r,

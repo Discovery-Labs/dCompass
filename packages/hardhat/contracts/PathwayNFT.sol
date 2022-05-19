@@ -106,6 +106,23 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         emit ReceiveCalled(msg.sender, msg.value);
     }
 
+    function createPathwayAndVote(
+        address[] memory _contributors,
+        string memory _pathwayId,
+        string memory _projectId,
+        bytes32[2] memory r,
+        bytes32[2] memory s,
+        uint8[2] memory v,
+        uint256 votesNeeded,
+        uint numUsersRewarded,
+        bool[2] memory rewardsNative,
+        address _ERC20Address,
+        uint amount,
+        address sender) external {
+            createPathway(_pathwayId, _projectId, numUsersRewarded, rewardsNative[0], _ERC20Address, rewardsNative[1], amount, sender);
+            voteForApproval(_contributors, _pathwayId, _projectId, r, s, v, votesNeeded);
+        }
+
     function createPathway(
         string memory _pathwayId,
         string memory _projectId,
@@ -113,13 +130,14 @@ contract PathwayNFT is ERC721URIStorage, ERC721Enumerable, Ownable {
         bool callRewards,
         address _ERC20Address,
         bool useNative,
-        uint amount
-    ) external payable {
+        uint amount,
+        address sender
+    ) public payable {
             require(status[_pathwayId] == PathwayStatus.NONEXISTENT);
             status[_pathwayId] = PathwayStatus.PENDING;
             projectIdforPathway[_pathwayId] = _projectId;
             numUsersRewardPerPathway[_pathwayId] = numUsersRewarded;
-            creator[_pathwayId] = _msgSender();
+            creator[_pathwayId] = sender;
             if (callRewards){
                 addPathwayCreationReward(_pathwayId, _ERC20Address, useNative, amount);
             }
