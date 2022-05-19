@@ -55,7 +55,6 @@ function QuestSubmissionList({ questId }: { questId: string }) {
   const [solutionReview, setSolutionReview] =
     useState<SolutionSubmission | null>();
   const [markdownSolution, setMarkdownSolution] = useState<string | null>();
-  const { self } = useContext(Web3Context);
   const { getBorderColor } = useCustomColor();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [approveQuestSolutionMutation] = useMutation(
@@ -65,7 +64,6 @@ function QuestSubmissionList({ questId }: { questId: string }) {
     variables: {
       input: {
         questId,
-        did: self?.id,
       },
     },
   });
