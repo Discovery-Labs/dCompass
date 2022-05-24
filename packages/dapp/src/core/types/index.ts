@@ -4,6 +4,12 @@ export type Tag = {
   color: string;
 };
 
+export type Questions = {
+  question: string;
+  choices: string[];
+  answer: string;
+}[];
+
 export type Quest = {
   id: string;
   streamId: string;
@@ -25,6 +31,7 @@ export type Quest = {
   rewardUserCap: number;
   rewardCurrency: string;
   createdBy: string;
+  questions: Questions;
   // unlocked: boolean;
 };
 

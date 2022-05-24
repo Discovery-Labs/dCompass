@@ -267,7 +267,8 @@ const Web3Provider = ({ children }: { children: any }) => {
 
   useEffect(() => {
     async function handleActiveAccount() {
-      if (active && account) {
+      if (active && account && !state.isSignedIn) {
+        console.log({ active, account });
         setAccount(account);
         const ethersProvider = new ethers.providers.Web3Provider(
           library.provider,
@@ -293,10 +294,48 @@ const Web3Provider = ({ children }: { children: any }) => {
         try {
           const { data: meData } = await me();
           console.log({ me: meData?.me });
-          if (!meData?.me?.did || meData.me.did !== mySelf.id) {
-            return;
+          if (!meData?.me?.id) {
+            // Get a nonce from the back-end
+            const { data } = await getNonce();
+            console.log({ nonce: data?.getNonce });
+            if (!data?.getNonce) {
+              throw new Error("No nonce");
+            }
+            const message = new SiweMessage({
+              domain: window.document.location.host,
+              address: account,
+              chainId: await library
+                .getNetwork()
+                .then(({ chainId }: { chainId: number }) => chainId),
+              uri: window.document.location.origin,
+              version: "1",
+              statement: "Howdy Adventurer!",
+              nonce: data?.getNonce,
+            });
+
+            console.log({ message });
+
+            const signature = await library
+              .getSigner()
+              .signMessage(message.prepareMessage());
+
+            console.log({ signature });
+
+            const isSignedIn = await signIn({
+              variables: {
+                input: {
+                  message: {
+                    ...message,
+                    statement: message.statement || "Howdy Adventurer!",
+                    type: SignatureType.PersonalSignature,
+                    signature,
+                  },
+                },
+              },
+            });
+            console.log(isSignedIn.data);
+            setIsSignedIn(true);
           }
-          setIsSignedIn(true);
           // setAccount(meData.me.address);
           // setENS(meData.me.ens);
         } catch (error) {
@@ -360,11 +399,16 @@ const Web3Provider = ({ children }: { children: any }) => {
       }
     }
     handleActiveAccount();
-    return () => {
-      setAccount(null);
-      return setENS(null);
-    };
-  }, [account, me, active, signIn, getNonce, library, web3Modal]);
+  }, [
+    account,
+    me,
+    active,
+    signIn,
+    getNonce,
+    library,
+    web3Modal,
+    state.isSignedIn,
+  ]);
 
   const connectWeb3 = useCallback(async () => {
     const provider = await web3Modal.connect();

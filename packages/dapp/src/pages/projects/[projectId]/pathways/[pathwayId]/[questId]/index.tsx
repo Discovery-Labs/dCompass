@@ -310,6 +310,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
   const isContributor = projectRes.getProjectById.squads
     .flatMap(({ members }: { members: string[] }) => members)
     .includes(account);
+
   return (
     <Container>
       <BreadcrumbItems
@@ -343,7 +344,16 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
           {quizData?.getQuizQuestById.name}{" "}
           <Icon as={RiSwordLine} color="text-weak" />
         </Heading>
-        <Text color="text-weak">{quizData?.getQuizQuestById.slogan}</Text>
+
+        <HStack justifyContent={"space-between"}>
+          <Text color="text-weak">{quizData?.getQuizQuestById.slogan}</Text>
+          {isContributor && (
+            <NextLink href={`${window.location.href}/edit`} passHref>
+              {/** TODO: Edit pathway form or page **/}
+              <Button leftIcon={<EditIcon />}>{t("edit-quest")}</Button>
+            </NextLink>
+          )}
+        </HStack>
 
         <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">

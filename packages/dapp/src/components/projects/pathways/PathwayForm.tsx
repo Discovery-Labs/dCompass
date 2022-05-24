@@ -35,11 +35,7 @@ const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
 });
 
-export default function PathwayForm({
-  isWithRewards,
-  withRewards,
-  existingPathways,
-}: any) {
+export default function PathwayForm({ isWithRewards, withRewards }: any) {
   const [code, setCode] = useState<string>();
   const { codeEditorScheme } = useCustomColor();
 
@@ -298,14 +294,14 @@ export default function PathwayForm({
         </FormControl>
       </VStack>
 
-      <ControlledSelect
+      {/* <ControlledSelect
         control={control}
         name="prerequisites"
         label="Prerequisites"
         isMulti
         options={existingPathways}
         hasStickyGroupHeaders
-      />
+      /> */}
       <Divider bg="none" py="5" />
     </VStack>
   );

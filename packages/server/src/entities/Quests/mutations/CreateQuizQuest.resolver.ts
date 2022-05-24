@@ -40,7 +40,10 @@ export class CreateQuizQuestResolver {
       (account) => account.split("@")[0]
     );
 
-    if (!formattedAccounts.includes(address)) {
+    if (
+      !formattedAccounts.includes(address) ||
+      ogQuest.content.createdBy !== address
+    ) {
       throw new ForbiddenError("Unauthorized");
     }
 
@@ -60,7 +63,6 @@ export class CreateQuizQuestResolver {
       questType: type.value,
       streamId: id,
       isPending: true,
-      createdBy: ogQuest.controllers[0],
     });
 
     return removeNulls(createdQuest);

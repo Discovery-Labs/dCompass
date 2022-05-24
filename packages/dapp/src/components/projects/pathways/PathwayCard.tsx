@@ -1,33 +1,26 @@
 /* eslint-disable complexity */
 import { useMutation, useQuery } from "@apollo/client";
-import { CheckIcon, CloseIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
   Flex,
   Heading,
   HStack,
-  ListItem,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
   Progress,
   Spacer,
   Tag,
   TagLabel,
   Text,
   Tooltip,
-  UnorderedList,
   useDisclosure,
   useToast,
   VStack,
-  Link,
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 // import { ethers } from "ethers";
@@ -116,7 +109,7 @@ function PathwayCard({
   const [claimedBy, setClaimedBy] = useState<string[]>();
   const [isClaimed, setIsClaimed] = useState<boolean>(false);
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
-  const [pathways, setPathways] = useState<Pathway[]>();
+  // const [pathways, setPathways] = useState<Pathway[]>();
   const [rewardStatus, setRewardStatus] = useState<string>();
   const { account, contracts, self } = useContext(Web3Context);
   const { chainId } = useWeb3React();
@@ -168,7 +161,7 @@ function PathwayCard({
         //     projectId: pathway.projectId,
         //   },
         // });
-        setPathways(data.getAllPathwaysByProjectId.pathways);
+        // setPathways(data.getAllPathwaysByProjectId.pathways);
       }
       null;
     }
@@ -470,7 +463,7 @@ function PathwayCard({
       <VStack w="full" align="start">
         <Text color="accent">Requisites: </Text>
 
-        {pathway.prerequisites.length > 0 ? (
+        {/* {pathway.prerequisites.length > 0 ? (
           <Popover isLazy matchWidth>
             <PopoverTrigger>
               <Button w="full" variant="outline">
@@ -505,7 +498,7 @@ function PathwayCard({
           <Button w="full" variant="outline">
             None
           </Button>
-        )}
+        )} */}
       </VStack>
       {isContributor && status !== "MINTED" && (
         <VStack w="full" align="left">

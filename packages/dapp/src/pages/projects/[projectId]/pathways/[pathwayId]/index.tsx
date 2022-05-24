@@ -174,13 +174,15 @@ function PathwayPage({
 
   useEffect(() => {
     async function init() {
-      if (contracts && streamId) {
+      if (contracts?.pathwayNFTContract && streamId) {
         const claimedByAddresses =
           await contracts.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
             streamId,
             0
           );
-        const currentUserHasClaimed = claimedByAddresses.includes(account);
+        const currentUserHasClaimed = account
+          ? claimedByAddresses.includes(account)
+          : false;
 
         setIsClaimed(currentUserHasClaimed);
         setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");

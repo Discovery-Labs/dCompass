@@ -151,6 +151,12 @@ export class SignInResolver {
           });
           break;
         }
+        case SiweErrorType.INVALID_NONCE: {
+          ctx.req.session.save(() => {
+            throw new ApolloError(error.message, "401");
+          });
+          break;
+        }
         default: {
           ctx.req.session.save(() => {
             throw new ApolloError(error.message, "400");

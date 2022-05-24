@@ -24,6 +24,8 @@ export default function Questions({ control, register }: any) {
 
   const currentValues = watch();
 
+  console.log({ currentValues });
+
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "questions", // unique name for your Field Array

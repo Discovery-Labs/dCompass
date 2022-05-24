@@ -68,6 +68,19 @@ export const CREATE_QUEST_MUTATION = gql`
   }
 `;
 
+export const EDIT_QUEST_MUTATION = gql`
+  mutation EditQuest($input: EditQuestInput!) {
+    editQuest(input: $input) {
+      id
+      name
+      description
+      difficulty
+      slogan
+      pathwayId
+    }
+  }
+`;
+
 export const APPROVE_QUEST_MUTATION = gql`
   mutation ApproveQuest($input: ApproveQuestInput!) {
     approveQuest(input: $input) {

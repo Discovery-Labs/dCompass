@@ -77,6 +77,7 @@ export class ApprovePathwayResolver {
       verifyContract.thresholdNoncesById(foundPathway.streamId),
     ]);
 
+    console.log({ metadataNonceId, thresholdNonceId });
     const [metadataVerify, tresholdVerify] = await Promise.all([
       verifyNFTInfo({
         contractAddress: pathwayContract.address,

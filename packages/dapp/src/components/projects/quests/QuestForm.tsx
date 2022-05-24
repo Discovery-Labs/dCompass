@@ -533,15 +533,15 @@ const CreateQuestForm: React.FunctionComponent = () => {
         }}
         options={difficultyOptions}
       />
-      <ControlledSelect
-        control={control}
-        name="prerequisites"
-        label="Prerequisites"
-        isMulti
-        options={
-          (pathwayData?.getAllQuestsByPathwayId?.bountyQuests?.length ||
-            pathwayData?.getAllQuestsByPathwayId?.quizQuests?.length) &&
-          [
+
+      {(pathwayData?.getAllQuestsByPathwayId?.bountyQuests?.length ||
+        pathwayData?.getAllQuestsByPathwayId?.quizQuests?.length) && (
+        <ControlledSelect
+          control={control}
+          name="prerequisites"
+          label="Prerequisites"
+          isMulti
+          options={[
             ...pathwayData?.getAllQuestsByPathwayId?.bountyQuests,
             ...pathwayData?.getAllQuestsByPathwayId?.quizQuests,
           ].map((quest: Quest) => {
@@ -550,10 +550,10 @@ const CreateQuestForm: React.FunctionComponent = () => {
               value: quest.id,
               colorScheme: "purple",
             };
-          })
-        }
-        hasStickyGroupHeaders
-      />
+          })}
+          hasStickyGroupHeaders
+        />
+      )}
 
       <FormControl isInvalid={errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>

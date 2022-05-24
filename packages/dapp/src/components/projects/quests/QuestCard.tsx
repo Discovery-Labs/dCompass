@@ -112,6 +112,7 @@ const QuestCard = ({
     const isWithRewards = parseFloat(quest.rewardAmount) > 0;
 
     if (status === "NONEXISTENT" && !isWithRewards) {
+      console.log({ crea: quest.createdBy });
       // TODO provide quest.createdBy instead of msg.sender?
       const createQuestOnChainTx = await contracts?.BadgeNFT.createBadge(
         quest.streamId,
