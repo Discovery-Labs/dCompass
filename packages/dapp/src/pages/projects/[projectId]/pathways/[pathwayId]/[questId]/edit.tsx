@@ -23,10 +23,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useMutation, useQuery } from "@apollo/client";
 import { useTranslation } from "next-i18next";
-import { EDIT_PATHWAY_MUTATION } from "../../../../../../graphql/pathways";
 
-import { GET_QUIZ_QUEST_BY_ID_QUERY } from "../../../../../../graphql/quests";
-import { useEffect } from "react";
+import {
+  EDIT_QUEST_MUTATION,
+  GET_QUIZ_QUEST_BY_ID_QUERY,
+} from "../../../../../../graphql/quests";
+import { useEffect, useMemo } from "react";
 
 export const getServerSideProps = async (ctx) => {
   const locale = ctx.locale || "en";
@@ -56,7 +58,7 @@ function EditQuest({ questId }: { questId: string }) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const toast = useToast();
-  const editableFields = ["name", "slogan", "description"];
+  const editableFields = useMemo(() => ["name", "slogan", "description"], []);
 
   const { data, loading, error } = useQuery(GET_QUIZ_QUEST_BY_ID_QUERY, {
     variables: {
@@ -64,7 +66,7 @@ function EditQuest({ questId }: { questId: string }) {
     },
   });
 
-  const [editQuestMutation] = useMutation(EDIT_PATHWAY_MUTATION, {
+  const [editQuestMutation] = useMutation(EDIT_QUEST_MUTATION, {
     refetchQueries: "all",
   });
 
@@ -117,13 +119,19 @@ function EditQuest({ questId }: { questId: string }) {
         variables: {
           input: {
             id: questId,
+            questType: data?.getQuizQuestById.questType,
             ...values,
+            questions: values.questions.map((q) => ({
+              question: q.question,
+              choices: q.options.map((opt) => opt.value),
+              answer: q.answer.map((answr) => answr.value),
+            })),
           },
         },
       });
       toast({
-        title: "Pathway updated!",
-        description: `Pathway informations updated successfully!`,
+        title: "Quest updated!",
+        description: `Quest informations updated successfully!`,
         status: "success",
         position: "bottom-right",
         duration: 3000,
@@ -133,8 +141,8 @@ function EditQuest({ questId }: { questId: string }) {
       return router.back();
     } catch (error) {
       toast({
-        title: "Error on pathway update!",
-        description: `An error occured while updating the pathway!`,
+        title: "Error on quest update!",
+        description: `An error occured while updating the quest!`,
         status: "error",
         position: "bottom-right",
         duration: 3000,

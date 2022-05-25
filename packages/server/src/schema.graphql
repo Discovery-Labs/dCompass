@@ -106,6 +106,23 @@ input EditProjectInput {
   whitepaper: String
 }
 
+input EditQuestInput {
+  description: String
+  difficulty: QuestDifficultyEnum
+  id: String!
+  name: String
+  questType: String!
+  questions: [EditQuestQuestionInput!]
+  slogan: String
+}
+
+input EditQuestQuestionInput {
+  answer: [String!]!
+  choices: [String!]!
+  id: String
+  question: String!
+}
+
 type ExpandedServerSignature {
   r: String!
   s: String!
@@ -152,6 +169,9 @@ type Mutation {
 
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
+
+  """Updates a Quest in dCompass"""
+  editQuest(input: EditQuestInput!): Quest
 
   """Sign in a user and notifies the connected clients"""
   signIn(input: SiweRegisterInput!): User!

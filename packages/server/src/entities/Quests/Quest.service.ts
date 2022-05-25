@@ -4,6 +4,7 @@ import {
   BountyQuest,
   Prisma,
   SolutionSubmission,
+  QuizQuestion,
 } from "@prisma/client";
 import { PrismaService } from "src/services/prisma/Prisma.service";
 
@@ -127,6 +128,14 @@ export class QuestService {
     return this.prisma.quizQuest.delete({
       where,
     });
+  }
+
+  async updateQuizQuestion(params: {
+    data: Prisma.QuizQuestionUpdateInput;
+    where: Prisma.QuizQuestionWhereUniqueInput;
+  }): Promise<QuizQuestion> {
+    const { data, where } = params;
+    return this.prisma.quizQuestion.update({ data, where });
   }
 
   async bountyQuest(

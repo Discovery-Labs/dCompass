@@ -11,6 +11,7 @@ import { ClaimQuestRewardsResolver } from "./mutations/ClaimQuestRewards.resolve
 
 import { CreateQuestResolver } from "./mutations/CreateQuest.resolver";
 import { CreateQuizQuestResolver } from "./mutations/CreateQuizQuest.resolver";
+import { EditQuestResolver } from "./mutations/EditQuest.resolver";
 
 // import { GetAllQuestsResolver } from './queries/GetAllQuests.resolver';
 // import { CreateQuestResolver } from './mutations/CreateQuest.resolver';
@@ -43,6 +44,7 @@ import { QuestService } from "./Quest.service";
     PrismaService,
     PathwayService,
     QuestService,
+    EditQuestResolver,
     // CreateQuestResolver,
     // GetQuestByIdResolver,
   ],

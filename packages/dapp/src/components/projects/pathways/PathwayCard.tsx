@@ -460,10 +460,10 @@ function PathwayCard({
         </Text>
       </Flex>
 
-      <VStack w="full" align="start">
+      {/* <VStack w="full" align="start">
         <Text color="accent">Requisites: </Text>
 
-        {/* {pathway.prerequisites.length > 0 ? (
+       {pathway.prerequisites.length > 0 ? (
           <Popover isLazy matchWidth>
             <PopoverTrigger>
               <Button w="full" variant="outline">
@@ -498,8 +498,9 @@ function PathwayCard({
           <Button w="full" variant="outline">
             None
           </Button>
-        )} */}
+        )} 
       </VStack>
+    */}
       {isContributor && status !== "MINTED" && (
         <VStack w="full" align="left">
           <Tag
