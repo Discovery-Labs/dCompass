@@ -24,6 +24,6 @@ export class GetProjectByIdResolver {
     if (!projectWithSquadsAndTags) {
       throw new NotFoundException("Project not found");
     }
-    return projectWithSquadsAndTags as Project;
+    return projectWithSquadsAndTags as unknown as Project;
   }
 }

@@ -15,6 +15,7 @@ type Props = typeof SkillTreeProvider.defaultProps & {
   treeId: string;
   savedData?: SavedDataType;
   storage?: ContextStorage;
+  children?: React.ReactNode;
 };
 
 type DefaultProps = {
@@ -89,7 +90,7 @@ export class SkillTreeProvider extends React.Component<Props, State> {
 
   componentDidMount() {
     const { storage } = this.props;
-    const { context } = this;
+    const { context } = this as any;
 
     if (storage) {
       this.storage = storage;
@@ -139,12 +140,16 @@ export class SkillTreeProvider extends React.Component<Props, State> {
   };
 
   componentDidUpdate() {
-    if (this.context.resetId !== this.state.resetId) {
+    const { context } = this as any;
+
+    if (context.resetId !== this.state.resetId) {
       this.resetSkills();
     }
   }
 
   incrementSelectedCount = (optional: boolean = false) => {
+    const { context } = this as any;
+
     const action: Action = {
       type: optional ? 'SELECT_OPTIONAL_SKILL' : 'SELECT_REQUIRED_SKILL',
     };
@@ -154,10 +159,12 @@ export class SkillTreeProvider extends React.Component<Props, State> {
       return { selectedCount: selectedCount + 1 };
     });
 
-    this.context.dispatch(action);
+    context.dispatch(action);
   };
 
   decrementSelectedCount = (optional: boolean = false) => {
+    const { context } = this as any;
+
     const action: Action = {
       type: optional ? 'DESELECT_OPTIONAL_SKILL' : 'DESELECT_REQUIRED_SKILL',
     };
@@ -167,10 +174,12 @@ export class SkillTreeProvider extends React.Component<Props, State> {
       return { selectedCount: selectedCount - 1 };
     });
 
-    this.context.dispatch(action);
+    context.dispatch(action);
   };
 
   resetSkills = () => {
+    const { context } = this as any;
+
     return this.setState(prevState => {
       const { skills } = prevState;
 
@@ -184,7 +193,7 @@ export class SkillTreeProvider extends React.Component<Props, State> {
 
       return {
         skills: resettedSkills,
-        resetId: this.context.resetId,
+        resetId: context.resetId,
       };
     });
   };

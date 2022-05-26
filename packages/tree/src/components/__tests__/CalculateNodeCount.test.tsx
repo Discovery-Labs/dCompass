@@ -32,7 +32,7 @@ function renderComponent(data: Skill[]) {
         return (
           <ThemeProvider theme={defaultTheme}>
             <SkillTreeProvider treeId="hey">
-              <CalculateSkillNodes data={data} />>
+              <CalculateSkillNodes data={data} />
             </SkillTreeProvider>
           </ThemeProvider>
         );
