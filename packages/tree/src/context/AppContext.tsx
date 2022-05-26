@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { createContext, useReducer, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { SkillCount, Action } from '../models';
 import reducer from './appContextReducer';
@@ -16,7 +16,7 @@ export interface IAppContext {
   resetSkills: VoidFunction;
 }
 
-const AppContext = React.createContext<IAppContext>({
+const AppContext = createContext<IAppContext>({
   skillCount: {
     required: 0,
     optional: 0,
@@ -39,16 +39,16 @@ export const initialState = {
 };
 
 export function AppProvider({ children }: Props) {
-  const [resetId, setResetId] = React.useState('');
-  const [skillCount, setSkillCount] = React.useState({
+  const [resetId, setResetId] = useState('');
+  const [skillCount, setSkillCount] = useState({
     required: 0,
     optional: 0,
   });
 
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   function addToSkillCount(skillCount: SkillCount): void {
-    return setSkillCount(prev => ({
+    return setSkillCount((prev) => ({
       required: prev.required + skillCount.required,
       optional: prev.optional + skillCount.optional,
     }));
