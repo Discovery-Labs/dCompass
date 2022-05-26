@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import React, { useCallback, useContext } from 'react';
 import styled, { BaseThemedCssFunction, ThemeContext } from 'styled-components';
 import SkillCountSubtitle from './SkillCountSubtitle';

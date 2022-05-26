@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import * as React from 'react';
 import styled, { BaseThemedCssFunction } from 'styled-components';
 import { SELECTED_STATE, UNLOCKED_STATE, LOCKED_STATE } from '../constants';

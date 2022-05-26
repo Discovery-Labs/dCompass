@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import React from 'react';
 import { NodeState, Direction } from '../../models';
 import { LOCKED_STATE, SELECTED_STATE } from '../../components/constants';

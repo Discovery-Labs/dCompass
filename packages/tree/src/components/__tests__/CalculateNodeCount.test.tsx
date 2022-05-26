@@ -26,7 +26,7 @@ function renderComponent(data: Skill[]) {
 
   const api = render(
     <GetDummyCounter>
-      {skillCount => {
+      {( skillCount ) => {
         counter = skillCount.optional + skillCount.required;
 
         return (

@@ -11,7 +11,7 @@ interface StyledIconProps {
   containerWidth: number;
 }
 
-const Icon = React.memo(function({ src, title, containerWidth }: Props) {
+const Icon = React.memo(function Icon({ src, title, containerWidth }: Props) {
   return (
     <StyledIcon data-testid="icon-container" containerWidth={containerWidth}>
       <Image src={src} alt={title} />

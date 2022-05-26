@@ -7,17 +7,6 @@ import { Nullable } from '../models/utils';
 import SkillContext from '../context/SkillContext';
 import { SELECTED_STATE, LOCKED_STATE, UNLOCKED_STATE } from './constants';
 
-SkillTreeSegment.defaultProps = {
-  hasParent: true,
-};
-
-type Props = {
-  skill: Skill;
-  parentPosition: number;
-  parentHasMultipleChildren: boolean;
-  shouldBeUnlocked: boolean;
-} & typeof SkillTreeSegment.defaultProps;
-
 function SkillTreeSegment({
   skill,
   hasParent,
@@ -98,5 +87,16 @@ function SkillTreeSegment({
     </div>
   );
 }
+
+SkillTreeSegment.defaultProps = {
+  hasParent: true,
+};
+
+type Props = {
+  skill: Skill;
+  parentPosition: number;
+  parentHasMultipleChildren: boolean;
+  shouldBeUnlocked: boolean;
+} & typeof SkillTreeSegment.defaultProps;
 
 export default SkillTreeSegment;

@@ -147,7 +147,7 @@ export class SkillTreeProvider extends React.Component<Props, State> {
     }
   }
 
-  incrementSelectedCount = (optional: boolean = false) => {
+  incrementSelectedCount = (optional = false) => {
     const { context } = this as any;
 
     const action: Action = {
@@ -162,7 +162,7 @@ export class SkillTreeProvider extends React.Component<Props, State> {
     context.dispatch(action);
   };
 
-  decrementSelectedCount = (optional: boolean = false) => {
+  decrementSelectedCount = (optional = false) => {
     const { context } = this as any;
 
     const action: Action = {
@@ -211,7 +211,7 @@ export class SkillTreeProvider extends React.Component<Props, State> {
   updateSkillState = (
     key: string,
     updatedState: NodeState,
-    optional: boolean = false
+    optional = false
   ) => {
     const { handleSave, treeId } = this.props;
 

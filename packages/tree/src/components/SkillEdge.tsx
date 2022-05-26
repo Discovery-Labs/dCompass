@@ -21,10 +21,8 @@ function SkillEdge(props: Props) {
     childNodeRef,
     parentPosition,
   } = props;
-
-  if (!parentHasMultipleChildren) return <Line state={state} />;
-
   const [childPosition, setChildPosition] = useState(0);
+
   const direction = parentPosition < childPosition ? 'right' : 'left';
 
   function calculatePosition() {
@@ -45,6 +43,8 @@ function SkillEdge(props: Props) {
       window.removeEventListener('resize', throttledHandleResize);
     };
   }, []);
+
+  if (!parentHasMultipleChildren) return <Line state={state} />;
 
   return (
     <div style={{ height: '56px' }}>

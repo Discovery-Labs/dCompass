@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import React, { useEffect, useState } from 'react';
 import styled, { BaseThemedCssFunction } from 'styled-components';
 import { SkillTheme } from 'theme';
