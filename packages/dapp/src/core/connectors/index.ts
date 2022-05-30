@@ -1,6 +1,5 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { InjectedConnector } from "@web3-react/injected-connector";
-import { PortisConnector } from "@web3-react/portis-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { WalletLinkConnector } from "@web3-react/walletlink-connector";
 import { BigNumber, utils } from "ethers";
@@ -36,7 +35,6 @@ export const switchToNetwork = async ({
 
 export const ctxNetworkConstant = "NETWORK";
 const INFURA_KEY = process.env.NEXT_PUBLIC_INFURA_ID;
-const PORTIS_ID = process.env.NEXT_PUBLIC_PORTIS_ID;
 
 if (typeof INFURA_KEY === "undefined") {
   throw new Error(
@@ -80,12 +78,6 @@ export const walletconnect = new WalletConnectConnector({
   supportedChainIds: ALL_SUPPORTED_CHAIN_IDS,
   rpc: NETWORK_URLS,
   qrcode: true,
-});
-
-// mainnet only
-export const portis = new PortisConnector({
-  dAppId: PORTIS_ID ?? "",
-  networks: [1],
 });
 
 // mainnet only
