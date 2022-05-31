@@ -1,5 +1,5 @@
 import { darken, lighten } from '@chakra-ui/theme-tools';
-import { colors } from '../theme/colors';
+import { colors } from './colors';
 import { borderRadius } from './default-props';
 
 const layerStyles = {

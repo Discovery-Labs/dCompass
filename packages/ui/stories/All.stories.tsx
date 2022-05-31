@@ -1,24 +1,27 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-
-import { ColorModeToggleBar } from './ColorMode';
-
 import {
-  AddIcon,
-  HamburgerIcon,
-  SearchIcon,
-  ExternalLinkIcon,
-} from '@chakra-ui/icons';
-import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Badge,
   Box,
   Button,
-  Checkbox,
+  Center,
   Divider,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
   FormControl,
   FormHelperText,
   FormLabel,
   Heading,
   HStack,
+  Icon,
   IconButton,
   Input,
   Link,
@@ -34,72 +37,45 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Radio,
   RadioGroup,
   Select,
-  Switch,
   Tab,
+  Table,
+  TableCaption,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Tag,
+  Tbody,
+  Td,
   Text,
   Textarea,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
   useDisclosure,
   useToast,
   VStack,
-  Center,
-  Flex,
-  useTheme,
-  Badge,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuIcon,
-  MenuCommand,
-  MenuDivider,
-  Skeleton,
-  Stack,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
 } from '@chakra-ui/react';
+import { Meta } from '@storybook/react';
+import React from 'react';
+import { FaExternalLinkAlt, FaSearch } from 'react-icons/fa';
+import { ColorModeToggleBar } from './ColorMode';
 
 const meta: Meta = {
   title: 'All',
   argTypes: {
-    text: {
+    children: {
       control: {
         type: 'text',
       },
@@ -109,6 +85,7 @@ const meta: Meta = {
     controls: { expanded: true },
   },
 };
+
 export default meta;
 
 export const All = () => {
@@ -119,6 +96,7 @@ export const All = () => {
     onClose: onCloseDrawer,
   } = useDisclosure();
   const toast = useToast();
+
   return (
     <>
       <VStack>
@@ -129,7 +107,10 @@ export const All = () => {
           <Button onClick={() => console.log('hello')}>Primary</Button>
           <Button variant="outline">Primary</Button>
           <Button variant="ghost">Primary</Button>
-          <IconButton aria-label="Search database" icon={<SearchIcon />} />
+          <IconButton
+            aria-label="Search database"
+            icon={<Icon as={FaSearch} />}
+          />
         </HStack>
 
         {/* Buttons Secondary Variants */}
@@ -423,7 +404,7 @@ export const All = () => {
 
         {/* Link */}
         <Link isExternal>
-          Link <ExternalLinkIcon mx="2px" />
+          Link <Icon as={FaExternalLinkAlt} mx="2px" />
         </Link>
 
         {/* Menu */}
