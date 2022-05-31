@@ -3,12 +3,7 @@ import { Meta, Story } from '@storybook/react';
 
 import { ColorModeToggleBar } from './ColorMode';
 
-import {
-  AddIcon,
-  HamburgerIcon,
-  SearchIcon,
-  ExternalLinkIcon,
-} from '@chakra-ui/icons';
+import { FaExternalLinkAlt, FaSearch } from 'react-icons/fa';
 import {
   Box,
   Button,
@@ -94,12 +89,13 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   PopoverAnchor,
+  Icon,
 } from '@chakra-ui/react';
 
 const meta: Meta = {
   title: 'All',
   argTypes: {
-    text: {
+    children: {
       control: {
         type: 'text',
       },
@@ -109,6 +105,7 @@ const meta: Meta = {
     controls: { expanded: true },
   },
 };
+
 export default meta;
 
 export const All = () => {
@@ -119,6 +116,7 @@ export const All = () => {
     onClose: onCloseDrawer,
   } = useDisclosure();
   const toast = useToast();
+
   return (
     <>
       <VStack>
@@ -129,7 +127,10 @@ export const All = () => {
           <Button onClick={() => console.log('hello')}>Primary</Button>
           <Button variant="outline">Primary</Button>
           <Button variant="ghost">Primary</Button>
-          <IconButton aria-label="Search database" icon={<SearchIcon />} />
+          <IconButton
+            aria-label="Search database"
+            icon={<Icon as={FaSearch} />}
+          />
         </HStack>
 
         {/* Buttons Secondary Variants */}
@@ -423,7 +424,7 @@ export const All = () => {
 
         {/* Link */}
         <Link isExternal>
-          Link <ExternalLinkIcon mx="2px" />
+          Link <Icon as={FaExternalLinkAlt} mx="2px" />
         </Link>
 
         {/* Menu */}
