@@ -1,14 +1,14 @@
 import {
   ApolloServerPlugin,
   GraphQLServiceContext,
-} from 'apollo-server-plugin-base';
-import { GraphQLSchema, separateOperations } from 'graphql';
+} from "apollo-server-plugin-base";
+import { GraphQLSchema, separateOperations } from "graphql";
 import {
   fieldExtensionsEstimator,
   getComplexity,
   simpleEstimator,
-} from 'graphql-query-complexity';
-import { Logger, PayloadTooLargeException } from '@nestjs/common';
+} from "graphql-query-complexity";
+import { Logger, PayloadTooLargeException } from "@nestjs/common";
 
 export class ApolloComplexityPlugin implements ApolloServerPlugin {
   private schema: GraphQLSchema;
@@ -18,8 +18,7 @@ export class ApolloComplexityPlugin implements ApolloServerPlugin {
   public async serverWillStart(service: GraphQLServiceContext) {
     this.schema = service.schema;
   }
-
-  public requestDidStart() {
+  public async requestDidStart() {
     return {
       didResolveOperation: async ({ request, document }: any) => {
         /**
@@ -61,7 +60,7 @@ export class ApolloComplexityPlugin implements ApolloServerPlugin {
         // the threshold is reached.
         if (complexity >= this.maxComplexity) {
           throw new PayloadTooLargeException(
-            `Too complicated query (complexity: ${complexity}, max complexity: ${this.maxComplexity})`,
+            `Too complicated query (complexity: ${complexity}, max complexity: ${this.maxComplexity})`
           );
         }
         complexity > 0 &&

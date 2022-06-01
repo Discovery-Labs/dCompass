@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { HttpModule } from "@nestjs/axios";
 
 import { RedisModule } from "../../core/resources/Redis/Redis.module";
 
@@ -17,13 +16,7 @@ import { PathwayService } from "./Pathway.service";
 import { EditPathwayResolver } from "./mutations/EditPathway.resolver";
 
 @Module({
-  imports: [
-    RedisModule,
-    HttpModule.register({
-      timeout: 60000,
-      maxRedirects: 10,
-    }),
-  ],
+  imports: [RedisModule],
   providers: [
     CreatePathwayResolver,
     ApprovePathwayResolver,

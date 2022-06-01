@@ -76,7 +76,6 @@ export const getServerSideProps: GetServerSideProps<
   const locale = ctx.locale || "en";
   const id = ctx.params?.projectId ?? null;
 
-  console.log({ inServSideP: id });
   if (id === null) {
     return {
       redirect: { destination: "/", permanent: true },

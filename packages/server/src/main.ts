@@ -91,6 +91,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     })
   );
+
   await app.listen(port, () => {
     Logger.log(`${protocol()}://${hostname}/health`, "REST API");
     Logger.log(`${protocol()}://${hostname}/graphql`, "GraphQL API");

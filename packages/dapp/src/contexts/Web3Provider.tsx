@@ -6,14 +6,12 @@ import {
   BadgeNFT,
 } from "@discovery-dao/hardhat/typechain-types";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
-// import { Client, ThreadID, Where } from "@textile/hub";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { SiweMessage } from "siwe";
-// import Authereum from "authereum";
 
 import { ethers } from "ethers";
 import { useReducer, useEffect, useCallback, useMemo } from "react";
@@ -33,13 +31,6 @@ import {
 } from "../core/graphql/generated/types";
 import { useActiveWeb3React } from "../core/hooks/web3";
 import { defaultChain, getStaticProvider, NETWORKS } from "../core/networks";
-// import {
-//   getAuthorizedUserClient,
-//   getDBClient,
-//   getIdentity,
-//   getPrivateIdentity,
-//   sign,
-// } from "../core/thread-db/thread-db";
 
 import { initialState, Web3Context } from "./Web3Context";
 import { Web3Reducer } from "./Web3Reducer";
@@ -68,14 +59,10 @@ const providerOptions = {
       infuraId: INFURA_ID,
     },
   },
-  // authereum: {
-  //   package: Authereum,
-  // },
 };
 
 const Web3Provider = ({ children }: { children: any }) => {
-  const { activeChain, pendingChainId } = useNetwork();
-  console.log({ activeChain, pendingChainId });
+  const { activeChain } = useNetwork();
 
   const staticProvider = useMemo(
     () => getStaticProvider(activeChain),
@@ -534,15 +521,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       aliases: publishedModel,
     });
     setSelf(mySelf);
-
-    provider.on("chainChanged", () => {
-      // window.location.reload();
-    });
-
-    provider.on("accountsChanged", () => {
-      // window.location.reload();
-    });
-  }, [chainId, activate, web3Modal]);
+  }, [chainId, activate, web3Modal, account]);
 
   return (
     <Web3Context.Provider
