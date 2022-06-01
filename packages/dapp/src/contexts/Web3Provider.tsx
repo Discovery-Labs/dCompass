@@ -468,7 +468,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       }
       const message = new SiweMessage({
         domain: window.document.location.host,
-        address: account,
+        address: connectedAccount,
         chainId: await lib
           .getNetwork()
           .then(({ chainId }: { chainId: number }) => chainId),
@@ -521,7 +521,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       aliases: publishedModel,
     });
     setSelf(mySelf);
-  }, [chainId, activate, web3Modal, account]);
+  }, [chainId, activate, web3Modal]);
 
   return (
     <Web3Context.Provider

@@ -29,10 +29,11 @@ export class GetQuizQuestByIdResolver {
     });
 
     if (!foundQuest) {
-      const foundBountyQuest =
-        await this.questService.bountyQuestWithPathwayAndProjectSquads({
+      const foundBountyQuest = await this.questService.bountyQuestWithPathwayAndProjectSquads(
+        {
           id: questId,
-        });
+        }
+      );
       if (!foundBountyQuest) {
         throw new NotFoundException("Quest not found by back-end");
       }
@@ -70,9 +71,7 @@ export class GetQuizQuestByIdResolver {
     // 2. check if decoded address is in project contributors
     // TODO: Keep track of address & network to avoid impersonation
     const projectContributors = project.squads
-      ? project.squads.flatMap((squad) =>
-          squad.members.map((m) => m.toLowerCase())
-        )
+      ? project.squads.flatMap(squad => squad.members.map(m => m.toLowerCase()))
       : [];
 
     const isProjectContributor = projectContributors.includes(
@@ -84,8 +83,8 @@ export class GetQuizQuestByIdResolver {
     let decryptedQuestions = [] as any[];
 
     if (isProjectContributor && foundQuest.questType === "quiz") {
-      const quizQuest = foundQuest as QuizQuest;
-      const parsedQuestions = quizQuest.questions?.map((question) => ({
+      const quizQuest = (foundQuest as unknown) as QuizQuest;
+      const parsedQuestions = quizQuest.questions?.map(question => ({
         ...question,
         answer: JSON.parse(question.answer),
       }));
@@ -93,9 +92,10 @@ export class GetQuizQuestByIdResolver {
       if (parsedQuestions) {
         console.log({ parsedQuestions });
         decryptedQuestions = await Promise.all(
-          parsedQuestions.map(async (question) => {
-            const decryptedSolution =
-              await ceramicClient.ceramic.did?.decryptDagJWE(question.answer);
+          parsedQuestions.map(async question => {
+            const decryptedSolution = await ceramicClient.ceramic.did?.decryptDagJWE(
+              question.answer
+            );
             return {
               id: question.id,
               question: question.question,
@@ -114,7 +114,7 @@ export class GetQuizQuestByIdResolver {
       questions:
         decryptedQuestions.length > 0
           ? decryptedQuestions
-          : (foundQuest as QuizQuest).questions ?? [],
+          : ((foundQuest as unknown) as QuizQuest).questions ?? [],
       chainId: questInfos.content.chainId,
       namespace: questInfos.content.namespace,
       createdBy: questCreatorDID,

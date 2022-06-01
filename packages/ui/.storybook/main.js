@@ -12,11 +12,11 @@ module.exports = {
     reactDocgen: false,
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
-      propFilter: (prop) =>
+      propFilter: prop =>
         prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
     },
   },
-  webpackFinal: async (config) => {
+  webpackFinal: async config => {
     return {
       ...config,
       resolve: {

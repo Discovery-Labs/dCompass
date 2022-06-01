@@ -1,4 +1,3 @@
-import Steps from './steps';
 import Accordion from './accordion';
 import Alert from './alert';
 import Badge from './badge';
@@ -41,7 +40,6 @@ import Textarea from './textarea';
 import Tooltip from './tooltip';
 
 export default {
-  Steps,
   Accordion,
   Alert,
   Badge,

@@ -16,14 +16,15 @@ export class GetProjectByIdResolver {
   async getProjectById(
     @Args("projectId") projectId: string
   ): Promise<Project | null | undefined> {
-    const projectWithSquadsAndTags =
-      await this.projectService.projectWithAllNestedRel({
+    const projectWithSquadsAndTags = await this.projectService.projectWithAllNestedRel(
+      {
         id: projectId,
-      });
+      }
+    );
 
     if (!projectWithSquadsAndTags) {
       throw new NotFoundException("Project not found");
     }
-    return projectWithSquadsAndTags as Project;
+    return (projectWithSquadsAndTags as unknown) as Project;
   }
 }

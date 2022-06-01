@@ -197,7 +197,82 @@ const CreateProjectForm = () => {
         </FormErrorMessage>
       </FormControl> */}
 
-      <Flex p="4" w="full" justify="space-around">
+      <FormControl isInvalid={errors.twitter}>
+        <FormLabel htmlFor="twitter">Twitter</FormLabel>
+        <Input
+          placeholder="Twitter account url"
+          {...register("twitter", {
+            required: "This is required",
+            maxLength: {
+              value: 150,
+              message: "Maximum length should be 150",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.twitter && errors.twitter.message}
+        </FormErrorMessage>
+      </FormControl>
+
+      <FormControl isInvalid={errors.discord}>
+        <FormLabel htmlFor="discord">Discord</FormLabel>
+        <Input
+          placeholder="Discord account url"
+          {...register("discord", {
+            required: "This is required",
+            maxLength: {
+              value: 150,
+              message: "Maximum length should be 150",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.discord && errors.discord.message}
+        </FormErrorMessage>
+      </FormControl>
+
+      <FormControl isInvalid={errors.gitbook}>
+        <FormLabel htmlFor="gitbook">Gitbook</FormLabel>
+        <Input
+          placeholder="Gitbook account url"
+          {...register("gitbook", {
+            required: "This is required",
+            maxLength: {
+              value: 150,
+              message: "Maximum length should be 150",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.gitbook && errors.gitbook.message}
+        </FormErrorMessage>
+      </FormControl>
+
+      <FormControl isInvalid={errors.github}>
+        <FormLabel htmlFor="github">Github</FormLabel>
+        <Input
+          placeholder="Github account url"
+          {...register("github", {
+            required: "This is required",
+            maxLength: {
+              value: 150,
+              message: "Maximum length should be 150",
+            },
+          })}
+        />
+        <FormErrorMessage>
+          {errors.github && errors.github.message}
+        </FormErrorMessage>
+      </FormControl>
+
+      {/*  
+        Error: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+        1. You might have mismatching versions of React and the renderer (such as React DOM)
+        2. You might be breaking the Rules of Hooks
+        3. You might have more than one copy of React in the same app
+        See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.
+      */}
+      {/* <Flex p="4" w="full" justify="space-around">
         <IconWithState
           icon="twitter"
           label="Twitter"
@@ -222,7 +297,7 @@ const CreateProjectForm = () => {
           label="Github"
           placeholder="Github organization url"
         />
-      </Flex>
+      </Flex> */}
     </>
   );
 };

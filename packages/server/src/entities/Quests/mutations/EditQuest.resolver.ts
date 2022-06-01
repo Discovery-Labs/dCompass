@@ -40,10 +40,11 @@ export class EditQuestResolver {
       );
     }
     if (questType === "bounty") {
-      foundQuest =
-        await this.questService.bountyQuestWithPathwayAndProjectSquads({
+      foundQuest = await this.questService.bountyQuestWithPathwayAndProjectSquads(
+        {
           id: id,
-        });
+        }
+      );
     }
 
     if (!foundQuest) {
@@ -63,9 +64,7 @@ export class EditQuestResolver {
     // TODO: Keep track of address & network to avoid impersonation
     console.log({ address });
     const projectContributors = project.squads
-      ? project.squads.flatMap((squad) =>
-          squad.members.map((m) => m.toLowerCase())
-        )
+      ? project.squads.flatMap(squad => squad.members.map(m => m.toLowerCase()))
       : [];
 
     const isOwner = foundQuest.createdBy === address;
@@ -76,21 +75,21 @@ export class EditQuestResolver {
 
     let updatedQuest = null;
     if (questType === "quiz") {
-      const questionsToAdd = editQuestData.questions?.filter((q) => !q.id);
-      const currentQuestionsIds = (foundQuest as QuizQuest).questions?.map(
-        (q) => q.id
+      const questionsToAdd = editQuestData.questions?.filter(q => !q.id);
+      const currentQuestionsIds = ((foundQuest as unknown) as QuizQuest).questions?.map(
+        q => q.id
       );
       const questionIdsToDelete = currentQuestionsIds?.filter(
-        (questionId) =>
-          !editQuestData?.questions?.map((q) => q.id).includes(questionId)
+        questionId =>
+          !editQuestData?.questions?.map(q => q.id).includes(questionId)
       );
       const questionsToUpdate = editQuestData.questions?.filter(
-        (q) => q.id && !questionIdsToDelete?.includes(q.id)
+        q => q.id && !questionIdsToDelete?.includes(q.id)
       );
 
       if (questionsToUpdate) {
         const encryptedUpdatedQuestions = await Promise.all(
-          questionsToUpdate.map(async (q) => ({
+          questionsToUpdate.map(async q => ({
             id: q.id,
             answer: JSON.stringify(
               await ceramicClient.ceramic.did?.createDagJWE(q.answer, [
@@ -103,7 +102,7 @@ export class EditQuestResolver {
         );
 
         await Promise.all(
-          encryptedUpdatedQuestions.map(async (encryptedQuestion) =>
+          encryptedUpdatedQuestions.map(async encryptedQuestion =>
             this.questService.updateQuizQuestion({
               data: {
                 ...encryptedQuestion,
@@ -121,7 +120,7 @@ export class EditQuestResolver {
 
       if (questionsToAdd) {
         const encryptedNewQuestions = await Promise.all(
-          questionsToAdd.map(async (q) => ({
+          questionsToAdd.map(async q => ({
             answer: JSON.stringify(
               await ceramicClient.ceramic.did?.createDagJWE(q.answer, [
                 ceramicClient.ceramic.did.id.toString(),

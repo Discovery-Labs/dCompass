@@ -58,6 +58,7 @@ export function useInactiveListener(suppress = false) {
 
     if (ethereum && ethereum.on && !error && !suppress) {
       const handleChainChanged = () => {
+        connectWeb3();
         // eat errors
         activate(injected, undefined, true).catch((activationError) => {
           console.error(
@@ -69,6 +70,7 @@ export function useInactiveListener(suppress = false) {
 
       const handleAccountsChanged = (accounts: string[]) => {
         if (accounts.length > 0) {
+          connectWeb3();
           // eat errors
           activate(injected, undefined, true).catch((accountsChangedError) => {
             console.error(
