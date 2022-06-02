@@ -118,5 +118,13 @@
     "chakra-ui-markdown-renderer": {
       "@chakra-ui/react": "^2.1.2"
     }
+  },
+  "overrides": {
+    "chakra-ui-steps": {
+      "@chakra-ui/react": "^2.1.2"
+    },
+    "chakra-ui-markdown-renderer": {
+      "@chakra-ui/react": "^2.1.2"
+    }
   }
 }
