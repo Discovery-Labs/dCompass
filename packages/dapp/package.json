@@ -86,7 +86,7 @@
     "tiny-invariant": "^1.2.0",
     "uint8arrays": "^3.0.0",
     "use-nft": "^0.10.2",
-    "wagmi": "^0.3.5",
+    "wagmi": "^0.4.6",
     "web3.storage": "^3.5.4",
     "web3modal": "^1.9.7"
   },

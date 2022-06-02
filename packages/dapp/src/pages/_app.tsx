@@ -14,9 +14,14 @@ import { DefaultSeo } from "next-seo";
 import { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { allChains, chain, createClient, defaultChains, Provider } from "wagmi";
+import { WagmiConfig, chain, createClient, configureChains } from "wagmi";
+
+import { alchemyProvider } from "wagmi/providers/alchemy";
+import { publicProvider } from "wagmi/providers/public";
+
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
 import { InjectedConnector } from "wagmi/connectors/injected";
+import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 
 import theme from "styles/customTheme";
@@ -45,46 +50,40 @@ const getLibrary = (provider: any): EthersProvider => {
 const client = createApolloClient();
 
 // Get environment variables
-const infuraId = process.env.NEXT_PUBLIC_INFURA_ID as string;
+const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID;
 
 // Pick chains
-const chains = allChains.filter((chain) =>
-  Object.keys(NETWORKS).includes(chain.id.toString())
+const { chains, provider } = configureChains(
+  [chain.mainnet, chain.polygon, chain.rinkeby, chain.polygonMumbai],
+  [alchemyProvider({ alchemyId }), publicProvider()]
 );
 
 // Set up connectors
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors({ chainId }) {
-    const currentChain = chains.find((x) => x.id === chainId) ?? defaultChain;
-    const rpcUrl = currentChain.rpcUrls.infura
-      ? `${currentChain.rpcUrls.infura}/${infuraId}`
-      : currentChain.rpcUrls.default;
-    return [
-      new InjectedConnector(),
-      new CoinbaseWalletConnector({
-        options: {
-          appName: "Infini3",
-          chainId: currentChain.id,
-          jsonRpcUrl: rpcUrl,
-        },
-      }),
-      new WalletConnectConnector({
-        options: {
-          clientMeta: {
-            icons: ["🚀🌈"],
-            description: "A great dapp!",
-            url: "https://dcompass.xyz",
-            name: "dCompass",
-          },
-          qrcode: true,
-          rpc: {
-            [currentChain.id]: rpcUrl,
-          },
-        },
-      }),
-    ];
-  },
+  connectors: [
+    new MetaMaskConnector({ chains }),
+    new CoinbaseWalletConnector({
+      chains,
+      options: {
+        appName: "dCompass",
+      },
+    }),
+    new WalletConnectConnector({
+      chains,
+      options: {
+        qrcode: true,
+      },
+    }),
+    new InjectedConnector({
+      chains,
+      options: {
+        name: "Injected",
+        shimDisconnect: true,
+      },
+    }),
+  ],
+  provider,
 });
 
 const NETWORK = "rinkeby";
@@ -100,7 +99,7 @@ const MyApp = ({
 }: DcompassAppProps) => {
   // const apolloClient = useApollo(pageProps);
   return (
-    <Provider client={wagmiClient}>
+    <WagmiConfig client={wagmiClient}>
       <NftProvider
         fetcher={[
           "ethers",
@@ -134,7 +133,7 @@ const MyApp = ({
           </Web3ReactProvider>
         </ApolloProvider>
       </NftProvider>
-    </Provider>
+    </WagmiConfig>
   );
 };
 
