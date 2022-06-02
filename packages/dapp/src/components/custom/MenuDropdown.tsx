@@ -7,10 +7,8 @@ import {
   MenuList,
   useDisclosure,
 } from "@chakra-ui/react";
-import useCustomColor from "core/hooks/useCustomColor";
 
 function MenuDropdown() {
-  const { getPrimaryColor } = useCustomColor();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   //   const moreLink =
@@ -21,7 +19,8 @@ function MenuDropdown() {
       <Menu isOpen={isOpen}>
         <MenuButton
           as={Link}
-          _hover={{ color: getPrimaryColor, textDecoration: "none" }}
+          color={"text-weak"}
+          _hover={{ color: "text", textDecoration: "none" }}
           onMouseEnter={onOpen}
           onMouseLeave={onClose}
           rightIcon={<ChevronDownIcon />}

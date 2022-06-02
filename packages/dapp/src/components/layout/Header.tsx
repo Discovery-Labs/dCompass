@@ -24,7 +24,6 @@ import { useRouter } from "next/router";
 import { useContext } from "react";
 
 import { Web3Context } from "../../contexts/Web3Provider";
-import useCustomColor from "../../core/hooks/useCustomColor";
 import ConnectButton from "../Buttons/ConnectButton";
 import LanguageButton from "../Buttons/LanguageButton";
 import NetworkSwitch from "../custom/NetworkSwitch";
@@ -37,7 +36,6 @@ import DrawerConnectButton from "components/Buttons/DrawerConnectButton";
 const LinkItem = ({ href, _target, children, ...props }: any) => {
   const { pathname } = useRouter();
   let isActive = false;
-  const { getPrimaryColor, getTextColor } = useCustomColor();
 
   if (href !== "/") {
     const [, path] = href.split("/");
@@ -49,9 +47,9 @@ const LinkItem = ({ href, _target, children, ...props }: any) => {
   return (
     <NextLink href={href} passHref>
       <Link
-        color={isActive ? getPrimaryColor : getTextColor}
+        color={isActive ? "text" : "text-weak"}
         _target={_target}
-        _hover={{ color: getPrimaryColor, textDecoration: "none" }}
+        _hover={{ color: "text", textDecoration: "none" }}
         {...props}
       >
         {children}
@@ -73,7 +71,6 @@ const LinkItems = () => {
 const Navbar = (props: any) => {
   const { account, isReviewer } = useContext(Web3Context);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { getOverBgColor } = useCustomColor();
 
   return (
     <Box
@@ -81,7 +78,7 @@ const Navbar = (props: any) => {
       as="nav"
       w="100%"
       top="0"
-      bg={getOverBgColor}
+      bg="bg-medium"
       style={{ backdropFilter: "blur(10px)" }}
       zIndex="sticky"
       {...props}
