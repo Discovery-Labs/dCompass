@@ -1,6 +1,6 @@
 {
   "name": "@discovery-dao/tree",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/skill-tree-package.esm.js",
@@ -84,9 +84,9 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
+    "@tippy.js/react": "^3.1.1",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.3",
-    "@tippy.js/react": "^3.1.1",
     "lodash": "^4.17.15",
     "lodash-es": "^4.17.15",
     "styled-components": "5.0.1",
