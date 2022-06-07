@@ -12105,7 +12105,7 @@ chai@^4.3.4:
     pathval "^1.1.1"
     type-detect "^4.0.5"
 
-chakra-react-select@^4.0.0:
+chakra-react-select@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/chakra-react-select/-/chakra-react-select-4.0.1.tgz#3c5bdd2bf20febd7f874cbad78a00792fc7aaf8f"
   integrity sha512-MIvG0vlpqR8bYHjtv1CyVF9KFrKr6OX0ab73OR5WXLq9OBK1Z0LBBGodC8WePmwryYmPn0zM1vaVkStG8QuGgw==
