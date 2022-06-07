@@ -216,14 +216,14 @@ function ReviewProjectPage({
         (uri: string) => uri.split("://")[1].split("/")[0]
       );
       const { firstParts, secondParts } = splitCIDS(cids);
-      const createTokenTx = await contracts.projectNFTContract.createToken(
+      const createTokenTx = await contracts?.projectNFTContract.createToken(
         firstParts,
         secondParts,
         streamId
       );
       // get return values or events
-      const receipt = await createTokenTx.wait(2);
-      const isMinted = await contracts.projectNFTContract.projectMinted(
+      const receipt = await createTokenTx?.wait(2);
+      const isMinted = await contracts?.projectNFTContract.projectMinted(
         streamId
       );
       setStatus("MINTED");

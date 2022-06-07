@@ -243,7 +243,7 @@ function PathwayPage({
     console.log({ metadataVerify });
     setRewardStatus("Claiming on-chain");
     const claimRewardsTx =
-      await contracts.pathwayNFTContract.claimPathwayRewards(
+      await contracts?.pathwayNFTContract.claimPathwayRewards(
         streamId,
         isNativeToken,
         isNativeToken ? account : tokenAddressOrSymbol,
@@ -254,14 +254,17 @@ function PathwayPage({
         url,
         0
       );
-    await claimRewardsTx.wait(1);
+    await claimRewardsTx?.wait(1);
 
     const claimedByAddresses =
-      await contracts.PathwayNFTContract.getAllAddrsByPathwayIDVersion(
+      await contracts?.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
         streamId,
         0
       );
-    const currentUserHasClaimed = claimedByAddresses.includes(account);
+    const currentUserHasClaimed =
+      claimedByAddresses && account
+        ? claimedByAddresses.includes(account)
+        : false;
     setIsClaimed(currentUserHasClaimed);
     setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
     setClaimedBy(claimedByAddresses);
@@ -512,8 +515,13 @@ function PathwayPage({
                       Rewards
                     </Text>
                     <Tag variant="outline" size="lg">
-                      {rewardAmount} {getRewardCurrency(rewardCurrency)}
+                      NFT
                     </Tag>
+                    {rewardAmount && (
+                      <Tag variant="outline" size="lg">
+                        {rewardAmount} {getRewardCurrency(rewardCurrency)}
+                      </Tag>
+                    )}
                   </HStack>
                 </VStack>
                 <Flex align="center" maxW="full" py="4">
@@ -579,10 +587,15 @@ function PathwayPage({
                           left: 0,
                         }}
                       />
-                      <Text>+</Text>
-                      <Tag variant="outline" size="lg">
-                        {rewardAmount} {getRewardCurrency(rewardCurrency)}
-                      </Tag>
+                      <Text>NFT</Text>
+                      {rewardAmount && (
+                        <>
+                          <Text>+</Text>
+                          <Tag variant="outline" size="lg">
+                            {rewardAmount} {getRewardCurrency(rewardCurrency)}
+                          </Tag>
+                        </>
+                      )}
                     </HStack>
 
                     <Button
