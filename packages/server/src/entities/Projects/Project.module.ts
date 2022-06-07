@@ -8,7 +8,7 @@ import { GetProjectByIdResolver } from "./queries/GetProjectById.resolver";
 import { AppService } from "../../app.service";
 import { ApproveProjectResolver } from "./mutations/ApproveProject.resolver";
 import { EditProjectResolver } from "./mutations/EditProject.resolver";
-import { CeramicProjectService } from "./CeramicProject.service";
+// import { CeramicProjectService } from "./CeramicProject.service";
 
 import { ProjectService } from "./Project.service";
 import { PrismaService } from "../../services/prisma/Prisma.service";
@@ -22,7 +22,7 @@ import { PrismaService } from "../../services/prisma/Prisma.service";
     EditProjectResolver,
     ApproveProjectResolver,
     AppService,
-    CeramicProjectService,
+    // CeramicProjectService,
     ProjectService,
     PrismaService,
   ],

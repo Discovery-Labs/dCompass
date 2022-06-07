@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@ceramicnetwork/3id-did-resolver": "^2.0.4",
-    "@ceramicnetwork/http-client": "^2.0.4",
+    "@ceramicnetwork/http-client": "^1.0.7",
     "@discovery-dao/hardhat": "^0.0.14",
     "@discovery-dao/schemas": "^0.0.13",
     "@glazed/datamodel": "^0.2.0",
