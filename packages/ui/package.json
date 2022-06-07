@@ -73,7 +73,7 @@
     "typescript": "^4.7.2"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.1.2",
+    "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "framer-motion": "^6",

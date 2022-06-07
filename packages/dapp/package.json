@@ -22,8 +22,8 @@
   ],
   "dependencies": {
     "@apollo/client": "^3.6.2",
-    "@chakra-ui/icons": "^2.0.1",
-    "@chakra-ui/react": "^2.1.2",
+    "@chakra-ui/icons": "^2.0.2",
+    "@chakra-ui/react": "^2.2.1",
     "@datamodels/identity-accounts-web": "^0.1.2",
     "@discovery-dao/hardhat": "^0.0.14",
     "@discovery-dao/schemas": "^0.0.13",

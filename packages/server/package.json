@@ -23,12 +23,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@ceramicnetwork/3id-did-resolver": "^1.2.7",
-    "@ceramicnetwork/http-client": "^1.0.7",
-    "@ceramicnetwork/stream-tile": "^1.0.7",
-    "@ceramicnetwork/streamid": "^1.0.2",
-    "@ceramicstudio/idx": "^0.12.1",
-    "@ceramicstudio/idx-tools": "^0.11.0",
+    "@ceramicnetwork/3id-did-resolver": "^2.0.4",
+    "@ceramicnetwork/http-client": "^2.0.4",
     "@discovery-dao/hardhat": "^0.0.14",
     "@discovery-dao/schemas": "^0.0.13",
     "@glazed/datamodel": "^0.2.0",

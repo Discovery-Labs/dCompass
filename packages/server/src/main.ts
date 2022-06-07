@@ -10,7 +10,6 @@ import { Context } from "./core/utils/types";
 import { NextFunction } from "express";
 import { Logger, ValidationPipe } from "@nestjs/common";
 import config from "./core/configs/config";
-// import { makeCeramicClient } from './services/ceramic/ceramic.service';
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { SwaggerConfig } from "./core/configs/config.interface";
