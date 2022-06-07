@@ -281,7 +281,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
     });
   };
 
-  const isOwner = quizData?.getQuizQuestById.createdBy.did === self?.id;
+  const isOwner = quizData?.getQuizQuestById.createdBy === self?.id;
   const isCompleted = useCallback(() => {
     return (quizData?.getQuizQuestById.completedBy || []).includes(self?.id);
   }, [quizData?.getQuizQuestById.completedBy, self?.id]);
@@ -500,11 +500,20 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                         Total Rewards
                       </Text>
                       <Tag variant="outline" size="lg">
-                        {quizData?.getQuizQuestById.rewardAmount}{" "}
-                        {getRewardCurrency(
-                          quizData?.getQuizQuestById.rewardCurrency
-                        )}
+                        NFT
                       </Tag>
+
+                      {quizData?.getQuizQuestById.rewardAmount && (
+                        <>
+                          <Text>+</Text>
+                          <Tag variant="outline" size="lg">
+                            {quizData?.getQuizQuestById.rewardAmount}{" "}
+                            {getRewardCurrency(
+                              quizData?.getQuizQuestById.rewardCurrency
+                            )}
+                          </Tag>
+                        </>
+                      )}
                     </HStack>
                   ) : (
                     <HStack w="full">
@@ -523,10 +532,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                 <Flex align="center" maxW="full" py="4">
                   {quizData?.getQuizQuestById.createdBy && (
                     <Blockies
-                      seed={
-                        quizData?.getQuizQuestById.createdBy.name ||
-                        quizData?.getQuizQuestById.createdBy.did
-                      }
+                      seed={quizData?.getQuizQuestById.createdBy}
                       className="blockies"
                       size={7}
                       scale={10}
@@ -543,7 +549,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                       <Text fontSize="sm">
                         {t("by")}{" "}
                         {getShortenedAddress(
-                          quizData?.getQuizQuestById.createdBy.did
+                          quizData?.getQuizQuestById.createdBy
                         )}
                       </Text>
                     )}
@@ -587,7 +593,8 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                         left: 0,
                       }}
                     />
-                    {quizData?.getQuizQuestById.rewardAmount !== 0 && (
+                    <Text>NFT</Text>
+                    {quizData?.getQuizQuestById.rewardAmount && (
                       <>
                         <Text>+</Text>
                         <Tag variant="outline" size="lg">
