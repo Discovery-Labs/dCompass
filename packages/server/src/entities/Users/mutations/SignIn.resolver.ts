@@ -81,9 +81,7 @@ export class SignInResolver {
         session: ctx.req.session,
       });
       if (siweMsg.nonce !== ctx.req.session.nonce) {
-        throw new BadRequestException({
-          message: "Invalid nonce.",
-        });
+        throw new ApolloError("Invalid nonce", "400");
       }
 
       const chainSpecificAddress = `${siweMsg.address}@eip155:${siweMsg.chainId}`;
