@@ -13,10 +13,9 @@ import {
 import config from "../../../core/configs/config";
 import { PUB_SUB } from "../../../core/constants/redis";
 import { User } from "../User.entity";
-import { SiweErrorType, SiweMessage } from "siwe";
+import { SiweMessage } from "siwe";
 import { SiweRegisterInput } from "../dto/SignInInput";
 import { providers } from "ethers";
-import { ApolloError } from "apollo-server-errors";
 import { getInfuraUrl } from "../../../core/utils/helpers/networks";
 import { UserService } from "../User.service";
 import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
@@ -33,6 +32,7 @@ export class SignInResolver {
     private readonly userService: UserService
   ) {}
   @Mutation(() => User || null, {
+    nullable: true,
     description: "Sign in a user and notifies the connected clients",
   })
   async signIn(
@@ -72,16 +72,12 @@ export class SignInResolver {
           time: message.issuedAt,
         });
         if (!isValid.success || isValid.error) {
-          throw new ForbiddenException("Invalid SIWE message");
+          throw new ForbiddenException("Invalid SIWE param");
         }
       }
-      console.log({
-        siweNonce: siweMsg.nonce,
-        reqNonce: ctx.req.session.nonce,
-        session: ctx.req.session,
-      });
+
       if (siweMsg.nonce !== ctx.req.session.nonce) {
-        throw new BadRequestException("Invalid Nonce");
+        throw new ForbiddenException("Invalid SIWE param");
       }
 
       const chainSpecificAddress = `${siweMsg.address}@eip155:${siweMsg.chainId}`;
@@ -136,33 +132,7 @@ export class SignInResolver {
       ctx.req.session.siwe = null;
       ctx.req.session.nonce = null;
       ctx.req.session.ens = null;
-      // switch (error) {
-      //   case SiweErrorType.EXPIRED_MESSAGE: {
-      //     ctx.req.session.save(() => {
-      //       throw new ApolloError(error.message, "440");
-      //     });
-      //     break;
-      //   }
-      //   case SiweErrorType.INVALID_SIGNATURE: {
-      //     ctx.req.session.save(() => {
-      //       throw new ApolloError(error.message, "422");
-      //     });
-      //     break;
-      //   }
-      //   case SiweErrorType.INVALID_NONCE: {
-      //     ctx.req.session.save(() => {
-      //       throw new ApolloError(error.message, "401");
-      //     });
-      //     break;
-      //   }
-      //   default: {
-      //     ctx.req.session.save(() => {
-      //       throw new ApolloError(error.message, "400");
-      //     });
-      //     break;
-      //   }
-      // }
-      return null;
+      throw error;
     }
   }
 }

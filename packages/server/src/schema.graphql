@@ -174,7 +174,7 @@ type Mutation {
   editQuest(input: EditQuestInput!): Quest
 
   """Sign in a user and notifies the connected clients"""
-  signIn(input: SiweRegisterInput!): User!
+  signIn(input: SiweRegisterInput!): User
 
   """Logs out a user an notifies the connected clients"""
   signOut: Boolean!
