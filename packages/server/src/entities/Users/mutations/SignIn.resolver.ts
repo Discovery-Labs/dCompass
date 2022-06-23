@@ -81,7 +81,7 @@ export class SignInResolver {
         session: ctx.req.session,
       });
       if (siweMsg.nonce !== ctx.req.session.nonce) {
-        throw new ApolloError("Invalid nonce", "400");
+        throw new BadRequestException("Invalid Nonce");
       }
 
       const chainSpecificAddress = `${siweMsg.address}@eip155:${siweMsg.chainId}`;
@@ -136,32 +136,32 @@ export class SignInResolver {
       ctx.req.session.siwe = null;
       ctx.req.session.nonce = null;
       ctx.req.session.ens = null;
-      switch (error) {
-        case SiweErrorType.EXPIRED_MESSAGE: {
-          ctx.req.session.save(() => {
-            throw new ApolloError(error.message, "440");
-          });
-          break;
-        }
-        case SiweErrorType.INVALID_SIGNATURE: {
-          ctx.req.session.save(() => {
-            throw new ApolloError(error.message, "422");
-          });
-          break;
-        }
-        case SiweErrorType.INVALID_NONCE: {
-          ctx.req.session.save(() => {
-            throw new ApolloError(error.message, "401");
-          });
-          break;
-        }
-        default: {
-          ctx.req.session.save(() => {
-            throw new ApolloError(error.message, "400");
-          });
-          break;
-        }
-      }
+      // switch (error) {
+      //   case SiweErrorType.EXPIRED_MESSAGE: {
+      //     ctx.req.session.save(() => {
+      //       throw new ApolloError(error.message, "440");
+      //     });
+      //     break;
+      //   }
+      //   case SiweErrorType.INVALID_SIGNATURE: {
+      //     ctx.req.session.save(() => {
+      //       throw new ApolloError(error.message, "422");
+      //     });
+      //     break;
+      //   }
+      //   case SiweErrorType.INVALID_NONCE: {
+      //     ctx.req.session.save(() => {
+      //       throw new ApolloError(error.message, "401");
+      //     });
+      //     break;
+      //   }
+      //   default: {
+      //     ctx.req.session.save(() => {
+      //       throw new ApolloError(error.message, "400");
+      //     });
+      //     break;
+      //   }
+      // }
       return null;
     }
   }
