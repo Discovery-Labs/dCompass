@@ -30,8 +30,8 @@ function PriceWrapper(props: any) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
   const { children } = props;
 
-  const { style, children: inputChild, ...input } = getInputProps();
-  const { style: checkboxDefaultStyle, ...checkbox } = getCheckboxProps();
+  const { ...input } = getInputProps();
+  const { ...checkbox } = getCheckboxProps();
 
   return (
     <Box as="label">
@@ -75,7 +75,7 @@ export default function ThreeTierPricing() {
     onChange: selectPlan,
   });
 
-  const { style: groupStyle, ...group } = getRootProps();
+  const { ...group } = getRootProps();
   const radioSilver = getRadioProps({ value: "SILVER" });
   const radioGold = getRadioProps({ value: "GOLD" });
   const radioDiamond = getRadioProps({ value: "DIAMOND" });
@@ -223,7 +223,7 @@ export default function ThreeTierPricing() {
               {selectedPass}
             </Text>
           </HStack>
-          <FormControl isInvalid={errors.projectWallet}>
+          <FormControl isInvalid={!!errors.projectWallet}>
             <FormLabel htmlFor="projectWallet">Project wallet</FormLabel>
 
             <Input
