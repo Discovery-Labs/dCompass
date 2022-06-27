@@ -521,7 +521,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       aliases: publishedModel,
     });
     setSelf(mySelf);
-  }, [chainId, activate, web3Modal]);
+  }, [chainId, activate, web3Modal, signIn, account, getNonce]);
 
   return (
     <Web3Context.Provider
