@@ -1,17 +1,11 @@
 import { Resolver, Mutation, Args, Context } from "@nestjs/graphql";
-import {
-  BadRequestException,
-  ForbiddenException,
-  Inject,
-} from "@nestjs/common";
-import { RedisPubSub } from "graphql-redis-subscriptions";
+import { BadRequestException, ForbiddenException } from "@nestjs/common";
 
 import {
   Context as ContextType,
   UseCeramicClient,
 } from "../../../core/utils/types";
 import config from "../../../core/configs/config";
-import { PUB_SUB } from "../../../core/constants/redis";
 import { User } from "../User.entity";
 import { SiweMessage } from "siwe";
 import { SiweRegisterInput } from "../dto/SignInInput";
@@ -26,11 +20,7 @@ const {
 } = config();
 @Resolver()
 export class SignInResolver {
-  constructor(
-    @Inject(PUB_SUB)
-    private readonly pubSub: RedisPubSub,
-    private readonly userService: UserService
-  ) {}
+  constructor(private readonly userService: UserService) {}
   @Mutation(() => User || null, {
     nullable: true,
     description: "Sign in a user and notifies the connected clients",
@@ -120,9 +110,9 @@ export class SignInResolver {
       }
       await ctx.req.session.save();
 
-      await this.pubSub.publish("userSignedIn", {
-        userSignedIn: ctx.req.session.siwe.address,
-      });
+      // await this.pubSub.publish("userSignedIn", {
+      //   userSignedIn: ctx.req.session.siwe.address,
+      // });
       return {
         addresses: [ctx.req.session.siwe.address],
         did: ctx.req.session.ens || userDID,

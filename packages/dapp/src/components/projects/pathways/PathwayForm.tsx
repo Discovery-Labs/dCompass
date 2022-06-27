@@ -175,7 +175,18 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
         </Box>
       )}
 
-      <FormControl isInvalid={errors.image}>
+      <ImageDropzone
+        {...{
+          register,
+          setValue,
+          errors,
+          fieldName: "image",
+          label: "Pathway NFT Image reward",
+          isRequired: true,
+        }}
+      />
+
+      {/* <FormControl isInvalid={errors.image}>
         <FormLabel htmlFor="image">NFT reward image</FormLabel>
 
         <Input
@@ -187,7 +198,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
         <FormErrorMessage>
           {errors.image && errors.image.message}
         </FormErrorMessage>
-      </FormControl>
+      </FormControl> */}
 
       <Checkbox onChange={(e) => withRewards(e)}>ERC20 Rewards</Checkbox>
       {isWithRewards ? (

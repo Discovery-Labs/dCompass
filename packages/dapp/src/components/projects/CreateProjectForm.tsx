@@ -40,10 +40,8 @@ const CreateProjectForm = () => {
     setValue,
     getValues,
     control,
-    watch,
     formState: { errors },
   } = useFormContext();
-  const currentValues = watch();
 
   useEffect(() => {
     const descriptionValues = getValues("description");
@@ -65,11 +63,11 @@ const CreateProjectForm = () => {
   return (
     <>
       <Heading>Create project</Heading>
-      {/* <LogoDropzone
+      <LogoDropzone
         {...{ register, setValue, getValues, errors, isRequired: true }}
-      /> */}
+      />
 
-      <FormControl isInvalid={errors.logo}>
+      {/* <FormControl isInvalid={errors.logo}>
         <FormLabel htmlFor="logo">Logo</FormLabel>
 
         <Input type="file" placeholder="Logo" {...register("logo")} />
@@ -77,7 +75,7 @@ const CreateProjectForm = () => {
         <FormErrorMessage>
           {errors.logo && errors.logo.message}
         </FormErrorMessage>
-      </FormControl>
+      </FormControl> */}
 
       <FormControl isInvalid={errors.name}>
         <FormLabel htmlFor="name">Project name</FormLabel>

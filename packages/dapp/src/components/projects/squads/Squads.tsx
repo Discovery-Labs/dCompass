@@ -77,12 +77,12 @@ export default function Squads({
               </FormErrorMessage>
             </FormControl>
 
-            {/* <SquadDropzone
+            <SquadDropzone
               nestIndex={index}
               formLabel="Squad image"
               {...{ register, setValue, getValues, errors }}
-            /> */}
-            <FormControl
+            />
+            {/* <FormControl
               isInvalid={errors.squads && errors.squads[index].image}
             >
               <FormLabel htmlFor={`squads[${index}].image`}>
@@ -100,7 +100,7 @@ export default function Squads({
                   errors.squads[index].image &&
                   errors.squads[index].image.message}
               </FormErrorMessage>
-            </FormControl>
+            </FormControl> */}
 
             <FormControl
               isInvalid={errors.squads && errors.squads[index].members}

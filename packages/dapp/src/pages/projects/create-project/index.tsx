@@ -187,7 +187,7 @@ function CreateProjectStepper() {
       }
     );
 
-    const allProjects = await createProjectMutation({
+    await createProjectMutation({
       variables: {
         input: {
           id: projectId,
