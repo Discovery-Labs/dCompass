@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import {
-  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -11,6 +10,12 @@ import {
   AlertIcon,
   AlertTitle,
   Spinner,
+  Icon,
+  InputGroup,
+  InputLeftAddon,
+  InputRightElement,
+  VStack,
+  Text,
 } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 import dynamic from "next/dynamic";
@@ -20,10 +25,12 @@ import { useState, useEffect } from "react";
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import { Tag } from "../../core/types";
 import { ALL_TAGS_QUERY } from "../../graphql/tags";
-import IconWithState from "../custom/IconWithState";
 import ControlledSelect from "../Inputs/ControlledSelect";
 
 import LogoDropzone from "./LogoDropzone";
+import { BsGlobe } from "react-icons/bs";
+import { SiTwitter, SiDiscord, SiGithub } from "react-icons/si";
+import { REQUIRED_FIELD_LABEL } from "../../core/constants";
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
@@ -35,13 +42,10 @@ const EditProjectForm: React.FunctionComponent = () => {
     register,
     setValue,
     getValues,
-    watch,
     control,
     formState: { errors },
   } = useFormContext();
   const { data, loading, error } = useQuery(ALL_TAGS_QUERY);
-
-  const currentValues = watch();
 
   useEffect(() => {
     const descriptionValues = getValues("description");
@@ -144,32 +148,111 @@ const EditProjectForm: React.FunctionComponent = () => {
         }))}
       />
 
-      <Flex p="4" w="full" justify="space-around">
-        <IconWithState
-          icon="twitter"
-          label="Twitter"
-          active={!!currentValues.twitter}
-          placeholder="Twitter account url"
-        />
-        <IconWithState
-          icon="discord"
-          active={!!currentValues.discord}
-          label="Discord"
-          placeholder="Discord server invite url"
-        />
-        <IconWithState
-          icon="gitbook"
-          active={!!currentValues.gitbook}
-          label="Gitbook"
-          placeholder="Gitbook repository url"
-        />
-        <IconWithState
-          icon="github"
-          active={!!currentValues.github}
-          label="Github"
-          placeholder="Github organization url"
-        />
-      </Flex>
+      <VStack align="flex-start">
+        <FormControl isInvalid={errors.website}>
+          <FormLabel htmlFor="website">Website</FormLabel>
+          <InputGroup>
+            <InputRightElement pointerEvents="none">
+              <Icon as={BsGlobe} />
+            </InputRightElement>
+            <InputLeftAddon>
+              <Text>https://</Text>
+            </InputLeftAddon>
+            <Input
+              placeholder="website.xyz"
+              {...register("website", {
+                required: REQUIRED_FIELD_LABEL,
+                maxLength: {
+                  value: 50,
+                  message: "Maximum length should be 50",
+                },
+              })}
+            />
+          </InputGroup>
+
+          <FormErrorMessage>
+            {errors.website && errors.website.message}
+          </FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={errors.twitter}>
+          <FormLabel htmlFor="twitter">Twitter</FormLabel>
+          <InputGroup>
+            <InputRightElement pointerEvents="none">
+              <Icon as={SiTwitter} />
+            </InputRightElement>
+            <InputLeftAddon>
+              <Text>https://twitter.com/</Text>
+            </InputLeftAddon>
+            <Input
+              placeholder="your_handle"
+              {...register("twitter", {
+                required: REQUIRED_FIELD_LABEL,
+                maxLength: {
+                  value: 50,
+                  message: "Maximum length should be 50",
+                },
+              })}
+            />
+          </InputGroup>
+
+          <FormErrorMessage>
+            {errors.twitter && errors.twitter.message}
+          </FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={errors.discord}>
+          <FormLabel htmlFor="discord">Discord</FormLabel>
+          <InputGroup>
+            <InputRightElement pointerEvents="none">
+              <Icon as={SiDiscord} />
+            </InputRightElement>
+            <InputLeftAddon>
+              <Text>https://discord.gg/</Text>
+            </InputLeftAddon>
+            <Input
+              placeholder="discord_invite_code"
+              {...register("discord", {
+                required: REQUIRED_FIELD_LABEL,
+                maxLength: {
+                  value: 50,
+                  message: "Maximum length should be 50",
+                },
+              })}
+            />
+          </InputGroup>
+
+          <FormErrorMessage>
+            {errors.discord && errors.discord.message}
+          </FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={errors.github}>
+          <FormLabel htmlFor="github">Github</FormLabel>
+          <InputGroup>
+            <InputRightElement pointerEvents="none">
+              <Icon as={SiGithub} />
+            </InputRightElement>
+            <InputLeftAddon>
+              <Text>https://github.com/</Text>
+            </InputLeftAddon>
+            <Input
+              placeholder="organisation or project repository"
+              {...register("github", {
+                required: REQUIRED_FIELD_LABEL,
+                maxLength: {
+                  value: 50,
+                  message: "Maximum length should be 50",
+                },
+              })}
+            />
+          </InputGroup>
+
+          <FormErrorMessage>
+            {errors.github && errors.github.message}
+          </FormErrorMessage>
+        </FormControl>
+      </VStack>
     </>
   );
 };

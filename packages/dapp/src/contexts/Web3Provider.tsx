@@ -254,7 +254,7 @@ const Web3Provider = ({ children }: { children: any }) => {
 
   useEffect(() => {
     async function handleActiveAccount() {
-      if (active && account && !state.isSignedIn) {
+      if (active && account) {
         console.log({ active, account });
         setAccount(account);
         const ethersProvider = new ethers.providers.Web3Provider(
@@ -386,16 +386,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       }
     }
     handleActiveAccount();
-  }, [
-    account,
-    me,
-    active,
-    signIn,
-    getNonce,
-    library,
-    web3Modal,
-    state.isSignedIn,
-  ]);
+  }, [account, me, active, signIn, getNonce, library, web3Modal]);
 
   const connectWeb3 = useCallback(async () => {
     const provider = await web3Modal.connect();
