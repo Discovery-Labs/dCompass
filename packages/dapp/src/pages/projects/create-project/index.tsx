@@ -92,7 +92,6 @@ function CreateProjectStepper() {
 
   async function onSubmit() {
     const values = methods.getValues();
-    console.log({ values });
     if (!projectNFTContract) {
       throw new Error("ProjectNFTContract not deployed on this network");
     }
