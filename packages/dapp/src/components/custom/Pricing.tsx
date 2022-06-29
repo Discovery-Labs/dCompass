@@ -216,7 +216,7 @@ export default function ThreeTierPricing() {
       </Stack>
 
       <Center>
-        <VStack>
+        <VStack as="form">
           <HStack>
             <Text>Your selected pass is</Text>{" "}
             <Text color={selectedPass === "DIAMOND" ? "cyan" : selectedPass}>
@@ -236,9 +236,11 @@ export default function ThreeTierPricing() {
                 },
               })}
             />
-            <FormErrorMessage>
-              {errors.projectWallet && errors.projectWallet.message}
-            </FormErrorMessage>
+            {errors.projectWallet && errors.projectWallet.message && (
+              <FormErrorMessage>
+                {errors.projectWallet && errors.projectWallet.message}
+              </FormErrorMessage>
+            )}
           </FormControl>
         </VStack>
       </Center>
