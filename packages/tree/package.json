@@ -1,6 +1,6 @@
 {
   "name": "@discovery-dao/tree",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/skill-tree-package.esm.js",
