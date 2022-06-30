@@ -238,7 +238,9 @@ export default function ThreeTierPricing() {
             />
 
             <FormErrorMessage>
-              {errors.projectWallet && errors.projectWallet.message}
+              <Text>
+                {errors.projectWallet && errors.projectWallet.message}
+              </Text>
             </FormErrorMessage>
           </FormControl>
         </VStack>
