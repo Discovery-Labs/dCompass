@@ -236,11 +236,10 @@ export default function ThreeTierPricing() {
                 },
               })}
             />
-            {errors.projectWallet && errors.projectWallet.message && (
-              <FormErrorMessage>
-                {errors.projectWallet && errors.projectWallet.message}
-              </FormErrorMessage>
-            )}
+
+            <FormErrorMessage>
+              {errors.projectWallet && errors.projectWallet.message}
+            </FormErrorMessage>
           </FormControl>
         </VStack>
       </Center>

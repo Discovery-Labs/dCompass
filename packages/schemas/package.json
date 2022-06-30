@@ -35,7 +35,7 @@
     "@datamodels/identity-profile-basic": "^0.1.2",
     "@glazed/devtools": "^0.1.3",
     "rimraf": "^3.0.2",
-    "typescript": "^4.3.5"
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "@ceramicnetwork/http-client": "^2.0.4",
