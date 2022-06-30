@@ -27,7 +27,7 @@
     "@datamodels/identity-accounts-web": "^0.1.2",
     "@discovery-dao/hardhat": "^0.0.14",
     "@discovery-dao/schemas": "^0.0.14",
-    "@discovery-dao/tree": "^0.0.4",
+    "@discovery-dao/tree": "^0.0.3",
     "@discovery-dao/ui": "^0.1.2",
     "@emotion/cache": "^11.7.1",
     "@emotion/react": "^11.9.0",
