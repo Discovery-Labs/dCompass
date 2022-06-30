@@ -50,7 +50,7 @@ const EditPathwayForm: React.FunctionComponent = () => {
     <>
       <Heading>Edit pathway</Heading>
       <VStack w="full" align="start">
-        <FormControl isInvalid={errors.title}>
+        <FormControl isInvalid={!!errors.title}>
           <FormLabel htmlFor="title">Title</FormLabel>
           <HStack>
             <Input
@@ -69,7 +69,7 @@ const EditPathwayForm: React.FunctionComponent = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.slogan}>
+        <FormControl isInvalid={!!errors.slogan}>
           <FormLabel htmlFor="slogan">Short Description</FormLabel>
           <Input
             placeholder="Slogan"
@@ -86,7 +86,7 @@ const EditPathwayForm: React.FunctionComponent = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.description}>
+        <FormControl isInvalid={!!errors.description}>
           <FormLabel htmlFor="description">Description</FormLabel>
 
           <CodeEditor

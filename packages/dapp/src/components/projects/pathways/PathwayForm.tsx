@@ -107,7 +107,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
 
   return (
     <VStack w="full" align="start">
-      <FormControl isInvalid={errors.title}>
+      <FormControl isInvalid={!!errors.title}>
         <FormLabel htmlFor="title">Title</FormLabel>
         <HStack>
           <Input
@@ -126,7 +126,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.slogan}>
+      <FormControl isInvalid={!!errors.slogan}>
         <FormLabel htmlFor="slogan">Short Description</FormLabel>
         <Input
           placeholder="Slogan"
@@ -143,7 +143,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.description}>
+      <FormControl isInvalid={!!errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
 
         <CodeEditor
@@ -186,7 +186,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
         }}
       />
 
-      {/* <FormControl isInvalid={errors.image}>
+      {/* <FormControl isInvalid={!!errors.image}>
         <FormLabel htmlFor="image">NFT reward image</FormLabel>
 
         <Input
@@ -204,7 +204,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
       {isWithRewards ? (
         <VStack w="full">
           <Flex w="full" direction={["column", "column", "row"]} gap="2">
-            <FormControl isInvalid={errors.rewardAmount}>
+            <FormControl isInvalid={!!errors.rewardAmount}>
               <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
               <NumberInput
                 step={nativeToken.isMatic ? 10_000 : 5}
@@ -271,7 +271,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
       )}
 
       <VStack alignItems="center" w="full">
-        <FormControl isInvalid={errors.rewardUserCap}>
+        <FormControl isInvalid={!!errors.rewardUserCap}>
           <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
           <NumberInput step={1_000} defaultValue={1_000}>
             <NumberInputField

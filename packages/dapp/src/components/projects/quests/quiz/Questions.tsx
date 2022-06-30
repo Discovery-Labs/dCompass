@@ -38,7 +38,7 @@ export default function Questions({ control, register }: any) {
         return (
           <VStack w="full" key={item.id}>
             <FormControl
-              isInvalid={errors.questions && errors.questions[index].question}
+              isInvalid={!!errors.questions && errors.questions[index].question}
             >
               <FormLabel htmlFor={`questions[${index}].question`}>
                 Question
@@ -72,7 +72,7 @@ export default function Questions({ control, register }: any) {
             </FormControl>
 
             <FormControl
-              isInvalid={errors.questions && errors.questions[index].options}
+              isInvalid={!!errors.questions && errors.questions[index].options}
             >
               <FormLabel htmlFor={`questions[${index}].options`}>
                 Options

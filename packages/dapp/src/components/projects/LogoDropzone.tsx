@@ -101,7 +101,7 @@ const LogoDropzone = ({
   );
 
   return (
-    <FormControl isInvalid={errors.logo}>
+    <FormControl isInvalid={!!errors.logo}>
       <FormLabel htmlFor="logo">Logo</FormLabel>
       {files && thumbs}
 

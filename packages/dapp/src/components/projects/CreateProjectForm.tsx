@@ -69,7 +69,7 @@ const CreateProjectForm = () => {
         {...{ register, setValue, getValues, errors, isRequired: true }}
       />
 
-      {/* <FormControl isInvalid={errors.logo}>
+      {/* <FormControl isInvalid={!!errors.logo}>
         <FormLabel htmlFor="logo">Logo</FormLabel>
 
         <Input type="file" placeholder="Logo" {...register("logo")} />
@@ -79,7 +79,7 @@ const CreateProjectForm = () => {
         </FormErrorMessage>
       </FormControl> */}
 
-      <FormControl isInvalid={errors.name}>
+      <FormControl isInvalid={!!errors.name}>
         <FormLabel htmlFor="name">Project name</FormLabel>
         <Input
           placeholder="Project name"
@@ -96,7 +96,7 @@ const CreateProjectForm = () => {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.slogan}>
+      <FormControl isInvalid={!!errors.slogan}>
         <FormLabel htmlFor="slogan">Short Description</FormLabel>
         <Input
           placeholder="Slogan"
@@ -113,7 +113,7 @@ const CreateProjectForm = () => {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.description}>
+      <FormControl isInvalid={!!errors.description}>
         <FormLabel htmlFor="description">Markdown Description</FormLabel>
         <CodeEditor
           value={code}
@@ -158,7 +158,7 @@ const CreateProjectForm = () => {
       />
 
       <VStack align="flex-start">
-        <FormControl isInvalid={errors.website}>
+        <FormControl isInvalid={!!errors.website}>
           <FormLabel htmlFor="website">Website</FormLabel>
           <InputGroup>
             <InputRightElement pointerEvents="none">
@@ -184,7 +184,7 @@ const CreateProjectForm = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.twitter}>
+        <FormControl isInvalid={!!errors.twitter}>
           <FormLabel htmlFor="twitter">Twitter</FormLabel>
           <InputGroup>
             <InputRightElement pointerEvents="none">
@@ -210,7 +210,7 @@ const CreateProjectForm = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.discord}>
+        <FormControl isInvalid={!!errors.discord}>
           <FormLabel htmlFor="discord">Discord</FormLabel>
           <InputGroup>
             <InputRightElement pointerEvents="none">
@@ -236,7 +236,7 @@ const CreateProjectForm = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.github}>
+        <FormControl isInvalid={!!errors.github}>
           <FormLabel htmlFor="github">Github</FormLabel>
           <InputGroup>
             <InputRightElement pointerEvents="none">

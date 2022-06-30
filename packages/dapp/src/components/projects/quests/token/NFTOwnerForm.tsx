@@ -12,7 +12,7 @@ function NFTOwnerForm() {
     formState: { errors },
   } = useFormContext();
   return (
-    <FormControl isInvalid={errors.collectionContractAddress}>
+    <FormControl isInvalid={!!errors.collectionContractAddress}>
       <FormLabel htmlFor="collectionContractAddress">
         Collection Contract Address
       </FormLabel>

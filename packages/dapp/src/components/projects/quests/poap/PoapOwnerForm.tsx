@@ -15,7 +15,7 @@ function PoapOwnerForm() {
     // TODO: to verify this we need to
     // STEP1: query the subgraph based on the network https://github.com/poap-xyz/poap-subgraph
     // STEP2: query the poap api, eg: https://api.poap.xyz/token/3099358
-    <FormControl isInvalid={errors.poapTokenId}>
+    <FormControl isInvalid={!!errors.poapTokenId}>
       <FormLabel htmlFor="poapTokenId">POAP Token ID</FormLabel>
       <Input
         placeholder="PAOP Token ID"

@@ -76,7 +76,7 @@ const PathwayImageDropzone = ({
 
   return (
     <FormControl
-      isInvalid={errors.pathways && errors.pathways[nestIndex].image}
+      isInvalid={!!errors.pathways && errors.pathways[nestIndex].image}
       {...getRootProps()}
     >
       <FormLabel htmlFor={`pathways[${nestIndex}].image`}>

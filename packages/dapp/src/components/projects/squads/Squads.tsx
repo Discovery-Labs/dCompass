@@ -45,7 +45,7 @@ export default function Squads({
       {fields.map((item, index) => {
         return (
           <VStack w="full" key={item.id}>
-            <FormControl isInvalid={errors.squads && errors.squads[index].name}>
+            <FormControl isInvalid={!!errors.squads && errors.squads[index].name}>
               <HStack py="2" w="full" justify="space-between">
                 <FormLabel htmlFor={`squads[${index}].name`}>
                   Squad name
@@ -83,7 +83,7 @@ export default function Squads({
               {...{ register, setValue, getValues, errors }}
             />
             {/* <FormControl
-              isInvalid={errors.squads && errors.squads[index].image}
+              isInvalid={!!errors.squads && errors.squads[index].image}
             >
               <FormLabel htmlFor={`squads[${index}].image`}>
                 Squad image
@@ -103,7 +103,7 @@ export default function Squads({
             </FormControl> */}
 
             <FormControl
-              isInvalid={errors.squads && errors.squads[index].members}
+              isInvalid={!!errors.squads && errors.squads[index].members}
             >
               <MembersFieldArray
                 nestIndex={index}

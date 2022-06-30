@@ -12,7 +12,7 @@ function SnapshotForm() {
     formState: { errors },
   } = useFormContext();
   return (
-    <FormControl isInvalid={errors.proposalId}>
+    <FormControl isInvalid={!!errors.proposalId}>
       <FormLabel htmlFor="proposalId">Proposal ID</FormLabel>
       <Input
         placeholder="Proposal ID"

@@ -52,7 +52,7 @@ const EditQuestForm = ({ quest }: { quest: Quest }) => {
     <>
       <Heading>Edit quest</Heading>
       <VStack w="full" align="start">
-        <FormControl isInvalid={errors.name}>
+        <FormControl isInvalid={!!errors.name}>
           <FormLabel htmlFor="name">Title</FormLabel>
           <HStack>
             <Input
@@ -71,7 +71,7 @@ const EditQuestForm = ({ quest }: { quest: Quest }) => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.slogan}>
+        <FormControl isInvalid={!!errors.slogan}>
           <FormLabel htmlFor="slogan">Short Description</FormLabel>
           <Input
             placeholder="Slogan"
@@ -88,7 +88,7 @@ const EditQuestForm = ({ quest }: { quest: Quest }) => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.description}>
+        <FormControl isInvalid={!!errors.description}>
           <FormLabel htmlFor="description">Description</FormLabel>
 
           <CodeEditor

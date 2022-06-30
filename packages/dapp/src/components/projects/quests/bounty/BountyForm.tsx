@@ -183,7 +183,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
     );
   return (
     <VStack as="form">
-      <FormControl isInvalid={errors.solution}>
+      <FormControl isInvalid={!!errors.solution}>
         <FormLabel htmlFor="solution">Your Solution</FormLabel>
 
         <CodeEditor

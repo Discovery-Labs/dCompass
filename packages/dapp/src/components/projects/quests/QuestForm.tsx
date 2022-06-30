@@ -490,7 +490,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
   return (
     <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
       <Heading>Create quest</Heading>
-      <FormControl isInvalid={errors.name}>
+      <FormControl isInvalid={!!errors.name}>
         <FormLabel htmlFor="name">Title</FormLabel>
         <Input
           placeholder="Quest title"
@@ -507,7 +507,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.slogan}>
+      <FormControl isInvalid={!!errors.slogan}>
         <FormLabel htmlFor="slogan">Short Description</FormLabel>
         <Input
           placeholder="Slogan"
@@ -555,7 +555,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
         />
       )}
 
-      <FormControl isInvalid={errors.description}>
+      <FormControl isInvalid={!!errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
 
         <CodeEditor
@@ -598,7 +598,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       {isWithRewards ? (
         <VStack w="full">
           <Flex w="full" direction={["column", "column", "row"]} gap="2">
-            <FormControl isInvalid={errors.rewardAmount}>
+            <FormControl isInvalid={!!errors.rewardAmount}>
               <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
               <NumberInput
                 step={nativeToken.isMatic ? 10_000 : 5}
@@ -664,7 +664,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
       )}
 
       <VStack>
-        <FormControl isInvalid={errors.rewardUserCap}>
+        <FormControl isInvalid={!!errors.rewardUserCap}>
           <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
           <NumberInput step={1_000} defaultValue={1_000}>
             <NumberInputField

@@ -12,7 +12,7 @@ function GithubContributorForm() {
     formState: { errors },
   } = useFormContext();
   return (
-    <FormControl isInvalid={errors.proposalId}>
+    <FormControl isInvalid={!!errors.proposalId}>
       <FormLabel htmlFor="githubOrgId">Github Organization</FormLabel>
       <Input
         placeholder="Github Org ID"

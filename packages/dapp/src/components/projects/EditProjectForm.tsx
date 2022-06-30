@@ -69,7 +69,7 @@ const EditProjectForm: React.FunctionComponent = () => {
       <Heading>Edit project</Heading>
       <LogoDropzone {...{ register, setValue, errors }} />
 
-      <FormControl isInvalid={errors.name}>
+      <FormControl isInvalid={!!errors.name}>
         <FormLabel htmlFor="name">Project name</FormLabel>
         <Input
           placeholder="Project name"
@@ -85,7 +85,7 @@ const EditProjectForm: React.FunctionComponent = () => {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.description}>
+      <FormControl isInvalid={!!errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
 
         <CodeEditor
@@ -116,7 +116,7 @@ const EditProjectForm: React.FunctionComponent = () => {
 
       {code && <CodeEditorPreview code={code} />}
 
-      <FormControl isInvalid={errors.website}>
+      <FormControl isInvalid={!!errors.website}>
         <FormLabel htmlFor="website">Website</FormLabel>
         <Input
           placeholder="Website"
@@ -149,7 +149,7 @@ const EditProjectForm: React.FunctionComponent = () => {
       />
 
       <VStack align="flex-start">
-        <FormControl isInvalid={errors.website}>
+        <FormControl isInvalid={!!errors.website}>
           <FormLabel htmlFor="website">Website</FormLabel>
           <InputGroup>
             <InputRightElement pointerEvents="none">
@@ -175,7 +175,7 @@ const EditProjectForm: React.FunctionComponent = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.twitter}>
+        <FormControl isInvalid={!!errors.twitter}>
           <FormLabel htmlFor="twitter">Twitter</FormLabel>
           <InputGroup>
             <InputRightElement pointerEvents="none">
@@ -201,7 +201,7 @@ const EditProjectForm: React.FunctionComponent = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.discord}>
+        <FormControl isInvalid={!!errors.discord}>
           <FormLabel htmlFor="discord">Discord</FormLabel>
           <InputGroup>
             <InputRightElement pointerEvents="none">
@@ -227,7 +227,7 @@ const EditProjectForm: React.FunctionComponent = () => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.github}>
+        <FormControl isInvalid={!!errors.github}>
           <FormLabel htmlFor="github">Github</FormLabel>
           <InputGroup>
             <InputRightElement pointerEvents="none">
