@@ -137,7 +137,20 @@ const CreateQuestForm: React.FunctionComponent = () => {
     handleSubmit,
     setError,
     formState: { isSubmitting, errors },
-  } = useFormContext();
+  } = useFormContext<{
+    rewardAmount: string;
+    rewardCurrency: {
+      label: string;
+      value: string;
+    };
+    rewardUserCap: string;
+    name: string;
+    description: string;
+    slogan: string;
+    type: {
+      value: string;
+    };
+  }>();
 
   const getSelectedTokenContract = (token: string) => {
     const [tokenChainIdStr, tokenAddress] = token.split(":");
@@ -566,9 +579,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
             required: REQUIRED_FIELD_LABEL,
           })}
           onChange={(e) => {
-            const { name } = e.target;
             setCode(e.target.value);
-            setValue(name, e.target.value);
+            setValue("description", e.target.value);
           }}
           style={{
             fontSize: "16px",

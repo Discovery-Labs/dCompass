@@ -43,7 +43,16 @@ const CreateProjectForm = () => {
     getValues,
     control,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{
+    name: string;
+    message: string;
+    slogan: string;
+    description: string;
+    website: string;
+    twitter: string;
+    discord: string;
+    github: string;
+  }>();
 
   useEffect(() => {
     const descriptionValues = getValues("description");
@@ -123,9 +132,8 @@ const CreateProjectForm = () => {
             required: REQUIRED_FIELD_LABEL,
           })}
           onChange={(e) => {
-            const { name } = e.target;
             setCode(e.target.value);
-            setValue(name, e.target.value);
+            setValue("description", e.target.value);
           }}
           style={{
             fontSize: "16px",

@@ -79,7 +79,18 @@ const ProfileForm = ({
     control,
     formState: { errors, isSubmitting },
     setValue,
-  } = useForm();
+  } = useForm<{
+    name: string;
+    image: unknown;
+    background: unknown;
+    description: string;
+    url: string;
+    emoji: string;
+    birthDate: unknown;
+    residenceCountry: string;
+    homeLocation: string;
+    affiliations?: string;
+  }>();
 
   useEffect(() => {
     // fetch from Ceramic
@@ -134,9 +145,10 @@ const ProfileForm = ({
                 value: project.id,
               }));
             setValue(key, foundProjects);
-          } else {
-            setValue(key, value);
           }
+          // else {
+          //   setValue(key, value);
+          // }
         });
         setIsLoadingProfile(false);
       }
@@ -360,6 +372,7 @@ const ProfileForm = ({
               <FormControl isInvalid={!!errors.image}>
                 <FormLabel htmlFor="image">Profile Image</FormLabel>
                 <Image
+                  alt="image"
                   ref={image}
                   src={imageURL}
                   boxSize={imageURL ? "5rem" : "0rem"}
@@ -378,6 +391,7 @@ const ProfileForm = ({
               <FormControl isInvalid={!!errors.background}>
                 <FormLabel htmlFor="background">Header Background</FormLabel>
                 <Image
+                  alt="background"
                   ref={background}
                   src={backgroundURL}
                   boxSize={imageURL ? "5rem" : "0rem"}

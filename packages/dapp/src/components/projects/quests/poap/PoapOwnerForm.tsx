@@ -10,7 +10,9 @@ function PoapOwnerForm() {
   const {
     register,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{
+    poapTokenId: string;
+  }>();
   return (
     // TODO: to verify this we need to
     // STEP1: query the subgraph based on the network https://github.com/poap-xyz/poap-subgraph

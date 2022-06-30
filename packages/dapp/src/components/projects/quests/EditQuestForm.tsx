@@ -29,7 +29,11 @@ const EditQuestForm = ({ quest }: { quest: Quest }) => {
     setValue,
     getValues,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{
+    name: string;
+    description: string;
+    slogan: string;
+  }>();
 
   useEffect(() => {
     const descriptionValues = getValues("description");
@@ -99,9 +103,8 @@ const EditQuestForm = ({ quest }: { quest: Quest }) => {
               required: REQUIRED_FIELD_LABEL,
             })}
             onChange={(e) => {
-              const { name } = e.target;
               setCode(e.target.value);
-              setValue(name, e.target.value);
+              setValue("description", e.target.value);
             }}
             style={{
               fontSize: "16px",

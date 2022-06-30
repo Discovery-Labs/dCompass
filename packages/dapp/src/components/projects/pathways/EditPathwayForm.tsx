@@ -27,7 +27,11 @@ const EditPathwayForm: React.FunctionComponent = () => {
     setValue,
     getValues,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{
+    title: string;
+    description: string;
+    slogan: string;
+  }>();
 
   useEffect(() => {
     const descriptionValues = getValues("description");
@@ -97,9 +101,8 @@ const EditPathwayForm: React.FunctionComponent = () => {
               required: REQUIRED_FIELD_LABEL,
             })}
             onChange={(e) => {
-              const { name } = e.target;
               setCode(e.target.value);
-              setValue(name, e.target.value);
+              setValue("description", e.target.value);
             }}
             style={{
               fontSize: "16px",

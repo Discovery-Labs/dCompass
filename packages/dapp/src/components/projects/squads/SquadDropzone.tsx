@@ -95,7 +95,7 @@ const SquadDropzone = ({
 
   return (
     <FormControl
-      isInvalid={!!errors.squads && errors.squads[nestIndex].image}
+      isInvalid={errors.squads && errors.squads[nestIndex].image}
       {...getRootProps()}
     >
       <FormLabel htmlFor={`squads[${nestIndex}].image`}>{formLabel}</FormLabel>

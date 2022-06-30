@@ -10,7 +10,9 @@ function NFTOwnerForm() {
   const {
     register,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{
+    collectionContractAddress: string;
+  }>();
   return (
     <FormControl isInvalid={!!errors.collectionContractAddress}>
       <FormLabel htmlFor="collectionContractAddress">
@@ -27,8 +29,8 @@ function NFTOwnerForm() {
         })}
       />
       <FormErrorMessage>
-        {errors.nftCollectionAContractddress &&
-          errors.nftCollectionAddresContracts.message}
+        {errors.collectionContractAddress &&
+          errors.collectionContractAddress.message}
       </FormErrorMessage>
     </FormControl>
   );

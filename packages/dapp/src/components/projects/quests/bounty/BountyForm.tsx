@@ -9,11 +9,9 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  HStack,
   Progress,
   Stack,
   Text,
-  Textarea,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -45,7 +43,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm<{ solution: string }>();
   const { self } = useContext(Web3Context);
 
   const [code, setCode] = useState<string>();
@@ -194,9 +192,8 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
             required: REQUIRED_FIELD_LABEL,
           })}
           onChange={(e) => {
-            const { name } = e.target;
             setCode(e.target.value);
-            setValue(name, e.target.value);
+            setValue("solution", e.target.value);
           }}
           style={{
             fontSize: "16px",

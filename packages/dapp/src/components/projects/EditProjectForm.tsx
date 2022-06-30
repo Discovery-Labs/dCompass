@@ -44,7 +44,14 @@ const EditProjectForm: React.FunctionComponent = () => {
     getValues,
     control,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{
+    name: string;
+    description: string;
+    website: string;
+    twitter: string;
+    discord: string;
+    github: string;
+  }>();
   const { data, loading, error } = useQuery(ALL_TAGS_QUERY);
 
   useEffect(() => {
@@ -99,9 +106,8 @@ const EditProjectForm: React.FunctionComponent = () => {
             },
           })}
           onChange={(e) => {
-            const { name } = e.target;
             setCode(e.target.value);
-            setValue(name, e.target.value);
+            setValue("description", e.target.value);
           }}
           style={{
             fontSize: "16px",

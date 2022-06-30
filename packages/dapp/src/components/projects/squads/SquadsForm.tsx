@@ -1,4 +1,3 @@
-import { Heading } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 
 import Squads from "./Squads";

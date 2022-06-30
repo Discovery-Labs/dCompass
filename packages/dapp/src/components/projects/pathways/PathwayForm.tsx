@@ -48,7 +48,17 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
     getValues,
     watch,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{
+    rewardAmount: string;
+    rewardCurrency: {
+      label: string;
+      value: string;
+    };
+    rewardUserCap: string;
+    title: string;
+    description: string;
+    slogan: string;
+  }>();
 
   useEffect(() => {
     const descriptionValues = getValues("description");
@@ -154,9 +164,8 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
             required: REQUIRED_FIELD_LABEL,
           })}
           onChange={(e) => {
-            const { name } = e.target;
             setCode(e.target.value);
-            setValue(name, e.target.value);
+            setValue("description", e.target.value);
           }}
           style={{
             fontSize: "16px",
