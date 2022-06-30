@@ -243,7 +243,7 @@ const ProfileForm = ({
         ) : (
           <Stack as="form" onSubmit={handleSubmit(onSubmit)}>
             <SimpleGrid columns={2} spacing={10}>
-              <FormControl isInvalid={errors.name}>
+              <FormControl isInvalid={!!errors.name}>
                 <FormLabel htmlFor="name">Name</FormLabel>
                 <Input
                   placeholder="anon"
@@ -357,7 +357,7 @@ const ProfileForm = ({
             </SimpleGrid>
 
             <SimpleGrid columns={2} spacing={10}>
-              <FormControl isInvalid={errors.image}>
+              <FormControl isInvalid={!!errors.image}>
                 <FormLabel htmlFor="image">Profile Image</FormLabel>
                 <Image
                   ref={image}
@@ -375,7 +375,7 @@ const ProfileForm = ({
                   {errors.image && errors.image.message}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={errors.background}>
+              <FormControl isInvalid={!!errors.background}>
                 <FormLabel htmlFor="background">Header Background</FormLabel>
                 <Image
                   ref={background}
@@ -412,7 +412,7 @@ const ProfileForm = ({
               />
             </SimpleGrid>
 
-            <FormControl isInvalid={errors.description}>
+            <FormControl isInvalid={!!errors.description}>
               <FormLabel htmlFor="description">Description</FormLabel>
               <Textarea
                 placeholder="Web3 and blockchain enthusiast"
@@ -429,7 +429,7 @@ const ProfileForm = ({
               </FormErrorMessage>
             </FormControl>
             <SimpleGrid columns={3} spacing={10}>
-              <FormControl isInvalid={errors.url}>
+              <FormControl isInvalid={!!errors.url}>
                 <FormLabel htmlFor="url">Website</FormLabel>
                 <Input
                   placeholder="ens-or-website.eth"
@@ -442,7 +442,7 @@ const ProfileForm = ({
                   {errors.url && errors.url.message}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={errors.emoji}>
+              <FormControl isInvalid={!!errors.emoji}>
                 <FormLabel htmlFor="emoji">Emoji</FormLabel>
                 <Select borderColor="purple.500" {...register("emoji")}>
                   <option value={undefined}>Select an emoji</option>
@@ -456,7 +456,7 @@ const ProfileForm = ({
                   {errors.emoji && errors.emoji.message}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={errors.birthDate}>
+              <FormControl isInvalid={!!errors.birthDate}>
                 <FormLabel htmlFor="birthDate">Birthdate</FormLabel>
                 <Input
                   type="date"
@@ -471,7 +471,7 @@ const ProfileForm = ({
             </SimpleGrid>
 
             <SimpleGrid columns={2} spacing={10}>
-              <FormControl isInvalid={errors.residenceCountry}>
+              <FormControl isInvalid={!!errors.residenceCountry}>
                 <FormLabel htmlFor="residenceCountry">Country</FormLabel>
                 <Select
                   placeholder="Select your country of residence"
@@ -490,7 +490,7 @@ const ProfileForm = ({
                   {errors.residenceCountry && errors.residenceCountry.message}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={errors.homeLocation}>
+              <FormControl isInvalid={!!errors.homeLocation}>
                 <FormLabel htmlFor="homeLocation">Location</FormLabel>
                 <Input
                   placeholder="London"
