@@ -13,7 +13,6 @@ import {
   useRadioGroup,
   Center,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Input,
 } from "@chakra-ui/react";
@@ -230,18 +229,8 @@ export default function ThreeTierPricing() {
               placeholder="project Wallet"
               {...register("projectWallet", {
                 required: REQUIRED_FIELD_LABEL,
-                maxLength: {
-                  value: 150,
-                  message: "Maximum length should be 150",
-                },
               })}
             />
-
-            <FormErrorMessage>
-              <Text>
-                {errors.projectWallet && errors.projectWallet.message}
-              </Text>
-            </FormErrorMessage>
           </FormControl>
         </VStack>
       </Center>
