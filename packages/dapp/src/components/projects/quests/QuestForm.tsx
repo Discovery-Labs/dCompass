@@ -237,8 +237,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
   }
 
   async function onSubmit(values: Record<string, any>) {
-    console.log("submitted", values);
-
     if (!account) {
       return toast({
         title: "Not connected",
