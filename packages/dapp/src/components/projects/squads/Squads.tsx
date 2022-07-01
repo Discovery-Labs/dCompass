@@ -45,9 +45,7 @@ export default function Squads({
       {fields.map((item, index) => {
         return (
           <VStack w="full" key={item.id}>
-            <FormControl
-              isInvalid={!!errors.squads && !!errors.squads[index].name}
-            >
+            <FormControl isInvalid={errors.squads && errors.squads[index].name}>
               <HStack py="2" w="full" justify="space-between">
                 <FormLabel htmlFor={`squads[${index}].name`}>
                   Squad name
