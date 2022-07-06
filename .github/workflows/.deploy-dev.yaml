@@ -28,4 +28,8 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
         env:
           HD_APP_BASE: "packages/server"
-        run: npx prisma migrate deploy
+      - name: Release dev API
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16.x"
+      - run: cd packages/server && npx prisma migrate deploy
