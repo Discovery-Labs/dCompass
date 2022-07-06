@@ -13,7 +13,6 @@ import {
   useRadioGroup,
   Center,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Input,
 } from "@chakra-ui/react";
@@ -30,8 +29,8 @@ function PriceWrapper(props: any) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
   const { children } = props;
 
-  const input = getInputProps();
-  const checkbox = getCheckboxProps();
+  const { ...input } = getInputProps();
+  const { ...checkbox } = getCheckboxProps();
 
   return (
     <Box as="label">
@@ -75,7 +74,7 @@ export default function ThreeTierPricing() {
     onChange: selectPlan,
   });
 
-  const group = getRootProps();
+  const { ...group } = getRootProps();
   const radioSilver = getRadioProps({ value: "SILVER" });
   const radioGold = getRadioProps({ value: "GOLD" });
   const radioDiamond = getRadioProps({ value: "DIAMOND" });
@@ -94,7 +93,7 @@ export default function ThreeTierPricing() {
         direction={{ base: "column", md: "row" }}
         textAlign="center"
         justify="center"
-        spacing={{ base: 4, lg: 10 }}
+        spacing={{ base: 4, md: 10 }}
         py={10}
         {...group}
       >
@@ -203,8 +202,8 @@ export default function ThreeTierPricing() {
                 everything from Gold tier
               </ListItem>
               <ListItem>
-                <ListIcon as={FaCheckCircle} color="accent.500" />1 custom
-                quest development
+                <ListIcon as={FaCheckCircle} color="accent.500" />1 custom quest
+                development
               </ListItem>
               <ListItem>
                 <ListIcon as={FaCheckCircle} color="accent.500" />1 custom
@@ -216,29 +215,22 @@ export default function ThreeTierPricing() {
       </Stack>
 
       <Center>
-        <VStack>
+        <VStack as="form">
           <HStack>
             <Text>Your selected pass is</Text>{" "}
             <Text color={selectedPass === "DIAMOND" ? "cyan" : selectedPass}>
               {selectedPass}
             </Text>
           </HStack>
-          <FormControl isInvalid={errors.projectWallet}>
+          <FormControl isInvalid={!!errors.projectWallet}>
             <FormLabel htmlFor="projectWallet">Project wallet</FormLabel>
 
             <Input
               placeholder="project Wallet"
               {...register("projectWallet", {
                 required: REQUIRED_FIELD_LABEL,
-                maxLength: {
-                  value: 150,
-                  message: "Maximum length should be 150",
-                },
               })}
             />
-            <FormErrorMessage>
-              {errors.projectWallet && errors.projectWallet.message}
-            </FormErrorMessage>
           </FormControl>
         </VStack>
       </Center>

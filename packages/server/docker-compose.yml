@@ -21,7 +21,7 @@ services:
       redis:
         condition: service_started
     ports:
-      - ${API_PORT}:${API_PORT}
+      - ${PORT}:${PORT}
       # - 9229:9229  Debug port
     environment:
       NODE_ENV: development

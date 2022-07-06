@@ -4,6 +4,7 @@ import {
   AlertDescription,
   AlertIcon,
   AlertTitle,
+  Box,
   Button,
   FormControl,
   FormErrorMessage,
@@ -14,7 +15,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useWeb3React } from "@web3-react/core";
+
 import CodeEditorPreview from "components/custom/CodeEditorPreview";
 import ImageDropzone from "components/custom/ImageDropzone";
 import { REQUIRED_FIELD_LABEL } from "core/constants";
@@ -42,7 +43,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm<{ solution: string }>();
   const { self } = useContext(Web3Context);
 
   const [code, setCode] = useState<string>();
@@ -79,24 +80,27 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         description: `Try to refresh the page or disconnect & connect`,
         status: "error",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });
     }
     const files = values.medias;
+
     const markdownBlob = new Blob([values.solution], {
       type: "text/markdown",
     });
     const markdownDataUrl = await blobToDataURL(markdownBlob);
     const attachments = [] as string[];
-    for await (const file of files as FileList) {
-      const dataUrl = await blobToDataURL(
-        new Blob([file], {
-          type: file.type,
-        })
-      );
-      attachments.push(dataUrl);
+    if (files) {
+      for await (const file of files as FileList) {
+        const dataUrl = await blobToDataURL(
+          new Blob([file], {
+            type: file.type,
+          })
+        );
+        attachments.push(dataUrl);
+      }
     }
 
     const solutionDag = await self.client.ceramic.did.createDagJWE(
@@ -130,7 +134,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
           description: `Thanks for your submission, your solution will be reviewed soon!`,
           status: "success",
           position: "bottom-right",
-          duration: 6000,
+          duration: 3000,
           isClosable: true,
           variant: "subtle",
         });
@@ -143,7 +147,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         description: `There was an issue with your solution submission..`,
         status: "error",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });
@@ -154,7 +158,7 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         description: `You already submitted a solution or you didn't sign your solution submission`,
         status: "error",
         position: "bottom-right",
-        duration: 6000,
+        duration: 3000,
         isClosable: true,
         variant: "subtle",
       });
@@ -177,8 +181,9 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
     );
   return (
     <VStack as="form">
-      <FormControl isInvalid={errors.solution}>
+      <FormControl isInvalid={!!errors.solution}>
         <FormLabel htmlFor="solution">Your Solution</FormLabel>
+
         <CodeEditor
           value={code}
           language="markdown"
@@ -187,9 +192,8 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
             required: REQUIRED_FIELD_LABEL,
           })}
           onChange={(e) => {
-            const { name } = e.target;
             setCode(e.target.value);
-            setValue(name, e.target.value);
+            setValue("solution", e.target.value);
           }}
           style={{
             fontSize: "16px",
@@ -197,6 +201,11 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
           className={codeEditorScheme}
           padding={15}
         />
+        {code && (
+          <Box w="full" py="2">
+            <CodeEditorPreview code={code} />
+          </Box>
+        )}
         <FormErrorMessage>
           {errors.solution && errors.solution.message}
         </FormErrorMessage>
@@ -213,7 +222,6 @@ function BountyForm({ questId, pathwayId, successCallback }: any) {
         }}
       />
 
-      {code && <CodeEditorPreview code={code} />}
       <Button
         isLoading={isLoading}
         loadingText="Submitting answers..."

@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -27,9 +27,9 @@ import { useWeb3React } from "@web3-react/core";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Card from "components/custom/Card";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
-import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
+import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useCustomColor from "../../../core/hooks/useCustomColor";
@@ -42,8 +42,6 @@ import {
   GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
   VERIFY_PATHWAY_MUTATION,
 } from "../../../graphql/pathways";
-
-// import { PathwayNFT } from "@discovery-dao/hardhat/typechain-types/PathwayNFT";
 
 const ModalDetails = ({ pathway }: { pathway: Pathway }) => {
   const { getTextColor, getOverBgColor } = useCustomColor();
@@ -90,13 +88,13 @@ function PathwayCard({
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getRewardCurrency } = useTokenList();
-  const { getPrimaryColor, getAccentColor } = useCustomColor();
+  const { getAccentColor } = useCustomColor();
   const [approvePathwayMutation] = useMutation(APPROVE_PATHWAY_MUTATION);
   const [verifyPathwayMutation] = useMutation(VERIFY_PATHWAY_MUTATION);
   const [claimPathwayRewardsMutation] = useMutation(
     CLAIM_PATHWAY_REWARDS_MUTATION
   );
-  const [getAllPathwaysByProjectId] = useLazyQuery(
+  const { data, refetch: getAllPathwaysByProjectId } = useQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
     {
       variables: {
@@ -104,15 +102,17 @@ function PathwayCard({
       },
     }
   );
+
   const [status, setStatus] = useState<string>();
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isCreatingToken, setIsCreatingToken] = useState<boolean>(false);
   const [claimedBy, setClaimedBy] = useState<string[]>();
   const [isClaimed, setIsClaimed] = useState<boolean>(false);
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
+  // const [pathways, setPathways] = useState<Pathway[]>();
   const [rewardStatus, setRewardStatus] = useState<string>();
   const { account, contracts, self } = useContext(Web3Context);
-  const { chainId, library } = useWeb3React();
+  const { chainId } = useWeb3React();
   const router = useRouter();
 
   useEffect(() => {
@@ -134,83 +134,139 @@ function PathwayCard({
   }, [pathway.quizQuests, pathway.bountyQuests, self?.id]);
   useEffect(() => {
     async function init() {
-      if (contracts && pathway.streamId) {
+      if (contracts?.pathwayNFTContract && pathway.streamId) {
         const statusInt = await contracts.pathwayNFTContract.status(
           pathway.streamId
         );
+        console.log({ statusInt });
         const isMinted = await contracts.pathwayNFTContract.pathwayMinted(
           pathway.streamId
         );
         const statusString: string =
           await contracts.pathwayNFTContract.statusStrings(statusInt);
-        console.log({ statusString });
         setStatus(isMinted ? "MINTED" : statusString);
         const claimedByAddresses =
           await contracts.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
             pathway.streamId,
             0
           );
-        const currentUserHasClaimed = claimedByAddresses.includes(account);
-        console.log({ claimedByAddresses, currentUserHasClaimed });
+        const currentUserHasClaimed = claimedByAddresses.includes(
+          account || ""
+        );
         setIsClaimed(currentUserHasClaimed);
         setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
         setClaimedBy(claimedByAddresses);
+        // const { data } = await getAllPathwaysByProjectId({
+        //   variables: {
+        //     projectId: pathway.projectId,
+        //   },
+        // });
+        // setPathways(data.getAllPathwaysByProjectId.pathways);
       }
       null;
     }
     init();
-  }, [contracts, pathway.streamId, account]);
+  }, [
+    pathway.streamId,
+    account,
+    contracts?.pathwayNFTContract,
+    pathway.projectId,
+    data.getAllPathwaysByProjectId.pathways,
+  ]);
 
-  const isContributor = account && projectContributors.includes(account);
+  const isContributor = useMemo(
+    () => (account ? projectContributors.includes(account) : false),
+    [account, projectContributors]
+  );
   function openPathway() {
     return router.push(`/projects/${pathway.projectId}/pathways/${pathway.id}`);
   }
 
   const handleApprovePathway = async () => {
     setIsApproving(true);
-    if (chainId && account) {
-      const { data } = await approvePathwayMutation({
-        variables: {
-          input: {
-            id: pathway.id,
-          },
-        },
-      });
+    const isWithRewards = parseFloat(pathway.rewardAmount) > 0;
 
-      const [metadataVerifySignature, thresholdVerifySignature] =
-        data.approvePathway.expandedServerSignatures;
-
-      const voteForApprovalTx =
-        await contracts.pathwayNFTContract.voteForApproval(
-          projectContributors,
+    if (status === "NONEXISTENT" && !isWithRewards) {
+      const createPathwayOnChainTx =
+        await contracts?.pathwayNFTContract.createPathway(
           pathway.streamId,
-          data.approvePathway.projectStreamId,
-          [metadataVerifySignature.r, thresholdVerifySignature.r],
-          [metadataVerifySignature.s, thresholdVerifySignature.s],
-          [metadataVerifySignature.v, thresholdVerifySignature.v],
-          1
+          data.getAllPathwaysByProjectId.streamId,
+          pathway.rewardUserCap,
+          isWithRewards,
+          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+          account || "",
+          false,
+          "0",
+          pathway.createdBy
         );
-
-      // get return values or events
-      const receipt = await voteForApprovalTx.wait(1);
-      console.log({ receipt });
-      const statusInt = await contracts.pathwayNFTContract.status(
-        pathway.streamId
-      );
-      const statusString: string =
-        await contracts.pathwayNFTContract.statusStrings(statusInt);
-      setStatus(statusString);
+      await createPathwayOnChainTx?.wait(1);
     }
-    setIsApproving(false);
-    return toast({
-      title: "Pathway approved!",
-      description: `Approval vote submitted successfully!`,
-      status: "success",
-      position: "bottom-right",
-      duration: 6000,
-      isClosable: true,
-      variant: "subtle",
-    });
+    if (chainId && account) {
+      try {
+        const { data } = await approvePathwayMutation({
+          variables: {
+            input: {
+              id: pathway.id,
+            },
+          },
+        });
+
+        const [metadataVerifySignature, thresholdVerifySignature] =
+          data.approvePathway.expandedServerSignatures;
+
+        const voteForApprovalTx =
+          await contracts?.pathwayNFTContract.voteForApproval(
+            projectContributors,
+            pathway.streamId,
+            data.approvePathway.projectStreamId,
+            [metadataVerifySignature.r, thresholdVerifySignature.r],
+            [metadataVerifySignature.s, thresholdVerifySignature.s],
+            [metadataVerifySignature.v, thresholdVerifySignature.v],
+            1
+          );
+
+        // get return values or events
+        const receipt = await voteForApprovalTx?.wait(1);
+        console.log({ receipt });
+        const statusInt = await contracts?.pathwayNFTContract.status(
+          pathway.streamId
+        );
+        if (statusInt) {
+          const statusString =
+            await contracts?.pathwayNFTContract.statusStrings(statusInt);
+          setStatus(statusString);
+
+          return toast({
+            title: "Pathway approved!",
+            description: `Approval vote submitted successfully!`,
+            status: "success",
+            position: "bottom-right",
+            duration: 6000,
+            isClosable: true,
+            variant: "subtle",
+          });
+        }
+      } catch (error) {
+        console.error(error);
+
+        let toastTitle = "Error";
+        if (typeof error === "string") {
+          toastTitle = error;
+        } else if (error instanceof Error) {
+          toastTitle = error.message; // works, `e` narrowed to Error
+        }
+        return toast({
+          title: toastTitle,
+          status: "warning",
+          position: "bottom-right",
+          duration: 3000,
+          isClosable: true,
+          variant: "subtle",
+        });
+      } finally {
+        setIsApproving(false);
+      }
+    }
   };
 
   const handleCreateToken = async () => {
@@ -243,7 +299,7 @@ function PathwayCard({
       const [metadataVerifySignature, thresholdVerifySignature] =
         data.verifyPathway.expandedServerSignatures;
 
-      const createTokenTx = await contracts.pathwayNFTContract.createToken(
+      const createTokenTx = await contracts?.pathwayNFTContract.createToken(
         url,
         pathway.streamId,
         data.verifyPathway.projectStreamId,
@@ -254,10 +310,10 @@ function PathwayCard({
       );
 
       // get return values or events
-      const receipt = await createTokenTx.wait(1);
+      const receipt = await createTokenTx?.wait(1);
       // TODO: receipt tx hash in the toast body
       console.log({ receipt });
-      const isMinted = await contracts.pathwayNFTContract.pathwayMinted(
+      const isMinted = await contracts?.pathwayNFTContract.pathwayMinted(
         pathway.id
       );
       if (isMinted) {
@@ -265,18 +321,14 @@ function PathwayCard({
       }
     }
     // refetch pathways
-    await getAllPathwaysByProjectId({
-      variables: {
-        projectId: pathway.projectId,
-      },
-    });
+    await getAllPathwaysByProjectId();
     setIsCreatingToken(false);
     return toast({
       title: "Pathway minted!",
       description: `Pathway minted and created successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
@@ -316,10 +368,10 @@ function PathwayCard({
     console.log({ metadataVerify });
     setRewardStatus("Claiming on-chain");
     const claimRewardsTx =
-      await contracts.pathwayNFTContract.claimPathwayRewards(
+      await contracts?.pathwayNFTContract.claimPathwayRewards(
         pathway.streamId,
         isNativeToken,
-        isNativeToken ? account : tokenAddressOrSymbol,
+        isNativeToken ? account || "" : tokenAddressOrSymbol,
         metadataVerify.r,
         metadataVerify.s,
         metadataVerify.v,
@@ -327,14 +379,17 @@ function PathwayCard({
         url,
         0
       );
-    await claimRewardsTx.wait(1);
+    await claimRewardsTx?.wait(1);
 
     const claimedByAddresses =
-      await contracts.PathwayNFTContract.getAllAddrsByPathwayIDVersion(
+      await contracts?.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
         pathway.streamId,
         0
       );
-    const currentUserHasClaimed = claimedByAddresses.includes(account);
+    const currentUserHasClaimed =
+      claimedByAddresses && account
+        ? claimedByAddresses.includes(account)
+        : false;
     setIsClaimed(currentUserHasClaimed);
     setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
     setClaimedBy(claimedByAddresses);
@@ -344,7 +399,7 @@ function PathwayCard({
       description: `Rewards claimed successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
@@ -358,9 +413,6 @@ function PathwayCard({
         </Tag>
       </HStack>
       <Flex direction="column" w="full">
-        <Text pb="1" textStyle="small" color={getPrimaryColor}>
-          {pathway.difficulty}
-        </Text>
         <Tooltip label={pathway.title} hasArrow placement="top">
           <Heading noOfLines={2} as="h2" fontSize="2xl" color="text">
             {pathway.title}
@@ -408,6 +460,47 @@ function PathwayCard({
         </Text>
       </Flex>
 
+      {/* <VStack w="full" align="start">
+        <Text color="accent">Requisites: </Text>
+
+       {pathway.prerequisites.length > 0 ? (
+          <Popover isLazy matchWidth>
+            <PopoverTrigger>
+              <Button w="full" variant="outline">
+                {pathway.prerequisites.length} Requisites
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent w="full">
+              <PopoverBody>
+                <UnorderedList>
+                  {pathway.prerequisites.map((prereqPathwayId) => {
+                    return (
+                      <ListItem key={prereqPathwayId}>
+                        <Link
+                          href={`http://localhost:3000/projects/${pathway.projectId}/pathways/${prereqPathwayId}`}
+                          isExternal
+                        >
+                          {
+                            pathways?.find(
+                              (pway) => pway.id === prereqPathwayId
+                            )?.title
+                          }{" "}
+                          <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      </ListItem>
+                    );
+                  })}
+                </UnorderedList>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <Button w="full" variant="outline">
+            None
+          </Button>
+        )} 
+      </VStack>
+    */}
       {isContributor && status !== "MINTED" && (
         <VStack w="full" align="left">
           <Tag
@@ -455,7 +548,7 @@ function PathwayCard({
           <Text>Under review</Text>
         </VStack>
       )}
-      {status == "MINTED" && (
+      {status && status === "MINTED" && (
         <>
           <Tooltip
             label={`${pathwayProgress?.ratio}% - ${pathwayProgress?.completedQuestCount}/${pathwayProgress?.totalQuestCount} quests completed`}
@@ -467,7 +560,7 @@ function PathwayCard({
                 w="full"
                 size="md"
                 rounded="md"
-                value={pathwayProgress?.ratio}
+                value={pathwayProgress?.ratio || 0}
                 border={`solid 1px ${getAccentColor}`}
                 hasStripe
                 colorScheme="accent"

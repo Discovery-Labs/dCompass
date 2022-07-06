@@ -10,7 +10,7 @@ export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
 let apolloClient;
 
-function createApolloClient() {
+export function createApolloClient() {
   // const cacheOptions = {
   //   typePolicies: {
   //     Query: {

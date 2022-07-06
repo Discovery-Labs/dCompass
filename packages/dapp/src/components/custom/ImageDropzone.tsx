@@ -21,7 +21,7 @@ const ImageDropzone = ({
   isRequired = false,
   fieldName,
   label,
-  isMultiple = false
+  isMultiple = false,
 }: any) => {
   const [files, setFiles] = useState([]);
   const fieldOptions = isRequired
@@ -49,23 +49,31 @@ const ImageDropzone = ({
   );
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*, video/*, audio/*, .pdf",
+    accept: {
+      "image/*": [],
+    },
     onDrop,
   });
 
   const thumbs = files.map((file: any) => (
     <Flex direction={["column", "row"]} w="full" key={file.name}>
-     {file.type.includes("image") && <Image
-        alt="file preview"
-        borderRadius="2"
-        objectFit="cover"
-        boxSize="150px"
-        src={file.preview}
-      />}
+      {file.type.includes("image") && (
+        <Image
+          alt="file preview"
+          borderRadius="2"
+          objectFit="cover"
+          boxSize="150px"
+          src={file.preview}
+        />
+      )}
       <VStack p="2" w="full" align="start" justify="center">
         <IconButton
           colorScheme="secondary"
-          onClick={() => setFiles(isMultiple ? files.filter((f: any) => f.name !== file.name) : [])}
+          onClick={() =>
+            setFiles(
+              isMultiple ? files.filter((f: any) => f.name !== file.name) : []
+            )
+          }
           aria-label="Remove Image"
           icon={<CloseIcon />}
         />

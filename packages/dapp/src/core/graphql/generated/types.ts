@@ -1,10 +1,16 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import { gql } from "@apollo/client";
+import * as Apollo from "@apollo/client";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -18,151 +24,106 @@ export type Scalars = {
 };
 
 export type ApprovePathwayInput = {
-  chainId: Scalars['Int'];
-  id: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  pathwayApproverSignature: Scalars['String'];
+  id: Scalars["String"];
 };
 
 export type ApproveProjectInput = {
-  chainId: Scalars['String'];
-  id: Scalars['String'];
-  reviewerSignature: Scalars['String'];
-  tokenUris: Array<Scalars['String']>;
+  id: Scalars["String"];
+  tokenUris: Array<Scalars["String"]>;
 };
 
 export type ApproveQuestInput = {
-  chainId: Scalars['Int'];
-  id: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questApproverSignature: Scalars['String'];
-  questType: Scalars['String'];
+  id: Scalars["String"];
+  questType: Scalars["String"];
 };
 
 export type ApproveQuestSolutionInput = {
-  adventurerDID: Scalars['String'];
-  id: Scalars['String'];
-  solutionApproverSignature: Scalars['String'];
-  solutionId: Scalars['String'];
+  adventurerDID: Scalars["String"];
+  id: Scalars["String"];
+  solutionId: Scalars["String"];
 };
 
 export type BountyQuest = {
-  __typename?: 'BountyQuest';
-  chainId: Scalars['Int'];
-  completedBy: Array<Scalars['String']>;
+  __typename?: "BountyQuest";
+  chainId: Scalars["Int"];
+  completedBy: Array<Scalars["String"]>;
   /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
+  createdAt: Scalars["DateTime"];
+  createdBy: Scalars["String"];
+  description: Scalars["String"];
   expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  isProjectContributor: Scalars['Boolean'];
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  questType: Scalars['String'];
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
+  id: Scalars["String"];
+  image: Scalars["String"];
+  isPending?: Maybe<Scalars["Boolean"]>;
+  isProjectContributor: Scalars["Boolean"];
+  name: Scalars["String"];
+  namespace?: Maybe<Scalars["String"]>;
+  pathwayId: Scalars["String"];
+  questType: Scalars["String"];
+  rewardAmount: Scalars["Float"];
+  rewardCurrency: Scalars["String"];
+  rewardUserCap: Scalars["Int"];
+  slogan: Scalars["String"];
+  streamId: Scalars["String"];
   submissions: Array<SolutionSubmission>;
   /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars["DateTime"];
 };
 
 export type ClaimPathwayRewardsInput = {
-  chainId: Scalars['Int'];
-  did: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  questAdventurerSignature: Scalars['String'];
+  did: Scalars["String"];
+  pathwayId: Scalars["String"];
 };
 
 export type ClaimQuestRewardsInput = {
-  chainId: Scalars['Int'];
-  did: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questAdventurerSignature: Scalars['String'];
-  questId: Scalars['String'];
-  questType: Scalars['String'];
+  did: Scalars["String"];
+  questId: Scalars["String"];
+  questType: Scalars["String"];
 };
 
 export type CreatePathwayInput = {
-  id: Scalars['String'];
-  pathwayCreatorSignature: Scalars['String'];
+  id: Scalars["String"];
+  pathwayCreatorSignature: Scalars["String"];
 };
 
 export type CreateProjectInput = {
-  creatorSignature: Scalars['String'];
-  id: Scalars['String'];
-  tokenUris: Array<Scalars['String']>;
+  id: Scalars["String"];
+  tokenUris: Array<Scalars["String"]>;
 };
 
 export type CreateQuestInput = {
-  id: Scalars['String'];
-  questCreatorSignature: Scalars['String'];
+  id: Scalars["String"];
 };
 
 export type EditProjectInput = {
-  color?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['String']>;
-  discord?: InputMaybe<Scalars['String']>;
-  editorSignature: Scalars['String'];
-  github?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
-  logo?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
+  color?: InputMaybe<Scalars["String"]>;
+  description?: InputMaybe<Scalars["String"]>;
+  discord?: InputMaybe<Scalars["String"]>;
+  github?: InputMaybe<Scalars["String"]>;
+  id: Scalars["String"];
+  logo?: InputMaybe<Scalars["String"]>;
+  name?: InputMaybe<Scalars["String"]>;
   squads?: InputMaybe<Array<ProjectSquadsInput>>;
-  tokenUris?: InputMaybe<Array<Scalars['String']>>;
-  twitter?: InputMaybe<Scalars['String']>;
-  website?: InputMaybe<Scalars['String']>;
-  whitepaper?: InputMaybe<Scalars['String']>;
+  tokenUris?: InputMaybe<Array<Scalars["String"]>>;
+  twitter?: InputMaybe<Scalars["String"]>;
+  website?: InputMaybe<Scalars["String"]>;
+  whitepaper?: InputMaybe<Scalars["String"]>;
 };
 
 export type ExpandedServerSignature = {
-  __typename?: 'ExpandedServerSignature';
-  r: Scalars['String'];
-  s: Scalars['String'];
-  v: Scalars['Int'];
+  __typename?: "ExpandedServerSignature";
+  r: Scalars["String"];
+  s: Scalars["String"];
+  v: Scalars["Int"];
 };
 
 export type GetBountyQuestByIdInput = {
-  did: Scalars['String'];
-  questId: Scalars['String'];
-  signature: Scalars['String'];
-};
-
-export type GithubContributorQuest = {
-  __typename?: 'GithubContributorQuest';
-  chainId: Scalars['Int'];
-  completedBy: Array<Scalars['String']>;
-  /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
-  expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  githubOrgId: Scalars['String'];
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  questType: Scalars['String'];
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
-  /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
+  did: Scalars["String"];
+  questId: Scalars["String"];
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
+  __typename?: "Mutation";
   /** Approve a new Pathway in dCompass */
   approvePathway?: Maybe<Pathway>;
   /** Approves a new Project in dCompass */
@@ -175,10 +136,6 @@ export type Mutation = {
   claimPathwayRewards?: Maybe<Pathway>;
   /** Verify a new Quest right before minting in dCompass */
   claimQuestRewards?: Maybe<Quest>;
-  /** Create a new Github Contributor Quest in dCompass */
-  createGithubContributorQuest?: Maybe<GithubContributorQuest>;
-  /** Create a new NFT Owner Quest in dCompass */
-  createNFTOwnerQuest?: Maybe<NftOwnerQuest>;
   /** Create a new Pathway in dCompass */
   createPathway?: Maybe<Pathway>;
   /** Create a new Project in dCompass */
@@ -187,223 +144,164 @@ export type Mutation = {
   createQuest?: Maybe<Quest>;
   /** Create a new Quiz quest in dCompass */
   createQuizQuest?: Maybe<QuizQuest>;
-  /** Create a new Snapshot Voter Quest in dCompass */
-  createSnapshotVoterQuest?: Maybe<SnapshotVoterQuest>;
   /** Edit project in dCompass */
   editProject?: Maybe<Project>;
   /** Sign in a user and notifies the connected clients */
   signIn: User;
   /** Logs out a user an notifies the connected clients */
-  signOut: Scalars['Boolean'];
+  signOut: Scalars["Boolean"];
   /** Submits quest answers */
   submitQuestAnswers: SubmitQuestAnswersOutput;
   /** Submits quest solution */
-  submitQuestSolution: Scalars['Boolean'];
+  submitQuestSolution: Scalars["Boolean"];
   /** Verify a new Pathway right before minting in dCompass */
   verifyPathway?: Maybe<Pathway>;
   /** Verify a new Quest right before minting in dCompass */
   verifyQuest?: Maybe<Quest>;
 };
 
-
 export type MutationApprovePathwayArgs = {
   input: ApprovePathwayInput;
 };
-
 
 export type MutationApproveProjectArgs = {
   input: ApproveProjectInput;
 };
 
-
 export type MutationApproveQuestArgs = {
   input: ApproveQuestInput;
 };
-
 
 export type MutationApproveQuestSolutionArgs = {
   input: ApproveQuestSolutionInput;
 };
 
-
 export type MutationClaimPathwayRewardsArgs = {
   input: ClaimPathwayRewardsInput;
 };
-
 
 export type MutationClaimQuestRewardsArgs = {
   input: ClaimQuestRewardsInput;
 };
 
-
-export type MutationCreateGithubContributorQuestArgs = {
-  input: CreateQuestInput;
-};
-
-
-export type MutationCreateNftOwnerQuestArgs = {
-  input: CreateQuestInput;
-};
-
-
 export type MutationCreatePathwayArgs = {
   input: CreatePathwayInput;
 };
-
 
 export type MutationCreateProjectArgs = {
   input: CreateProjectInput;
 };
 
-
 export type MutationCreateQuestArgs = {
   input: CreateQuestInput;
 };
-
 
 export type MutationCreateQuizQuestArgs = {
   input: CreateQuestInput;
 };
 
-
-export type MutationCreateSnapshotVoterQuestArgs = {
-  input: CreateQuestInput;
-};
-
-
 export type MutationEditProjectArgs = {
   input: EditProjectInput;
 };
-
 
 export type MutationSignInArgs = {
   input: SiweRegisterInput;
 };
 
-
 export type MutationSubmitQuestAnswersArgs = {
   input: QuestAnswersSubmitionInput;
 };
-
 
 export type MutationSubmitQuestSolutionArgs = {
   input: QuestSolutionSubmissionInput;
 };
 
-
 export type MutationVerifyPathwayArgs = {
   input: VerifyPathwayInput;
 };
-
 
 export type MutationVerifyQuestArgs = {
   input: VerifyQuestInput;
 };
 
-export type NftOwnerQuest = {
-  __typename?: 'NFTOwnerQuest';
-  chainId: Scalars['Int'];
-  collectionContractAddress: Scalars['String'];
-  completedBy: Array<Scalars['String']>;
-  /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
-  expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  questType: Scalars['String'];
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
-  /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
-};
-
 export type Pathway = {
-  __typename?: 'Pathway';
+  __typename?: "Pathway";
   bountyQuests?: Maybe<Array<BountyQuest>>;
   /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
+  createdAt: Scalars["DateTime"];
+  createdBy: Scalars["String"];
+  description: Scalars["String"];
   difficulty: PathwayDifficultyEnum;
   expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  prerequisites?: Maybe<Array<Scalars['String']>>;
-  projectId: Scalars['String'];
-  projectStreamId: Scalars['String'];
+  id: Scalars["String"];
+  image: Scalars["String"];
+  isPending?: Maybe<Scalars["Boolean"]>;
+  prerequisites?: Maybe<Array<Scalars["String"]>>;
+  projectId: Scalars["String"];
+  projectStreamId: Scalars["String"];
   quests?: Maybe<Array<Quest>>;
   quizQuests?: Maybe<Array<QuizQuest>>;
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
-  title: Scalars['String'];
+  rewardAmount: Scalars["Float"];
+  rewardCurrency: Scalars["String"];
+  rewardUserCap: Scalars["Int"];
+  slogan: Scalars["String"];
+  streamId: Scalars["String"];
+  title: Scalars["String"];
   /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars["DateTime"];
 };
 
 /** The difficulty of a pathway, from beginner to wizard where wizard is the most difficult mode */
 export enum PathwayDifficultyEnum {
-  Advanced = 'ADVANCED',
-  Beginner = 'BEGINNER',
-  Expert = 'EXPERT',
-  Intermediate = 'INTERMEDIATE',
-  Wizard = 'WIZARD'
+  Advanced = "ADVANCED",
+  Beginner = "BEGINNER",
+  Expert = "EXPERT",
+  Intermediate = "INTERMEDIATE",
+  Wizard = "WIZARD",
 }
 
 export type Project = {
-  __typename?: 'Project';
-  color?: Maybe<Scalars['String']>;
-  contracts?: Maybe<Array<Scalars['String']>>;
+  __typename?: "Project";
+  color?: Maybe<Scalars["String"]>;
+  contracts?: Maybe<Array<Scalars["String"]>>;
   /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
-  discord?: Maybe<Scalars['String']>;
-  gitbook?: Maybe<Scalars['String']>;
-  github?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  isFeatured: Scalars['Boolean'];
-  logo?: Maybe<Scalars['String']>;
-  members?: Maybe<Array<Scalars['String']>>;
-  name: Scalars['String'];
+  createdAt: Scalars["DateTime"];
+  createdBy: Scalars["String"];
+  description: Scalars["String"];
+  discord?: Maybe<Scalars["String"]>;
+  gitbook?: Maybe<Scalars["String"]>;
+  github?: Maybe<Scalars["String"]>;
+  id: Scalars["String"];
+  isFeatured: Scalars["Boolean"];
+  logo?: Maybe<Scalars["String"]>;
+  members?: Maybe<Array<Scalars["String"]>>;
+  name: Scalars["String"];
   pathways: Array<Pathway>;
-  peerProjects?: Maybe<Array<Scalars['String']>>;
-  pendingMembers?: Maybe<Array<Scalars['String']>>;
+  peerProjects?: Maybe<Array<Scalars["String"]>>;
+  pendingMembers?: Maybe<Array<Scalars["String"]>>;
   pendingPathways: Array<Pathway>;
-  repos?: Maybe<Array<Scalars['String']>>;
-  slogan: Scalars['String'];
+  repos?: Maybe<Array<Scalars["String"]>>;
+  slogan: Scalars["String"];
   squads: Array<Squad>;
-  streamId: Scalars['String'];
+  streamId: Scalars["String"];
   tags?: Maybe<Array<Tag>>;
-  tokenUris: Array<Scalars['String']>;
-  twitter?: Maybe<Scalars['String']>;
+  tokenUris: Array<Scalars["String"]>;
+  twitter?: Maybe<Scalars["String"]>;
   /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
-  updatedBy?: Maybe<Scalars['String']>;
-  website: Scalars['String'];
-  whitepaper?: Maybe<Scalars['String']>;
+  updatedAt: Scalars["DateTime"];
+  updatedBy?: Maybe<Scalars["String"]>;
+  website: Scalars["String"];
+  whitepaper?: Maybe<Scalars["String"]>;
 };
 
 export type ProjectSquadsInput = {
-  image: Scalars['String'];
-  members: Array<Scalars['String']>;
-  name: Scalars['String'];
+  image: Scalars["String"];
+  members: Array<Scalars["String"]>;
+  name: Scalars["String"];
 };
 
 export type Query = {
-  __typename?: 'Query';
+  __typename?: "Query";
   /** Gets all the pathways in dCompass */
   getAllPathwaysByProjectId?: Maybe<Project>;
   /** Gets all the projects in dCompass */
@@ -413,11 +311,11 @@ export type Query = {
   /** Gets all the tags in Discovery */
   getAllTags?: Maybe<Array<Tag>>;
   /** Return the DID of the dCompass backend server */
-  getAppDID?: Maybe<Scalars['String']>;
+  getAppDID?: Maybe<Scalars["String"]>;
   /** Gets a quiz quest by its ID */
   getBountyQuestById?: Maybe<BountyQuest>;
   /** Gets a nonce */
-  getNonce?: Maybe<Scalars['String']>;
+  getNonce?: Maybe<Scalars["String"]>;
   /** Gets a pathway by its Stream ID */
   getPathwayById?: Maybe<Pathway>;
   /** Gets a project by its document ID */
@@ -428,462 +326,848 @@ export type Query = {
   me?: Maybe<User>;
 };
 
-
 export type QueryGetAllPathwaysByProjectIdArgs = {
-  projectId: Scalars['String'];
+  projectId: Scalars["String"];
 };
-
 
 export type QueryGetAllQuestsByPathwayIdArgs = {
-  pathwayId: Scalars['String'];
+  pathwayId: Scalars["String"];
 };
-
 
 export type QueryGetBountyQuestByIdArgs = {
   input: GetBountyQuestByIdInput;
 };
 
-
 export type QueryGetPathwayByIdArgs = {
-  pathwayId: Scalars['String'];
+  pathwayId: Scalars["String"];
 };
-
 
 export type QueryGetProjectByIdArgs = {
-  projectId: Scalars['String'];
+  projectId: Scalars["String"];
 };
 
-
 export type QueryGetQuizQuestByIdArgs = {
-  questId: Scalars['String'];
+  questId: Scalars["String"];
 };
 
 export type Quest = {
-  __typename?: 'Quest';
-  chainId: Scalars['Int'];
-  completedBy: Array<Scalars['String']>;
+  __typename?: "Quest";
+  chainId: Scalars["Int"];
+  completedBy: Array<Scalars["String"]>;
   /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
+  createdAt: Scalars["DateTime"];
+  createdBy: Scalars["String"];
+  description: Scalars["String"];
   expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  questType: Scalars['String'];
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
+  id: Scalars["String"];
+  image: Scalars["String"];
+  isPending?: Maybe<Scalars["Boolean"]>;
+  name: Scalars["String"];
+  namespace?: Maybe<Scalars["String"]>;
+  pathwayId: Scalars["String"];
+  questType: Scalars["String"];
+  rewardAmount: Scalars["Float"];
+  rewardCurrency: Scalars["String"];
+  rewardUserCap: Scalars["Int"];
+  slogan: Scalars["String"];
+  streamId: Scalars["String"];
   /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars["DateTime"];
 };
 
 export type QuestAnswersSubmitionInput = {
-  chainId: Scalars['Int'];
-  did: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questAdventurerSignature: Scalars['String'];
-  questId: Scalars['String'];
+  did: Scalars["String"];
+  questId: Scalars["String"];
   questionAnswers: Array<QuestQuestionAnswerInput>;
 };
 
 export type QuestQuestionAnswerInput = {
-  answer: Array<Scalars['String']>;
-  question: Scalars['String'];
+  answer: Array<Scalars["String"]>;
+  question: Scalars["String"];
 };
 
 export type QuestSolutionSubmissionInput = {
-  chainId: Scalars['Int'];
-  did: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questAdventurerSignature: Scalars['String'];
-  questId: Scalars['String'];
-  solution: Scalars['String'];
+  did: Scalars["String"];
+  questId: Scalars["String"];
+  solution: Scalars["String"];
 };
 
 export type QuizQuest = {
-  __typename?: 'QuizQuest';
-  chainId: Scalars['Int'];
-  completedBy: Array<Scalars['String']>;
+  __typename?: "QuizQuest";
+  chainId: Scalars["Int"];
+  completedBy: Array<Scalars["String"]>;
   /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
+  createdAt: Scalars["DateTime"];
+  createdBy: Scalars["String"];
+  description: Scalars["String"];
   expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  questType: Scalars['String'];
+  id: Scalars["String"];
+  image: Scalars["String"];
+  isPending?: Maybe<Scalars["Boolean"]>;
+  name: Scalars["String"];
+  namespace?: Maybe<Scalars["String"]>;
+  pathwayId: Scalars["String"];
+  questType: Scalars["String"];
   questions?: Maybe<Array<QuizQuestion>>;
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
+  rewardAmount: Scalars["Float"];
+  rewardCurrency: Scalars["String"];
+  rewardUserCap: Scalars["Int"];
+  slogan: Scalars["String"];
+  streamId: Scalars["String"];
   /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars["DateTime"];
 };
 
 export type QuizQuestion = {
-  __typename?: 'QuizQuestion';
-  answer: Scalars['String'];
-  choices: Array<Scalars['String']>;
-  id: Scalars['String'];
-  question: Scalars['String'];
+  __typename?: "QuizQuestion";
+  answer: Scalars["String"];
+  choices: Array<Scalars["String"]>;
+  id: Scalars["String"];
+  question: Scalars["String"];
 };
 
 /** EIP-191 signature scheme */
 export enum SignatureType {
-  PersonalSignature = 'PERSONAL_SIGNATURE'
+  PersonalSignature = "PERSONAL_SIGNATURE",
 }
 
 export type SiweMessageInput = {
-  address: Scalars['String'];
-  chainId: Scalars['Int'];
-  domain: Scalars['String'];
-  expirationTime?: InputMaybe<Scalars['String']>;
-  issuedAt: Scalars['String'];
-  nonce: Scalars['String'];
-  notBefore?: InputMaybe<Scalars['String']>;
-  requestId?: InputMaybe<Scalars['String']>;
-  resources?: InputMaybe<Array<Scalars['String']>>;
-  signature: Scalars['String'];
-  statement: Scalars['String'];
+  address: Scalars["String"];
+  chainId: Scalars["Int"];
+  domain: Scalars["String"];
+  expirationTime?: InputMaybe<Scalars["String"]>;
+  issuedAt: Scalars["String"];
+  nonce: Scalars["String"];
+  notBefore?: InputMaybe<Scalars["String"]>;
+  requestId?: InputMaybe<Scalars["String"]>;
+  resources?: InputMaybe<Array<Scalars["String"]>>;
+  signature: Scalars["String"];
+  statement: Scalars["String"];
   type: SignatureType;
-  uri: Scalars['String'];
-  version: Scalars['String'];
+  uri: Scalars["String"];
+  version: Scalars["String"];
 };
 
 export type SiweRegisterInput = {
-  ens?: InputMaybe<Scalars['String']>;
+  ens?: InputMaybe<Scalars["String"]>;
   message: SiweMessageInput;
 };
 
-export type SnapshotVoterQuest = {
-  __typename?: 'SnapshotVoterQuest';
-  chainId: Scalars['Int'];
-  completedBy: Array<Scalars['String']>;
-  /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
-  expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  proposalId: Scalars['String'];
-  questType: Scalars['String'];
-  rewardAmount: Scalars['Float'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
-  /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
-};
-
 export type SolutionSubmission = {
-  __typename?: 'SolutionSubmission';
-  did: Scalars['String'];
-  id: Scalars['String'];
-  reviewComment?: Maybe<Scalars['String']>;
-  solution: Scalars['String'];
-  status: Scalars['String'];
+  __typename?: "SolutionSubmission";
+  did: Scalars["String"];
+  id: Scalars["String"];
+  reviewComment?: Maybe<Scalars["String"]>;
+  solution: Scalars["String"];
+  status: Scalars["String"];
 };
 
 export type Squad = {
-  __typename?: 'Squad';
+  __typename?: "Squad";
   /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  image?: Maybe<Scalars['String']>;
-  members: Array<Scalars['String']>;
-  name: Scalars['String'];
+  createdAt: Scalars["DateTime"];
+  image?: Maybe<Scalars["String"]>;
+  members: Array<Scalars["String"]>;
+  name: Scalars["String"];
   /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars["DateTime"];
 };
 
 export type SubmitQuestAnswersOutput = {
-  __typename?: 'SubmitQuestAnswersOutput';
-  chainId: Scalars['Int'];
-  completedBy?: Maybe<Array<Scalars['String']>>;
+  __typename?: "SubmitQuestAnswersOutput";
+  chainId: Scalars["Int"];
+  completedBy?: Maybe<Array<Scalars["String"]>>;
   /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  createdBy: Scalars['String'];
-  description: Scalars['String'];
+  createdAt: Scalars["DateTime"];
+  createdBy: Scalars["String"];
+  description: Scalars["String"];
   expandedServerSignatures?: Maybe<Array<ExpandedServerSignature>>;
-  id: Scalars['String'];
-  image: Scalars['String'];
-  isPending?: Maybe<Scalars['Boolean']>;
-  isSuccess: Scalars['Boolean'];
-  name: Scalars['String'];
-  namespace?: Maybe<Scalars['String']>;
-  pathwayId: Scalars['String'];
-  questType: Scalars['String'];
-  rewardAmount: Scalars['Int'];
-  rewardCurrency: Scalars['String'];
-  rewardUserCap: Scalars['Int'];
-  slogan: Scalars['String'];
-  streamId: Scalars['String'];
+  id: Scalars["String"];
+  image: Scalars["String"];
+  isPending?: Maybe<Scalars["Boolean"]>;
+  isSuccess: Scalars["Boolean"];
+  name: Scalars["String"];
+  namespace?: Maybe<Scalars["String"]>;
+  pathwayId: Scalars["String"];
+  questType: Scalars["String"];
+  rewardAmount: Scalars["Int"];
+  rewardCurrency: Scalars["String"];
+  rewardUserCap: Scalars["Int"];
+  slogan: Scalars["String"];
+  streamId: Scalars["String"];
   /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars["DateTime"];
 };
 
 export type Tag = {
-  __typename?: 'Tag';
-  color: Scalars['String'];
+  __typename?: "Tag";
+  color: Scalars["String"];
   /** Identifies the date and time when the object was created. */
-  createdAt: Scalars['DateTime'];
-  id: Scalars['String'];
-  label: Scalars['String'];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["String"];
+  label: Scalars["String"];
   /** Identifies the date and time when the object was last updated. */
-  updatedAt: Scalars['DateTime'];
-  value: Scalars['String'];
+  updatedAt: Scalars["DateTime"];
+  value: Scalars["String"];
 };
 
 export type User = {
-  __typename?: 'User';
-  addresses: Array<Scalars['String']>;
-  did: Scalars['String'];
-  id: Scalars['String'];
+  __typename?: "User";
+  addresses: Array<Scalars["String"]>;
+  did: Scalars["String"];
+  id: Scalars["String"];
 };
 
 export type VerifyPathwayInput = {
-  chainId: Scalars['Int'];
-  id: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  pathwayMinterSignature: Scalars['String'];
+  id: Scalars["String"];
 };
 
 export type VerifyQuestInput = {
-  chainId: Scalars['Int'];
-  id: Scalars['String'];
-  namespace?: InputMaybe<Scalars['String']>;
-  questMinterSignature: Scalars['String'];
-  questType: Scalars['String'];
+  id: Scalars["String"];
+  questType: Scalars["String"];
 };
 
-export type GetAppDidQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAppDidQueryVariables = Exact<{ [key: string]: never }>;
 
-
-export type GetAppDidQuery = { __typename?: 'Query', getAppDID?: string | null };
+export type GetAppDidQuery = {
+  __typename?: "Query";
+  getAppDID?: string | null;
+};
 
 export type CreatePathwayMutationVariables = Exact<{
   input: CreatePathwayInput;
 }>;
 
-
-export type CreatePathwayMutation = { __typename?: 'Mutation', createPathway?: { __typename?: 'Pathway', id: string, title: string, difficulty: PathwayDifficultyEnum, description: string, slogan: string } | null };
+export type CreatePathwayMutation = {
+  __typename?: "Mutation";
+  createPathway?: {
+    __typename?: "Pathway";
+    id: string;
+    title: string;
+    difficulty: PathwayDifficultyEnum;
+    description: string;
+    slogan: string;
+  } | null;
+};
 
 export type ApprovePathwayMutationVariables = Exact<{
   input: ApprovePathwayInput;
 }>;
 
-
-export type ApprovePathwayMutation = { __typename?: 'Mutation', approvePathway?: { __typename?: 'Pathway', id: string, title: string, difficulty: PathwayDifficultyEnum, image: string, description: string, slogan: string, projectStreamId: string, isPending?: boolean | null, expandedServerSignatures?: Array<{ __typename?: 'ExpandedServerSignature', r: string, s: string, v: number }> | null } | null };
+export type ApprovePathwayMutation = {
+  __typename?: "Mutation";
+  approvePathway?: {
+    __typename?: "Pathway";
+    id: string;
+    title: string;
+    difficulty: PathwayDifficultyEnum;
+    image: string;
+    description: string;
+    slogan: string;
+    projectStreamId: string;
+    isPending?: boolean | null;
+    expandedServerSignatures?: Array<{
+      __typename?: "ExpandedServerSignature";
+      r: string;
+      s: string;
+      v: number;
+    }> | null;
+  } | null;
+};
 
 export type VerifyPathwayMutationVariables = Exact<{
   input: VerifyPathwayInput;
 }>;
 
-
-export type VerifyPathwayMutation = { __typename?: 'Mutation', verifyPathway?: { __typename?: 'Pathway', id: string, title: string, difficulty: PathwayDifficultyEnum, image: string, projectStreamId: string, description: string, slogan: string, isPending?: boolean | null, expandedServerSignatures?: Array<{ __typename?: 'ExpandedServerSignature', r: string, s: string, v: number }> | null } | null };
+export type VerifyPathwayMutation = {
+  __typename?: "Mutation";
+  verifyPathway?: {
+    __typename?: "Pathway";
+    id: string;
+    title: string;
+    difficulty: PathwayDifficultyEnum;
+    image: string;
+    projectStreamId: string;
+    description: string;
+    slogan: string;
+    isPending?: boolean | null;
+    expandedServerSignatures?: Array<{
+      __typename?: "ExpandedServerSignature";
+      r: string;
+      s: string;
+      v: number;
+    }> | null;
+  } | null;
+};
 
 export type GetAllPathwaysByProjectIdQueryVariables = Exact<{
-  projectId: Scalars['String'];
+  projectId: Scalars["String"];
 }>;
 
-
-export type GetAllPathwaysByProjectIdQuery = { __typename?: 'Query', getAllPathwaysByProjectId?: { __typename?: 'Project', id: string, streamId: string, pathways: Array<{ __typename?: 'Pathway', id: string, streamId: string, title: string, description: string, slogan: string, image: string, difficulty: PathwayDifficultyEnum, rewardCurrency: string, rewardAmount: number, rewardUserCap: number, isPending?: boolean | null, projectId: string, quizQuests?: Array<{ __typename?: 'QuizQuest', id: string, isPending?: boolean | null, completedBy: Array<string> }> | null, bountyQuests?: Array<{ __typename?: 'BountyQuest', id: string, isPending?: boolean | null, completedBy: Array<string> }> | null }> } | null };
+export type GetAllPathwaysByProjectIdQuery = {
+  __typename?: "Query";
+  getAllPathwaysByProjectId?: {
+    __typename?: "Project";
+    id: string;
+    streamId: string;
+    pathways: Array<{
+      __typename?: "Pathway";
+      id: string;
+      streamId: string;
+      title: string;
+      description: string;
+      slogan: string;
+      image: string;
+      difficulty: PathwayDifficultyEnum;
+      rewardCurrency: string;
+      rewardAmount: number;
+      rewardUserCap: number;
+      isPending?: boolean | null;
+      projectId: string;
+      quizQuests?: Array<{
+        __typename?: "QuizQuest";
+        id: string;
+        isPending?: boolean | null;
+        completedBy: Array<string>;
+      }> | null;
+      bountyQuests?: Array<{
+        __typename?: "BountyQuest";
+        id: string;
+        isPending?: boolean | null;
+        completedBy: Array<string>;
+      }> | null;
+    }>;
+  } | null;
+};
 
 export type GetPathwayByIdQueryVariables = Exact<{
-  pathwayId: Scalars['String'];
+  pathwayId: Scalars["String"];
 }>;
 
-
-export type GetPathwayByIdQuery = { __typename?: 'Query', getPathwayById?: { __typename?: 'Pathway', id: string, streamId: string, title: string, createdBy: string, createdAt: any, difficulty: PathwayDifficultyEnum, description: string, slogan: string, rewardCurrency: string, rewardAmount: number, rewardUserCap: number, image: string, projectId: string, prerequisites?: Array<string> | null, quests?: Array<{ __typename?: 'Quest', id: string, isPending?: boolean | null, completedBy: Array<string> }> | null } | null };
+export type GetPathwayByIdQuery = {
+  __typename?: "Query";
+  getPathwayById?: {
+    __typename?: "Pathway";
+    id: string;
+    streamId: string;
+    title: string;
+    createdBy: string;
+    createdAt: any;
+    difficulty: PathwayDifficultyEnum;
+    description: string;
+    slogan: string;
+    rewardCurrency: string;
+    rewardAmount: number;
+    rewardUserCap: number;
+    image: string;
+    projectId: string;
+    prerequisites?: Array<string> | null;
+    quests?: Array<{
+      __typename?: "Quest";
+      id: string;
+      isPending?: boolean | null;
+      completedBy: Array<string>;
+    }> | null;
+  } | null;
+};
 
 export type ClaimPathwayRewardsMutationVariables = Exact<{
   input: ClaimPathwayRewardsInput;
 }>;
 
-
-export type ClaimPathwayRewardsMutation = { __typename?: 'Mutation', claimPathwayRewards?: { __typename?: 'Pathway', id: string, streamId: string, title: string, rewardCurrency: string, expandedServerSignatures?: Array<{ __typename?: 'ExpandedServerSignature', r: string, s: string, v: number }> | null } | null };
+export type ClaimPathwayRewardsMutation = {
+  __typename?: "Mutation";
+  claimPathwayRewards?: {
+    __typename?: "Pathway";
+    id: string;
+    streamId: string;
+    title: string;
+    rewardCurrency: string;
+    expandedServerSignatures?: Array<{
+      __typename?: "ExpandedServerSignature";
+      r: string;
+      s: string;
+      v: number;
+    }> | null;
+  } | null;
+};
 
 export type CreateProjectMutationVariables = Exact<{
   input: CreateProjectInput;
 }>;
 
-
-export type CreateProjectMutation = { __typename?: 'Mutation', createProject?: { __typename?: 'Project', id: string, tokenUris: Array<string>, isFeatured: boolean } | null };
+export type CreateProjectMutation = {
+  __typename?: "Mutation";
+  createProject?: {
+    __typename?: "Project";
+    id: string;
+    tokenUris: Array<string>;
+    isFeatured: boolean;
+  } | null;
+};
 
 export type EditProjectMutationVariables = Exact<{
   input: EditProjectInput;
 }>;
 
-
-export type EditProjectMutation = { __typename?: 'Mutation', editProject?: { __typename?: 'Project', id: string, name: string, createdBy: string, createdAt: any, description: string, slogan: string, website: string, whitepaper?: string | null, tokenUris: Array<string>, discord?: string | null, twitter?: string | null, github?: string | null, gitbook?: string | null, isFeatured: boolean, logo?: string | null, squads: Array<{ __typename?: 'Squad', name: string, image?: string | null, members: Array<string> }>, tags?: Array<{ __typename?: 'Tag', id: string, label: string, color: string }> | null } | null };
+export type EditProjectMutation = {
+  __typename?: "Mutation";
+  editProject?: {
+    __typename?: "Project";
+    id: string;
+    name: string;
+    createdBy: string;
+    createdAt: any;
+    description: string;
+    slogan: string;
+    website: string;
+    whitepaper?: string | null;
+    tokenUris: Array<string>;
+    discord?: string | null;
+    twitter?: string | null;
+    github?: string | null;
+    gitbook?: string | null;
+    isFeatured: boolean;
+    logo?: string | null;
+    squads: Array<{
+      __typename?: "Squad";
+      name: string;
+      image?: string | null;
+      members: Array<string>;
+    }>;
+    tags?: Array<{
+      __typename?: "Tag";
+      id: string;
+      label: string;
+      color: string;
+    }> | null;
+  } | null;
+};
 
 export type ApproveProjectMutationVariables = Exact<{
   input: ApproveProjectInput;
 }>;
 
+export type ApproveProjectMutation = {
+  __typename?: "Mutation";
+  approveProject?: {
+    __typename?: "Project";
+    id: string;
+    tokenUris: Array<string>;
+    isFeatured: boolean;
+  } | null;
+};
 
-export type ApproveProjectMutation = { __typename?: 'Mutation', approveProject?: { __typename?: 'Project', id: string, tokenUris: Array<string>, isFeatured: boolean } | null };
+export type GetAllProjectsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetAllProjectsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetAllProjectsQuery = { __typename?: 'Query', getAllProjects?: Array<{ __typename?: 'Project', id: string, name: string, createdBy: string, description: string, slogan: string, tokenUris: Array<string>, website: string, whitepaper?: string | null, discord?: string | null, twitter?: string | null, github?: string | null, gitbook?: string | null, createdAt: any, isFeatured: boolean, logo?: string | null, squads: Array<{ __typename?: 'Squad', name: string, image?: string | null, members: Array<string> }>, tags?: Array<{ __typename?: 'Tag', id: string, label: string, color: string }> | null }> | null };
+export type GetAllProjectsQuery = {
+  __typename?: "Query";
+  getAllProjects?: Array<{
+    __typename?: "Project";
+    id: string;
+    name: string;
+    createdBy: string;
+    description: string;
+    slogan: string;
+    tokenUris: Array<string>;
+    website: string;
+    whitepaper?: string | null;
+    discord?: string | null;
+    twitter?: string | null;
+    github?: string | null;
+    gitbook?: string | null;
+    createdAt: any;
+    isFeatured: boolean;
+    logo?: string | null;
+    squads: Array<{
+      __typename?: "Squad";
+      name: string;
+      image?: string | null;
+      members: Array<string>;
+    }>;
+    tags?: Array<{
+      __typename?: "Tag";
+      id: string;
+      label: string;
+      color: string;
+    }> | null;
+  }> | null;
+};
 
 export type GetProjectByIdQueryVariables = Exact<{
-  projectId: Scalars['String'];
+  projectId: Scalars["String"];
 }>;
 
-
-export type GetProjectByIdQuery = { __typename?: 'Query', getProjectById?: { __typename?: 'Project', id: string, streamId: string, name: string, createdBy: string, createdAt: any, description: string, slogan: string, tokenUris: Array<string>, isFeatured: boolean, website: string, whitepaper?: string | null, discord?: string | null, twitter?: string | null, github?: string | null, gitbook?: string | null, logo?: string | null, squads: Array<{ __typename?: 'Squad', name: string, image?: string | null, members: Array<string> }>, tags?: Array<{ __typename?: 'Tag', id: string, label: string, color: string }> | null } | null };
-
-export type CreateSnapshotVoterQuestMutationVariables = Exact<{
-  input: CreateQuestInput;
-}>;
-
-
-export type CreateSnapshotVoterQuestMutation = { __typename?: 'Mutation', createSnapshotVoterQuest?: { __typename?: 'SnapshotVoterQuest', id: string, name: string, description: string, slogan: string, pathwayId: string, proposalId: string } | null };
-
-export type CreateNftOwnerQuestMutationVariables = Exact<{
-  input: CreateQuestInput;
-}>;
-
-
-export type CreateNftOwnerQuestMutation = { __typename?: 'Mutation', createNFTOwnerQuest?: { __typename?: 'NFTOwnerQuest', id: string, name: string, description: string, slogan: string, pathwayId: string, collectionContractAddress: string } | null };
-
-export type CreateGithubContributorQuestMutationVariables = Exact<{
-  input: CreateQuestInput;
-}>;
-
-
-export type CreateGithubContributorQuestMutation = { __typename?: 'Mutation', createGithubContributorQuest?: { __typename?: 'GithubContributorQuest', id: string, name: string, description: string, slogan: string, pathwayId: string, githubOrgId: string } | null };
+export type GetProjectByIdQuery = {
+  __typename?: "Query";
+  getProjectById?: {
+    __typename?: "Project";
+    id: string;
+    streamId: string;
+    name: string;
+    createdBy: string;
+    createdAt: any;
+    description: string;
+    slogan: string;
+    tokenUris: Array<string>;
+    isFeatured: boolean;
+    website: string;
+    whitepaper?: string | null;
+    discord?: string | null;
+    twitter?: string | null;
+    github?: string | null;
+    gitbook?: string | null;
+    logo?: string | null;
+    squads: Array<{
+      __typename?: "Squad";
+      name: string;
+      image?: string | null;
+      members: Array<string>;
+    }>;
+    tags?: Array<{
+      __typename?: "Tag";
+      id: string;
+      label: string;
+      color: string;
+    }> | null;
+  } | null;
+};
 
 export type CreateQuizQuestMutationVariables = Exact<{
   input: CreateQuestInput;
 }>;
 
-
-export type CreateQuizQuestMutation = { __typename?: 'Mutation', createQuizQuest?: { __typename?: 'QuizQuest', id: string, name: string, description: string, slogan: string, pathwayId: string, questions?: Array<{ __typename?: 'QuizQuestion', question: string, choices: Array<string>, answer: string }> | null } | null };
+export type CreateQuizQuestMutation = {
+  __typename?: "Mutation";
+  createQuizQuest?: {
+    __typename?: "QuizQuest";
+    id: string;
+    name: string;
+    description: string;
+    slogan: string;
+    pathwayId: string;
+    questions?: Array<{
+      __typename?: "QuizQuestion";
+      question: string;
+      choices: Array<string>;
+      answer: string;
+    }> | null;
+  } | null;
+};
 
 export type CreateQuestMutationVariables = Exact<{
   input: CreateQuestInput;
 }>;
 
-
-export type CreateQuestMutation = { __typename?: 'Mutation', createQuest?: { __typename?: 'Quest', id: string, name: string, description: string, slogan: string, pathwayId: string } | null };
+export type CreateQuestMutation = {
+  __typename?: "Mutation";
+  createQuest?: {
+    __typename?: "Quest";
+    id: string;
+    name: string;
+    description: string;
+    slogan: string;
+    pathwayId: string;
+  } | null;
+};
 
 export type ApproveQuestMutationVariables = Exact<{
   input: ApproveQuestInput;
 }>;
 
-
-export type ApproveQuestMutation = { __typename?: 'Mutation', approveQuest?: { __typename?: 'Quest', id: string, name: string, description: string, slogan: string, pathwayId: string, image: string, isPending?: boolean | null, expandedServerSignatures?: Array<{ __typename?: 'ExpandedServerSignature', r: string, s: string, v: number }> | null } | null };
+export type ApproveQuestMutation = {
+  __typename?: "Mutation";
+  approveQuest?: {
+    __typename?: "Quest";
+    id: string;
+    name: string;
+    description: string;
+    slogan: string;
+    pathwayId: string;
+    image: string;
+    isPending?: boolean | null;
+    expandedServerSignatures?: Array<{
+      __typename?: "ExpandedServerSignature";
+      r: string;
+      s: string;
+      v: number;
+    }> | null;
+  } | null;
+};
 
 export type ApproveQuestSolutionMutationVariables = Exact<{
   input: ApproveQuestSolutionInput;
 }>;
 
-
-export type ApproveQuestSolutionMutation = { __typename?: 'Mutation', approveQuestSolution?: { __typename?: 'BountyQuest', id: string, name: string, description: string, submissions: Array<{ __typename?: 'SolutionSubmission', id: string, did: string, status: string, reviewComment?: string | null, solution: string }> } | null };
+export type ApproveQuestSolutionMutation = {
+  __typename?: "Mutation";
+  approveQuestSolution?: {
+    __typename?: "BountyQuest";
+    id: string;
+    name: string;
+    description: string;
+    submissions: Array<{
+      __typename?: "SolutionSubmission";
+      id: string;
+      did: string;
+      status: string;
+      reviewComment?: string | null;
+      solution: string;
+    }>;
+  } | null;
+};
 
 export type VerifyQuestMutationVariables = Exact<{
   input: VerifyQuestInput;
 }>;
 
-
-export type VerifyQuestMutation = { __typename?: 'Mutation', verifyQuest?: { __typename?: 'Quest', id: string, name: string, description: string, slogan: string, pathwayId: string, image: string, isPending?: boolean | null, expandedServerSignatures?: Array<{ __typename?: 'ExpandedServerSignature', r: string, s: string, v: number }> | null } | null };
+export type VerifyQuestMutation = {
+  __typename?: "Mutation";
+  verifyQuest?: {
+    __typename?: "Quest";
+    id: string;
+    name: string;
+    description: string;
+    slogan: string;
+    pathwayId: string;
+    image: string;
+    isPending?: boolean | null;
+    expandedServerSignatures?: Array<{
+      __typename?: "ExpandedServerSignature";
+      r: string;
+      s: string;
+      v: number;
+    }> | null;
+  } | null;
+};
 
 export type GetAllQuestsByPathwayIdQueryVariables = Exact<{
-  pathwayId: Scalars['String'];
+  pathwayId: Scalars["String"];
 }>;
 
-
-export type GetAllQuestsByPathwayIdQuery = { __typename?: 'Query', getAllQuestsByPathwayId?: { __typename?: 'Pathway', id: string, streamId: string, title: string, description: string, slogan: string, image: string, difficulty: PathwayDifficultyEnum, rewardCurrency: string, rewardAmount: number, rewardUserCap: number, isPending?: boolean | null, projectId: string, quizQuests?: Array<{ __typename?: 'QuizQuest', id: string, streamId: string, name: string, description: string, slogan: string, pathwayId: string, questType: string, image: string, rewardCurrency: string, rewardAmount: number, rewardUserCap: number, isPending?: boolean | null, completedBy: Array<string> }> | null, bountyQuests?: Array<{ __typename?: 'BountyQuest', id: string, streamId: string, name: string, description: string, slogan: string, pathwayId: string, questType: string, image: string, rewardCurrency: string, rewardAmount: number, rewardUserCap: number, isPending?: boolean | null, completedBy: Array<string> }> | null } | null };
+export type GetAllQuestsByPathwayIdQuery = {
+  __typename?: "Query";
+  getAllQuestsByPathwayId?: {
+    __typename?: "Pathway";
+    id: string;
+    streamId: string;
+    title: string;
+    description: string;
+    slogan: string;
+    image: string;
+    difficulty: PathwayDifficultyEnum;
+    rewardCurrency: string;
+    rewardAmount: number;
+    rewardUserCap: number;
+    isPending?: boolean | null;
+    projectId: string;
+    quizQuests?: Array<{
+      __typename?: "QuizQuest";
+      id: string;
+      streamId: string;
+      name: string;
+      description: string;
+      slogan: string;
+      pathwayId: string;
+      questType: string;
+      image: string;
+      rewardCurrency: string;
+      rewardAmount: number;
+      rewardUserCap: number;
+      isPending?: boolean | null;
+      completedBy: Array<string>;
+    }> | null;
+    bountyQuests?: Array<{
+      __typename?: "BountyQuest";
+      id: string;
+      streamId: string;
+      name: string;
+      description: string;
+      slogan: string;
+      pathwayId: string;
+      questType: string;
+      image: string;
+      rewardCurrency: string;
+      rewardAmount: number;
+      rewardUserCap: number;
+      isPending?: boolean | null;
+      completedBy: Array<string>;
+    }> | null;
+  } | null;
+};
 
 export type GetBountyQuestByIdQueryVariables = Exact<{
   input: GetBountyQuestByIdInput;
 }>;
 
-
-export type GetBountyQuestByIdQuery = { __typename?: 'Query', getBountyQuestById?: { __typename?: 'BountyQuest', id: string, streamId: string, name: string, description: string, slogan: string, pathwayId: string, questType: string, image: string, rewardCurrency: string, rewardAmount: number, rewardUserCap: number, isPending?: boolean | null, completedBy: Array<string>, createdBy: string, isProjectContributor: boolean, submissions: Array<{ __typename?: 'SolutionSubmission', id: string, did: string, status: string, reviewComment?: string | null, solution: string }> } | null };
+export type GetBountyQuestByIdQuery = {
+  __typename?: "Query";
+  getBountyQuestById?: {
+    __typename?: "BountyQuest";
+    id: string;
+    streamId: string;
+    name: string;
+    description: string;
+    slogan: string;
+    pathwayId: string;
+    questType: string;
+    image: string;
+    rewardCurrency: string;
+    rewardAmount: number;
+    rewardUserCap: number;
+    isPending?: boolean | null;
+    completedBy: Array<string>;
+    createdBy: string;
+    isProjectContributor: boolean;
+    submissions: Array<{
+      __typename?: "SolutionSubmission";
+      id: string;
+      did: string;
+      status: string;
+      reviewComment?: string | null;
+      solution: string;
+    }>;
+  } | null;
+};
 
 export type GetQuizQuestByIdQueryVariables = Exact<{
-  questId: Scalars['String'];
+  questId: Scalars["String"];
 }>;
 
-
-export type GetQuizQuestByIdQuery = { __typename?: 'Query', getQuizQuestById?: { __typename?: 'QuizQuest', id: string, streamId: string, name: string, description: string, slogan: string, pathwayId: string, questType: string, image: string, rewardCurrency: string, rewardAmount: number, rewardUserCap: number, isPending?: boolean | null, completedBy: Array<string>, createdBy: string, questions?: Array<{ __typename?: 'QuizQuestion', id: string, question: string, choices: Array<string>, answer: string }> | null } | null };
+export type GetQuizQuestByIdQuery = {
+  __typename?: "Query";
+  getQuizQuestById?: {
+    __typename?: "QuizQuest";
+    id: string;
+    streamId: string;
+    name: string;
+    description: string;
+    slogan: string;
+    pathwayId: string;
+    questType: string;
+    image: string;
+    rewardCurrency: string;
+    rewardAmount: number;
+    rewardUserCap: number;
+    isPending?: boolean | null;
+    completedBy: Array<string>;
+    createdBy: string;
+    questions?: Array<{
+      __typename?: "QuizQuestion";
+      id: string;
+      question: string;
+      choices: Array<string>;
+      answer: string;
+    }> | null;
+  } | null;
+};
 
 export type SubmitQuestAnswersMutationVariables = Exact<{
   input: QuestAnswersSubmitionInput;
 }>;
 
-
-export type SubmitQuestAnswersMutation = { __typename?: 'Mutation', submitQuestAnswers: { __typename?: 'SubmitQuestAnswersOutput', id: string, isSuccess: boolean, streamId: string, name: string, rewardCurrency: string, completedBy?: Array<string> | null, expandedServerSignatures?: Array<{ __typename?: 'ExpandedServerSignature', r: string, s: string, v: number }> | null } };
+export type SubmitQuestAnswersMutation = {
+  __typename?: "Mutation";
+  submitQuestAnswers: {
+    __typename?: "SubmitQuestAnswersOutput";
+    id: string;
+    isSuccess: boolean;
+    streamId: string;
+    name: string;
+    rewardCurrency: string;
+    completedBy?: Array<string> | null;
+    expandedServerSignatures?: Array<{
+      __typename?: "ExpandedServerSignature";
+      r: string;
+      s: string;
+      v: number;
+    }> | null;
+  };
+};
 
 export type SubmitQuestSolutionMutationVariables = Exact<{
   input: QuestSolutionSubmissionInput;
 }>;
 
-
-export type SubmitQuestSolutionMutation = { __typename?: 'Mutation', submitQuestSolution: boolean };
+export type SubmitQuestSolutionMutation = {
+  __typename?: "Mutation";
+  submitQuestSolution: boolean;
+};
 
 export type ClaimQuestRewardsMutationVariables = Exact<{
   input: ClaimQuestRewardsInput;
 }>;
 
+export type ClaimQuestRewardsMutation = {
+  __typename?: "Mutation";
+  claimQuestRewards?: {
+    __typename?: "Quest";
+    id: string;
+    streamId: string;
+    name: string;
+    rewardCurrency: string;
+    completedBy: Array<string>;
+    expandedServerSignatures?: Array<{
+      __typename?: "ExpandedServerSignature";
+      r: string;
+      s: string;
+      v: number;
+    }> | null;
+  } | null;
+};
 
-export type ClaimQuestRewardsMutation = { __typename?: 'Mutation', claimQuestRewards?: { __typename?: 'Quest', id: string, streamId: string, name: string, rewardCurrency: string, completedBy: Array<string>, expandedServerSignatures?: Array<{ __typename?: 'ExpandedServerSignature', r: string, s: string, v: number }> | null } | null };
+export type GetAllTagsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type Unnamed_1_QueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type Unnamed_1_Query = { __typename?: 'Query', getAllTags?: Array<{ __typename?: 'Tag', id: string, label: string, color: string, value: string }> | null };
+export type GetAllTagsQuery = {
+  __typename?: "Query";
+  getAllTags?: Array<{
+    __typename?: "Tag";
+    id: string;
+    label: string;
+    color: string;
+    value: string;
+  }> | null;
+};
 
 export type SignInMutationVariables = Exact<{
   input: SiweRegisterInput;
 }>;
 
+export type SignInMutation = {
+  __typename?: "Mutation";
+  signIn: {
+    __typename?: "User";
+    id: string;
+    did: string;
+    addresses: Array<string>;
+  };
+};
 
-export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'User', id: string, did: string, addresses: Array<string> } };
+export type SignOutMutationVariables = Exact<{ [key: string]: never }>;
 
-export type SignOutMutationVariables = Exact<{ [key: string]: never; }>;
+export type SignOutMutation = { __typename?: "Mutation"; signOut: boolean };
 
+export type MeQueryVariables = Exact<{ [key: string]: never }>;
 
-export type SignOutMutation = { __typename?: 'Mutation', signOut: boolean };
+export type MeQuery = {
+  __typename?: "Query";
+  me?: {
+    __typename?: "User";
+    id: string;
+    did: string;
+    addresses: Array<string>;
+  } | null;
+};
 
-export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetNonceQueryVariables = Exact<{ [key: string]: never }>;
 
-
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, did: string, addresses: Array<string> } | null };
-
-export type GetNonceQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetNonceQuery = { __typename?: 'Query', getNonce?: string | null };
-
+export type GetNonceQuery = { __typename?: "Query"; getNonce?: string | null };
 
 export const GetAppDidDocument = gql`
-    query GetAppDID {
-  getAppDID
-}
-    `;
+  query GetAppDID {
+    getAppDID
+  }
+`;
 
 /**
  * __useGetAppDidQuery__
@@ -900,29 +1184,50 @@ export const GetAppDidDocument = gql`
  *   },
  * });
  */
-export function useGetAppDidQuery(baseOptions?: Apollo.QueryHookOptions<GetAppDidQuery, GetAppDidQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAppDidQuery, GetAppDidQueryVariables>(GetAppDidDocument, options);
-      }
-export function useGetAppDidLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAppDidQuery, GetAppDidQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAppDidQuery, GetAppDidQueryVariables>(GetAppDidDocument, options);
-        }
-export type GetAppDidQueryHookResult = ReturnType<typeof useGetAppDidQuery>;
-export type GetAppDidLazyQueryHookResult = ReturnType<typeof useGetAppDidLazyQuery>;
-export type GetAppDidQueryResult = Apollo.QueryResult<GetAppDidQuery, GetAppDidQueryVariables>;
-export const CreatePathwayDocument = gql`
-    mutation CreatePathway($input: CreatePathwayInput!) {
-  createPathway(input: $input) {
-    id
-    title
-    difficulty
-    description
-    slogan
-  }
+export function useGetAppDidQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetAppDidQuery, GetAppDidQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAppDidQuery, GetAppDidQueryVariables>(
+    GetAppDidDocument,
+    options
+  );
 }
-    `;
-export type CreatePathwayMutationFn = Apollo.MutationFunction<CreatePathwayMutation, CreatePathwayMutationVariables>;
+export function useGetAppDidLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAppDidQuery,
+    GetAppDidQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetAppDidQuery, GetAppDidQueryVariables>(
+    GetAppDidDocument,
+    options
+  );
+}
+export type GetAppDidQueryHookResult = ReturnType<typeof useGetAppDidQuery>;
+export type GetAppDidLazyQueryHookResult = ReturnType<
+  typeof useGetAppDidLazyQuery
+>;
+export type GetAppDidQueryResult = Apollo.QueryResult<
+  GetAppDidQuery,
+  GetAppDidQueryVariables
+>;
+export const CreatePathwayDocument = gql`
+  mutation CreatePathway($input: CreatePathwayInput!) {
+    createPathway(input: $input) {
+      id
+      title
+      difficulty
+      description
+      slogan
+    }
+  }
+`;
+export type CreatePathwayMutationFn = Apollo.MutationFunction<
+  CreatePathwayMutation,
+  CreatePathwayMutationVariables
+>;
 
 /**
  * __useCreatePathwayMutation__
@@ -941,33 +1246,50 @@ export type CreatePathwayMutationFn = Apollo.MutationFunction<CreatePathwayMutat
  *   },
  * });
  */
-export function useCreatePathwayMutation(baseOptions?: Apollo.MutationHookOptions<CreatePathwayMutation, CreatePathwayMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreatePathwayMutation, CreatePathwayMutationVariables>(CreatePathwayDocument, options);
-      }
-export type CreatePathwayMutationHookResult = ReturnType<typeof useCreatePathwayMutation>;
-export type CreatePathwayMutationResult = Apollo.MutationResult<CreatePathwayMutation>;
-export type CreatePathwayMutationOptions = Apollo.BaseMutationOptions<CreatePathwayMutation, CreatePathwayMutationVariables>;
+export function useCreatePathwayMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreatePathwayMutation,
+    CreatePathwayMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreatePathwayMutation,
+    CreatePathwayMutationVariables
+  >(CreatePathwayDocument, options);
+}
+export type CreatePathwayMutationHookResult = ReturnType<
+  typeof useCreatePathwayMutation
+>;
+export type CreatePathwayMutationResult =
+  Apollo.MutationResult<CreatePathwayMutation>;
+export type CreatePathwayMutationOptions = Apollo.BaseMutationOptions<
+  CreatePathwayMutation,
+  CreatePathwayMutationVariables
+>;
 export const ApprovePathwayDocument = gql`
-    mutation ApprovePathway($input: ApprovePathwayInput!) {
-  approvePathway(input: $input) {
-    id
-    title
-    difficulty
-    image
-    description
-    slogan
-    projectStreamId
-    isPending
-    expandedServerSignatures {
-      r
-      s
-      v
+  mutation ApprovePathway($input: ApprovePathwayInput!) {
+    approvePathway(input: $input) {
+      id
+      title
+      difficulty
+      image
+      description
+      slogan
+      projectStreamId
+      isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
-}
-    `;
-export type ApprovePathwayMutationFn = Apollo.MutationFunction<ApprovePathwayMutation, ApprovePathwayMutationVariables>;
+`;
+export type ApprovePathwayMutationFn = Apollo.MutationFunction<
+  ApprovePathwayMutation,
+  ApprovePathwayMutationVariables
+>;
 
 /**
  * __useApprovePathwayMutation__
@@ -986,33 +1308,50 @@ export type ApprovePathwayMutationFn = Apollo.MutationFunction<ApprovePathwayMut
  *   },
  * });
  */
-export function useApprovePathwayMutation(baseOptions?: Apollo.MutationHookOptions<ApprovePathwayMutation, ApprovePathwayMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ApprovePathwayMutation, ApprovePathwayMutationVariables>(ApprovePathwayDocument, options);
-      }
-export type ApprovePathwayMutationHookResult = ReturnType<typeof useApprovePathwayMutation>;
-export type ApprovePathwayMutationResult = Apollo.MutationResult<ApprovePathwayMutation>;
-export type ApprovePathwayMutationOptions = Apollo.BaseMutationOptions<ApprovePathwayMutation, ApprovePathwayMutationVariables>;
+export function useApprovePathwayMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ApprovePathwayMutation,
+    ApprovePathwayMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ApprovePathwayMutation,
+    ApprovePathwayMutationVariables
+  >(ApprovePathwayDocument, options);
+}
+export type ApprovePathwayMutationHookResult = ReturnType<
+  typeof useApprovePathwayMutation
+>;
+export type ApprovePathwayMutationResult =
+  Apollo.MutationResult<ApprovePathwayMutation>;
+export type ApprovePathwayMutationOptions = Apollo.BaseMutationOptions<
+  ApprovePathwayMutation,
+  ApprovePathwayMutationVariables
+>;
 export const VerifyPathwayDocument = gql`
-    mutation VerifyPathway($input: VerifyPathwayInput!) {
-  verifyPathway(input: $input) {
-    id
-    title
-    difficulty
-    image
-    projectStreamId
-    description
-    slogan
-    isPending
-    expandedServerSignatures {
-      r
-      s
-      v
+  mutation VerifyPathway($input: VerifyPathwayInput!) {
+    verifyPathway(input: $input) {
+      id
+      title
+      difficulty
+      image
+      projectStreamId
+      description
+      slogan
+      isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
-}
-    `;
-export type VerifyPathwayMutationFn = Apollo.MutationFunction<VerifyPathwayMutation, VerifyPathwayMutationVariables>;
+`;
+export type VerifyPathwayMutationFn = Apollo.MutationFunction<
+  VerifyPathwayMutation,
+  VerifyPathwayMutationVariables
+>;
 
 /**
  * __useVerifyPathwayMutation__
@@ -1031,45 +1370,59 @@ export type VerifyPathwayMutationFn = Apollo.MutationFunction<VerifyPathwayMutat
  *   },
  * });
  */
-export function useVerifyPathwayMutation(baseOptions?: Apollo.MutationHookOptions<VerifyPathwayMutation, VerifyPathwayMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<VerifyPathwayMutation, VerifyPathwayMutationVariables>(VerifyPathwayDocument, options);
-      }
-export type VerifyPathwayMutationHookResult = ReturnType<typeof useVerifyPathwayMutation>;
-export type VerifyPathwayMutationResult = Apollo.MutationResult<VerifyPathwayMutation>;
-export type VerifyPathwayMutationOptions = Apollo.BaseMutationOptions<VerifyPathwayMutation, VerifyPathwayMutationVariables>;
+export function useVerifyPathwayMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    VerifyPathwayMutation,
+    VerifyPathwayMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    VerifyPathwayMutation,
+    VerifyPathwayMutationVariables
+  >(VerifyPathwayDocument, options);
+}
+export type VerifyPathwayMutationHookResult = ReturnType<
+  typeof useVerifyPathwayMutation
+>;
+export type VerifyPathwayMutationResult =
+  Apollo.MutationResult<VerifyPathwayMutation>;
+export type VerifyPathwayMutationOptions = Apollo.BaseMutationOptions<
+  VerifyPathwayMutation,
+  VerifyPathwayMutationVariables
+>;
 export const GetAllPathwaysByProjectIdDocument = gql`
-    query GetAllPathwaysByProjectId($projectId: String!) {
-  getAllPathwaysByProjectId(projectId: $projectId) {
-    id
-    streamId
-    pathways {
+  query GetAllPathwaysByProjectId($projectId: String!) {
+    getAllPathwaysByProjectId(projectId: $projectId) {
       id
       streamId
-      title
-      description
-      slogan
-      image
-      difficulty
-      rewardCurrency
-      rewardAmount
-      rewardUserCap
-      isPending
-      projectId
-      quizQuests {
+      pathways {
         id
+        streamId
+        title
+        description
+        slogan
+        image
+        difficulty
+        rewardCurrency
+        rewardAmount
+        rewardUserCap
         isPending
-        completedBy
-      }
-      bountyQuests {
-        id
-        isPending
-        completedBy
+        projectId
+        quizQuests {
+          id
+          isPending
+          completedBy
+        }
+        bountyQuests {
+          id
+          isPending
+          completedBy
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetAllPathwaysByProjectIdQuery__
@@ -1087,42 +1440,65 @@ export const GetAllPathwaysByProjectIdDocument = gql`
  *   },
  * });
  */
-export function useGetAllPathwaysByProjectIdQuery(baseOptions: Apollo.QueryHookOptions<GetAllPathwaysByProjectIdQuery, GetAllPathwaysByProjectIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllPathwaysByProjectIdQuery, GetAllPathwaysByProjectIdQueryVariables>(GetAllPathwaysByProjectIdDocument, options);
-      }
-export function useGetAllPathwaysByProjectIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllPathwaysByProjectIdQuery, GetAllPathwaysByProjectIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllPathwaysByProjectIdQuery, GetAllPathwaysByProjectIdQueryVariables>(GetAllPathwaysByProjectIdDocument, options);
-        }
-export type GetAllPathwaysByProjectIdQueryHookResult = ReturnType<typeof useGetAllPathwaysByProjectIdQuery>;
-export type GetAllPathwaysByProjectIdLazyQueryHookResult = ReturnType<typeof useGetAllPathwaysByProjectIdLazyQuery>;
-export type GetAllPathwaysByProjectIdQueryResult = Apollo.QueryResult<GetAllPathwaysByProjectIdQuery, GetAllPathwaysByProjectIdQueryVariables>;
+export function useGetAllPathwaysByProjectIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetAllPathwaysByProjectIdQuery,
+    GetAllPathwaysByProjectIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetAllPathwaysByProjectIdQuery,
+    GetAllPathwaysByProjectIdQueryVariables
+  >(GetAllPathwaysByProjectIdDocument, options);
+}
+export function useGetAllPathwaysByProjectIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllPathwaysByProjectIdQuery,
+    GetAllPathwaysByProjectIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetAllPathwaysByProjectIdQuery,
+    GetAllPathwaysByProjectIdQueryVariables
+  >(GetAllPathwaysByProjectIdDocument, options);
+}
+export type GetAllPathwaysByProjectIdQueryHookResult = ReturnType<
+  typeof useGetAllPathwaysByProjectIdQuery
+>;
+export type GetAllPathwaysByProjectIdLazyQueryHookResult = ReturnType<
+  typeof useGetAllPathwaysByProjectIdLazyQuery
+>;
+export type GetAllPathwaysByProjectIdQueryResult = Apollo.QueryResult<
+  GetAllPathwaysByProjectIdQuery,
+  GetAllPathwaysByProjectIdQueryVariables
+>;
 export const GetPathwayByIdDocument = gql`
-    query GetPathwayById($pathwayId: String!) {
-  getPathwayById(pathwayId: $pathwayId) {
-    id
-    streamId
-    title
-    createdBy
-    createdAt
-    difficulty
-    description
-    slogan
-    rewardCurrency
-    rewardAmount
-    rewardUserCap
-    image
-    projectId
-    prerequisites
-    quests {
+  query GetPathwayById($pathwayId: String!) {
+    getPathwayById(pathwayId: $pathwayId) {
       id
-      isPending
-      completedBy
+      streamId
+      title
+      createdBy
+      createdAt
+      difficulty
+      description
+      slogan
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
+      image
+      projectId
+      prerequisites
+      quests {
+        id
+        isPending
+        completedBy
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetPathwayByIdQuery__
@@ -1140,33 +1516,59 @@ export const GetPathwayByIdDocument = gql`
  *   },
  * });
  */
-export function useGetPathwayByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPathwayByIdQuery, GetPathwayByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPathwayByIdQuery, GetPathwayByIdQueryVariables>(GetPathwayByIdDocument, options);
-      }
-export function useGetPathwayByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPathwayByIdQuery, GetPathwayByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPathwayByIdQuery, GetPathwayByIdQueryVariables>(GetPathwayByIdDocument, options);
-        }
-export type GetPathwayByIdQueryHookResult = ReturnType<typeof useGetPathwayByIdQuery>;
-export type GetPathwayByIdLazyQueryHookResult = ReturnType<typeof useGetPathwayByIdLazyQuery>;
-export type GetPathwayByIdQueryResult = Apollo.QueryResult<GetPathwayByIdQuery, GetPathwayByIdQueryVariables>;
+export function useGetPathwayByIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetPathwayByIdQuery,
+    GetPathwayByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetPathwayByIdQuery, GetPathwayByIdQueryVariables>(
+    GetPathwayByIdDocument,
+    options
+  );
+}
+export function useGetPathwayByIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetPathwayByIdQuery,
+    GetPathwayByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetPathwayByIdQuery, GetPathwayByIdQueryVariables>(
+    GetPathwayByIdDocument,
+    options
+  );
+}
+export type GetPathwayByIdQueryHookResult = ReturnType<
+  typeof useGetPathwayByIdQuery
+>;
+export type GetPathwayByIdLazyQueryHookResult = ReturnType<
+  typeof useGetPathwayByIdLazyQuery
+>;
+export type GetPathwayByIdQueryResult = Apollo.QueryResult<
+  GetPathwayByIdQuery,
+  GetPathwayByIdQueryVariables
+>;
 export const ClaimPathwayRewardsDocument = gql`
-    mutation ClaimPathwayRewards($input: ClaimPathwayRewardsInput!) {
-  claimPathwayRewards(input: $input) {
-    id
-    streamId
-    title
-    rewardCurrency
-    expandedServerSignatures {
-      r
-      s
-      v
+  mutation ClaimPathwayRewards($input: ClaimPathwayRewardsInput!) {
+    claimPathwayRewards(input: $input) {
+      id
+      streamId
+      title
+      rewardCurrency
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
-}
-    `;
-export type ClaimPathwayRewardsMutationFn = Apollo.MutationFunction<ClaimPathwayRewardsMutation, ClaimPathwayRewardsMutationVariables>;
+`;
+export type ClaimPathwayRewardsMutationFn = Apollo.MutationFunction<
+  ClaimPathwayRewardsMutation,
+  ClaimPathwayRewardsMutationVariables
+>;
 
 /**
  * __useClaimPathwayRewardsMutation__
@@ -1185,23 +1587,40 @@ export type ClaimPathwayRewardsMutationFn = Apollo.MutationFunction<ClaimPathway
  *   },
  * });
  */
-export function useClaimPathwayRewardsMutation(baseOptions?: Apollo.MutationHookOptions<ClaimPathwayRewardsMutation, ClaimPathwayRewardsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ClaimPathwayRewardsMutation, ClaimPathwayRewardsMutationVariables>(ClaimPathwayRewardsDocument, options);
-      }
-export type ClaimPathwayRewardsMutationHookResult = ReturnType<typeof useClaimPathwayRewardsMutation>;
-export type ClaimPathwayRewardsMutationResult = Apollo.MutationResult<ClaimPathwayRewardsMutation>;
-export type ClaimPathwayRewardsMutationOptions = Apollo.BaseMutationOptions<ClaimPathwayRewardsMutation, ClaimPathwayRewardsMutationVariables>;
-export const CreateProjectDocument = gql`
-    mutation CreateProject($input: CreateProjectInput!) {
-  createProject(input: $input) {
-    id
-    tokenUris
-    isFeatured
-  }
+export function useClaimPathwayRewardsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ClaimPathwayRewardsMutation,
+    ClaimPathwayRewardsMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ClaimPathwayRewardsMutation,
+    ClaimPathwayRewardsMutationVariables
+  >(ClaimPathwayRewardsDocument, options);
 }
-    `;
-export type CreateProjectMutationFn = Apollo.MutationFunction<CreateProjectMutation, CreateProjectMutationVariables>;
+export type ClaimPathwayRewardsMutationHookResult = ReturnType<
+  typeof useClaimPathwayRewardsMutation
+>;
+export type ClaimPathwayRewardsMutationResult =
+  Apollo.MutationResult<ClaimPathwayRewardsMutation>;
+export type ClaimPathwayRewardsMutationOptions = Apollo.BaseMutationOptions<
+  ClaimPathwayRewardsMutation,
+  ClaimPathwayRewardsMutationVariables
+>;
+export const CreateProjectDocument = gql`
+  mutation CreateProject($input: CreateProjectInput!) {
+    createProject(input: $input) {
+      id
+      tokenUris
+      isFeatured
+    }
+  }
+`;
+export type CreateProjectMutationFn = Apollo.MutationFunction<
+  CreateProjectMutation,
+  CreateProjectMutationVariables
+>;
 
 /**
  * __useCreateProjectMutation__
@@ -1220,45 +1639,62 @@ export type CreateProjectMutationFn = Apollo.MutationFunction<CreateProjectMutat
  *   },
  * });
  */
-export function useCreateProjectMutation(baseOptions?: Apollo.MutationHookOptions<CreateProjectMutation, CreateProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, options);
-      }
-export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
-export type CreateProjectMutationResult = Apollo.MutationResult<CreateProjectMutation>;
-export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export function useCreateProjectMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateProjectMutation,
+    CreateProjectMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateProjectMutation,
+    CreateProjectMutationVariables
+  >(CreateProjectDocument, options);
+}
+export type CreateProjectMutationHookResult = ReturnType<
+  typeof useCreateProjectMutation
+>;
+export type CreateProjectMutationResult =
+  Apollo.MutationResult<CreateProjectMutation>;
+export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<
+  CreateProjectMutation,
+  CreateProjectMutationVariables
+>;
 export const EditProjectDocument = gql`
-    mutation EditProject($input: EditProjectInput!) {
-  editProject(input: $input) {
-    id
-    name
-    createdBy
-    createdAt
-    description
-    slogan
-    website
-    whitepaper
-    tokenUris
-    discord
-    twitter
-    github
-    gitbook
-    isFeatured
-    logo
-    squads {
-      name
-      image
-      members
-    }
-    tags {
+  mutation EditProject($input: EditProjectInput!) {
+    editProject(input: $input) {
       id
-      label
-      color
+      name
+      createdBy
+      createdAt
+      description
+      slogan
+      website
+      whitepaper
+      tokenUris
+      discord
+      twitter
+      github
+      gitbook
+      isFeatured
+      logo
+      squads {
+        name
+        image
+        members
+      }
+      tags {
+        id
+        label
+        color
+      }
     }
   }
-}
-    `;
-export type EditProjectMutationFn = Apollo.MutationFunction<EditProjectMutation, EditProjectMutationVariables>;
+`;
+export type EditProjectMutationFn = Apollo.MutationFunction<
+  EditProjectMutation,
+  EditProjectMutationVariables
+>;
 
 /**
  * __useEditProjectMutation__
@@ -1277,23 +1713,40 @@ export type EditProjectMutationFn = Apollo.MutationFunction<EditProjectMutation,
  *   },
  * });
  */
-export function useEditProjectMutation(baseOptions?: Apollo.MutationHookOptions<EditProjectMutation, EditProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<EditProjectMutation, EditProjectMutationVariables>(EditProjectDocument, options);
-      }
-export type EditProjectMutationHookResult = ReturnType<typeof useEditProjectMutation>;
-export type EditProjectMutationResult = Apollo.MutationResult<EditProjectMutation>;
-export type EditProjectMutationOptions = Apollo.BaseMutationOptions<EditProjectMutation, EditProjectMutationVariables>;
-export const ApproveProjectDocument = gql`
-    mutation ApproveProject($input: ApproveProjectInput!) {
-  approveProject(input: $input) {
-    id
-    tokenUris
-    isFeatured
-  }
+export function useEditProjectMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    EditProjectMutation,
+    EditProjectMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<EditProjectMutation, EditProjectMutationVariables>(
+    EditProjectDocument,
+    options
+  );
 }
-    `;
-export type ApproveProjectMutationFn = Apollo.MutationFunction<ApproveProjectMutation, ApproveProjectMutationVariables>;
+export type EditProjectMutationHookResult = ReturnType<
+  typeof useEditProjectMutation
+>;
+export type EditProjectMutationResult =
+  Apollo.MutationResult<EditProjectMutation>;
+export type EditProjectMutationOptions = Apollo.BaseMutationOptions<
+  EditProjectMutation,
+  EditProjectMutationVariables
+>;
+export const ApproveProjectDocument = gql`
+  mutation ApproveProject($input: ApproveProjectInput!) {
+    approveProject(input: $input) {
+      id
+      tokenUris
+      isFeatured
+    }
+  }
+`;
+export type ApproveProjectMutationFn = Apollo.MutationFunction<
+  ApproveProjectMutation,
+  ApproveProjectMutationVariables
+>;
 
 /**
  * __useApproveProjectMutation__
@@ -1312,44 +1765,58 @@ export type ApproveProjectMutationFn = Apollo.MutationFunction<ApproveProjectMut
  *   },
  * });
  */
-export function useApproveProjectMutation(baseOptions?: Apollo.MutationHookOptions<ApproveProjectMutation, ApproveProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ApproveProjectMutation, ApproveProjectMutationVariables>(ApproveProjectDocument, options);
-      }
-export type ApproveProjectMutationHookResult = ReturnType<typeof useApproveProjectMutation>;
-export type ApproveProjectMutationResult = Apollo.MutationResult<ApproveProjectMutation>;
-export type ApproveProjectMutationOptions = Apollo.BaseMutationOptions<ApproveProjectMutation, ApproveProjectMutationVariables>;
+export function useApproveProjectMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ApproveProjectMutation,
+    ApproveProjectMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ApproveProjectMutation,
+    ApproveProjectMutationVariables
+  >(ApproveProjectDocument, options);
+}
+export type ApproveProjectMutationHookResult = ReturnType<
+  typeof useApproveProjectMutation
+>;
+export type ApproveProjectMutationResult =
+  Apollo.MutationResult<ApproveProjectMutation>;
+export type ApproveProjectMutationOptions = Apollo.BaseMutationOptions<
+  ApproveProjectMutation,
+  ApproveProjectMutationVariables
+>;
 export const GetAllProjectsDocument = gql`
-    query getAllProjects {
-  getAllProjects {
-    id
-    name
-    createdBy
-    description
-    slogan
-    tokenUris
-    website
-    whitepaper
-    discord
-    twitter
-    github
-    gitbook
-    createdAt
-    isFeatured
-    logo
-    squads {
-      name
-      image
-      members
-    }
-    tags {
+  query GetAllProjects {
+    getAllProjects {
       id
-      label
-      color
+      name
+      createdBy
+      description
+      slogan
+      tokenUris
+      website
+      whitepaper
+      discord
+      twitter
+      github
+      gitbook
+      createdAt
+      isFeatured
+      logo
+      squads {
+        name
+        image
+        members
+      }
+      tags {
+        id
+        label
+        color
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetAllProjectsQuery__
@@ -1366,49 +1833,72 @@ export const GetAllProjectsDocument = gql`
  *   },
  * });
  */
-export function useGetAllProjectsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllProjectsQuery, GetAllProjectsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllProjectsQuery, GetAllProjectsQueryVariables>(GetAllProjectsDocument, options);
-      }
-export function useGetAllProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllProjectsQuery, GetAllProjectsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllProjectsQuery, GetAllProjectsQueryVariables>(GetAllProjectsDocument, options);
-        }
-export type GetAllProjectsQueryHookResult = ReturnType<typeof useGetAllProjectsQuery>;
-export type GetAllProjectsLazyQueryHookResult = ReturnType<typeof useGetAllProjectsLazyQuery>;
-export type GetAllProjectsQueryResult = Apollo.QueryResult<GetAllProjectsQuery, GetAllProjectsQueryVariables>;
+export function useGetAllProjectsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAllProjectsQuery,
+    GetAllProjectsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAllProjectsQuery, GetAllProjectsQueryVariables>(
+    GetAllProjectsDocument,
+    options
+  );
+}
+export function useGetAllProjectsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllProjectsQuery,
+    GetAllProjectsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetAllProjectsQuery, GetAllProjectsQueryVariables>(
+    GetAllProjectsDocument,
+    options
+  );
+}
+export type GetAllProjectsQueryHookResult = ReturnType<
+  typeof useGetAllProjectsQuery
+>;
+export type GetAllProjectsLazyQueryHookResult = ReturnType<
+  typeof useGetAllProjectsLazyQuery
+>;
+export type GetAllProjectsQueryResult = Apollo.QueryResult<
+  GetAllProjectsQuery,
+  GetAllProjectsQueryVariables
+>;
 export const GetProjectByIdDocument = gql`
-    query GetProjectById($projectId: String!) {
-  getProjectById(projectId: $projectId) {
-    id
-    streamId
-    name
-    createdBy
-    createdAt
-    description
-    slogan
-    tokenUris
-    isFeatured
-    website
-    whitepaper
-    discord
-    twitter
-    github
-    gitbook
-    logo
-    squads {
-      name
-      image
-      members
-    }
-    tags {
+  query GetProjectById($projectId: String!) {
+    getProjectById(projectId: $projectId) {
       id
-      label
-      color
+      streamId
+      name
+      createdBy
+      createdAt
+      description
+      slogan
+      tokenUris
+      isFeatured
+      website
+      whitepaper
+      discord
+      twitter
+      github
+      gitbook
+      logo
+      squads {
+        name
+        image
+        members
+      }
+      tags {
+        id
+        label
+        color
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetProjectByIdQuery__
@@ -1426,148 +1916,60 @@ export const GetProjectByIdDocument = gql`
  *   },
  * });
  */
-export function useGetProjectByIdQuery(baseOptions: Apollo.QueryHookOptions<GetProjectByIdQuery, GetProjectByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProjectByIdQuery, GetProjectByIdQueryVariables>(GetProjectByIdDocument, options);
-      }
-export function useGetProjectByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectByIdQuery, GetProjectByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProjectByIdQuery, GetProjectByIdQueryVariables>(GetProjectByIdDocument, options);
-        }
-export type GetProjectByIdQueryHookResult = ReturnType<typeof useGetProjectByIdQuery>;
-export type GetProjectByIdLazyQueryHookResult = ReturnType<typeof useGetProjectByIdLazyQuery>;
-export type GetProjectByIdQueryResult = Apollo.QueryResult<GetProjectByIdQuery, GetProjectByIdQueryVariables>;
-export const CreateSnapshotVoterQuestDocument = gql`
-    mutation CreateSnapshotVoterQuest($input: CreateQuestInput!) {
-  createSnapshotVoterQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-    proposalId
-  }
+export function useGetProjectByIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetProjectByIdQuery,
+    GetProjectByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetProjectByIdQuery, GetProjectByIdQueryVariables>(
+    GetProjectByIdDocument,
+    options
+  );
 }
-    `;
-export type CreateSnapshotVoterQuestMutationFn = Apollo.MutationFunction<CreateSnapshotVoterQuestMutation, CreateSnapshotVoterQuestMutationVariables>;
-
-/**
- * __useCreateSnapshotVoterQuestMutation__
- *
- * To run a mutation, you first call `useCreateSnapshotVoterQuestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateSnapshotVoterQuestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createSnapshotVoterQuestMutation, { data, loading, error }] = useCreateSnapshotVoterQuestMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateSnapshotVoterQuestMutation(baseOptions?: Apollo.MutationHookOptions<CreateSnapshotVoterQuestMutation, CreateSnapshotVoterQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateSnapshotVoterQuestMutation, CreateSnapshotVoterQuestMutationVariables>(CreateSnapshotVoterQuestDocument, options);
-      }
-export type CreateSnapshotVoterQuestMutationHookResult = ReturnType<typeof useCreateSnapshotVoterQuestMutation>;
-export type CreateSnapshotVoterQuestMutationResult = Apollo.MutationResult<CreateSnapshotVoterQuestMutation>;
-export type CreateSnapshotVoterQuestMutationOptions = Apollo.BaseMutationOptions<CreateSnapshotVoterQuestMutation, CreateSnapshotVoterQuestMutationVariables>;
-export const CreateNftOwnerQuestDocument = gql`
-    mutation CreateNFTOwnerQuest($input: CreateQuestInput!) {
-  createNFTOwnerQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-    collectionContractAddress
-  }
+export function useGetProjectByIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetProjectByIdQuery,
+    GetProjectByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetProjectByIdQuery, GetProjectByIdQueryVariables>(
+    GetProjectByIdDocument,
+    options
+  );
 }
-    `;
-export type CreateNftOwnerQuestMutationFn = Apollo.MutationFunction<CreateNftOwnerQuestMutation, CreateNftOwnerQuestMutationVariables>;
-
-/**
- * __useCreateNftOwnerQuestMutation__
- *
- * To run a mutation, you first call `useCreateNftOwnerQuestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateNftOwnerQuestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createNftOwnerQuestMutation, { data, loading, error }] = useCreateNftOwnerQuestMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateNftOwnerQuestMutation(baseOptions?: Apollo.MutationHookOptions<CreateNftOwnerQuestMutation, CreateNftOwnerQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateNftOwnerQuestMutation, CreateNftOwnerQuestMutationVariables>(CreateNftOwnerQuestDocument, options);
-      }
-export type CreateNftOwnerQuestMutationHookResult = ReturnType<typeof useCreateNftOwnerQuestMutation>;
-export type CreateNftOwnerQuestMutationResult = Apollo.MutationResult<CreateNftOwnerQuestMutation>;
-export type CreateNftOwnerQuestMutationOptions = Apollo.BaseMutationOptions<CreateNftOwnerQuestMutation, CreateNftOwnerQuestMutationVariables>;
-export const CreateGithubContributorQuestDocument = gql`
-    mutation CreateGithubContributorQuest($input: CreateQuestInput!) {
-  createGithubContributorQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-    githubOrgId
-  }
-}
-    `;
-export type CreateGithubContributorQuestMutationFn = Apollo.MutationFunction<CreateGithubContributorQuestMutation, CreateGithubContributorQuestMutationVariables>;
-
-/**
- * __useCreateGithubContributorQuestMutation__
- *
- * To run a mutation, you first call `useCreateGithubContributorQuestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateGithubContributorQuestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createGithubContributorQuestMutation, { data, loading, error }] = useCreateGithubContributorQuestMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateGithubContributorQuestMutation(baseOptions?: Apollo.MutationHookOptions<CreateGithubContributorQuestMutation, CreateGithubContributorQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateGithubContributorQuestMutation, CreateGithubContributorQuestMutationVariables>(CreateGithubContributorQuestDocument, options);
-      }
-export type CreateGithubContributorQuestMutationHookResult = ReturnType<typeof useCreateGithubContributorQuestMutation>;
-export type CreateGithubContributorQuestMutationResult = Apollo.MutationResult<CreateGithubContributorQuestMutation>;
-export type CreateGithubContributorQuestMutationOptions = Apollo.BaseMutationOptions<CreateGithubContributorQuestMutation, CreateGithubContributorQuestMutationVariables>;
+export type GetProjectByIdQueryHookResult = ReturnType<
+  typeof useGetProjectByIdQuery
+>;
+export type GetProjectByIdLazyQueryHookResult = ReturnType<
+  typeof useGetProjectByIdLazyQuery
+>;
+export type GetProjectByIdQueryResult = Apollo.QueryResult<
+  GetProjectByIdQuery,
+  GetProjectByIdQueryVariables
+>;
 export const CreateQuizQuestDocument = gql`
-    mutation CreateQuizQuest($input: CreateQuestInput!) {
-  createQuizQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-    questions {
-      question
-      choices
-      answer
+  mutation CreateQuizQuest($input: CreateQuestInput!) {
+    createQuizQuest(input: $input) {
+      id
+      name
+      description
+      slogan
+      pathwayId
+      questions {
+        question
+        choices
+        answer
+      }
     }
   }
-}
-    `;
-export type CreateQuizQuestMutationFn = Apollo.MutationFunction<CreateQuizQuestMutation, CreateQuizQuestMutationVariables>;
+`;
+export type CreateQuizQuestMutationFn = Apollo.MutationFunction<
+  CreateQuizQuestMutation,
+  CreateQuizQuestMutationVariables
+>;
 
 /**
  * __useCreateQuizQuestMutation__
@@ -1586,25 +1988,42 @@ export type CreateQuizQuestMutationFn = Apollo.MutationFunction<CreateQuizQuestM
  *   },
  * });
  */
-export function useCreateQuizQuestMutation(baseOptions?: Apollo.MutationHookOptions<CreateQuizQuestMutation, CreateQuizQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateQuizQuestMutation, CreateQuizQuestMutationVariables>(CreateQuizQuestDocument, options);
-      }
-export type CreateQuizQuestMutationHookResult = ReturnType<typeof useCreateQuizQuestMutation>;
-export type CreateQuizQuestMutationResult = Apollo.MutationResult<CreateQuizQuestMutation>;
-export type CreateQuizQuestMutationOptions = Apollo.BaseMutationOptions<CreateQuizQuestMutation, CreateQuizQuestMutationVariables>;
-export const CreateQuestDocument = gql`
-    mutation CreateQuest($input: CreateQuestInput!) {
-  createQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-  }
+export function useCreateQuizQuestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateQuizQuestMutation,
+    CreateQuizQuestMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateQuizQuestMutation,
+    CreateQuizQuestMutationVariables
+  >(CreateQuizQuestDocument, options);
 }
-    `;
-export type CreateQuestMutationFn = Apollo.MutationFunction<CreateQuestMutation, CreateQuestMutationVariables>;
+export type CreateQuizQuestMutationHookResult = ReturnType<
+  typeof useCreateQuizQuestMutation
+>;
+export type CreateQuizQuestMutationResult =
+  Apollo.MutationResult<CreateQuizQuestMutation>;
+export type CreateQuizQuestMutationOptions = Apollo.BaseMutationOptions<
+  CreateQuizQuestMutation,
+  CreateQuizQuestMutationVariables
+>;
+export const CreateQuestDocument = gql`
+  mutation CreateQuest($input: CreateQuestInput!) {
+    createQuest(input: $input) {
+      id
+      name
+      description
+      slogan
+      pathwayId
+    }
+  }
+`;
+export type CreateQuestMutationFn = Apollo.MutationFunction<
+  CreateQuestMutation,
+  CreateQuestMutationVariables
+>;
 
 /**
  * __useCreateQuestMutation__
@@ -1623,32 +2042,49 @@ export type CreateQuestMutationFn = Apollo.MutationFunction<CreateQuestMutation,
  *   },
  * });
  */
-export function useCreateQuestMutation(baseOptions?: Apollo.MutationHookOptions<CreateQuestMutation, CreateQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateQuestMutation, CreateQuestMutationVariables>(CreateQuestDocument, options);
-      }
-export type CreateQuestMutationHookResult = ReturnType<typeof useCreateQuestMutation>;
-export type CreateQuestMutationResult = Apollo.MutationResult<CreateQuestMutation>;
-export type CreateQuestMutationOptions = Apollo.BaseMutationOptions<CreateQuestMutation, CreateQuestMutationVariables>;
+export function useCreateQuestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateQuestMutation,
+    CreateQuestMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateQuestMutation, CreateQuestMutationVariables>(
+    CreateQuestDocument,
+    options
+  );
+}
+export type CreateQuestMutationHookResult = ReturnType<
+  typeof useCreateQuestMutation
+>;
+export type CreateQuestMutationResult =
+  Apollo.MutationResult<CreateQuestMutation>;
+export type CreateQuestMutationOptions = Apollo.BaseMutationOptions<
+  CreateQuestMutation,
+  CreateQuestMutationVariables
+>;
 export const ApproveQuestDocument = gql`
-    mutation ApproveQuest($input: ApproveQuestInput!) {
-  approveQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-    image
-    isPending
-    expandedServerSignatures {
-      r
-      s
-      v
+  mutation ApproveQuest($input: ApproveQuestInput!) {
+    approveQuest(input: $input) {
+      id
+      name
+      description
+      slogan
+      pathwayId
+      image
+      isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
-}
-    `;
-export type ApproveQuestMutationFn = Apollo.MutationFunction<ApproveQuestMutation, ApproveQuestMutationVariables>;
+`;
+export type ApproveQuestMutationFn = Apollo.MutationFunction<
+  ApproveQuestMutation,
+  ApproveQuestMutationVariables
+>;
 
 /**
  * __useApproveQuestMutation__
@@ -1667,30 +2103,47 @@ export type ApproveQuestMutationFn = Apollo.MutationFunction<ApproveQuestMutatio
  *   },
  * });
  */
-export function useApproveQuestMutation(baseOptions?: Apollo.MutationHookOptions<ApproveQuestMutation, ApproveQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ApproveQuestMutation, ApproveQuestMutationVariables>(ApproveQuestDocument, options);
-      }
-export type ApproveQuestMutationHookResult = ReturnType<typeof useApproveQuestMutation>;
-export type ApproveQuestMutationResult = Apollo.MutationResult<ApproveQuestMutation>;
-export type ApproveQuestMutationOptions = Apollo.BaseMutationOptions<ApproveQuestMutation, ApproveQuestMutationVariables>;
+export function useApproveQuestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ApproveQuestMutation,
+    ApproveQuestMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ApproveQuestMutation,
+    ApproveQuestMutationVariables
+  >(ApproveQuestDocument, options);
+}
+export type ApproveQuestMutationHookResult = ReturnType<
+  typeof useApproveQuestMutation
+>;
+export type ApproveQuestMutationResult =
+  Apollo.MutationResult<ApproveQuestMutation>;
+export type ApproveQuestMutationOptions = Apollo.BaseMutationOptions<
+  ApproveQuestMutation,
+  ApproveQuestMutationVariables
+>;
 export const ApproveQuestSolutionDocument = gql`
-    mutation ApproveQuestSolution($input: ApproveQuestSolutionInput!) {
-  approveQuestSolution(input: $input) {
-    id
-    name
-    description
-    submissions {
+  mutation ApproveQuestSolution($input: ApproveQuestSolutionInput!) {
+    approveQuestSolution(input: $input) {
       id
-      did
-      status
-      reviewComment
-      solution
+      name
+      description
+      submissions {
+        id
+        did
+        status
+        reviewComment
+        solution
+      }
     }
   }
-}
-    `;
-export type ApproveQuestSolutionMutationFn = Apollo.MutationFunction<ApproveQuestSolutionMutation, ApproveQuestSolutionMutationVariables>;
+`;
+export type ApproveQuestSolutionMutationFn = Apollo.MutationFunction<
+  ApproveQuestSolutionMutation,
+  ApproveQuestSolutionMutationVariables
+>;
 
 /**
  * __useApproveQuestSolutionMutation__
@@ -1709,32 +2162,49 @@ export type ApproveQuestSolutionMutationFn = Apollo.MutationFunction<ApproveQues
  *   },
  * });
  */
-export function useApproveQuestSolutionMutation(baseOptions?: Apollo.MutationHookOptions<ApproveQuestSolutionMutation, ApproveQuestSolutionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ApproveQuestSolutionMutation, ApproveQuestSolutionMutationVariables>(ApproveQuestSolutionDocument, options);
-      }
-export type ApproveQuestSolutionMutationHookResult = ReturnType<typeof useApproveQuestSolutionMutation>;
-export type ApproveQuestSolutionMutationResult = Apollo.MutationResult<ApproveQuestSolutionMutation>;
-export type ApproveQuestSolutionMutationOptions = Apollo.BaseMutationOptions<ApproveQuestSolutionMutation, ApproveQuestSolutionMutationVariables>;
+export function useApproveQuestSolutionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ApproveQuestSolutionMutation,
+    ApproveQuestSolutionMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ApproveQuestSolutionMutation,
+    ApproveQuestSolutionMutationVariables
+  >(ApproveQuestSolutionDocument, options);
+}
+export type ApproveQuestSolutionMutationHookResult = ReturnType<
+  typeof useApproveQuestSolutionMutation
+>;
+export type ApproveQuestSolutionMutationResult =
+  Apollo.MutationResult<ApproveQuestSolutionMutation>;
+export type ApproveQuestSolutionMutationOptions = Apollo.BaseMutationOptions<
+  ApproveQuestSolutionMutation,
+  ApproveQuestSolutionMutationVariables
+>;
 export const VerifyQuestDocument = gql`
-    mutation VerifyQuest($input: VerifyQuestInput!) {
-  verifyQuest(input: $input) {
-    id
-    name
-    description
-    slogan
-    pathwayId
-    image
-    isPending
-    expandedServerSignatures {
-      r
-      s
-      v
+  mutation VerifyQuest($input: VerifyQuestInput!) {
+    verifyQuest(input: $input) {
+      id
+      name
+      description
+      slogan
+      pathwayId
+      image
+      isPending
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
-}
-    `;
-export type VerifyQuestMutationFn = Apollo.MutationFunction<VerifyQuestMutation, VerifyQuestMutationVariables>;
+`;
+export type VerifyQuestMutationFn = Apollo.MutationFunction<
+  VerifyQuestMutation,
+  VerifyQuestMutationVariables
+>;
 
 /**
  * __useVerifyQuestMutation__
@@ -1753,61 +2223,75 @@ export type VerifyQuestMutationFn = Apollo.MutationFunction<VerifyQuestMutation,
  *   },
  * });
  */
-export function useVerifyQuestMutation(baseOptions?: Apollo.MutationHookOptions<VerifyQuestMutation, VerifyQuestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<VerifyQuestMutation, VerifyQuestMutationVariables>(VerifyQuestDocument, options);
-      }
-export type VerifyQuestMutationHookResult = ReturnType<typeof useVerifyQuestMutation>;
-export type VerifyQuestMutationResult = Apollo.MutationResult<VerifyQuestMutation>;
-export type VerifyQuestMutationOptions = Apollo.BaseMutationOptions<VerifyQuestMutation, VerifyQuestMutationVariables>;
+export function useVerifyQuestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    VerifyQuestMutation,
+    VerifyQuestMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<VerifyQuestMutation, VerifyQuestMutationVariables>(
+    VerifyQuestDocument,
+    options
+  );
+}
+export type VerifyQuestMutationHookResult = ReturnType<
+  typeof useVerifyQuestMutation
+>;
+export type VerifyQuestMutationResult =
+  Apollo.MutationResult<VerifyQuestMutation>;
+export type VerifyQuestMutationOptions = Apollo.BaseMutationOptions<
+  VerifyQuestMutation,
+  VerifyQuestMutationVariables
+>;
 export const GetAllQuestsByPathwayIdDocument = gql`
-    query GetAllQuestsByPathwayId($pathwayId: String!) {
-  getAllQuestsByPathwayId(pathwayId: $pathwayId) {
-    id
-    streamId
-    title
-    description
-    slogan
-    image
-    difficulty
-    rewardCurrency
-    rewardAmount
-    rewardUserCap
-    isPending
-    projectId
-    quizQuests {
+  query GetAllQuestsByPathwayId($pathwayId: String!) {
+    getAllQuestsByPathwayId(pathwayId: $pathwayId) {
       id
       streamId
-      name
+      title
       description
       slogan
-      pathwayId
-      questType
       image
+      difficulty
       rewardCurrency
       rewardAmount
       rewardUserCap
       isPending
-      completedBy
-    }
-    bountyQuests {
-      id
-      streamId
-      name
-      description
-      slogan
-      pathwayId
-      questType
-      image
-      rewardCurrency
-      rewardAmount
-      rewardUserCap
-      isPending
-      completedBy
+      projectId
+      quizQuests {
+        id
+        streamId
+        name
+        description
+        slogan
+        pathwayId
+        questType
+        image
+        rewardCurrency
+        rewardAmount
+        rewardUserCap
+        isPending
+        completedBy
+      }
+      bountyQuests {
+        id
+        streamId
+        name
+        description
+        slogan
+        pathwayId
+        questType
+        image
+        rewardCurrency
+        rewardAmount
+        rewardUserCap
+        isPending
+        completedBy
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetAllQuestsByPathwayIdQuery__
@@ -1825,45 +2309,68 @@ export const GetAllQuestsByPathwayIdDocument = gql`
  *   },
  * });
  */
-export function useGetAllQuestsByPathwayIdQuery(baseOptions: Apollo.QueryHookOptions<GetAllQuestsByPathwayIdQuery, GetAllQuestsByPathwayIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllQuestsByPathwayIdQuery, GetAllQuestsByPathwayIdQueryVariables>(GetAllQuestsByPathwayIdDocument, options);
-      }
-export function useGetAllQuestsByPathwayIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllQuestsByPathwayIdQuery, GetAllQuestsByPathwayIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllQuestsByPathwayIdQuery, GetAllQuestsByPathwayIdQueryVariables>(GetAllQuestsByPathwayIdDocument, options);
-        }
-export type GetAllQuestsByPathwayIdQueryHookResult = ReturnType<typeof useGetAllQuestsByPathwayIdQuery>;
-export type GetAllQuestsByPathwayIdLazyQueryHookResult = ReturnType<typeof useGetAllQuestsByPathwayIdLazyQuery>;
-export type GetAllQuestsByPathwayIdQueryResult = Apollo.QueryResult<GetAllQuestsByPathwayIdQuery, GetAllQuestsByPathwayIdQueryVariables>;
-export const GetBountyQuestByIdDocument = gql`
-    query GetBountyQuestById($input: GetBountyQuestByIdInput!) {
-  getBountyQuestById(input: $input) {
-    id
-    streamId
-    name
-    description
-    slogan
-    pathwayId
-    questType
-    image
-    rewardCurrency
-    rewardAmount
-    rewardUserCap
-    isPending
-    completedBy
-    createdBy
-    submissions {
-      id
-      did
-      status
-      reviewComment
-      solution
-    }
-    isProjectContributor
-  }
+export function useGetAllQuestsByPathwayIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetAllQuestsByPathwayIdQuery,
+    GetAllQuestsByPathwayIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetAllQuestsByPathwayIdQuery,
+    GetAllQuestsByPathwayIdQueryVariables
+  >(GetAllQuestsByPathwayIdDocument, options);
 }
-    `;
+export function useGetAllQuestsByPathwayIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllQuestsByPathwayIdQuery,
+    GetAllQuestsByPathwayIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetAllQuestsByPathwayIdQuery,
+    GetAllQuestsByPathwayIdQueryVariables
+  >(GetAllQuestsByPathwayIdDocument, options);
+}
+export type GetAllQuestsByPathwayIdQueryHookResult = ReturnType<
+  typeof useGetAllQuestsByPathwayIdQuery
+>;
+export type GetAllQuestsByPathwayIdLazyQueryHookResult = ReturnType<
+  typeof useGetAllQuestsByPathwayIdLazyQuery
+>;
+export type GetAllQuestsByPathwayIdQueryResult = Apollo.QueryResult<
+  GetAllQuestsByPathwayIdQuery,
+  GetAllQuestsByPathwayIdQueryVariables
+>;
+export const GetBountyQuestByIdDocument = gql`
+  query GetBountyQuestById($input: GetBountyQuestByIdInput!) {
+    getBountyQuestById(input: $input) {
+      id
+      streamId
+      name
+      description
+      slogan
+      pathwayId
+      questType
+      image
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
+      isPending
+      completedBy
+      createdBy
+      submissions {
+        id
+        did
+        status
+        reviewComment
+        solution
+      }
+      isProjectContributor
+    }
+  }
+`;
 
 /**
  * __useGetBountyQuestByIdQuery__
@@ -1881,43 +2388,66 @@ export const GetBountyQuestByIdDocument = gql`
  *   },
  * });
  */
-export function useGetBountyQuestByIdQuery(baseOptions: Apollo.QueryHookOptions<GetBountyQuestByIdQuery, GetBountyQuestByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetBountyQuestByIdQuery, GetBountyQuestByIdQueryVariables>(GetBountyQuestByIdDocument, options);
-      }
-export function useGetBountyQuestByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBountyQuestByIdQuery, GetBountyQuestByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetBountyQuestByIdQuery, GetBountyQuestByIdQueryVariables>(GetBountyQuestByIdDocument, options);
-        }
-export type GetBountyQuestByIdQueryHookResult = ReturnType<typeof useGetBountyQuestByIdQuery>;
-export type GetBountyQuestByIdLazyQueryHookResult = ReturnType<typeof useGetBountyQuestByIdLazyQuery>;
-export type GetBountyQuestByIdQueryResult = Apollo.QueryResult<GetBountyQuestByIdQuery, GetBountyQuestByIdQueryVariables>;
+export function useGetBountyQuestByIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetBountyQuestByIdQuery,
+    GetBountyQuestByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetBountyQuestByIdQuery,
+    GetBountyQuestByIdQueryVariables
+  >(GetBountyQuestByIdDocument, options);
+}
+export function useGetBountyQuestByIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetBountyQuestByIdQuery,
+    GetBountyQuestByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetBountyQuestByIdQuery,
+    GetBountyQuestByIdQueryVariables
+  >(GetBountyQuestByIdDocument, options);
+}
+export type GetBountyQuestByIdQueryHookResult = ReturnType<
+  typeof useGetBountyQuestByIdQuery
+>;
+export type GetBountyQuestByIdLazyQueryHookResult = ReturnType<
+  typeof useGetBountyQuestByIdLazyQuery
+>;
+export type GetBountyQuestByIdQueryResult = Apollo.QueryResult<
+  GetBountyQuestByIdQuery,
+  GetBountyQuestByIdQueryVariables
+>;
 export const GetQuizQuestByIdDocument = gql`
-    query GetQuizQuestById($questId: String!) {
-  getQuizQuestById(questId: $questId) {
-    id
-    streamId
-    name
-    description
-    slogan
-    pathwayId
-    questType
-    image
-    rewardCurrency
-    rewardAmount
-    rewardUserCap
-    isPending
-    completedBy
-    createdBy
-    questions {
+  query GetQuizQuestById($questId: String!) {
+    getQuizQuestById(questId: $questId) {
       id
-      question
-      choices
-      answer
+      streamId
+      name
+      description
+      slogan
+      pathwayId
+      questType
+      image
+      rewardCurrency
+      rewardAmount
+      rewardUserCap
+      isPending
+      completedBy
+      createdBy
+      questions {
+        id
+        question
+        choices
+        answer
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useGetQuizQuestByIdQuery__
@@ -1935,35 +2465,61 @@ export const GetQuizQuestByIdDocument = gql`
  *   },
  * });
  */
-export function useGetQuizQuestByIdQuery(baseOptions: Apollo.QueryHookOptions<GetQuizQuestByIdQuery, GetQuizQuestByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetQuizQuestByIdQuery, GetQuizQuestByIdQueryVariables>(GetQuizQuestByIdDocument, options);
-      }
-export function useGetQuizQuestByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQuizQuestByIdQuery, GetQuizQuestByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetQuizQuestByIdQuery, GetQuizQuestByIdQueryVariables>(GetQuizQuestByIdDocument, options);
-        }
-export type GetQuizQuestByIdQueryHookResult = ReturnType<typeof useGetQuizQuestByIdQuery>;
-export type GetQuizQuestByIdLazyQueryHookResult = ReturnType<typeof useGetQuizQuestByIdLazyQuery>;
-export type GetQuizQuestByIdQueryResult = Apollo.QueryResult<GetQuizQuestByIdQuery, GetQuizQuestByIdQueryVariables>;
+export function useGetQuizQuestByIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetQuizQuestByIdQuery,
+    GetQuizQuestByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetQuizQuestByIdQuery, GetQuizQuestByIdQueryVariables>(
+    GetQuizQuestByIdDocument,
+    options
+  );
+}
+export function useGetQuizQuestByIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetQuizQuestByIdQuery,
+    GetQuizQuestByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetQuizQuestByIdQuery,
+    GetQuizQuestByIdQueryVariables
+  >(GetQuizQuestByIdDocument, options);
+}
+export type GetQuizQuestByIdQueryHookResult = ReturnType<
+  typeof useGetQuizQuestByIdQuery
+>;
+export type GetQuizQuestByIdLazyQueryHookResult = ReturnType<
+  typeof useGetQuizQuestByIdLazyQuery
+>;
+export type GetQuizQuestByIdQueryResult = Apollo.QueryResult<
+  GetQuizQuestByIdQuery,
+  GetQuizQuestByIdQueryVariables
+>;
 export const SubmitQuestAnswersDocument = gql`
-    mutation SubmitQuestAnswers($input: QuestAnswersSubmitionInput!) {
-  submitQuestAnswers(input: $input) {
-    id
-    isSuccess
-    streamId
-    name
-    rewardCurrency
-    completedBy
-    expandedServerSignatures {
-      r
-      s
-      v
+  mutation SubmitQuestAnswers($input: QuestAnswersSubmitionInput!) {
+    submitQuestAnswers(input: $input) {
+      id
+      isSuccess
+      streamId
+      name
+      rewardCurrency
+      completedBy
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
-}
-    `;
-export type SubmitQuestAnswersMutationFn = Apollo.MutationFunction<SubmitQuestAnswersMutation, SubmitQuestAnswersMutationVariables>;
+`;
+export type SubmitQuestAnswersMutationFn = Apollo.MutationFunction<
+  SubmitQuestAnswersMutation,
+  SubmitQuestAnswersMutationVariables
+>;
 
 /**
  * __useSubmitQuestAnswersMutation__
@@ -1982,19 +2538,36 @@ export type SubmitQuestAnswersMutationFn = Apollo.MutationFunction<SubmitQuestAn
  *   },
  * });
  */
-export function useSubmitQuestAnswersMutation(baseOptions?: Apollo.MutationHookOptions<SubmitQuestAnswersMutation, SubmitQuestAnswersMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SubmitQuestAnswersMutation, SubmitQuestAnswersMutationVariables>(SubmitQuestAnswersDocument, options);
-      }
-export type SubmitQuestAnswersMutationHookResult = ReturnType<typeof useSubmitQuestAnswersMutation>;
-export type SubmitQuestAnswersMutationResult = Apollo.MutationResult<SubmitQuestAnswersMutation>;
-export type SubmitQuestAnswersMutationOptions = Apollo.BaseMutationOptions<SubmitQuestAnswersMutation, SubmitQuestAnswersMutationVariables>;
-export const SubmitQuestSolutionDocument = gql`
-    mutation SubmitQuestSolution($input: QuestSolutionSubmissionInput!) {
-  submitQuestSolution(input: $input)
+export function useSubmitQuestAnswersMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SubmitQuestAnswersMutation,
+    SubmitQuestAnswersMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SubmitQuestAnswersMutation,
+    SubmitQuestAnswersMutationVariables
+  >(SubmitQuestAnswersDocument, options);
 }
-    `;
-export type SubmitQuestSolutionMutationFn = Apollo.MutationFunction<SubmitQuestSolutionMutation, SubmitQuestSolutionMutationVariables>;
+export type SubmitQuestAnswersMutationHookResult = ReturnType<
+  typeof useSubmitQuestAnswersMutation
+>;
+export type SubmitQuestAnswersMutationResult =
+  Apollo.MutationResult<SubmitQuestAnswersMutation>;
+export type SubmitQuestAnswersMutationOptions = Apollo.BaseMutationOptions<
+  SubmitQuestAnswersMutation,
+  SubmitQuestAnswersMutationVariables
+>;
+export const SubmitQuestSolutionDocument = gql`
+  mutation SubmitQuestSolution($input: QuestSolutionSubmissionInput!) {
+    submitQuestSolution(input: $input)
+  }
+`;
+export type SubmitQuestSolutionMutationFn = Apollo.MutationFunction<
+  SubmitQuestSolutionMutation,
+  SubmitQuestSolutionMutationVariables
+>;
 
 /**
  * __useSubmitQuestSolutionMutation__
@@ -2013,30 +2586,47 @@ export type SubmitQuestSolutionMutationFn = Apollo.MutationFunction<SubmitQuestS
  *   },
  * });
  */
-export function useSubmitQuestSolutionMutation(baseOptions?: Apollo.MutationHookOptions<SubmitQuestSolutionMutation, SubmitQuestSolutionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SubmitQuestSolutionMutation, SubmitQuestSolutionMutationVariables>(SubmitQuestSolutionDocument, options);
-      }
-export type SubmitQuestSolutionMutationHookResult = ReturnType<typeof useSubmitQuestSolutionMutation>;
-export type SubmitQuestSolutionMutationResult = Apollo.MutationResult<SubmitQuestSolutionMutation>;
-export type SubmitQuestSolutionMutationOptions = Apollo.BaseMutationOptions<SubmitQuestSolutionMutation, SubmitQuestSolutionMutationVariables>;
+export function useSubmitQuestSolutionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SubmitQuestSolutionMutation,
+    SubmitQuestSolutionMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SubmitQuestSolutionMutation,
+    SubmitQuestSolutionMutationVariables
+  >(SubmitQuestSolutionDocument, options);
+}
+export type SubmitQuestSolutionMutationHookResult = ReturnType<
+  typeof useSubmitQuestSolutionMutation
+>;
+export type SubmitQuestSolutionMutationResult =
+  Apollo.MutationResult<SubmitQuestSolutionMutation>;
+export type SubmitQuestSolutionMutationOptions = Apollo.BaseMutationOptions<
+  SubmitQuestSolutionMutation,
+  SubmitQuestSolutionMutationVariables
+>;
 export const ClaimQuestRewardsDocument = gql`
-    mutation ClaimQuestRewards($input: ClaimQuestRewardsInput!) {
-  claimQuestRewards(input: $input) {
-    id
-    streamId
-    name
-    rewardCurrency
-    completedBy
-    expandedServerSignatures {
-      r
-      s
-      v
+  mutation ClaimQuestRewards($input: ClaimQuestRewardsInput!) {
+    claimQuestRewards(input: $input) {
+      id
+      streamId
+      name
+      rewardCurrency
+      completedBy
+      expandedServerSignatures {
+        r
+        s
+        v
+      }
     }
   }
-}
-    `;
-export type ClaimQuestRewardsMutationFn = Apollo.MutationFunction<ClaimQuestRewardsMutation, ClaimQuestRewardsMutationVariables>;
+`;
+export type ClaimQuestRewardsMutationFn = Apollo.MutationFunction<
+  ClaimQuestRewardsMutation,
+  ClaimQuestRewardsMutationVariables
+>;
 
 /**
  * __useClaimQuestRewardsMutation__
@@ -2055,60 +2645,98 @@ export type ClaimQuestRewardsMutationFn = Apollo.MutationFunction<ClaimQuestRewa
  *   },
  * });
  */
-export function useClaimQuestRewardsMutation(baseOptions?: Apollo.MutationHookOptions<ClaimQuestRewardsMutation, ClaimQuestRewardsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ClaimQuestRewardsMutation, ClaimQuestRewardsMutationVariables>(ClaimQuestRewardsDocument, options);
-      }
-export type ClaimQuestRewardsMutationHookResult = ReturnType<typeof useClaimQuestRewardsMutation>;
-export type ClaimQuestRewardsMutationResult = Apollo.MutationResult<ClaimQuestRewardsMutation>;
-export type ClaimQuestRewardsMutationOptions = Apollo.BaseMutationOptions<ClaimQuestRewardsMutation, ClaimQuestRewardsMutationVariables>;
-export const Document = gql`
-    {
-  getAllTags {
-    id
-    label
-    color
-    value
-  }
+export function useClaimQuestRewardsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ClaimQuestRewardsMutation,
+    ClaimQuestRewardsMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ClaimQuestRewardsMutation,
+    ClaimQuestRewardsMutationVariables
+  >(ClaimQuestRewardsDocument, options);
 }
-    `;
+export type ClaimQuestRewardsMutationHookResult = ReturnType<
+  typeof useClaimQuestRewardsMutation
+>;
+export type ClaimQuestRewardsMutationResult =
+  Apollo.MutationResult<ClaimQuestRewardsMutation>;
+export type ClaimQuestRewardsMutationOptions = Apollo.BaseMutationOptions<
+  ClaimQuestRewardsMutation,
+  ClaimQuestRewardsMutationVariables
+>;
+export const GetAllTagsDocument = gql`
+  query GetAllTags {
+    getAllTags {
+      id
+      label
+      color
+      value
+    }
+  }
+`;
 
 /**
- * __useQuery__
+ * __useGetAllTagsQuery__
  *
- * To run a query within a React component, call `useQuery` and pass it any options that fit your needs.
- * When your component renders, `useQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetAllTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useQuery({
+ * const { data, loading, error } = useGetAllTagsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useQuery(baseOptions?: Apollo.QueryHookOptions<Query, QueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Query, QueryVariables>(Document, options);
-      }
-export function useLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Query, QueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Query, QueryVariables>(Document, options);
-        }
-export type QueryHookResult = ReturnType<typeof useQuery>;
-export type LazyQueryHookResult = ReturnType<typeof useLazyQuery>;
-export type QueryResult = Apollo.QueryResult<Query, QueryVariables>;
-export const SignInDocument = gql`
-    mutation SignIn($input: SiweRegisterInput!) {
-  signIn(input: $input) {
-    id
-    did
-    addresses
-  }
+export function useGetAllTagsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAllTagsQuery,
+    GetAllTagsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
+    GetAllTagsDocument,
+    options
+  );
 }
-    `;
-export type SignInMutationFn = Apollo.MutationFunction<SignInMutation, SignInMutationVariables>;
+export function useGetAllTagsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllTagsQuery,
+    GetAllTagsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
+    GetAllTagsDocument,
+    options
+  );
+}
+export type GetAllTagsQueryHookResult = ReturnType<typeof useGetAllTagsQuery>;
+export type GetAllTagsLazyQueryHookResult = ReturnType<
+  typeof useGetAllTagsLazyQuery
+>;
+export type GetAllTagsQueryResult = Apollo.QueryResult<
+  GetAllTagsQuery,
+  GetAllTagsQueryVariables
+>;
+export const SignInDocument = gql`
+  mutation SignIn($input: SiweRegisterInput!) {
+    signIn(input: $input) {
+      id
+      did
+      addresses
+    }
+  }
+`;
+export type SignInMutationFn = Apollo.MutationFunction<
+  SignInMutation,
+  SignInMutationVariables
+>;
 
 /**
  * __useSignInMutation__
@@ -2127,19 +2755,33 @@ export type SignInMutationFn = Apollo.MutationFunction<SignInMutation, SignInMut
  *   },
  * });
  */
-export function useSignInMutation(baseOptions?: Apollo.MutationHookOptions<SignInMutation, SignInMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SignInMutation, SignInMutationVariables>(SignInDocument, options);
-      }
+export function useSignInMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SignInMutation,
+    SignInMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<SignInMutation, SignInMutationVariables>(
+    SignInDocument,
+    options
+  );
+}
 export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
 export type SignInMutationResult = Apollo.MutationResult<SignInMutation>;
-export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
+export type SignInMutationOptions = Apollo.BaseMutationOptions<
+  SignInMutation,
+  SignInMutationVariables
+>;
 export const SignOutDocument = gql`
-    mutation SignOut {
-  signOut
-}
-    `;
-export type SignOutMutationFn = Apollo.MutationFunction<SignOutMutation, SignOutMutationVariables>;
+  mutation SignOut {
+    signOut
+  }
+`;
+export type SignOutMutationFn = Apollo.MutationFunction<
+  SignOutMutation,
+  SignOutMutationVariables
+>;
 
 /**
  * __useSignOutMutation__
@@ -2157,22 +2799,33 @@ export type SignOutMutationFn = Apollo.MutationFunction<SignOutMutation, SignOut
  *   },
  * });
  */
-export function useSignOutMutation(baseOptions?: Apollo.MutationHookOptions<SignOutMutation, SignOutMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SignOutMutation, SignOutMutationVariables>(SignOutDocument, options);
-      }
+export function useSignOutMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SignOutMutation,
+    SignOutMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<SignOutMutation, SignOutMutationVariables>(
+    SignOutDocument,
+    options
+  );
+}
 export type SignOutMutationHookResult = ReturnType<typeof useSignOutMutation>;
 export type SignOutMutationResult = Apollo.MutationResult<SignOutMutation>;
-export type SignOutMutationOptions = Apollo.BaseMutationOptions<SignOutMutation, SignOutMutationVariables>;
+export type SignOutMutationOptions = Apollo.BaseMutationOptions<
+  SignOutMutation,
+  SignOutMutationVariables
+>;
 export const MeDocument = gql`
-    query Me {
-  me {
-    id
-    did
-    addresses
+  query Me {
+    me {
+      id
+      did
+      addresses
+    }
   }
-}
-    `;
+`;
 
 /**
  * __useMeQuery__
@@ -2189,22 +2842,26 @@ export const MeDocument = gql`
  *   },
  * });
  */
-export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-      }
-export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-        }
+export function useMeQuery(
+  baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
+export function useMeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const GetNonceDocument = gql`
-    query GetNonce {
-  getNonce
-}
-    `;
+  query GetNonce {
+    getNonce
+  }
+`;
 
 /**
  * __useGetNonceQuery__
@@ -2221,14 +2878,32 @@ export const GetNonceDocument = gql`
  *   },
  * });
  */
-export function useGetNonceQuery(baseOptions?: Apollo.QueryHookOptions<GetNonceQuery, GetNonceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetNonceQuery, GetNonceQueryVariables>(GetNonceDocument, options);
-      }
-export function useGetNonceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetNonceQuery, GetNonceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetNonceQuery, GetNonceQueryVariables>(GetNonceDocument, options);
-        }
+export function useGetNonceQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetNonceQuery, GetNonceQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetNonceQuery, GetNonceQueryVariables>(
+    GetNonceDocument,
+    options
+  );
+}
+export function useGetNonceLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetNonceQuery,
+    GetNonceQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetNonceQuery, GetNonceQueryVariables>(
+    GetNonceDocument,
+    options
+  );
+}
 export type GetNonceQueryHookResult = ReturnType<typeof useGetNonceQuery>;
-export type GetNonceLazyQueryHookResult = ReturnType<typeof useGetNonceLazyQuery>;
-export type GetNonceQueryResult = Apollo.QueryResult<GetNonceQuery, GetNonceQueryVariables>;
+export type GetNonceLazyQueryHookResult = ReturnType<
+  typeof useGetNonceLazyQuery
+>;
+export type GetNonceQueryResult = Apollo.QueryResult<
+  GetNonceQuery,
+  GetNonceQueryVariables
+>;

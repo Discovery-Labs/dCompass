@@ -25,6 +25,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
     getContractFactory(
+      name: "Initializable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Initializable__factory>;
+    getContractFactory(
       name: "ERC1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155__factory>;
@@ -137,17 +141,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDiamondLoupe__factory>;
     getContractFactory(
-      name: "IERC1155",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC1155__factory>;
-    getContractFactory(
       name: "IERC1155Internal",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1155Internal__factory>;
-    getContractFactory(
-      name: "IERC165",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
       name: "IERC173",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -164,6 +160,10 @@ declare module "hardhat/types/runtime" {
       name: "Migrations",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Migrations__factory>;
+    getContractFactory(
+      name: "NFTAux",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NFTAux__factory>;
     getContractFactory(
       name: "PathwayNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -208,6 +208,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Ownable>;
+    getContractAt(
+      name: "Initializable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Initializable>;
     getContractAt(
       name: "ERC1155",
       address: string,
@@ -349,20 +354,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IDiamondLoupe>;
     getContractAt(
-      name: "IERC1155",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC1155>;
-    getContractAt(
       name: "IERC1155Internal",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC1155Internal>;
-    getContractAt(
-      name: "IERC165",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC165>;
     getContractAt(
       name: "IERC173",
       address: string,
@@ -383,6 +378,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Migrations>;
+    getContractAt(
+      name: "NFTAux",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NFTAux>;
     getContractAt(
       name: "PathwayNFT",
       address: string,

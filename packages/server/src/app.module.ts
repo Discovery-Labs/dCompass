@@ -1,10 +1,9 @@
 import { Module } from "@nestjs/common";
 // import { disconnect } from './core/utils/helpers/shutdown';
-import { HttpModule } from "@nestjs/axios";
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
+
 import { GraphQLModule } from "@nestjs/graphql";
 import { TerminusModule } from "@nestjs/terminus";
-import depthLimit from "graphql-depth-limit";
-import { formatError } from "graphql";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
 import { AppController } from "./app.controller";
@@ -13,7 +12,7 @@ import { ApolloComplexityPlugin } from "./core/utils/security/ApolloComplexity.p
 import { pubSub } from "./core/resources/Redis/redis";
 import { HealthController } from "./core/controllers/health.controller";
 import config from "./core/configs/config";
-import { CeramicController } from "./core/controllers/validate-quest-completion.controller";
+
 import { GraphqlConfig } from "./core/configs/config.interface";
 import { ProjectModule } from "./entities/Projects/Project.module";
 import { PathwayModule } from "./entities/Pathways/Pathway.module";
@@ -25,12 +24,9 @@ import { UserModule } from "./entities/Users/User.module";
 
 @Module({
   imports: [
-    HttpModule.register({
-      timeout: 60000,
-      maxRedirects: 10,
-    }),
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
-    GraphQLModule.forRootAsync({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
       useFactory: async (configService: ConfigService) => {
         const graphqlConfig = configService.get<GraphqlConfig>("graphql");
         return {
@@ -41,8 +37,7 @@ import { UserModule } from "./entities/Users/User.module";
             pubSub,
           },
           plugins: [new ApolloComplexityPlugin(80)],
-          formatError,
-          validationRules: [depthLimit(10)],
+          formatError: (error) => error.toJSON(),
           sortSchema: graphqlConfig?.sortSchema,
           autoSchemaFile:
             graphqlConfig?.schemaDestination || "./src/schema.graphql",
@@ -60,7 +55,7 @@ import { UserModule } from "./entities/Users/User.module";
     TagModule,
     UserModule,
   ],
-  controllers: [AppController, HealthController, CeramicController],
+  controllers: [AppController, HealthController],
   providers: [AppService, ConfigService, GetAppDIDResolver, PrismaService],
 })
 export class AppModule {}

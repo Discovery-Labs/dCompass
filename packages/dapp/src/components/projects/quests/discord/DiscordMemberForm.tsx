@@ -10,9 +10,9 @@ function DiscordMemberForm() {
   const {
     register,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{ discordGuildId: string }>();
   return (
-    <FormControl isInvalid={errors.discordGuildId}>
+    <FormControl isInvalid={!!errors.discordGuildId}>
       <FormLabel htmlFor="discordGuildId">Discord Guild ID</FormLabel>
       <Input
         placeholder="562828676480237578"

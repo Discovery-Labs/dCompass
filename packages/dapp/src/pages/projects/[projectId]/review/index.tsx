@@ -41,7 +41,6 @@ import CenteredFrame from "../../../../components/layout/CenteredFrame";
 import Container from "../../../../components/layout/Container";
 import { Web3Context } from "../../../../contexts/Web3Provider";
 import { splitCIDS } from "../../../../core/helpers";
-import useCustomColor from "../../../../core/hooks/useCustomColor";
 import { usePageMarkdownTheme } from "../../../../core/hooks/useMarkdownTheme";
 // import useTokenList from "../../../../core/hooks/useTokenList";
 import { Tag as TagType } from "../../../../core/types";
@@ -106,7 +105,7 @@ function ReviewProjectPage({
 }: any) {
   const { t } = useTranslation("common");
   const { isReviewer, contracts } = useContext(Web3Context);
-  const { chainId, account, library } = useWeb3React();
+  const { chainId, account } = useWeb3React();
   const [approveProjectMutation] = useMutation(APPROVE_PROJECT_MUTATION, {
     refetchQueries: "all",
   });
@@ -217,14 +216,14 @@ function ReviewProjectPage({
         (uri: string) => uri.split("://")[1].split("/")[0]
       );
       const { firstParts, secondParts } = splitCIDS(cids);
-      const createTokenTx = await contracts.projectNFTContract.createToken(
+      const createTokenTx = await contracts?.projectNFTContract.createToken(
         firstParts,
         secondParts,
         streamId
       );
       // get return values or events
-      const receipt = await createTokenTx.wait(2);
-      const isMinted = await contracts.projectNFTContract.projectMinted(
+      const receipt = await createTokenTx?.wait(2);
+      const isMinted = await contracts?.projectNFTContract.projectMinted(
         streamId
       );
       setStatus("MINTED");
@@ -306,10 +305,10 @@ function ReviewProjectPage({
         <VStack w="full" align="flex-start" ml="2">
           <VStack align="flex-start">
             {createdBy && <Blockies seed={createdBy} className="blockies" />}
-            <Text color="text-weak" textStyle="small" isTruncated>
+            <Text color="text-weak" textStyle="small">
               {t("creation-date")} {new Date(createdAt).toLocaleString()}
             </Text>
-            <Text fontSize="sm" isTruncated>
+            <Text fontSize="sm">
               {t("by")} {createdBy}
             </Text>
           </VStack>
@@ -408,7 +407,7 @@ function ReviewProjectPage({
                 {squad.members.map((member: string) => (
                   <HStack w="full" key={member}>
                     {member && <Blockies seed={member} className="blockies" />}
-                    <Text ml="2" fontSize="sm" isTruncated>
+                    <Text ml="2" fontSize="sm">
                       {member}
                     </Text>
                   </HStack>

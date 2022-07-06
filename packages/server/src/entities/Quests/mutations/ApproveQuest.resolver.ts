@@ -91,7 +91,6 @@ export class ApproveQuestResolver {
         },
       });
     }
-    // set it previously pending quest as approved
 
     const chaindIdStr = chainId.toString();
     if (!Object.keys(ABIS).includes(chaindIdStr)) {
@@ -103,7 +102,10 @@ export class ApproveQuestResolver {
       chaindIdStr,
       "BadgeNFT"
     );
+    console.log({ bNFTAdr: badgeNFTContract.address });
+    console.log({ vrfAdr: verifyContract.address });
 
+    console.log(pathway.streamId, foundQuest.streamId);
     const [metadataNonceId, thresholdNonceId] = await Promise.all([
       verifyContract.noncesParentIdChildId(
         pathway.streamId,
@@ -111,8 +113,7 @@ export class ApproveQuestResolver {
       ),
       verifyContract.thresholdNoncesById(foundQuest.streamId),
     ]);
-    console.log({ bNFTAdr: badgeNFTContract.address });
-    // console.log({ pathwayId: foundPathway.streamId });
+    console.log({ metadataNonceId, thresholdNonceId });
     const [metadataVerify, tresholdVerify] = await Promise.all([
       verifyNFTInfo({
         contractAddress: badgeNFTContract.address,

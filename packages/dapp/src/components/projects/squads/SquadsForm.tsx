@@ -1,4 +1,3 @@
-import { Heading } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 
 import Squads from "./Squads";
@@ -25,7 +24,6 @@ function SquadsForm() {
 
   return (
     <>
-      <Heading>Create squads &amp; add members</Heading>
       <Squads
         {...{
           control,

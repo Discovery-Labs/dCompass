@@ -20,8 +20,8 @@ import CenteredFrame from "../../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
 import { Web3Context } from "../../../contexts/Web3Provider";
-// import { schemaAliases } from "../../../core/ceramic";
 import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
+// import { schemaAliases } from "../../../core/ceramic";
 
 // const { PROJECTS_ALIAS } = schemaAliases;
 const CreateProject = <CreateProjectForm />;
@@ -43,7 +43,7 @@ function CreateProjectStepper() {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { self } = useContext(Web3Context);
-  const { account, library } = useWeb3React();
+  const { account } = useWeb3React();
   const { contracts } = useContext(Web3Context);
   const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
   const [sponsorPassSFT, setSponsorPassSFT] = useState<SponsorPassSFT>();
@@ -92,7 +92,6 @@ function CreateProjectStepper() {
 
   async function onSubmit() {
     const values = methods.getValues();
-    console.log({ values });
     if (!projectNFTContract) {
       throw new Error("ProjectNFTContract not deployed on this network");
     }
@@ -106,11 +105,13 @@ function CreateProjectStepper() {
 
     const formData = new FormData();
     if (values.logo) {
-      formData.append("logo", values.logo[0]);
+      const logo = values.logo[0] as any;
+      formData.append("logo", logo, logo.name);
     }
     values.squads.forEach((squad) => {
       if (squad.image) {
-        formData.append(squad.name, squad.image[0]);
+        const squadImage = squad.image[0] as any;
+        formData.append(squad.name, squad.image[0], squadImage.name);
       }
     });
 
@@ -119,6 +120,8 @@ function CreateProjectStepper() {
       body: formData,
     });
     const { cids } = await cidsRes.json();
+
+    console.log({ cids });
 
     const serializedProject = {
       ...values,
@@ -146,6 +149,8 @@ function CreateProjectStepper() {
       }
     );
 
+    console.log({ cnt: newProjectDoc.content });
+
     const projectId = newProjectDoc.id.toUrl();
     formData.append(
       "metadata",
@@ -161,14 +166,6 @@ function CreateProjectStepper() {
     });
 
     const { metadataCids } = await nftCidRes.json();
-
-    const signature = await library.provider.send("personal_sign", [
-      JSON.stringify({
-        id: projectId,
-        tokenUris: metadataCids,
-      }),
-      account,
-    ]);
 
     const stakeAmountsIndex = {
       SILVER: 1,
@@ -189,12 +186,11 @@ function CreateProjectStepper() {
       }
     );
 
-    const allProjects = await createProjectMutation({
+    await createProjectMutation({
       variables: {
         input: {
           id: projectId,
           tokenUris: metadataCids,
-          creatorSignature: signature.result,
         },
       },
     });
@@ -203,7 +199,7 @@ function CreateProjectStepper() {
       description: `Your project will be reviewed soon!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
@@ -296,7 +292,7 @@ function CreateProjectStepper() {
                 {activeStep === 2 && (
                   <Button
                     ml="0.5rem"
-                    // colorScheme="accent"
+                    // colorScheme="accentDark"
                     isLoading={methods.formState.isSubmitting}
                     type="submit"
                     px="1.25rem"

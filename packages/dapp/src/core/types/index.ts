@@ -4,12 +4,20 @@ export type Tag = {
   color: string;
 };
 
+export type Questions = {
+  question: string;
+  choices: string[];
+  answer: string;
+}[];
+
 export type Quest = {
   id: string;
   streamId: string;
   image: string;
+  difficulty: string;
   completedBy: string[];
   projectId: string;
+  prerequisites: string[];
   pathwayId: string;
   owner: string;
   name: string;
@@ -22,6 +30,8 @@ export type Quest = {
   rewardAmount: string;
   rewardUserCap: number;
   rewardCurrency: string;
+  createdBy: string;
+  questions: Questions;
   // unlocked: boolean;
 };
 
@@ -35,8 +45,8 @@ export type Pathway = {
   projectId: string;
   projectStreamId: string;
   quizQuests: Quest[];
+  prerequisites: string[];
   bountyQuests: Quest[];
-  difficulty: string;
   rewardCurrency: string;
   rewardAmount: string;
   rewardUserCap: number;

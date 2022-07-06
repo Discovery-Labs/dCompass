@@ -88,11 +88,6 @@ export class ClaimPathwayRewardsResolver {
       throw new Error("Unsupported Network");
     }
 
-    // const pathway = await this.threadDBService.getPathwayById({
-    //   dbClient,
-    //   threadId: latestThreadId,
-    //   pathwayId: quest.pathwayId,
-    // });
     // const verifyContract = this.appService.getContract(chainIdStr, 'Verify');
     const pathwayContract = this.appService.getContract(
       chainIdStr,

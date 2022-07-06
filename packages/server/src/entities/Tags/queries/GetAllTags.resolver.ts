@@ -13,13 +13,7 @@ export class GetAllTagsResolver {
   })
   async getAllTags(): Promise<Tag[] | undefined> {
     const allTags = await this.tagService.tags({ take: 100 });
-    // const allTags = await this.threadDBService.query({
-    //   collectionName: "Tag",
-    //   threadId: latestThreadId,
-    //   dbClient,
-    // });
 
-    console.log({ allTags });
     if (!allTags) {
       return undefined;
     }

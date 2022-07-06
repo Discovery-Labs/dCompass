@@ -36,6 +36,9 @@ export class UserService {
       data,
     });
   }
+  async createOrUpdateUser(args: Prisma.UserUpsertArgs): Promise<User> {
+    return this.prisma.user.upsert(args);
+  }
 
   async updateUser(params: {
     where: Prisma.UserWhereUniqueInput;

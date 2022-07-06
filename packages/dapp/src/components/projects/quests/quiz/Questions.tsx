@@ -22,7 +22,11 @@ export default function Questions({ control, register }: any) {
     formState: { errors },
   } = useFormContext();
 
+  const { questions } = errors as any;
+
   const currentValues = watch();
+
+  console.log({ currentValues });
 
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
@@ -35,9 +39,7 @@ export default function Questions({ control, register }: any) {
       {fields.map((item, index) => {
         return (
           <VStack w="full" key={item.id}>
-            <FormControl
-              isInvalid={errors.questions && errors.questions[index].question}
-            >
+            <FormControl isInvalid={questions && questions[index].question}>
               <FormLabel htmlFor={`questions[${index}].question`}>
                 Question
               </FormLabel>
@@ -63,23 +65,21 @@ export default function Questions({ control, register }: any) {
                 </Button>
               </HStack>
               <FormErrorMessage>
-                {errors.questions &&
-                  errors.questions[index].question &&
-                  errors.questions[index].question.message}
+                {questions &&
+                  questions[index].question &&
+                  questions[index].question.message}
               </FormErrorMessage>
             </FormControl>
 
-            <FormControl
-              isInvalid={errors.questions && errors.questions[index].options}
-            >
+            <FormControl isInvalid={questions && questions[index].options}>
               <FormLabel htmlFor={`questions[${index}].options`}>
                 Options
               </FormLabel>
               <OptionsFieldArray nestIndex={index} {...{ control, register }} />
               <FormErrorMessage>
-                {errors.questions &&
-                  errors.questions[index].options &&
-                  errors.questions[index].options.message}
+                {questions &&
+                  questions[index].options &&
+                  questions[index].options.message}
               </FormErrorMessage>
             </FormControl>
 

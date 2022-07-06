@@ -9,6 +9,7 @@ import {
   HStack,
   Icon,
   Progress,
+  Spacer,
   Stack,
   Tab,
   TabList,
@@ -33,7 +34,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useCallback, useContext, useEffect, useState } from "react";
 import Blockies from "react-blockies";
-import { BsCheckCircleFill, BsPeople } from "react-icons/bs";
+import { BsBarChartFill, BsCheckCircleFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
 import ReactMarkdown from "react-markdown";
@@ -113,7 +114,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
             quizData.getQuizQuestById.streamId,
             0
           );
-        const currentUserHasClaimed = claimedByAddresses.includes(account);
+        const currentUserHasClaimed = claimedByAddresses.includes(
+          account || ""
+        );
         console.log({ claimedByAddresses, currentUserHasClaimed });
         setIsClaimed(currentUserHasClaimed);
         setRewardStatus(
@@ -168,6 +171,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       chainId,
       namespace,
     } = quizData?.getQuizQuestById;
+
     setRewardStatus("Generating tokenURI");
     const formData = new FormData();
     const ogFile = await fetch(`https://ipfs.io/ipfs/${image}`);
@@ -208,37 +212,57 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       variables: {
         input: {
           questId,
-          did: self.id,
+          did: self?.id,
           questType: questType,
         },
       },
     });
 
-    const [, tokenAddressOrSymbol] = rewardCurrency.split(":");
-    const isNativeToken = tokenAddressOrSymbol ? false : true;
-
+    const hasRewards = rewardAmount ? true : false;
+    console.log({ hasRewards });
     const [metadataVerify] = data.claimQuestRewards.expandedServerSignatures;
-    console.log({ metadataVerify });
     setRewardStatus("Claiming on-chain");
-    const claimRewardsTx = await contracts.BadgeNFT.claimBadgeRewards(
-      streamId,
-      isNativeToken,
-      isNativeToken ? account : tokenAddressOrSymbol,
-      metadataVerify.r,
-      metadataVerify.s,
-      metadataVerify.v,
-      true,
-      url,
-      0
-    );
-    await claimRewardsTx.wait(1);
+    if (hasRewards) {
+      const [, tokenAddressOrSymbol] = rewardCurrency.split(":");
+      const isNativeToken = tokenAddressOrSymbol ? false : true;
+      const claimRewardsTx = await contracts?.BadgeNFT.claimBadgeRewards(
+        streamId,
+        isNativeToken,
+        isNativeToken ? account : tokenAddressOrSymbol,
+        metadataVerify.r,
+        metadataVerify.s,
+        metadataVerify.v,
+        true,
+        url,
+        0
+      );
+      await claimRewardsTx?.wait(1);
+    } else {
+      const claimRewardsTx = await contracts?.BadgeNFT.claimBadgeRewards(
+        streamId,
+        false,
+        account || "",
+        metadataVerify.r,
+        metadataVerify.s,
+        metadataVerify.v,
+        false,
+        url,
+        0
+      );
+      await claimRewardsTx?.wait(1);
+    }
+
+    console.log({ metadataVerify });
 
     const claimedByAddresses =
-      await contracts.BadgeNFT.getAllAddrsByBadgeIDVersion(
+      await contracts?.BadgeNFT.getAllAddrsByBadgeIDVersion(
         quizData.getQuizQuestById.streamId,
         0
       );
-    const currentUserHasClaimed = claimedByAddresses.includes(account);
+    const currentUserHasClaimed =
+      claimedByAddresses && account
+        ? claimedByAddresses.includes(account)
+        : false;
 
     setIsClaimed(currentUserHasClaimed);
     setRewardStatus(
@@ -251,18 +275,21 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
       description: `Rewards claimed successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
   };
 
-  const isOwner = quizData?.getQuizQuestById.createdBy.did === self?.id;
+  const isOwner = quizData?.getQuizQuestById.createdBy === self?.id;
   const isCompleted = useCallback(() => {
     return (quizData?.getQuizQuestById.completedBy || []).includes(self?.id);
   }, [quizData?.getQuizQuestById.completedBy, self?.id]);
 
   const getShortenedAddress = (address: string) => {
+    if (!address) {
+      return "Anonymous";
+    }
     let displayAddress = address.slice(0, 6);
     displayAddress += `...${address.slice(-4)}`;
 
@@ -283,6 +310,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
   const isContributor = projectRes.getProjectById.squads
     .flatMap(({ members }: { members: string[] }) => members)
     .includes(account);
+
   return (
     <Container>
       <BreadcrumbItems
@@ -316,7 +344,16 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
           {quizData?.getQuizQuestById.name}{" "}
           <Icon as={RiSwordLine} color="text-weak" />
         </Heading>
-        <Text color="text-weak">{quizData?.getQuizQuestById.slogan}</Text>
+
+        <HStack justifyContent={"space-between"}>
+          <Text color="text-weak">{quizData?.getQuizQuestById.slogan}</Text>
+          {isContributor && (
+            <NextLink href={`${window.location.href}/edit`} passHref>
+              {/** TODO: Edit pathway form or page **/}
+              <Button leftIcon={<EditIcon />}>{t("edit-quest")}</Button>
+            </NextLink>
+          )}
+        </HStack>
 
         <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">
@@ -406,6 +443,21 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
               >
                 <VStack align="left">
                   <HStack>
+                    <Icon as={BsBarChartFill} />
+                    <Text
+                      fontWeight="bold"
+                      fontSize="xl"
+                      color="text"
+                      textTransform="uppercase"
+                    >
+                      Difficulty
+                    </Text>
+                    <Spacer />
+                    <Flex align="end" direction="column">
+                      <Tag>{quizData?.getQuizQuestById.difficulty}</Tag>
+                    </Flex>
+                  </HStack>
+                  <HStack>
                     <Icon as={RiSwordLine} />
                     <Text
                       fontWeight="bold"
@@ -448,11 +500,20 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                         Total Rewards
                       </Text>
                       <Tag variant="outline" size="lg">
-                        {quizData?.getQuizQuestById.rewardAmount}{" "}
-                        {getRewardCurrency(
-                          quizData?.getQuizQuestById.rewardCurrency
-                        )}
+                        NFT
                       </Tag>
+
+                      {quizData?.getQuizQuestById.rewardAmount && (
+                        <>
+                          <Text>+</Text>
+                          <Tag variant="outline" size="lg">
+                            {quizData?.getQuizQuestById.rewardAmount}{" "}
+                            {getRewardCurrency(
+                              quizData?.getQuizQuestById.rewardCurrency
+                            )}
+                          </Tag>
+                        </>
+                      )}
                     </HStack>
                   ) : (
                     <HStack w="full">
@@ -471,28 +532,24 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                 <Flex align="center" maxW="full" py="4">
                   {quizData?.getQuizQuestById.createdBy && (
                     <Blockies
-                      seed={
-                        quizData?.getQuizQuestById.createdBy.name ||
-                        quizData?.getQuizQuestById.createdBy.did
-                      }
+                      seed={quizData?.getQuizQuestById.createdBy}
                       className="blockies"
                       size={7}
                       scale={10}
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color="text-weak" textStyle="small" isTruncated>
+                    <Text color="text-weak" textStyle="small">
                       {t("creation-date")}{" "}
                       {new Date(
                         quizData?.getQuizQuestById.createdAt || Date.now()
                       ).toLocaleString()}
                     </Text>
                     {quizData?.getQuizQuestById.createdBy && (
-                      <Text fontSize="sm" isTruncated>
+                      <Text fontSize="sm">
                         {t("by")}{" "}
                         {getShortenedAddress(
-                          quizData?.getQuizQuestById.createdBy.name ||
-                            quizData?.getQuizQuestById.createdBy.did
+                          quizData?.getQuizQuestById.createdBy
                         )}
                       </Text>
                     )}
@@ -536,7 +593,8 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                         left: 0,
                       }}
                     />
-                    {quizData?.getQuizQuestById.rewardAmount !== 0 && (
+                    <Text>NFT</Text>
+                    {quizData?.getQuizQuestById.rewardAmount && (
                       <>
                         <Text>+</Text>
                         <Tag variant="outline" size="lg">

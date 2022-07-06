@@ -10,9 +10,9 @@ function TwitterFollowerForm() {
   const {
     register,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{ twitterHandle: string }>();
   return (
-    <FormControl isInvalid={errors.twitterHandle}>
+    <FormControl isInvalid={!!errors.twitterHandle}>
       <FormLabel htmlFor="twitterHandle">Twitter handle to follow</FormLabel>
       <Input
         placeholder="@dCompass_"

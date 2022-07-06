@@ -1,6 +1,7 @@
 import { useFormContext } from "react-hook-form";
+import { Questions } from "../../../../core/types";
 
-import Questions from "./Questions";
+import QuizQuestionsForm from "./Questions";
 
 const questionsDefaultValues = {
   questions: [
@@ -12,7 +13,7 @@ const questionsDefaultValues = {
   ],
 };
 
-function QuestionsForm() {
+function QuestionsForm({ questions }: { questions?: Questions }) {
   const {
     control,
     register,
@@ -22,11 +23,13 @@ function QuestionsForm() {
   } = useFormContext();
 
   return (
-    <Questions
+    <QuizQuestionsForm
       {...{
         control,
         register,
-        defaultValues: questionsDefaultValues,
+        defaultValues: {
+          questions: questions ? questions : questionsDefaultValues.questions,
+        },
         getValues,
         setValue,
         errors,

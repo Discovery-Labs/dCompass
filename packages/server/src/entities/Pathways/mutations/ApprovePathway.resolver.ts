@@ -39,6 +39,7 @@ export class ApprovePathwayResolver {
     if (!foundPathway) {
       throw new NotFoundException("Pathway not found!");
     }
+
     const { project } = foundPathway;
 
     if (!project) {
@@ -76,6 +77,7 @@ export class ApprovePathwayResolver {
       verifyContract.thresholdNoncesById(foundPathway.streamId),
     ]);
 
+    console.log({ metadataNonceId, thresholdNonceId });
     const [metadataVerify, tresholdVerify] = await Promise.all([
       verifyNFTInfo({
         contractAddress: pathwayContract.address,

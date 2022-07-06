@@ -55,7 +55,6 @@ function QuestSubmissionList({ questId }: { questId: string }) {
   const [solutionReview, setSolutionReview] =
     useState<SolutionSubmission | null>();
   const [markdownSolution, setMarkdownSolution] = useState<string | null>();
-  const { self } = useContext(Web3Context);
   const { getBorderColor } = useCustomColor();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [approveQuestSolutionMutation] = useMutation(
@@ -65,12 +64,11 @@ function QuestSubmissionList({ questId }: { questId: string }) {
     variables: {
       input: {
         questId,
-        did: self.id,
       },
     },
   });
 
-  const handleOpenReview = async (submission: SolutionSubmission): void => {
+  const handleOpenReview = async (submission: SolutionSubmission) => {
     setSolutionReview(submission);
     const solutionBlob = dataURLtoBlob(
       JSON.parse(submission.solution).solution
@@ -100,7 +98,8 @@ function QuestSubmissionList({ questId }: { questId: string }) {
     return onClose();
   };
 
-  const handleRejectSolution = (solution: SolutionSubmission): void => {
+  const handleRejectSolution = (solution: SolutionSubmission) => {
+    console.log({ solution });
     setSolutionReview(null);
     return onClose();
   };
@@ -139,7 +138,7 @@ function QuestSubmissionList({ questId }: { questId: string }) {
 
                   <HStack>
                     <Button
-                      colorScheme={"accentDark"}
+                      colorScheme={"accent"}
                       onClick={() => handleApproveSolution(solutionReview)}
                       leftIcon={<CheckIcon />}
                     >
@@ -232,7 +231,7 @@ function QuestSubmissionList({ questId }: { questId: string }) {
                     <Td>
                       <Tag
                         colorScheme={
-                          status === "approved" ? "accentDark" : "orange"
+                          status === "approved" ? "accent" : "orange"
                         }
                       >
                         {status === "approved" ? "Approved" : "Under review"}

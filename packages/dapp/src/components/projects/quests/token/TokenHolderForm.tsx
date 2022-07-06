@@ -10,9 +10,9 @@ function TokenHolderForm() {
   const {
     register,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{ tokenContractAddress: string }>();
   return (
-    <FormControl isInvalid={errors.tokenContractAddress}>
+    <FormControl isInvalid={!!errors.tokenContractAddress}>
       <FormLabel htmlFor="tokenContractAddress">
         Token Contract Address
       </FormLabel>

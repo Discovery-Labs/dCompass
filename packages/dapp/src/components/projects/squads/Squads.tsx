@@ -82,6 +82,25 @@ export default function Squads({
               formLabel="Squad image"
               {...{ register, setValue, getValues, errors }}
             />
+            {/* <FormControl
+              isInvalid={!!errors.squads && errors.squads[index].image}
+            >
+              <FormLabel htmlFor={`squads[${index}].image`}>
+                Squad image
+              </FormLabel>
+
+              <Input
+                type="file"
+                placeholder="Squad logo"
+                {...register(`squads[${index}].image`)}
+              />
+
+              <FormErrorMessage>
+                {errors.squads &&
+                  errors.squads[index].image &&
+                  errors.squads[index].image.message}
+              </FormErrorMessage>
+            </FormControl> */}
 
             <FormControl
               isInvalid={errors.squads && errors.squads[index].members}

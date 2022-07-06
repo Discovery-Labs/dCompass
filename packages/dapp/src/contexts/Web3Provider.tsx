@@ -1,13 +1,17 @@
 import ABIS from "@discovery-dao/hardhat/abis.json";
+import {
+  PathwayNFT,
+  ProjectNFT,
+  SponsorPassSFT,
+  BadgeNFT,
+} from "@discovery-dao/hardhat/typechain-types";
 import publishedModel from "@discovery-dao/schemas/lib/model.json";
-// import { Client, ThreadID, Where } from "@textile/hub";
 import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { SiweMessage } from "siwe";
-// import Authereum from "authereum";
 
 import { ethers } from "ethers";
 import { useReducer, useEffect, useCallback, useMemo } from "react";
@@ -26,17 +30,11 @@ import {
   useSignOutMutation,
 } from "../core/graphql/generated/types";
 import { useActiveWeb3React } from "../core/hooks/web3";
-import NETWORKS from "../core/networks";
-// import {
-//   getAuthorizedUserClient,
-//   getDBClient,
-//   getIdentity,
-//   getPrivateIdentity,
-//   sign,
-// } from "../core/thread-db/thread-db";
+import { defaultChain, getStaticProvider, NETWORKS } from "../core/networks";
 
 import { initialState, Web3Context } from "./Web3Context";
 import { Web3Reducer } from "./Web3Reducer";
+import { useContract, useNetwork } from "wagmi";
 
 export const supportedNetworks = Object.keys(ABIS);
 
@@ -61,12 +59,40 @@ const providerOptions = {
       infuraId: INFURA_ID,
     },
   },
-  // authereum: {
-  //   package: Authereum,
-  // },
 };
 
 const Web3Provider = ({ children }: { children: any }) => {
+  const { activeChain } = useNetwork();
+
+  const staticProvider = useMemo(
+    () => getStaticProvider(activeChain),
+    [activeChain]
+  );
+
+  const abiForCurrentNetwork =
+    ABIS[defaultChain.id][NETWORKS[defaultChain.id].name];
+
+  const PathwayNFTContractRead = useContract({
+    addressOrName: abiForCurrentNetwork.contracts.PathwayNFT.address,
+    contractInterface: abiForCurrentNetwork.contracts.PathwayNFT.abi,
+    signerOrProvider: staticProvider,
+  }) as PathwayNFT;
+  const ProjectNFTContractRead = useContract({
+    addressOrName: abiForCurrentNetwork.contracts.ProjectNFT.address,
+    contractInterface: abiForCurrentNetwork.contracts.ProjectNFT.abi,
+    signerOrProvider: staticProvider,
+  }) as ProjectNFT;
+  const SponsorPassSFTContractRead = useContract({
+    addressOrName: abiForCurrentNetwork.contracts.SponsorPassSFT.address,
+    contractInterface: abiForCurrentNetwork.contracts.SponsorPassSFT.abi,
+    signerOrProvider: staticProvider,
+  }) as SponsorPassSFT;
+  const BadgeNFTContractRead = useContract({
+    addressOrName: abiForCurrentNetwork.contracts.BadgeNFT.address,
+    contractInterface: abiForCurrentNetwork.contracts.BadgeNFT.abi,
+    signerOrProvider: staticProvider,
+  }) as BadgeNFT;
+
   const [signIn] = useSignInMutation({
     fetchPolicy: "network-only",
   });
@@ -80,6 +106,7 @@ const Web3Provider = ({ children }: { children: any }) => {
     fetchPolicy: "network-only",
   });
   const [state, dispatch] = useReducer(Web3Reducer, initialState);
+
   const { activate, chainId, library } = useWeb3React();
   const { active, account } = useActiveWeb3React();
   const web3Modal = useMemo<Web3Modal>(
@@ -147,27 +174,18 @@ const Web3Provider = ({ children }: { children: any }) => {
     });
   };
 
-  // const setPrivateIdentity = (identity: null | any) => {
-  //   dispatch({
-  //     type: "SET_PRIVATE_IDENTITY",
-  //     payload: identity,
-  //   });
-  // };
-
-  // const setThreadDBAuthorizedClient = (client: null | Client) => {
-  //   dispatch({
-  //     type: "SET_THREAD_DB_AUTHORIZED_CLIENT",
-  //     payload: client,
-  //   });
-  // };
-
   const logout = async () => {
     await signOut();
     setAccount(null);
     setSelf(null);
     setCore(null);
     setIsReviewer(false);
-    setContracts(null);
+    setContracts({
+      projectNFTContract: ProjectNFTContractRead,
+      pathwayNFTContract: PathwayNFTContractRead,
+      SponsorPassSFT: SponsorPassSFTContractRead,
+      BadgeNFT: BadgeNFTContractRead,
+    });
     setIsSignedIn(false);
     // TODO: better way to handle this ? https://github.com/NoahZinsmeister/web3-react/issues/228
     localStorage.setItem("defaultWallet", "");
@@ -176,6 +194,18 @@ const Web3Provider = ({ children }: { children: any }) => {
   useEffect(() => {
     const coreCeramic = ceramicCoreFactory();
     setCore(coreCeramic);
+  }, []);
+
+  useEffect(() => {
+    async function initReadContracts() {
+      setContracts({
+        projectNFTContract: ProjectNFTContractRead,
+        pathwayNFTContract: PathwayNFTContractRead,
+        SponsorPassSFT: SponsorPassSFTContractRead,
+        BadgeNFT: BadgeNFTContractRead,
+      });
+    }
+    initReadContracts();
   }, []);
 
   useEffect(() => {
@@ -225,22 +255,10 @@ const Web3Provider = ({ children }: { children: any }) => {
   useEffect(() => {
     async function handleActiveAccount() {
       if (active && account) {
+        console.log({ active, account });
         setAccount(account);
-
-        try {
-          const { data: meData } = await me();
-          if (!meData?.me?.did) {
-            return;
-          }
-          setIsSignedIn(true);
-          // setAccount(meData.me.address);
-          // setENS(meData.me.ens);
-        } catch (error) {
-          console.log("NOT_AUTHENTICATED");
-        }
-        const provider = await web3Modal.connect();
         const ethersProvider = new ethers.providers.Web3Provider(
-          provider,
+          library.provider,
           "any"
         );
 
@@ -251,7 +269,7 @@ const Web3Provider = ({ children }: { children: any }) => {
           ),
           ceramic: CERAMIC_TESTNET,
           connectNetwork: CERAMIC_TESTNET,
-          model: publishedModel,
+          aliases: publishedModel,
         });
         setSelf(mySelf);
         const identityLinkService = new IdentityLink(
@@ -259,6 +277,102 @@ const Web3Provider = ({ children }: { children: any }) => {
             "https://verifications-clay.3boxlabs.com"
         );
         setIdentityLink(identityLinkService);
+
+        try {
+          const { data: meData } = await me();
+          console.log({ me: meData?.me });
+          if (!meData?.me?.id) {
+            // Get a nonce from the back-end
+            const { data } = await getNonce();
+            console.log({ nonce: data?.getNonce });
+            if (!data?.getNonce) {
+              throw new Error("No nonce");
+            }
+            const message = new SiweMessage({
+              domain: window.document.location.host,
+              address: account,
+              chainId: await library
+                .getNetwork()
+                .then(({ chainId }: { chainId: number }) => chainId),
+              uri: window.document.location.origin,
+              version: "1",
+              statement: "Howdy Adventurer!",
+              nonce: data?.getNonce,
+            });
+
+            console.log({ message });
+
+            const signature = await library
+              .getSigner()
+              .signMessage(message.prepareMessage());
+
+            console.log({ signature });
+
+            const isSignedIn = await signIn({
+              variables: {
+                input: {
+                  message: {
+                    ...message,
+                    statement: message.statement || "Howdy Adventurer!",
+                    type: SignatureType.PersonalSignature,
+                    signature,
+                  },
+                },
+              },
+            });
+            console.log(isSignedIn.data);
+            setIsSignedIn(true);
+          }
+          // setAccount(meData.me.address);
+          // setENS(meData.me.ens);
+        } catch (error) {
+          console.log("NOT_AUTHENTICATED");
+          try {
+            // Get a nonce from the back-end
+            const { data } = await getNonce();
+            console.log({ nonce: data?.getNonce });
+            if (!data?.getNonce) {
+              throw new Error("No nonce");
+            }
+            const message = new SiweMessage({
+              domain: window.document.location.host,
+              address: account,
+              chainId: await library
+                .getNetwork()
+                .then(({ chainId }: { chainId: number }) => chainId),
+              uri: window.document.location.origin,
+              version: "1",
+              statement: "Howdy Adventurer!",
+              nonce: data?.getNonce,
+            });
+
+            console.log({ message });
+
+            const signature = await library
+              .getSigner()
+              .signMessage(message.prepareMessage());
+
+            console.log({ signature });
+
+            const isSignedIn = await signIn({
+              variables: {
+                input: {
+                  message: {
+                    ...message,
+                    statement: message.statement || "Howdy Adventurer!",
+                    type: SignatureType.PersonalSignature,
+                    signature,
+                  },
+                },
+              },
+            });
+            console.log(isSignedIn.data);
+            setIsSignedIn(true);
+          } catch (error) {
+            setIsSignedIn(false);
+            console.log(error);
+          }
+        }
 
         // Get ens
         let ens = null;
@@ -272,11 +386,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       }
     }
     handleActiveAccount();
-    return () => {
-      setAccount(null);
-      return setENS(null);
-    };
-  }, [account, me, active, library, web3Modal]);
+  }, [account, me, active, signIn, getNonce, library, web3Modal]);
 
   const connectWeb3 = useCallback(async () => {
     const provider = await web3Modal.connect();
@@ -349,7 +459,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       }
       const message = new SiweMessage({
         domain: window.document.location.host,
-        address: account,
+        address: connectedAccount,
         chainId: await lib
           .getNetwork()
           .then(({ chainId }: { chainId: number }) => chainId),
@@ -399,18 +509,10 @@ const Web3Provider = ({ children }: { children: any }) => {
       ),
       ceramic: CERAMIC_TESTNET,
       connectNetwork: CERAMIC_TESTNET,
-      model: publishedModel,
+      aliases: publishedModel,
     });
     setSelf(mySelf);
-
-    provider.on("chainChanged", () => {
-      // window.location.reload();
-    });
-
-    provider.on("accountsChanged", () => {
-      // window.location.reload();
-    });
-  }, [chainId, activate, web3Modal]);
+  }, [chainId, activate, web3Modal, signIn, account, getNonce]);
 
   return (
     <Web3Context.Provider

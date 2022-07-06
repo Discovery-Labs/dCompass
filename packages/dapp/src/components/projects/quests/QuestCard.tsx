@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   CheckIcon,
   CloseIcon,
@@ -64,11 +64,11 @@ const QuestCard = ({
   const { getRewardCurrency } = useTokenList();
   const [status, setStatus] = useState<string>();
 
-  const { chainId, library } = useWeb3React();
+  const { chainId } = useWeb3React();
   const { account, contracts, self } = useContext(Web3Context);
   const [approveQuestMutation] = useMutation(APPROVE_QUEST_MUTATION);
 
-  const [getAllQuestsByPathwayId] = useLazyQuery(
+  const { data, refetch: getAllQuestsByPathwayId } = useQuery(
     GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
     {
       variables: {
@@ -83,13 +83,13 @@ const QuestCard = ({
     console.log({ streamId: quest.streamId });
     async function init() {
       if (contracts && quest.streamId) {
-        const statusInt = await contracts.BadgeNFT.status(quest.streamId);
+        const statusInt = await contracts?.BadgeNFT.status(quest.streamId);
         console.log({ statusInt });
-        const isMinted = await contracts.BadgeNFT.badgeMinted(quest.streamId);
-        const statusString = await contracts.BadgeNFT.statusStrings(statusInt);
+        const isMinted = await contracts?.BadgeNFT.badgeMinted(quest.streamId);
+        const statusString = await contracts?.BadgeNFT.statusStrings(statusInt);
         setStatus(isMinted ? "MINTED" : statusString);
         const claimedByAddresses =
-          await contracts.BadgeNFT.getAllAddrsByBadgeIDVersion(
+          await contracts?.BadgeNFT.getAllAddrsByBadgeIDVersion(
             quest.streamId,
             0
           );
@@ -109,8 +109,25 @@ const QuestCard = ({
 
   const handleApproveQuest = async () => {
     setIsApproving(true);
+    const isWithRewards = parseFloat(quest.rewardAmount) > 0;
 
-    const { data } = await approveQuestMutation({
+    if (status === "NONEXISTENT" && !isWithRewards) {
+      console.log({ crea: quest.createdBy });
+      // TODO provide quest.createdBy instead of msg.sender?
+      const createQuestOnChainTx = await contracts?.BadgeNFT.createBadge(
+        quest.streamId,
+        data.getAllQuestsByPathwayId.streamId,
+        quest.rewardUserCap,
+        isWithRewards,
+        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+        account || "",
+        false,
+        "0",
+        quest.createdBy
+      );
+      await createQuestOnChainTx?.wait(1);
+    }
+    const { data: approveData } = await approveQuestMutation({
       variables: {
         input: {
           id: quest.id,
@@ -119,9 +136,9 @@ const QuestCard = ({
       },
     });
     const [metadataVerifySignature, thresholdVerifySignature] =
-      data.approveQuest.expandedServerSignatures;
+      approveData.approveQuest.expandedServerSignatures;
     console.log({ bId: quest.streamId, pId: pathwayStreamId });
-    const voteForApprovalTx = await contracts.BadgeNFT.voteForApproval(
+    const voteForApprovalTx = await contracts?.BadgeNFT.voteForApproval(
       projectContributors,
       quest.streamId,
       pathwayStreamId,
@@ -132,10 +149,21 @@ const QuestCard = ({
     );
 
     // get return values or events
-    const receipt = await voteForApprovalTx.wait(1);
+    const receipt = await voteForApprovalTx?.wait(1);
     console.log({ receipt });
-    const statusInt = await contracts.BadgeNFT.status(quest.streamId);
-    const statusString = await contracts.BadgeNFT.statusStrings(statusInt);
+    const statusInt = await contracts?.BadgeNFT.status(quest.streamId);
+    if (!statusInt) {
+      return toast({
+        title: "Quest has no status!",
+        description: `Approval vote submitted successfully!`,
+        status: "success",
+        position: "bottom-right",
+        duration: 3000,
+        isClosable: true,
+        variant: "subtle",
+      });
+    }
+    const statusString = await contracts?.BadgeNFT.statusStrings(statusInt);
     console.log({ statusString });
     switch (statusString) {
       case "NONEXISTENT":
@@ -157,7 +185,7 @@ const QuestCard = ({
       description: `Approval vote submitted successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
@@ -195,7 +223,7 @@ const QuestCard = ({
         data.verifyQuest.expandedServerSignatures;
 
       const { url } = await nftCidRes.json();
-      const createTokenTx = await contracts.BadgeNFT.createToken(
+      const createTokenTx = await contracts?.BadgeNFT.createToken(
         url,
         quest.streamId,
         pathwayStreamId,
@@ -206,25 +234,21 @@ const QuestCard = ({
       );
 
       // get return values or events
-      const receipt = await createTokenTx.wait(1);
+      const receipt = await createTokenTx?.wait(1);
       console.log({ receipt });
-      const isMinted = await contracts.BadgeNFT.badgeMinted(quest.streamId);
+      const isMinted = await contracts?.BadgeNFT.badgeMinted(quest.streamId);
       if (isMinted) {
         setStatus("MINTED");
       }
     }
-    await getAllQuestsByPathwayId({
-      variables: {
-        pathwayId: quest.pathwayId,
-      },
-    });
+    await getAllQuestsByPathwayId();
     setIsCreatingToken(false);
     return toast({
       title: "Quest minted!",
       description: `Quest minted and created successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
@@ -253,7 +277,7 @@ const QuestCard = ({
   const isClaimed = account && claimedBy?.includes(account);
 
   const isLocked = quest.id === "01g0yjfgqrhc2q0f4nqtxtqy81";
-  const withRequisites = true;
+  const withRequisites = quest.prerequisites.length > 0;
 
   return (
     <Card position="relative" h="xl" spacing="6" py="4">
@@ -286,7 +310,7 @@ const QuestCard = ({
         <Flex w="full" minH="56px">
           <Flex w="full" justify="center" direction="column">
             <Text color="accent" textTransform="uppercase">
-              Quest type: {quest.questType}
+              {quest.difficulty} {quest.questType}
             </Text>
             <Heading
               noOfLines={2}
@@ -330,31 +354,33 @@ const QuestCard = ({
             <Text color="accent">Requisites: </Text>
 
             {withRequisites ? (
-              <Popover isLazy>
+              <Popover isLazy matchWidth>
                 <PopoverTrigger>
                   <Button w="full" variant="outline">
-                    3 Requisites
+                    {quest.prerequisites.length} Requisites
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent>
+                <PopoverContent w="full">
                   <PopoverBody>
                     <UnorderedList>
-                      <ListItem>
-                        <Link href="http://localhost:3000/projects" isExternal>
-                          Complete the Quest TEST OF THE SUPER DEV{" "}
-                          <ExternalLinkIcon mx="2px" />
-                        </Link>
-                      </ListItem>
-                      <ListItem>
-                        <Link href="http://localhost:3000/projects" isExternal>
-                          Create one Quest <ExternalLinkIcon mx="2px" />
-                        </Link>
-                      </ListItem>
-                      <ListItem>
-                        <Link href="http://localhost:3000/projects" isExternal>
-                          Join one Guild <ExternalLinkIcon mx="2px" />
-                        </Link>
-                      </ListItem>
+                      {quest.prerequisites.map((prereqQuestId) => {
+                        return (
+                          <ListItem key={prereqQuestId}>
+                            <Link
+                              href={`http://localhost:3000/projects/${data.getAllQuestsByPathwayId.projectId}/pathways/${data.getAllQuestsByPathwayId.id}/${prereqQuestId}`}
+                              isExternal
+                            >
+                              {
+                                [
+                                  ...data.getAllQuestsByPathwayId.quizQuests,
+                                  ...data.getAllQuestsByPathwayId.bountyQuests,
+                                ]?.find((qst) => qst.id === prereqQuestId)?.name
+                              }{" "}
+                              <ExternalLinkIcon mx="2px" />
+                            </Link>
+                          </ListItem>
+                        );
+                      })}
                     </UnorderedList>
                   </PopoverBody>
                 </PopoverContent>

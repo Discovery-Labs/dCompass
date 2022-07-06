@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { EditIcon, AddIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Button,
@@ -9,7 +9,6 @@ import {
   Icon,
   Progress,
   SimpleGrid,
-  Spacer,
   Stack,
   Tab,
   TabList,
@@ -22,7 +21,6 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
 import { Web3Context } from "contexts/Web3Provider";
@@ -37,7 +35,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Blockies from "react-blockies";
-import { BsBarChartFill, BsCheckCircleFill, BsPeople } from "react-icons/bs";
+import { BsCheckCircleFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { GoTasklist } from "react-icons/go";
 import { RiHandCoinFill } from "react-icons/ri";
@@ -102,7 +100,6 @@ function PathwayPage({
   image,
   quizQuests = [],
   bountyQuests = [],
-  difficulty,
   createdBy,
   createdAt,
   rewardAmount,
@@ -177,13 +174,15 @@ function PathwayPage({
 
   useEffect(() => {
     async function init() {
-      if (contracts && streamId) {
+      if (contracts?.pathwayNFTContract && streamId) {
         const claimedByAddresses =
           await contracts.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
             streamId,
             0
           );
-        const currentUserHasClaimed = claimedByAddresses.includes(account);
+        const currentUserHasClaimed = account
+          ? claimedByAddresses.includes(account)
+          : false;
 
         setIsClaimed(currentUserHasClaimed);
         setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
@@ -212,7 +211,6 @@ function PathwayPage({
         image,
         quizQuests,
         bountyQuests,
-        difficulty,
         createdBy,
         createdAt,
         rewardAmount,
@@ -245,7 +243,7 @@ function PathwayPage({
     console.log({ metadataVerify });
     setRewardStatus("Claiming on-chain");
     const claimRewardsTx =
-      await contracts.pathwayNFTContract.claimPathwayRewards(
+      await contracts?.pathwayNFTContract.claimPathwayRewards(
         streamId,
         isNativeToken,
         isNativeToken ? account : tokenAddressOrSymbol,
@@ -256,14 +254,17 @@ function PathwayPage({
         url,
         0
       );
-    await claimRewardsTx.wait(1);
+    await claimRewardsTx?.wait(1);
 
     const claimedByAddresses =
-      await contracts.PathwayNFTContract.getAllAddrsByPathwayIDVersion(
+      await contracts?.pathwayNFTContract.getAllAddrsByPathwayIDVersion(
         streamId,
         0
       );
-    const currentUserHasClaimed = claimedByAddresses.includes(account);
+    const currentUserHasClaimed =
+      claimedByAddresses && account
+        ? claimedByAddresses.includes(account)
+        : false;
     setIsClaimed(currentUserHasClaimed);
     setRewardStatus(currentUserHasClaimed ? "Claimed" : "Claim");
     setClaimedBy(claimedByAddresses);
@@ -273,7 +274,7 @@ function PathwayPage({
       description: `Rewards claimed successfully!`,
       status: "success",
       position: "bottom-right",
-      duration: 6000,
+      duration: 3000,
       isClosable: true,
       variant: "subtle",
     });
@@ -370,22 +371,32 @@ function PathwayPage({
               passHref
             >
               {/** TODO: Edit pathway form or page **/}
-              <Button disabled leftIcon={<AddIcon />}>
-                {t("edit-pathway")}
-              </Button>
+              <Button leftIcon={<AddIcon />}>{t("edit-pathway")}</Button>
             </NextLink>
           )}
         </HStack>
         <Tabs w="full">
           <HStack w="full">
             <TabList w="full">
+              <Tab w="full">Overview</Tab>
               <Tab w="full">Quests</Tab>
-              <Tab w="full">Guide</Tab>
               <Tab w="full">Details&amp;Rewards</Tab>
             </TabList>
           </HStack>
 
           <TabPanels>
+            {/* Overview */}
+            <TabPanel px="0">
+              <VStack w="full" align="flex-start">
+                <ReactMarkdown
+                  components={ChakraUIRenderer(pathwayMarkdownTheme)}
+                  skipHtml
+                >
+                  {description}
+                </ReactMarkdown>
+              </VStack>
+            </TabPanel>
+
             {/* Quests */}
             <TabPanel px="0">
               <Tabs w="full" variant="unstyled">
@@ -436,18 +447,6 @@ function PathwayPage({
               </Tabs>
             </TabPanel>
 
-            {/* Guide */}
-            <TabPanel px="0">
-              <VStack w="full" align="flex-start">
-                <ReactMarkdown
-                  components={ChakraUIRenderer(pathwayMarkdownTheme)}
-                  skipHtml
-                >
-                  {description}
-                </ReactMarkdown>
-              </VStack>
-            </TabPanel>
-
             {/* Details */}
             <TabPanel px="0">
               <Flex
@@ -457,21 +456,6 @@ function PathwayPage({
                 justify="space-between"
               >
                 <VStack align="left">
-                  <HStack>
-                    <Icon as={BsBarChartFill} />
-                    <Text
-                      fontWeight="bold"
-                      fontSize="xl"
-                      color="text"
-                      textTransform="uppercase"
-                    >
-                      Difficulty
-                    </Text>
-                    <Spacer />
-                    <Flex align="end" direction="column">
-                      <Tag>{difficulty}</Tag>
-                    </Flex>
-                  </HStack>
                   <Tooltip
                     label={`${pathwayProgress?.ratio}% - ${pathwayProgress?.completedQuestCount}/${pathwayProgress?.totalQuestCount} quests completed`}
                     hasArrow
@@ -531,8 +515,13 @@ function PathwayPage({
                       Rewards
                     </Text>
                     <Tag variant="outline" size="lg">
-                      {rewardAmount} {getRewardCurrency(rewardCurrency)}
+                      NFT
                     </Tag>
+                    {rewardAmount && (
+                      <Tag variant="outline" size="lg">
+                        {rewardAmount} {getRewardCurrency(rewardCurrency)}
+                      </Tag>
+                    )}
                   </HStack>
                 </VStack>
                 <Flex align="center" maxW="full" py="4">
@@ -545,11 +534,11 @@ function PathwayPage({
                     />
                   )}
                   <VStack align="flex-start" mx="2">
-                    <Text color="text-weak" textStyle="small" isTruncated>
+                    <Text color="text-weak" textStyle="small">
                       {t("creation-date")}{" "}
                       {new Date(createdAt).toLocaleString()}
                     </Text>
-                    <Text fontSize="sm" isTruncated>
+                    <Text fontSize="sm">
                       {t("by")} {getShortenedAddress(createdBy)}
                     </Text>
                     {isOwner && (
@@ -598,10 +587,15 @@ function PathwayPage({
                           left: 0,
                         }}
                       />
-                      <Text>+</Text>
-                      <Tag variant="outline" size="lg">
-                        {rewardAmount} {getRewardCurrency(rewardCurrency)}
-                      </Tag>
+                      <Text>NFT</Text>
+                      {rewardAmount && (
+                        <>
+                          <Text>+</Text>
+                          <Tag variant="outline" size="lg">
+                            {rewardAmount} {getRewardCurrency(rewardCurrency)}
+                          </Tag>
+                        </>
+                      )}
                     </HStack>
 
                     <Button

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Project, Prisma } from "@prisma/client";
+import { Project, Prisma, ProjectSquad } from "@prisma/client";
 import { PrismaService } from "src/services/prisma/Prisma.service";
 
 type ProjectWithSquads = Prisma.ProjectGetPayload<{
@@ -132,5 +132,26 @@ export class ProjectService {
     data: Prisma.ProjectSquadCreateManyInput
   ): Promise<Prisma.BatchPayload> {
     return this.prisma.projectSquad.createMany({ data });
+  }
+
+  async deleteSquads(
+    args: Prisma.ProjectSquadDeleteManyArgs
+  ): Promise<Prisma.BatchPayload> {
+    return this.prisma.projectSquad.deleteMany(args);
+  }
+
+  async updateSquads(
+    params: Prisma.ProjectSquadUpdateManyArgs
+  ): Promise<Prisma.BatchPayload> {
+    const { data, where } = params;
+    return this.prisma.projectSquad.updateMany({ data, where });
+  }
+
+  async updateSquad(params: {
+    data: Prisma.ProjectSquadUpdateInput;
+    where: Prisma.ProjectSquadWhereUniqueInput;
+  }): Promise<ProjectSquad> {
+    const { data, where } = params;
+    return this.prisma.projectSquad.update({ data, where });
   }
 }

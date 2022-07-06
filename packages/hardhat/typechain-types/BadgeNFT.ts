@@ -28,8 +28,11 @@ export interface BadgeNFTInterface extends utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "claimBadgeRewards(string,bool,address,bytes32,bytes32,uint8,bool,string,uint256)": FunctionFragment;
     "claimRejectionRefund(string,bool,address)": FunctionFragment;
-    "createBadge(string,string,uint256,bool,address,bool,uint256)": FunctionFragment;
+    "createBadge(string,string,uint256,bool,address,bool,uint256,address)": FunctionFragment;
+    "createBadgeAndVote(address[],string,string,bytes32[2],bytes32[2],uint8[2],uint256,uint256,bool[2],address,uint256,address)": FunctionFragment;
     "createToken(string,string,string,bytes32[2],bytes32[2],uint8[2],uint256)": FunctionFragment;
+    "creator(string)": FunctionFragment;
+    "creatorFee()": FunctionFragment;
     "currentNumUsersRewardPerBadgeERC20(string,address)": FunctionFragment;
     "currentNumUsersRewardPerBadgeNative(string)": FunctionFragment;
     "fee()": FunctionFragment;
@@ -114,7 +117,25 @@ export interface BadgeNFTInterface extends utils.Interface {
       boolean,
       string,
       boolean,
-      BigNumberish
+      BigNumberish,
+      string
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createBadgeAndVote",
+    values: [
+      string[],
+      string,
+      string,
+      [BytesLike, BytesLike],
+      [BytesLike, BytesLike],
+      [BigNumberish, BigNumberish],
+      BigNumberish,
+      BigNumberish,
+      [boolean, boolean],
+      string,
+      BigNumberish,
+      string
     ]
   ): string;
   encodeFunctionData(
@@ -128,6 +149,11 @@ export interface BadgeNFTInterface extends utils.Interface {
       [BigNumberish, BigNumberish],
       BigNumberish
     ]
+  ): string;
+  encodeFunctionData(functionFragment: "creator", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "creatorFee",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "currentNumUsersRewardPerBadgeERC20",
@@ -315,9 +341,15 @@ export interface BadgeNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "createBadgeAndVote",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "createToken",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "creator", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "creatorFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "currentNumUsersRewardPerBadgeERC20",
     data: BytesLike
@@ -601,7 +633,24 @@ export interface BadgeNFT extends BaseContract {
       _ERC20Address: string,
       useNative: boolean,
       amount: BigNumberish,
+      sender: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    createBadgeAndVote(
+      _contributors: string[],
+      _badgeId: string,
+      _pathwayId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      numUsersRewarded: BigNumberish,
+      rewardsNative: [boolean, boolean],
+      _ERC20Address: string,
+      amount: BigNumberish,
+      sender: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     createToken(
@@ -614,6 +663,10 @@ export interface BadgeNFT extends BaseContract {
       votesNeeded: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    creator(arg0: string, overrides?: CallOverrides): Promise<[string]>;
+
+    creatorFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     currentNumUsersRewardPerBadgeERC20(
       arg0: string,
@@ -879,7 +932,24 @@ export interface BadgeNFT extends BaseContract {
     _ERC20Address: string,
     useNative: boolean,
     amount: BigNumberish,
+    sender: string,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  createBadgeAndVote(
+    _contributors: string[],
+    _badgeId: string,
+    _pathwayId: string,
+    r: [BytesLike, BytesLike],
+    s: [BytesLike, BytesLike],
+    v: [BigNumberish, BigNumberish],
+    votesNeeded: BigNumberish,
+    numUsersRewarded: BigNumberish,
+    rewardsNative: [boolean, boolean],
+    _ERC20Address: string,
+    amount: BigNumberish,
+    sender: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   createToken(
@@ -892,6 +962,10 @@ export interface BadgeNFT extends BaseContract {
     votesNeeded: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  creator(arg0: string, overrides?: CallOverrides): Promise<string>;
+
+  creatorFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   currentNumUsersRewardPerBadgeERC20(
     arg0: string,
@@ -1142,6 +1216,23 @@ export interface BadgeNFT extends BaseContract {
       _ERC20Address: string,
       useNative: boolean,
       amount: BigNumberish,
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    createBadgeAndVote(
+      _contributors: string[],
+      _badgeId: string,
+      _pathwayId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      numUsersRewarded: BigNumberish,
+      rewardsNative: [boolean, boolean],
+      _ERC20Address: string,
+      amount: BigNumberish,
+      sender: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1155,6 +1246,10 @@ export interface BadgeNFT extends BaseContract {
       votesNeeded: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    creator(arg0: string, overrides?: CallOverrides): Promise<string>;
+
+    creatorFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentNumUsersRewardPerBadgeERC20(
       arg0: string,
@@ -1474,7 +1569,24 @@ export interface BadgeNFT extends BaseContract {
       _ERC20Address: string,
       useNative: boolean,
       amount: BigNumberish,
+      sender: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    createBadgeAndVote(
+      _contributors: string[],
+      _badgeId: string,
+      _pathwayId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      numUsersRewarded: BigNumberish,
+      rewardsNative: [boolean, boolean],
+      _ERC20Address: string,
+      amount: BigNumberish,
+      sender: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     createToken(
@@ -1487,6 +1599,10 @@ export interface BadgeNFT extends BaseContract {
       votesNeeded: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    creator(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    creatorFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentNumUsersRewardPerBadgeERC20(
       arg0: string,
@@ -1757,7 +1873,24 @@ export interface BadgeNFT extends BaseContract {
       _ERC20Address: string,
       useNative: boolean,
       amount: BigNumberish,
+      sender: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createBadgeAndVote(
+      _contributors: string[],
+      _badgeId: string,
+      _pathwayId: string,
+      r: [BytesLike, BytesLike],
+      s: [BytesLike, BytesLike],
+      v: [BigNumberish, BigNumberish],
+      votesNeeded: BigNumberish,
+      numUsersRewarded: BigNumberish,
+      rewardsNative: [boolean, boolean],
+      _ERC20Address: string,
+      amount: BigNumberish,
+      sender: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     createToken(
@@ -1770,6 +1903,13 @@ export interface BadgeNFT extends BaseContract {
       votesNeeded: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    creator(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    creatorFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     currentNumUsersRewardPerBadgeERC20(
       arg0: string,

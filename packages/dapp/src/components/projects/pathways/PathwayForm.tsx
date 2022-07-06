@@ -26,10 +26,7 @@ import useCustomColor from "core/hooks/useCustomColor";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import {
-  difficultyOptions,
-  REQUIRED_FIELD_LABEL,
-} from "../../../core/constants";
+import { REQUIRED_FIELD_LABEL } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
 import ImageDropzone from "../../custom/ImageDropzone";
 import ControlledSelect from "../../Inputs/ControlledSelect";
@@ -51,7 +48,17 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
     getValues,
     watch,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<{
+    rewardAmount: string;
+    rewardCurrency: {
+      label: string;
+      value: string;
+    };
+    rewardUserCap: string;
+    title: string;
+    description: string;
+    slogan: string;
+  }>();
 
   useEffect(() => {
     const descriptionValues = getValues("description");
@@ -108,22 +115,9 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
   //   },
   // ];
 
-  // const existingPathwaysOptions = data.getAllPathwaysByProjectId
-  //   .filter((pathway: Pathway) => pathway.quests?.length > 0)
-  //   .map((pathway: Pathway) => {
-  //     return {
-  //       label: pathway.title,
-  //       options: pathway.quests.map((quest) => ({
-  //         label: quest.name,
-  //         value: quest.id,
-  //         colorScheme: "purple",
-  //       })),
-  //     };
-  //   });
-
   return (
     <VStack w="full" align="start">
-      <FormControl isInvalid={errors.title}>
+      <FormControl isInvalid={!!errors.title}>
         <FormLabel htmlFor="title">Title</FormLabel>
         <HStack>
           <Input
@@ -142,7 +136,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.slogan}>
+      <FormControl isInvalid={!!errors.slogan}>
         <FormLabel htmlFor="slogan">Short Description</FormLabel>
         <Input
           placeholder="Slogan"
@@ -159,8 +153,9 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl isInvalid={errors.description}>
+      <FormControl isInvalid={!!errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
+
         <CodeEditor
           value={code}
           language="markdown"
@@ -169,9 +164,8 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
             required: REQUIRED_FIELD_LABEL,
           })}
           onChange={(e) => {
-            const { name } = e.target;
             setCode(e.target.value);
-            setValue(name, e.target.value);
+            setValue("description", e.target.value);
           }}
           style={{
             fontSize: "16px",
@@ -191,17 +185,35 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
       )}
 
       <ImageDropzone
-        isRequired
-        fieldName="image"
-        label="NFT image reward"
-        {...{ register, setValue, errors }}
+        {...{
+          register,
+          setValue,
+          errors,
+          fieldName: "image",
+          label: "Pathway NFT Image reward",
+          isRequired: true,
+        }}
       />
+
+      {/* <FormControl isInvalid={!!errors.image}>
+        <FormLabel htmlFor="image">NFT reward image</FormLabel>
+
+        <Input
+          type="file"
+          placeholder="NFT reward image"
+          {...register("image")}
+        />
+
+        <FormErrorMessage>
+          {errors.image && errors.image.message}
+        </FormErrorMessage>
+      </FormControl> */}
 
       <Checkbox onChange={(e) => withRewards(e)}>ERC20 Rewards</Checkbox>
       {isWithRewards ? (
         <VStack w="full">
           <Flex w="full" direction={["column", "column", "row"]} gap="2">
-            <FormControl isInvalid={errors.rewardAmount}>
+            <FormControl isInvalid={!!errors.rewardAmount}>
               <FormLabel htmlFor="rewardAmount">Total reward amount</FormLabel>
               <NumberInput
                 step={nativeToken.isMatic ? 10_000 : 5}
@@ -268,7 +280,7 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
       )}
 
       <VStack alignItems="center" w="full">
-        <FormControl isInvalid={errors.rewardUserCap}>
+        <FormControl isInvalid={!!errors.rewardUserCap}>
           <FormLabel htmlFor="rewardUserCap">Reward user cap</FormLabel>
           <NumberInput step={1_000} defaultValue={1_000}>
             <NumberInputField
@@ -302,22 +314,12 @@ export default function PathwayForm({ isWithRewards, withRewards }: any) {
         </FormControl>
       </VStack>
 
-      <ControlledSelect
-        control={control}
-        name="difficulty"
-        label="Difficulty"
-        rules={{
-          required: REQUIRED_FIELD_LABEL,
-        }}
-        options={difficultyOptions}
-      />
-
       {/* <ControlledSelect
         control={control}
         name="prerequisites"
         label="Prerequisites"
         isMulti
-        options={existingPathwaysOptions}
+        options={existingPathways}
         hasStickyGroupHeaders
       /> */}
       <Divider bg="none" py="5" />

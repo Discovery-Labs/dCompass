@@ -4,7 +4,7 @@ import INJECTED_ICON_URL from "../../../public/arrow-right.svg";
 import COINBASE_ICON_URL from "../../../public/coinbaseWalletIcon.svg";
 import WALLETCONNECT_ICON_URL from "../../../public/walletConnectIcon.svg";
 
-import { injected, portis, walletconnect, walletlink } from ".";
+import { injected, walletconnect, walletlink } from ".";
 
 export interface WalletInfo {
   connector?: AbstractConnector;
@@ -61,14 +61,5 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     color: "#315CF5",
     mobile: true,
     mobileOnly: true,
-  },
-  Portis: {
-    connector: portis,
-    name: "Portis",
-    iconURL: "../../../public/portisIcon.png",
-    description: "Login using Portis hosted wallet",
-    href: null,
-    color: "#4A6C9B",
-    mobile: true,
   },
 };

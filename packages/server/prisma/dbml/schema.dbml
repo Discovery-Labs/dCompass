@@ -37,6 +37,7 @@ Table SolutionSubmission {
 Table BountyQuest {
   id String [pk]
   streamId String [not null]
+  difficulty QuestDifficultyEnum [not null, default: 'BEGINNER']
   chainId Int [not null]
   completedBy String[] [not null]
   createdBy String [not null]
@@ -47,9 +48,10 @@ Table BountyQuest {
   namespace String [default: 'eip155']
   pathway Pathway
   pathwayId String
+  prerequisites String[] [not null]
   questType String [not null]
-  rewardAmount Float [not null]
-  rewardCurrency String [not null]
+  rewardAmount Float
+  rewardCurrency String
   rewardUserCap Int [not null]
   slogan String [not null]
   submissions SolutionSubmission [not null]
@@ -60,6 +62,7 @@ Table BountyQuest {
 Table QuizQuest {
   id String [pk]
   streamId String [not null]
+  difficulty QuestDifficultyEnum [not null, default: 'BEGINNER']
   chainId Int [not null]
   completedBy String[] [not null]
   createdAt DateTime [default: `now()`, not null]
@@ -73,8 +76,9 @@ Table QuizQuest {
   pathway Pathway
   pathwayId String
   questType String [not null]
-  rewardAmount Float [not null]
-  rewardCurrency String [not null]
+  prerequisites String[] [not null]
+  rewardAmount Float
+  rewardCurrency String
   rewardUserCap Int [not null]
   slogan String [not null]
   questions QuizQuestion [not null]
@@ -87,15 +91,14 @@ Table Pathway {
   updatedAt DateTime [not null]
   createdBy String [not null]
   description String [not null]
-  difficulty PathwayDifficultyEnum [not null]
   image String [not null]
   isPending Boolean [not null]
   prerequisites String[] [not null]
   projectStreamId String [not null]
   bountyQuests BountyQuest [not null]
   quizQuests QuizQuest [not null]
-  rewardAmount Float [not null]
-  rewardCurrency String [not null]
+  rewardAmount Float
+  rewardCurrency String
   rewardUserCap Int [not null]
   slogan String [not null]
   title String [not null]
@@ -173,7 +176,7 @@ Table ProjectToUser {
   projectsId String [ref: > Project.id]
 }
 
-Enum PathwayDifficultyEnum {
+Enum QuestDifficultyEnum {
   ADVANCED
   BEGINNER
   EXPERT

@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { HttpModule } from "@nestjs/axios";
 
 import { RedisModule } from "../../core/resources/Redis/Redis.module";
 
@@ -9,19 +8,13 @@ import { GetProjectByIdResolver } from "./queries/GetProjectById.resolver";
 import { AppService } from "../../app.service";
 import { ApproveProjectResolver } from "./mutations/ApproveProject.resolver";
 import { EditProjectResolver } from "./mutations/EditProject.resolver";
-import { CeramicProjectService } from "./CeramicProject.service";
-import { ThreadDBService } from "../../services/thread-db/thread-db.service";
+// import { CeramicProjectService } from "./CeramicProject.service";
+
 import { ProjectService } from "./Project.service";
 import { PrismaService } from "../../services/prisma/Prisma.service";
 
 @Module({
-  imports: [
-    RedisModule,
-    HttpModule.register({
-      timeout: 60000,
-      maxRedirects: 10,
-    }),
-  ],
+  imports: [RedisModule],
   providers: [
     GetAllProjectsResolver,
     GetProjectByIdResolver,
@@ -29,8 +22,7 @@ import { PrismaService } from "../../services/prisma/Prisma.service";
     EditProjectResolver,
     ApproveProjectResolver,
     AppService,
-    CeramicProjectService,
-    ThreadDBService,
+    // CeramicProjectService,
     ProjectService,
     PrismaService,
   ],

@@ -18,6 +18,7 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import useTokenList from "../../../core/hooks/useTokenList";
+import { Pathway } from "../../../core/types";
 import {
   CREATE_PATHWAY_MUTATION,
   GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
@@ -86,7 +87,7 @@ function PathwayFormWrapper() {
       tokenInfos.decimals
     );
     const res = await tokenContract.approve(
-      contracts.pathwayNFTContract.address,
+      contracts?.pathwayNFTContract.address,
       newAllowance
     );
     await res.wait(1);
@@ -94,68 +95,88 @@ function PathwayFormWrapper() {
   };
 
   async function onSubmit(values: Record<string, any>) {
+    if (!account) {
+      return toast({
+        title: "Not connected",
+        description: "You're not connected with your wallet'",
+        status: "error",
+        position: "bottom-right",
+        duration: 3000,
+        isClosable: true,
+        variant: "subtle",
+      });
+    }
     // TODO: add a field for this
-    const isRewardProvider = isWithRewards;
-
-    // check if the native token is used
+    const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
     const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
     const isNativeToken = tokenAddressOrSymbol ? false : true;
-    setSubmitStatus("Checking balance");
-
     let balance = 0;
-    const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
     const feeAmount = (rewardAmnt * 15) / 100;
     const totalToPay = rewardAmnt + feeAmount;
-    if (!isNativeToken) {
-      const { tokenContract, tokenInfos } = getSelectedTokenContract(
-        values.rewardCurrency.value
-      );
 
-      balance = parseFloat(
-        ethers.utils.formatUnits(
-          await tokenContract.balanceOf(account),
-          tokenInfos.decimals
-        )
-      );
-      const isValidBalance = balance >= totalToPay;
+    if (isWithRewards) {
+      // check if the native token is used
+      setSubmitStatus("Checking balance");
+      if (!isNativeToken) {
+        const { tokenContract, tokenInfos } = getSelectedTokenContract(
+          values.rewardCurrency.value
+        );
 
-      if (!isValidBalance) {
-        toast({
-          title: "Insufficient funds",
-          description: `You don't have enough funds to provide the pathway rewards in this currency`,
-          status: "error",
-          position: "bottom-right",
-          duration: 6000,
-          isClosable: true,
-          variant: "subtle",
-        });
-        return setError("rewardAmount", {
-          message: "Insufficient funds",
-        });
-      }
-    } else {
-      balance = parseFloat(
-        ethers.utils.formatEther(await library.getBalance(account))
-      );
-      const isValidBalance = balance >= totalToPay;
-      if (!isValidBalance) {
-        toast({
-          title: "Insufficient funds",
-          description: "You don't have enough funds to provide pathway rewards",
-          status: "error",
-          position: "bottom-right",
-          duration: 6000,
-          isClosable: true,
-          variant: "subtle",
-        });
-        return setError("rewardAmount", {
-          message: "Insufficient funds",
-        });
+        balance = parseFloat(
+          ethers.utils.formatUnits(
+            await tokenContract.balanceOf(account),
+            tokenInfos.decimals
+          )
+        );
+        const isValidBalance = balance >= totalToPay;
+
+        if (!isValidBalance) {
+          toast({
+            title: "Insufficient funds",
+            description: `You don't have enough funds to provide the pathway rewards in this currency`,
+            status: "error",
+            position: "bottom-right",
+            duration: 3000,
+            isClosable: true,
+            variant: "subtle",
+          });
+          return setError("rewardAmount", {
+            message: "Insufficient funds",
+          });
+        }
+      } else {
+        balance = parseFloat(
+          ethers.utils.formatEther(await library.getBalance(account))
+        );
+        const isValidBalance = balance >= totalToPay;
+        if (!isValidBalance) {
+          toast({
+            title: "Insufficient funds",
+            description:
+              "You don't have enough funds to provide pathway rewards",
+            status: "error",
+            position: "bottom-right",
+            duration: 3000,
+            isClosable: true,
+            variant: "subtle",
+          });
+          return setError("rewardAmount", {
+            message: "Insufficient funds",
+          });
+        }
       }
     }
+
     setSubmitStatus("Generating token URIs");
     // TODO: check prereqs
-    const { prerequisites, ...pathwayOptions } = values;
+    const {
+      prerequisites,
+      image,
+      rewardAmount,
+      rewardCurrency,
+      ...pathwayOptions
+    } = values;
+    console.log({ rewardAmount });
     const prereqs = prerequisites
       ? {
           prerequisites: prerequisites.map(
@@ -164,22 +185,30 @@ function PathwayFormWrapper() {
         }
       : {};
 
+    const erc20rewards = isWithRewards
+      ? {
+          rewardCurrency: rewardCurrency.value,
+          rewardAmount: rewardAmnt,
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
+        }
+      : {
+          rewardUserCap: parseInt(values.rewardUserCap, 10),
+        };
     const serlializedValues = {
       ...pathwayOptions,
-      difficulty: values.difficulty.value,
-      rewardCurrency: values.rewardCurrency.value,
-      rewardAmount: rewardAmnt,
-      rewardUserCap: parseInt(values.rewardUserCap, 10),
+      ...erc20rewards,
       ...prereqs,
       createdBy: account,
       createdAt: new Date().toISOString(),
     };
 
+    console.log({ serlializedValues });
+
     const formData = new FormData();
     formData.append("metadata", JSON.stringify(serlializedValues));
 
-    if (values.image) {
-      formData.append(values.title, values.image[0]);
+    if (image) {
+      formData.append(values.title, image[0], image[0].name);
     }
     const cidsRes = await fetch("/api/image-storage", {
       method: "POST",
@@ -197,6 +226,8 @@ function PathwayFormWrapper() {
       projectStreamId: data.getAllPathwaysByProjectId.streamId,
     };
 
+    console.log({ finalValues });
+
     const pathwayDoc = await self.client.dataModel.createTile(
       "Pathway",
       { ...finalValues, createdAt: new Date().toISOString() },
@@ -206,49 +237,47 @@ function PathwayFormWrapper() {
     );
 
     setSubmitStatus("Creating pathway on-chain");
-    if (isNativeToken) {
-      const createPathwayOnChainTx =
-        await contracts.pathwayNFTContract.createPathway(
-          pathwayDoc.id.toUrl(),
-          data.getAllPathwaysByProjectId.streamId,
-          parseInt(values.rewardUserCap, 10),
-          isRewardProvider,
-          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-          account,
-          true,
-          (rewardAmnt * 1e18).toString(),
-          {
-            value: (totalToPay * 1e18).toString(),
-          }
+    if (isWithRewards) {
+      if (isNativeToken) {
+        const createPathwayOnChainTx =
+          await contracts?.pathwayNFTContract.createPathway(
+            pathwayDoc.id.toUrl(),
+            data.getAllPathwaysByProjectId.streamId,
+            parseInt(values.rewardUserCap, 10),
+            isWithRewards,
+            // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+            account,
+            true,
+            (rewardAmnt * 1e18).toString(),
+            account
+          );
+        await createPathwayOnChainTx?.wait(1);
+      } else {
+        // TODO: check balance first
+        const tokenDetails = await approveTokenAllowance(
+          values.rewardCurrency.value,
+          totalToPay.toString()
         );
-      await createPathwayOnChainTx.wait(1);
-    } else {
-      // TODO: check balance first
-      const tokenDetails = await approveTokenAllowance(
-        values.rewardCurrency.value,
-        totalToPay.toString()
-      );
-      const rewardAmount = ethers.utils.parseUnits(
-        rewardAmnt.toString(),
-        tokenDetails.decimals
-      );
-      const createPathwayOnChainTx =
-        await contracts.pathwayNFTContract.createPathway(
-          pathwayDoc.id.toUrl(),
-          data.getAllPathwaysByProjectId.streamId,
-          parseInt(values.rewardUserCap, 10),
-          isRewardProvider,
-          // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-          values.rewardCurrency.value.split(":")[1],
-          false,
-          rewardAmount
+        const rewardAmount = ethers.utils.parseUnits(
+          rewardAmnt.toString(),
+          tokenDetails.decimals
         );
+        const createPathwayOnChainTx =
+          await contracts?.pathwayNFTContract.createPathway(
+            pathwayDoc.id.toUrl(),
+            data.getAllPathwaysByProjectId.streamId,
+            parseInt(values.rewardUserCap, 10),
+            isWithRewards,
+            // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
+            values.rewardCurrency.value.split(":")[1],
+            false,
+            rewardAmount,
+            account
+          );
 
-      await createPathwayOnChainTx.wait(1);
+        await createPathwayOnChainTx?.wait(1);
+      }
     }
-
-    setSubmitStatus("Signing pathway creation");
-
     setSubmitStatus("Pathway validation");
     await addPathwayMutation({
       variables: {
@@ -284,9 +313,27 @@ function PathwayFormWrapper() {
       </Alert>
     );
   return (
-    <>
+    <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
       <Heading>Add Pathway</Heading>
-      <PathwayForm isWithRewards={isWithRewards} withRewards={withRewards} />
+      <PathwayForm
+        isWithRewards={isWithRewards}
+        withRewards={withRewards}
+        existingPathways={
+          data?.getAllPathwaysByProjectId?.pathways?.length &&
+          data.getAllPathwaysByProjectId.pathways
+            .filter(
+              (pathway: Pathway) =>
+                [...pathway.quizQuests, ...pathway.bountyQuests].length > 0
+            )
+            .map((pathway: Pathway) => {
+              return {
+                label: pathway.title,
+                value: pathway.id,
+                colorScheme: "purple",
+              };
+            })
+        }
+      />
 
       <Flex w="full" justify="space-between">
         <Button
@@ -306,7 +353,7 @@ function PathwayFormWrapper() {
           Submit
         </Button>
       </Flex>
-    </>
+    </Stack>
   );
 }
 

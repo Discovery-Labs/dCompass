@@ -2,7 +2,7 @@ import { Button, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 
 import { namespaces } from "../../../../core/constants";
-import NETWORKS from "../../../../core/networks";
+import { NETWORKS } from "../../../../core/networks";
 
 function ClaimNFTOwnerForm({
   contractAddress,

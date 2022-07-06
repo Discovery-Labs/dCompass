@@ -35,13 +35,13 @@ const config: Config = {
   api: {
     apiKey: process.env.API_KEY!,
     environment: process.env.NODE_ENV!,
-    hostname: `${process.env.API_HOST}:${process.env.API_PORT}`,
+    hostname: `${process.env.HOST}:${process.env.PORT}`,
     confirmationTokenExpiration: parseInt(
       process.env.CONFIRMATION_TOKEN_EXPIRATION || "120",
       10
     ),
     tracing: false,
-    port: parseInt(process.env.API_PORT!),
+    port: parseInt(process.env.PORT!),
     logLevel: process.env.LOG_LEVEL!,
     protocol: function () {
       return `http${process.env.NODE_ENV! === "development" ? "" : "s"}`;
@@ -50,8 +50,9 @@ const config: Config = {
       credentials: true,
       origin: function (origin, callback) {
         const validPatternRegexes = [
-          /^(.*).coordination.party(\/(.*)|)$/,
-          /^(www.|)coordination.party(\/(.*)|)$/,
+          /^(.*).dcompass.xyz(\/(.*)|)$/,
+          /^(www.*).dcompass.xyz(\/(.*)|)$/,
+          /^(www.|)dcompass.xyz(\/(.*)|)$/,
           /^http:\/\/localhost:[0-9]{4}$/,
         ];
         if (validPatternRegexes.some((rx) => rx.test(origin)) || !origin) {
@@ -94,13 +95,14 @@ const config: Config = {
   sessionOptions: {
     name: process.env.COOKIE_NAME!,
     secret: process.env.COOKIE_SECRET!,
-    resave: true,
-    saveUninitialized: true,
-    unset: "destroy",
+    resave: false,
+    saveUninitialized: false,
+
     cookie: {
       secure: JSON.parse(process.env.IS_SECURE_COOKIE!), // casting the string to a boolean
       httpOnly: true,
       sameSite: "lax",
+      // domain: "dcompass.xyz",
       path: "/",
       maxAge: 144 * 60 * 60 * 1000, // 6 days
     },

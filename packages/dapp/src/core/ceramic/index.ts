@@ -30,7 +30,7 @@ export const ceramicCoreFactory = () => {
   // or use one of the preconfigured option
   return new Core({
     ceramic: CERAMIC_TESTNET_NODE_URL,
-    model: publishedModel,
+    aliases: publishedModel,
   });
 };
 

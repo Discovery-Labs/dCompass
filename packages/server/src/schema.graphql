@@ -30,6 +30,7 @@ type BountyQuest {
   createdAt: DateTime!
   createdBy: String!
   description: String!
+  difficulty: QuestDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -38,9 +39,10 @@ type BountyQuest {
   name: String!
   namespace: String
   pathwayId: String!
+  prerequisites: [String!]
   questType: String!
-  rewardAmount: Float!
-  rewardCurrency: String!
+  rewardAmount: Float
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!
@@ -63,7 +65,6 @@ input ClaimQuestRewardsInput {
 
 input CreatePathwayInput {
   id: String!
-  pathwayCreatorSignature: String!
 }
 
 input CreateProjectInput {
@@ -80,19 +81,46 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input EditPathwayInput {
+  description: String
+  id: String!
+  slogan: String
+  title: String
+}
+
 input EditProjectInput {
   color: String
   description: String
   discord: String
+  gitbook: String
   github: String
   id: String!
   logo: String
   name: String
+  slogan: String
   squads: [ProjectSquadsInput!]
+  tags: [String!]
   tokenUris: [String!]
   twitter: String
   website: String
   whitepaper: String
+}
+
+input EditQuestInput {
+  description: String
+  difficulty: QuestDifficultyEnum
+  id: String!
+  name: String
+  questType: String!
+  questions: [EditQuestQuestionInput!]
+  slogan: String
+}
+
+input EditQuestQuestionInput {
+  answer: [String!]!
+  choices: [String!]!
+  id: String
+  question: String!
 }
 
 type ExpandedServerSignature {
@@ -102,7 +130,6 @@ type ExpandedServerSignature {
 }
 
 input GetBountyQuestByIdInput {
-  did: String!
   questId: String!
 }
 
@@ -137,11 +164,17 @@ type Mutation {
   """Create a new Quiz quest in dCompass"""
   createQuizQuest(input: CreateQuestInput!): QuizQuest
 
+  """Edit a Pathway in dCompass"""
+  editPathway(input: EditPathwayInput!): Pathway
+
   """Edit project in dCompass"""
   editProject(input: EditProjectInput!): Project
 
+  """Updates a Quest in dCompass"""
+  editQuest(input: EditQuestInput!): Quest
+
   """Sign in a user and notifies the connected clients"""
-  signIn(input: SiweRegisterInput!): User!
+  signIn(input: SiweRegisterInput!): User
 
   """Logs out a user an notifies the connected clients"""
   signOut: Boolean!
@@ -166,7 +199,6 @@ type Pathway {
   createdAt: DateTime!
   createdBy: String!
   description: String!
-  difficulty: PathwayDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -176,8 +208,8 @@ type Pathway {
   projectStreamId: String!
   quests: [Quest!]
   quizQuests: [QuizQuest!]
-  rewardAmount: Float!
-  rewardCurrency: String!
+  rewardAmount: Float
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!
@@ -185,17 +217,6 @@ type Pathway {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
-}
-
-"""
-The difficulty of a pathway, from beginner to wizard where wizard is the most difficult mode
-"""
-enum PathwayDifficultyEnum {
-  ADVANCED
-  BEGINNER
-  EXPERT
-  INTERMEDIATE
-  WIZARD
 }
 
 type Project {
@@ -234,6 +255,7 @@ type Project {
 }
 
 input ProjectSquadsInput {
+  id: String
   image: String!
   members: [String!]!
   name: String!
@@ -282,6 +304,7 @@ type Quest {
   createdAt: DateTime!
   createdBy: String!
   description: String!
+  difficulty: QuestDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -289,9 +312,10 @@ type Quest {
   name: String!
   namespace: String
   pathwayId: String!
+  prerequisites: [String!]
   questType: String!
-  rewardAmount: Float!
-  rewardCurrency: String!
+  rewardAmount: Float
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!
@@ -304,6 +328,17 @@ input QuestAnswersSubmitionInput {
   did: String!
   questId: String!
   questionAnswers: [QuestQuestionAnswerInput!]!
+}
+
+"""
+The difficulty of a quest, from beginner to wizard where wizard is the most difficult mode
+"""
+enum QuestDifficultyEnum {
+  ADVANCED
+  BEGINNER
+  EXPERT
+  INTERMEDIATE
+  WIZARD
 }
 
 input QuestQuestionAnswerInput {
@@ -325,6 +360,7 @@ type QuizQuest {
   createdAt: DateTime!
   createdBy: String!
   description: String!
+  difficulty: QuestDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -332,10 +368,11 @@ type QuizQuest {
   name: String!
   namespace: String
   pathwayId: String!
+  prerequisites: [String!]
   questType: String!
   questions: [QuizQuestion!]
-  rewardAmount: Float!
-  rewardCurrency: String!
+  rewardAmount: Float
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!
@@ -389,6 +426,7 @@ type SolutionSubmission {
 type Squad {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
+  id: String!
   image: String
   members: [String!]!
   name: String!
@@ -405,6 +443,7 @@ type SubmitQuestAnswersOutput {
   createdAt: DateTime!
   createdBy: String!
   description: String!
+  difficulty: QuestDifficultyEnum!
   expandedServerSignatures: [ExpandedServerSignature!]
   id: String!
   image: String!
@@ -413,9 +452,10 @@ type SubmitQuestAnswersOutput {
   name: String!
   namespace: String
   pathwayId: String!
+  prerequisites: [String!]
   questType: String!
-  rewardAmount: Int!
-  rewardCurrency: String!
+  rewardAmount: Int
+  rewardCurrency: String
   rewardUserCap: Int!
   slogan: String!
   streamId: String!
