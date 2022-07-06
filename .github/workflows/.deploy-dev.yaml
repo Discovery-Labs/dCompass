@@ -28,3 +28,4 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
         env:
           HD_APP_BASE: "packages/server"
+        run: npx prisma migrate deploy
