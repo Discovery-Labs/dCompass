@@ -350,7 +350,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     };
 
     const appDid = data.getAppDID;
-    console.log({ appDid });
     const finalValues =
       questType === "quiz"
         ? {
