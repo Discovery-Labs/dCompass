@@ -319,9 +319,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     setSubmitStatus("Creating quest");
 
-    const { prerequisites, rewardAmount, rewardCurrency, ...questOptions } =
-      values;
-    console.log({ rewardAmount });
+    const { prerequisites, rewardCurrency, ...questOptions } = values;
     const prereqs = prerequisites
       ? {
           prerequisites: prerequisites.map(
