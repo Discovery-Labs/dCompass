@@ -37,3 +37,38 @@ export const difficultyOptions = [
     colorScheme: "black",
   },
 ];
+
+export const questTypeOptions = [
+  // {
+  //   label: "Snapshot voter",
+  //   value: "snapshot-voter",
+  // },
+  // {
+  //   label: "Twitter follower",
+  //   value: "twitter-follower",
+  // },
+  // {
+  //   label: "Discord member",
+  //   value: "discord-member",
+  // },
+  // {
+  //   label: "Token holder",
+  //   value: "token-holder",
+  // },
+  // {
+  //   label: "POAP owner",
+  //   value: "poap-owner",
+  // },
+  // {
+  //   label: "Github contributor",
+  //   value: "github-contributor",
+  // },
+  // {
+  //   label: "Bounty",
+  //   value: "bounty",
+  // },
+  {
+    label: "Quiz",
+    value: "quiz",
+  },
+];

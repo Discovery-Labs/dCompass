@@ -12,6 +12,10 @@ import { useRouter } from "next/router";
 export const questDefaultValues = {
   name: "",
   description: "",
+  type: {
+    value: "quiz",
+    label: "Quiz",
+  },
 };
 
 function AddQuestForm() {

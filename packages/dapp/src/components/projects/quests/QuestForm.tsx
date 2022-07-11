@@ -35,6 +35,7 @@ import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import {
   difficultyOptions,
+  questTypeOptions,
   REQUIRED_FIELD_LABEL,
 } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
@@ -60,40 +61,6 @@ type QuestionFormItemType = {
   options: { value: string }[];
   answer: { value: string }[];
 };
-const questTypeOptions = [
-  // {
-  //   label: "Snapshot voter",
-  //   value: "snapshot-voter",
-  // },
-  // {
-  //   label: "Twitter follower",
-  //   value: "twitter-follower",
-  // },
-  // {
-  //   label: "Discord member",
-  //   value: "discord-member",
-  // },
-  // {
-  //   label: "Token holder",
-  //   value: "token-holder",
-  // },
-  // {
-  //   label: "POAP owner",
-  //   value: "poap-owner",
-  // },
-  // {
-  //   label: "Github contributor",
-  //   value: "github-contributor",
-  // },
-  // {
-  //   label: "Bounty",
-  //   value: "bounty",
-  // },
-  {
-    label: "Quiz",
-    value: "quiz",
-  },
-];
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
