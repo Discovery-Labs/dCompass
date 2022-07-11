@@ -279,7 +279,9 @@ const Web3Provider = ({ children }: { children: any }) => {
         setIdentityLink(identityLinkService);
 
         try {
-          const { data: meData } = await me();
+          const { data: meData } = await me({
+            fetchPolicy: "network-only",
+          });
           console.log({ me: meData?.me });
           if (!meData?.me?.id) {
             // Get a nonce from the back-end
@@ -386,7 +388,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       }
     }
     handleActiveAccount();
-  }, [account, me, active, signIn, getNonce, library, web3Modal]);
+  }, [account, active, library, web3Modal]);
 
   const connectWeb3 = useCallback(async () => {
     const provider = await web3Modal.connect();
@@ -512,7 +514,7 @@ const Web3Provider = ({ children }: { children: any }) => {
       aliases: publishedModel,
     });
     setSelf(mySelf);
-  }, [chainId, activate, web3Modal, signIn, account, getNonce]);
+  }, [chainId, activate, web3Modal, account]);
 
   return (
     <Web3Context.Provider
