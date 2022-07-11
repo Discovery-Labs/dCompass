@@ -41,7 +41,6 @@ import useTokenList from "../../../core/hooks/useTokenList";
 import { Quest } from "../../../core/types";
 import { GET_APP_DID } from "../../../graphql/app";
 import {
-  CREATE_QUEST_MUTATION,
   CREATE_QUIZ_QUEST_MUTATION,
   GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
 } from "../../../graphql/quests";
@@ -86,10 +85,10 @@ const questTypeOptions = [
   //   label: "Github contributor",
   //   value: "github-contributor",
   // },
-  {
-    label: "Bounty",
-    value: "bounty",
-  },
+  // {
+  //   label: "Bounty",
+  //   value: "bounty",
+  // },
   {
     label: "Quiz",
     value: "quiz",
@@ -123,9 +122,10 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
     refetchQueries: "all",
   });
-  const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION, {
-    refetchQueries: "all",
-  });
+  // TODO: BOUNTY-DISABLED
+  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION, {
+  //   refetchQueries: "all",
+  // });
 
   const {
     control,
@@ -210,8 +210,10 @@ const CreateQuestForm: React.FunctionComponent = () => {
     bounty: "",
     defaultOption: "",
   };
-  const questType = (currentValues?.type?.value ||
-    "defaultOption") as keyof typeof questDetails;
+  // TODO: BOUNTY-DISABLED
+  // const questType = (currentValues?.type?.value ||
+  //   "defaultOption") as keyof typeof questDetails;
+  const questType = "quiz";
 
   function goBack() {
     router.back();
@@ -443,12 +445,13 @@ const CreateQuestForm: React.FunctionComponent = () => {
       });
       result = data.createQuizQuest;
     }
-    if (questType === "bounty") {
-      const { data } = await createQuestMutation({
-        variables: createQuestMutationVariables,
-      });
-      result = data.createQuizQuest;
-    }
+    // TODO: BOUNTY-DISABLED
+    // if (questType === "bounty") {
+    //   const { data } = await createQuestMutation({
+    //     variables: createQuestMutationVariables,
+    //   });
+    //   result = data.createQuizQuest;
+    // }
     setSubmitStatus("Quest created!");
     // TODO: support different types of quest
     // if (questType === "snapshot-voter") {
@@ -713,6 +716,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           required: REQUIRED_FIELD_LABEL,
         }}
         options={questTypeOptions}
+        defaultValue={questTypeOptions[1]}
       />
       {questDetails[questType]}
 
