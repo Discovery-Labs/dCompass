@@ -16,6 +16,7 @@ export class MeResolver {
   })
   async me(@UseSiwe() siwe: SiweMessage): Promise<User | undefined> {
     const chainSpecificAddress = `${siwe.address}@eip155:${siwe.chainId}`;
+    console.log({ chainSpecificAddress, siwe });
     const [foundUser] = await this.userService.users({
       where: {
         addresses: {
@@ -23,6 +24,7 @@ export class MeResolver {
         },
       },
     });
+    console.log({ foundUser });
     return removeNulls(foundUser);
   }
 }
