@@ -93,9 +93,11 @@ export class SignInResolver {
         },
       });
 
+      console.log({ foundUser });
+
       let createdUser = null;
-      // If user is not registered on our app yet but has a DID
-      if (!foundUser && userDID) {
+      // If user is not registered on our app yet
+      if (!foundUser) {
         createdUser = await this.userService.createUser({
           did: userDID,
           addresses: [chainSpecificAddress],
