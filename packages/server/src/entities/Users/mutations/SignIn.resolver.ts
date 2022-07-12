@@ -104,6 +104,17 @@ export class SignInResolver {
           addresses: [chainSpecificAddress],
         });
       }
+      // Update addresses if user has a did and is registered on our app with another address or on an other network
+      if (foundUser && userDID) {
+        createdUser = await this.userService.updateUser({
+          where: {
+            did: userDID,
+          },
+          data: {
+            addresses: [...foundUser.addresses, chainSpecificAddress],
+          },
+        });
+      }
 
       ctx.req.session.siwe = siweMsg;
       ctx.req.session.ens = ens;
