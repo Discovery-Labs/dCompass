@@ -111,7 +111,9 @@ export class SignInResolver {
             did: userDID,
           },
           data: {
-            addresses: [...foundUser.addresses, chainSpecificAddress],
+            addresses: [
+              ...new Set([...foundUser.addresses, chainSpecificAddress]),
+            ],
           },
         });
       }
