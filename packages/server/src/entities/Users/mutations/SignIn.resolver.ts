@@ -74,6 +74,7 @@ export class SignInResolver {
       let userDID = null as string | null;
       try {
         userDID = await ceramicCore.getAccountDID(chainSpecificAddress);
+        console.log({ userDID });
       } catch (error) {
         console.log("User has no DID");
       }
