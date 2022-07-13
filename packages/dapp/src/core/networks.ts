@@ -2,6 +2,8 @@ import { ethers } from "ethers";
 import { Chain, chain } from "wagmi";
 
 export const INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
+export const RPC_ID = process.env.NEXT_PUBLIC_RPC_ID;
+
 export const defaultChain = chain.polygonMumbai;
 
 export const NETWORKS = {
@@ -78,8 +80,8 @@ export const NETWORKS = {
     color: "#92D9FA",
     chainId: 80001,
     price: 1,
-    gasPrice: 1000000000,
-    rpcUrl: `https://polygon-mumbai.infura.io/v3/${INFURA_ID}`,
+    gasPrice: 8000000000,
+    rpcUrl: `https://polygon-mumbai.g.alchemy.com/v2/${RPC_ID}`,
     faucet: "https://faucet.matic.network/",
     blockExplorer: "https://mumbai-explorer.matic.today/",
   },
