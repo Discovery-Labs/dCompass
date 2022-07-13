@@ -1,5 +1,4 @@
 import { Button, Input, Text, Flex } from "@chakra-ui/react";
-import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
 import { useContext, useState, useEffect } from "react";
 import { Web3Context } from "contexts/Web3Provider";
 
@@ -13,20 +12,24 @@ function AddProjectWallet({ id }: AddProjectWalletProps) {
   const [loading, setLoading] = useState(false);
   const level = "SILVER";
   const { contracts } = useContext(Web3Context);
-  const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
 
   const onProjectWallet = (event: any) => setProjectWallet(event.target.value);
   const handleAddProjectWallet = async () => {
-    if (id !== "" && projectWallet !== "" && projectNFTContract) {
+    if (id !== "" && projectWallet !== "") {
       try {
         setLoading(true);
         // console.log(
         //   `Adding Project Wallet ${projectWallet} with Level ${level} to: ${id}`
         // );
-        await projectNFTContract.addProjectWallet(id, projectWallet, level, {
-          value: `0xde0b6b3a7640000`, // 1 eth
-          // value: `0x2540BE400`, // small amount
-        });
+        await contracts?.projectNFTContract.addProjectWallet(
+          id,
+          projectWallet,
+          level,
+          {
+            value: `0xde0b6b3a7640000`, // 1 eth
+            // value: `0x2540BE400`, // small amount
+          }
+        );
         setEditMode(false);
       } catch (error) {
         console.log(error);
@@ -38,22 +41,15 @@ function AddProjectWallet({ id }: AddProjectWalletProps) {
 
   useEffect(() => {
     async function init() {
-      if (contracts) {
-        setProjectNFTContract(contracts.projectNFTContract);
-      }
-    }
-    init();
-  }, [contracts]);
-
-  useEffect(() => {
-    async function init() {
-      if (projectNFTContract) {
-        const walletAddress = await projectNFTContract.projectWallets(id);
+      if (contracts?.projectNFTContract) {
+        const walletAddress = await contracts.projectNFTContract.projectWallets(
+          id
+        );
         setProjectWallet(walletAddress);
       }
     }
     init();
-  }, [projectNFTContract]);
+  }, [contracts?.projectNFTContract, id]);
 
   return (
     <>

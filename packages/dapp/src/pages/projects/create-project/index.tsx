@@ -1,7 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Link, Stack, useToast } from "@chakra-ui/react";
-import ABIS from "@discovery-dao/hardhat";
 
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
@@ -15,13 +14,11 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useContract } from "wagmi";
 import ThreeTierPricing from "../../../components/custom/Pricing";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
 import CreateProjectForm from "../../../components/projects/CreateProjectForm";
 import SquadsForm from "../../../components/projects/squads/SquadsForm";
 import { Web3Context } from "../../../contexts/Web3Provider";
-import { defaultChain, NETWORKS } from "../../../core/networks";
 import { CREATE_PROJECT_MUTATION } from "../../../graphql/projects";
 // import { schemaAliases } from "../../../core/ceramic";
 
@@ -44,26 +41,8 @@ function CreateProjectStepper() {
   const { getPrimaryColor } = useCustomColor();
   const { t } = useTranslation("common");
   const router = useRouter();
-  const { self } = useContext(Web3Context);
-  const { account, library } = useWeb3React();
-  const ProjectNFTContract = useContract({
-    addressOrName:
-      ABIS[defaultChain.id][NETWORKS[defaultChain.id].name].contracts.ProjectNFT
-        .address,
-    contractInterface:
-      ABIS[defaultChain.id][NETWORKS[defaultChain.id].name].contracts.ProjectNFT
-        .abi,
-    signerOrProvider: library.getSigner(),
-  });
-  const SponsorPassSFT = useContract({
-    addressOrName:
-      ABIS[defaultChain.id][NETWORKS[defaultChain.id].name].contracts
-        .SponsorPassSFT.address,
-    contractInterface:
-      ABIS[defaultChain.id][NETWORKS[defaultChain.id].name].contracts
-        .SponsorPassSFT.abi,
-    signerOrProvider: library.getSigner(),
-  });
+  const { self, contracts } = useContext(Web3Context);
+  const { account } = useWeb3React();
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -99,10 +78,10 @@ function CreateProjectStepper() {
 
   async function onSubmit() {
     const values = methods.getValues();
-    if (!ProjectNFTContract) {
+    if (!contracts?.projectNFTContract) {
       throw new Error("ProjectNFTContract not deployed on this network");
     }
-    if (!SponsorPassSFT) {
+    if (!contracts?.SponsorPassSFT) {
       throw new Error("SponsorPassSFT not deployed on this network");
     }
 
@@ -180,12 +159,11 @@ function CreateProjectStepper() {
       DIAMOND: 3,
     };
 
-    console.log({ val: stakeAmountsIndex[values.sponsorTier] });
-    const stakeAmounts = await SponsorPassSFT.stakeAmounts(
+    const stakeAmounts = await contracts.SponsorPassSFT.stakeAmounts(
       stakeAmountsIndex[values.sponsorTier]
     );
 
-    await ProjectNFTContract.addProjectWallet(
+    await contracts.projectNFTContract.addProjectWallet(
       projectId,
       values.projectWallet,
       values.sponsorTier,

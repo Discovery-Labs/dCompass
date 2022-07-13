@@ -23,7 +23,7 @@ export class CreateProjectResolver {
   async createProject(
     @UseSiwe() siwe: SiweMessage,
     @UseCeramic()
-    { ceramicClient }: UseCeramicClient,
+    { ceramicClient, ceramicCore }: UseCeramicClient,
     @Args("input") { id, tokenUris }: CreateProjectInput
   ): Promise<Project | null> {
     // Check that the current user is the owner of the project
@@ -31,7 +31,7 @@ export class CreateProjectResolver {
 
     const ogProject = await ceramicClient.ceramic.loadStream(id);
 
-    const ownerAccounts = await ceramicClient.dataStore.get(
+    const ownerAccounts = await ceramicCore.get(
       "cryptoAccounts",
       ogProject.controllers[0]
     );
