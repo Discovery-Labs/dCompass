@@ -70,18 +70,24 @@ export default function Questions({ control, register }: any) {
               </HStack>
               <FormErrorMessage>
                 {questions &&
+                  questions[index] &&
                   questions[index].question &&
                   questions[index].question.message}
               </FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={questions && questions[index].options}>
+            <FormControl
+              isInvalid={
+                questions && questions[index] && !!questions[index].options
+              }
+            >
               <FormLabel htmlFor={`questions[${index}].options`}>
                 Options
               </FormLabel>
               <OptionsFieldArray nestIndex={index} {...{ control, register }} />
               <FormErrorMessage>
                 {questions &&
+                  questions[index] &&
                   questions[index].options &&
                   questions[index].options.message}
               </FormErrorMessage>
