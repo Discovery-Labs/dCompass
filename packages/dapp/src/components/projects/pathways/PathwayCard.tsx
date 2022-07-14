@@ -112,7 +112,7 @@ function PathwayCard({
   // const [pathways, setPathways] = useState<Pathway[]>();
   const [rewardStatus, setRewardStatus] = useState<string>();
   const { account, contracts, self } = useContext(Web3Context);
-  const { chainId } = useWeb3React();
+  const { chainId, library } = useWeb3React();
   const router = useRouter();
 
   useEffect(() => {
@@ -169,6 +169,7 @@ function PathwayCard({
   }, [
     pathway.streamId,
     account,
+    library,
     contracts?.pathwayNFTContract,
     pathway.projectId,
     data.getAllPathwaysByProjectId.pathways,
@@ -187,6 +188,9 @@ function PathwayCard({
     const isWithRewards = parseFloat(pathway.rewardAmount) > 0;
 
     if (status === "NONEXISTENT" && !isWithRewards) {
+      console.log({ status });
+
+      console.log("createPathwayOnChainTx");
       const createPathwayOnChainTx =
         await contracts?.pathwayNFTContract.createPathway(
           pathway.streamId,
@@ -197,9 +201,12 @@ function PathwayCard({
           account || "",
           false,
           "0",
-          pathway.createdBy
+          account || ""
         );
+      console.log("createPathwayOnChainTxEnd");
+
       await createPathwayOnChainTx?.wait(1);
+      console.log("createPathwayOnChainTxEndWait");
     }
     if (chainId && account) {
       try {

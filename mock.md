@@ -47,19 +47,17 @@ A peer-to-peer hypermedia protocol designed to preserve and grow humanity's know
 
 > IPFS aims to surpass HTTP in order to build a better web for all of us.
 
-
-
 ## How IPFS works ?
 
-When you add a file to IPFS, your file is split into smaller chunks, cryptographically hashed, and given a **unique fingerprint** called a **content identifier (CID)**. This CID acts as an permanent record of your file as it exists at that point in time. 
+When you add a file to IPFS, your file is split into smaller chunks, cryptographically hashed, and given a **unique fingerprint** called a **content identifier (CID)**. This CID acts as an permanent record of your file as it exists at that point in time.
 
 When other nodes **look up your file**, they ask their peer nodes who's storing the content referenced by the file's CID. When they view or download your file, they cache a copy — and become another provider of your content until their cache is cleared.
- 
+
 A node can pin content in order to keep (and provide) it forever, or discard content it hasn't used in a while to save space. This means each node in the network **stores only content it is interested in**, plus some indexing information that helps figure out which node is storing what.
-  
+
 If you add a new version of your file to IPFS, its cryptographic hash is different, and so it gets a new CID. This means **files stored on IPFS are resistant to tampering and censorship** — any changes to a file don't overwrite the original, and common chunks across files can be reused in order to minimize storage costs.
-   
-However, this doesn't mean you need to remember a long string of CIDs — IPFS can find the latest version of your file using the IPNS decentralized naming system, and DNSLink can be used to map CIDs to **human-readable DNS names**. 
+
+However, this doesn't mean you need to remember a long string of CIDs — IPFS can find the latest version of your file using the IPNS decentralized naming system, and DNSLink can be used to map CIDs to **human-readable DNS names**.
 ----CERAMIC-----
 
 ## **Why Self.ID?**
@@ -106,13 +104,14 @@ The Web module provides user authentication, data storage, and retrieval for bro
 
 The Core module only provides data retrieval for Node and browser-based applications.
 
-
 --- FILECOIN ----
 
 ### Store your data using our simple API.
+
 #### It’s fast, open, and it’s free.
 
 ### Store and retrieve with ease
+
 Most decentralized storage services either need you to jump through hoops (like buying some cryptocurrency) or aren't truly decentralized.
 
 With Web3.Storage, things are both easy-to-use and trustless! Upload any data via our API or our web UI for free. The data will end up on a decentralized set of IPFS and Filecoin storage providers.
@@ -124,25 +123,28 @@ With Web3.Storage you get all the benefits of decentralized storage technologies
 > #### [READ THE DOCS](https://web3.storage/docs/)
 
 #### Simple
+
 With Web3.Storage, you get decentralized storage in minutes. Use our simple client library or the HTTP API directly - all you need is a free API token.
 
 #### Open
+
 All data stored is accessible on the public IPFS network via a content ID - interoperable with the tools and services building on the decentralized web.
 
 #### Free
-Data is stored on the Filecoin network, which has a unique economic model and over 15 EiB of capacity, allowing us to offer Web3.Storage for free today. This storage is cryptographically provable by anyone!
 
+Data is stored on the Filecoin network, which has a unique economic model and over 15 EiB of capacity, allowing us to offer Web3.Storage for free today. This storage is cryptographically provable by anyone!
 
 --- SELF ID BOUNTY ----
 
 > ##### `@self.id/framework` the highest-level abstraction provided by the Self.ID SDK, designed to easily power React applications with React components, hooks, and utility functions for user authentication, data storage, and retrieval.
 
+### 📖 Quest external resources
 
-###  📖 Quest external resources
 - [🔗 Official docs ](https://developers.ceramic.network/tools/self-id/framework/)
 - [🔗 Github repo](https://github.com/ceramicstudio/self.id)
 
 ### ✅ Quest success criterias
+
 - Should include a link to a working application using `@self.id/framework` (even on a dev or staging environment, using testnet networks)
 - Should include a link to the Github repo used for the deployed application
 - Should include feedback on the developer experience (minimum 200 words)
@@ -150,8 +152,21 @@ Data is stored on the Filecoin network, which has a unique economic model and ov
 ---- CERAMIC CHALLENGE SOLUTION -----
 
 ## [Link to working app](https://alpha.dcompass.xyz)
+
 ## [Link to github repo](https://github.com/Discovery-Labs/dCompass)
+
 ## Feedback on the developer experience
+
 - I had some issues trying to login on mobile using the Argent and Rainbow wallets
 - I had also issues when switching between wallets that had 2 different DIDs, I had to give a page refresh for a proper DID change
 - It was great to integrate the Github and Twitter account linking
+
+> #### External links
+>
+> ###### - [Governance process](https://gov.gitcoin.co/t/gitcoin-dao-governance-process-v3/10358)
+>
+> ###### - [Steward council](https://gov.gitcoin.co/t/introducing-the-steward-council/9485)
+
+**Becoming a steward**: If you want to get involved, state your intent [here](https://gov.gitcoin.co/t/introducing-stewards-governance/41) to build and govern for the public good. Any community member may pledge their intent to be a steward, fellow community members will choose who are worthy of their delegation.
+
+**Delegating your voting power:** If you just claimed GTC and would prefer to empower a steward, go [here](https://gitcoin.co/quadraticlands/stewards) to delegate your voting power. Even this act of delegation goes a long way to ensure your views and thoughts are well represented. Choose your delegate wisely (you can change it at any time)!

@@ -26,8 +26,6 @@ export default function Questions({ control, register }: any) {
 
   const currentValues = watch();
 
-  console.log({ currentValues });
-
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "questions", // unique name for your Field Array
@@ -39,7 +37,11 @@ export default function Questions({ control, register }: any) {
       {fields.map((item, index) => {
         return (
           <VStack w="full" key={item.id}>
-            <FormControl isInvalid={questions && questions[index].question}>
+            <FormControl
+              isInvalid={
+                questions && questions[index] && !!questions[index].question
+              }
+            >
               <FormLabel htmlFor={`questions[${index}].question`}>
                 Question
               </FormLabel>
@@ -49,8 +51,8 @@ export default function Questions({ control, register }: any) {
                   {...register(`questions[${index}].question`, {
                     required: "This is required",
                     maxLength: {
-                      value: 150,
-                      message: "Maximum length should be 150",
+                      value: 200,
+                      message: "Maximum length should be 200",
                     },
                   })}
                 />
@@ -66,18 +68,24 @@ export default function Questions({ control, register }: any) {
               </HStack>
               <FormErrorMessage>
                 {questions &&
+                  questions[index] &&
                   questions[index].question &&
                   questions[index].question.message}
               </FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={questions && questions[index].options}>
+            <FormControl
+              isInvalid={
+                questions && questions[index] && !!questions[index].options
+              }
+            >
               <FormLabel htmlFor={`questions[${index}].options`}>
                 Options
               </FormLabel>
               <OptionsFieldArray nestIndex={index} {...{ control, register }} />
               <FormErrorMessage>
                 {questions &&
+                  questions[index] &&
                   questions[index].options &&
                   questions[index].options.message}
               </FormErrorMessage>

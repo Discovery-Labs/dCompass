@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import { AddIcon, EditIcon } from "@chakra-ui/icons";
-import ABIS from "@discovery-dao/hardhat";
 import {
   Badge,
   Button,
@@ -47,7 +46,7 @@ import { BsPeopleFill } from "react-icons/bs";
 import { FiAlertCircle, FiCheckCircle } from "react-icons/fi";
 import { MdPersonAddAlt1 } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
-import { useContract, useNetwork } from "wagmi";
+import { useNetwork } from "wagmi";
 import { initializeApollo } from "../../../../lib/apolloClient";
 import CardMedia from "../../../components/custom/CardMedia";
 import MembersAddress from "../../../components/custom/MembersAddress";
@@ -58,11 +57,6 @@ import { usePageMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import { Pathway, Tag } from "../../../core/types";
 import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
 import { PROJECT_BY_ID_QUERY } from "../../../graphql/projects";
-import {
-  NETWORKS,
-  defaultChain,
-  getStaticProvider,
-} from "../../../core/networks";
 
 type Props = {
   projectId: string | null;
@@ -123,16 +117,6 @@ function ProjectPage({
   const { activeChain } = useNetwork();
   console.log({ activeChain });
 
-  const ProjectNFTContract = useContract({
-    addressOrName:
-      ABIS[defaultChain.id][NETWORKS[defaultChain.id].name].contracts.ProjectNFT
-        .address,
-    contractInterface:
-      ABIS[defaultChain.id][NETWORKS[defaultChain.id].name].contracts.ProjectNFT
-        .abi,
-    signerOrProvider: getStaticProvider(),
-  });
-
   const [status, setStatus] = useState<string>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -144,7 +128,7 @@ function ProjectPage({
 
   const { t } = useTranslation("common");
   const { accentColorScheme } = useCustomColor();
-  const { account, isReviewer } = useContext(Web3Context);
+  const { account, isReviewer, contracts } = useContext(Web3Context);
   const { data, loading, error } = useQuery(
     GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY,
     {
@@ -162,19 +146,23 @@ function ProjectPage({
 
   useEffect(() => {
     async function init() {
-      if (ProjectNFTContract && streamId && account) {
-        const projectStatusInt = await ProjectNFTContract.status(streamId);
-        const isMinted = await ProjectNFTContract.projectMinted(streamId);
-        const statusString = await ProjectNFTContract.statusStrings(
+      if (contracts?.projectNFTContract && streamId && account) {
+        const projectStatusInt = await contracts.projectNFTContract.status(
+          streamId
+        );
+        const isMinted = await contracts.projectNFTContract.projectMinted(
+          streamId
+        );
+        const statusString = await contracts.projectNFTContract.statusStrings(
           projectStatusInt
         );
         setStatus(isMinted ? "MINTED" : statusString);
       }
     }
-    if (ProjectNFTContract) {
+    if (contracts?.projectNFTContract) {
       init();
     }
-  }, [ProjectNFTContract, streamId, account]);
+  }, [contracts?.projectNFTContract, streamId, account]);
 
   if (loading)
     return (

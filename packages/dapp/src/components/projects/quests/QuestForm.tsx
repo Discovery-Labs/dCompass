@@ -35,13 +35,13 @@ import { useFormContext } from "react-hook-form";
 import { Web3Context } from "../../../contexts/Web3Provider";
 import {
   difficultyOptions,
+  questTypeOptions,
   REQUIRED_FIELD_LABEL,
 } from "../../../core/constants";
 import useTokenList from "../../../core/hooks/useTokenList";
 import { Quest } from "../../../core/types";
 import { GET_APP_DID } from "../../../graphql/app";
 import {
-  CREATE_QUEST_MUTATION,
   CREATE_QUIZ_QUEST_MUTATION,
   GET_ALL_QUESTS_BY_PATHWAY_ID_QUERY,
 } from "../../../graphql/quests";
@@ -61,40 +61,6 @@ type QuestionFormItemType = {
   options: { value: string }[];
   answer: { value: string }[];
 };
-const questTypeOptions = [
-  // {
-  //   label: "Snapshot voter",
-  //   value: "snapshot-voter",
-  // },
-  // {
-  //   label: "Twitter follower",
-  //   value: "twitter-follower",
-  // },
-  // {
-  //   label: "Discord member",
-  //   value: "discord-member",
-  // },
-  // {
-  //   label: "Token holder",
-  //   value: "token-holder",
-  // },
-  // {
-  //   label: "POAP owner",
-  //   value: "poap-owner",
-  // },
-  // {
-  //   label: "Github contributor",
-  //   value: "github-contributor",
-  // },
-  {
-    label: "Bounty",
-    value: "bounty",
-  },
-  {
-    label: "Quiz",
-    value: "quiz",
-  },
-];
 
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
@@ -123,9 +89,10 @@ const CreateQuestForm: React.FunctionComponent = () => {
   const [createQuizQuestMutation] = useMutation(CREATE_QUIZ_QUEST_MUTATION, {
     refetchQueries: "all",
   });
-  const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION, {
-    refetchQueries: "all",
-  });
+  // TODO: BOUNTY-DISABLED
+  // const [createQuestMutation] = useMutation(CREATE_QUEST_MUTATION, {
+  //   refetchQueries: "all",
+  // });
 
   const {
     control,
@@ -210,8 +177,10 @@ const CreateQuestForm: React.FunctionComponent = () => {
     bounty: "",
     defaultOption: "",
   };
-  const questType = (currentValues?.type?.value ||
-    "defaultOption") as keyof typeof questDetails;
+  // TODO: BOUNTY-DISABLED
+  // const questType = (currentValues?.type?.value ||
+  //   "defaultOption") as keyof typeof questDetails;
+  const questType = "quiz";
 
   function goBack() {
     router.back();
@@ -319,9 +288,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
 
     setSubmitStatus("Creating quest");
 
-    const { prerequisites, rewardAmount, rewardCurrency, ...questOptions } =
-      values;
-    console.log({ rewardAmount });
+    const { prerequisites, rewardCurrency, ...questOptions } = values;
     const prereqs = prerequisites
       ? {
           prerequisites: prerequisites.map(
@@ -352,7 +319,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     };
 
     const appDid = data.getAppDID;
-    console.log({ appDid });
     const finalValues =
       questType === "quiz"
         ? {
@@ -446,12 +412,13 @@ const CreateQuestForm: React.FunctionComponent = () => {
       });
       result = data.createQuizQuest;
     }
-    if (questType === "bounty") {
-      const { data } = await createQuestMutation({
-        variables: createQuestMutationVariables,
-      });
-      result = data.createQuizQuest;
-    }
+    // TODO: BOUNTY-DISABLED
+    // if (questType === "bounty") {
+    //   const { data } = await createQuestMutation({
+    //     variables: createQuestMutationVariables,
+    //   });
+    //   result = data.createQuizQuest;
+    // }
     setSubmitStatus("Quest created!");
     // TODO: support different types of quest
     // if (questType === "snapshot-voter") {
@@ -716,6 +683,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
           required: REQUIRED_FIELD_LABEL,
         }}
         options={questTypeOptions}
+        defaultValue={questTypeOptions[1]}
       />
       {questDetails[questType]}
 

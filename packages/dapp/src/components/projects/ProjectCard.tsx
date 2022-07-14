@@ -31,7 +31,6 @@ const ProjectCard = ({
 }: Props) => {
   // const { t } = useTranslation("common");
   const router = useRouter();
-  console.log({ pId: project.id });
   const imgSrc = `https://ipfs.io/ipfs/${project.logo}`;
 
   function openProject() {

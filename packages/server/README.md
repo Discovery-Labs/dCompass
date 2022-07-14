@@ -68,8 +68,6 @@ Generate Prisma Client JS by running
 
 ```bash
 npx prisma generate
-# or
-yarn prisma:generate
 ```
 
 ### 5. Seed the database data with this script

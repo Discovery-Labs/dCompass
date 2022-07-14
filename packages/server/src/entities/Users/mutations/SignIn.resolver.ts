@@ -74,6 +74,7 @@ export class SignInResolver {
       let userDID = null as string | null;
       try {
         userDID = await ceramicCore.getAccountDID(chainSpecificAddress);
+        console.log({ userDID });
       } catch (error) {
         console.log("User has no DID");
       }
@@ -93,12 +94,27 @@ export class SignInResolver {
         },
       });
 
+      console.log({ foundUser });
+
       let createdUser = null;
-      // If user is not registered on our app yet but has a DID
-      if (!foundUser && userDID) {
+      // If user is not registered on our app yet
+      if (!foundUser) {
         createdUser = await this.userService.createUser({
           did: userDID,
           addresses: [chainSpecificAddress],
+        });
+      }
+      // Update addresses if user has a did and is registered on our app with another address or on an other network
+      if (foundUser && userDID) {
+        createdUser = await this.userService.updateUser({
+          where: {
+            did: userDID,
+          },
+          data: {
+            addresses: [
+              ...new Set([...foundUser.addresses, chainSpecificAddress]),
+            ],
+          },
         });
       }
 

@@ -1,8 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Link, Stack, useToast } from "@chakra-ui/react";
-import { ProjectNFT } from "@discovery-dao/hardhat/typechain-types/ProjectNFT";
-import { SponsorPassSFT } from "@discovery-dao/hardhat/typechain-types/SponsorPassSFT";
+
 import { useWeb3React } from "@web3-react/core";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
 import Card from "components/custom/Card";
@@ -13,7 +12,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import ThreeTierPricing from "../../../components/custom/Pricing";
 import CenteredFrame from "../../../components/layout/CenteredFrame";
@@ -42,11 +41,8 @@ function CreateProjectStepper() {
   const { getPrimaryColor } = useCustomColor();
   const { t } = useTranslation("common");
   const router = useRouter();
-  const { self } = useContext(Web3Context);
+  const { self, contracts } = useContext(Web3Context);
   const { account } = useWeb3React();
-  const { contracts } = useContext(Web3Context);
-  const [projectNFTContract, setProjectNFTContract] = useState<ProjectNFT>();
-  const [sponsorPassSFT, setSponsorPassSFT] = useState<SponsorPassSFT>();
 
   const [createProjectMutation] = useMutation(CREATE_PROJECT_MUTATION, {
     refetchQueries: "all",
@@ -80,22 +76,12 @@ function CreateProjectStepper() {
     },
   });
 
-  useEffect(() => {
-    async function init() {
-      if (contracts) {
-        setProjectNFTContract(contracts.projectNFTContract);
-        setSponsorPassSFT(contracts.SponsorPassSFT);
-      }
-    }
-    init();
-  }, [contracts]);
-
   async function onSubmit() {
     const values = methods.getValues();
-    if (!projectNFTContract) {
+    if (!contracts?.projectNFTContract) {
       throw new Error("ProjectNFTContract not deployed on this network");
     }
-    if (!sponsorPassSFT) {
+    if (!contracts?.SponsorPassSFT) {
       throw new Error("SponsorPassSFT not deployed on this network");
     }
 
@@ -173,11 +159,11 @@ function CreateProjectStepper() {
       DIAMOND: 3,
     };
 
-    const stakeAmounts = await sponsorPassSFT.stakeAmounts(
+    const stakeAmounts = await contracts.SponsorPassSFT.stakeAmounts(
       stakeAmountsIndex[values.sponsorTier]
     );
 
-    await projectNFTContract.addProjectWallet(
+    await contracts.projectNFTContract.addProjectWallet(
       projectId,
       values.projectWallet,
       values.sponsorTier,
