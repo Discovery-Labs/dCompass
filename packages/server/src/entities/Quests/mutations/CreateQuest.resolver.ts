@@ -21,7 +21,7 @@ export class CreateQuestResolver {
   })
   async createQuest(
     @UseSiwe() siwe: SiweMessage,
-    @UseCeramic() { ceramicClient }: UseCeramicClient,
+    @UseCeramic() { ceramicClient, ceramicCore }: UseCeramicClient,
     @Args("input") { id }: CreateQuestInput
   ): Promise<Quest | null | undefined> {
     // Check that the current user is the owner of the quest
@@ -30,7 +30,7 @@ export class CreateQuestResolver {
 
     const { address } = siwe;
 
-    const ownerAccounts = await ceramicClient.dataStore.get(
+    const ownerAccounts = await ceramicCore.get(
       "cryptoAccounts",
       ogQuest.controllers[0]
     );

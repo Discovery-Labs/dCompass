@@ -39,7 +39,11 @@ export default function Questions({ control, register }: any) {
       {fields.map((item, index) => {
         return (
           <VStack w="full" key={item.id}>
-            <FormControl isInvalid={questions && questions[index].question}>
+            <FormControl
+              isInvalid={
+                questions && questions[index] && !!questions[index].question
+              }
+            >
               <FormLabel htmlFor={`questions[${index}].question`}>
                 Question
               </FormLabel>

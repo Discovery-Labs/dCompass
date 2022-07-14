@@ -160,3 +160,13 @@ Data is stored on the Filecoin network, which has a unique economic model and ov
 - I had some issues trying to login on mobile using the Argent and Rainbow wallets
 - I had also issues when switching between wallets that had 2 different DIDs, I had to give a page refresh for a proper DID change
 - It was great to integrate the Github and Twitter account linking
+
+> #### External links
+>
+> ###### - [Governance process](https://gov.gitcoin.co/t/gitcoin-dao-governance-process-v3/10358)
+>
+> ###### - [Steward council](https://gov.gitcoin.co/t/introducing-the-steward-council/9485)
+
+**Becoming a steward**: If you want to get involved, state your intent [here](https://gov.gitcoin.co/t/introducing-stewards-governance/41) to build and govern for the public good. Any community member may pledge their intent to be a steward, fellow community members will choose who are worthy of their delegation.
+
+**Delegating your voting power:** If you just claimed GTC and would prefer to empower a steward, go [here](https://gitcoin.co/quadraticlands/stewards) to delegate your voting power. Even this act of delegation goes a long way to ensure your views and thoughts are well represented. Choose your delegate wisely (you can change it at any time)!
