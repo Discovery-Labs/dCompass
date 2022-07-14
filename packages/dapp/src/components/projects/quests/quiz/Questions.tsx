@@ -26,8 +26,6 @@ export default function Questions({ control, register }: any) {
 
   const currentValues = watch();
 
-  console.log({ currentValues });
-
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "questions", // unique name for your Field Array
@@ -53,8 +51,8 @@ export default function Questions({ control, register }: any) {
                   {...register(`questions[${index}].question`, {
                     required: "This is required",
                     maxLength: {
-                      value: 150,
-                      message: "Maximum length should be 150",
+                      value: 200,
+                      message: "Maximum length should be 200",
                     },
                   })}
                 />
