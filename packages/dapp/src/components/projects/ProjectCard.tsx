@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { BsGlobe } from "react-icons/bs";
 import { MdCheckCircle, MdRateReview } from "react-icons/md";
 import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si";
+import { STATIC_LINKS } from "../../core/constants";
 import { Project } from "../../core/types";
 import CardMedia from "../custom/CardMedia";
 
@@ -102,17 +103,17 @@ const ProjectCard = ({
             </Link>
           )}
           {project.twitter && (
-            <Link target="_blank" href={project.twitter}>
+            <Link target="_blank" href={STATIC_LINKS.twitter + project.twitter}>
               <Icon boxSize={8} as={SiTwitter} />
             </Link>
           )}
           {project.discord && (
-            <Link target="_blank" href={project.discord}>
+            <Link target="_blank" href={STATIC_LINKS.discord + project.discord}>
               <Icon boxSize={8} as={SiDiscord} />
             </Link>
           )}
           {project.github && (
-            <Link target="_blank" href={project.github}>
+            <Link target="_blank" href={STATIC_LINKS.github + project.github}>
               <Icon boxSize={8} as={SiGithub} />
             </Link>
           )}
