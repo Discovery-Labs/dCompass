@@ -72,3 +72,9 @@ export const questTypeOptions = [
     value: "quiz",
   },
 ];
+
+export const STATIC_LINKS = {
+  twitter: "https://twitter.com/",
+  discord: "https://discord.gg/",
+  github: "https://github.com/",
+};

@@ -53,6 +53,7 @@ import MembersAddress from "../../../components/custom/MembersAddress";
 import ProfileForm from "../../../components/custom/profile/ProfileForm";
 import SocialLinks from "../../../components/custom/SocialLinks";
 import BreadcrumbItems from "../../../components/layout/BreadcrumbItems";
+import { STATIC_LINKS } from "../../../core/constants";
 import { usePageMarkdownTheme } from "../../../core/hooks/useMarkdownTheme";
 import { Pathway, Tag } from "../../../core/types";
 import { GET_ALL_PATHWAYS_BY_PROJECT_ID_QUERY } from "../../../graphql/pathways";
@@ -317,9 +318,9 @@ function ProjectPage({
       <HStack w="full" py="4" justify={["center", "center", "start"]}>
         <SocialLinks
           website={website}
-          discord={discord}
-          twitter={twitter}
-          github={github}
+          discord={STATIC_LINKS.discord + discord}
+          twitter={STATIC_LINKS.twitter + twitter}
+          github={STATIC_LINKS.github + github}
           gitbook={gitbook}
         />
       </HStack>
