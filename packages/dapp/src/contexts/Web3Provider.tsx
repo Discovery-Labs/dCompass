@@ -62,12 +62,9 @@ const providerOptions = {
 };
 
 const Web3Provider = ({ children }: { children: any }) => {
-  const { activeChain } = useNetwork();
+  const { chain } = useNetwork();
 
-  const staticProvider = useMemo(
-    () => getStaticProvider(activeChain),
-    [activeChain]
-  );
+  const staticProvider = useMemo(() => getStaticProvider(chain), [chain]);
 
   const abiForCurrentNetwork =
     ABIS[defaultChain.id][NETWORKS[defaultChain.id].name];

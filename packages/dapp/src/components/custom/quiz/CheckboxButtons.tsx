@@ -31,8 +31,9 @@ const CheckboxButtons = ({ quiz, setQuestionAnswer }: any) => {
 
   return (
     <VStack py="6">
-      <Text>{quiz.question}</Text>
-      <div
+      <Text fontWeight="bold">{quiz.question}</Text>
+      <VStack
+        w="full"
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -46,7 +47,7 @@ const CheckboxButtons = ({ quiz, setQuestionAnswer }: any) => {
             </CheckboxCard>
           );
         })}
-      </div>
+      </VStack>
       <Divider orientation="horizontal" />
     </VStack>
   );
