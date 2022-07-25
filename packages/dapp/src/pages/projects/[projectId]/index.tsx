@@ -46,7 +46,6 @@ import { BsPeopleFill } from "react-icons/bs";
 import { FiAlertCircle, FiCheckCircle } from "react-icons/fi";
 import { MdPersonAddAlt1 } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
-import { useNetwork } from "wagmi";
 import { initializeApollo } from "../../../../lib/apolloClient";
 import CardMedia from "../../../components/custom/CardMedia";
 import MembersAddress from "../../../components/custom/MembersAddress";
@@ -115,9 +114,6 @@ function ProjectPage({
   github,
   gitbook,
 }: any) {
-  const { activeChain } = useNetwork();
-  console.log({ activeChain });
-
   const [status, setStatus] = useState<string>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
