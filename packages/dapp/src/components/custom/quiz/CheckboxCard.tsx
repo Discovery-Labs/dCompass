@@ -11,17 +11,18 @@ const CheckboxCard = (props: any) => {
   const { ...checkbox } = getCheckboxProps();
   const { ...label } = getLabelProps();
   return (
-    <Box as="label" margin="5" {...htmlProps}>
+    <Box w="full" as="label" py={1} {...htmlProps}>
       <input {...input} />
       {state.isChecked ? (
         <Box
           {...checkbox}
           cursor="pointer"
           borderWidth="1px"
+          w="full"
           borderRadius="md"
           boxShadow="md"
           px={5}
-          py={3}
+          py={2}
           borderColor={getAccentColor}
         >
           <Text {...label}>{children}</Text>
