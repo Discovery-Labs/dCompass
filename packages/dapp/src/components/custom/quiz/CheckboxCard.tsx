@@ -7,9 +7,9 @@ const CheckboxCard = (props: any) => {
     useCheckbox(props);
 
   const { children } = props;
-  const { style, children: inputChild, ...input } = getInputProps();
-  const { style: checkboxDefaultStyle, ...checkbox } = getCheckboxProps();
-  const { style: labelStyle, ...label } = getLabelProps();
+  const { ...input } = getInputProps();
+  const { ...checkbox } = getCheckboxProps();
+  const { ...label } = getLabelProps();
   return (
     <Box as="label" margin="5" {...htmlProps}>
       <input {...input} />
