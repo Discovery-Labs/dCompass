@@ -5,6 +5,7 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TerminusModule } from "@nestjs/terminus";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import publishedModel from "@discovery-dao/schemas/lib/model.json";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -21,6 +22,12 @@ import { TagModule } from "./entities/Tags/Tag.module";
 import { GetAppDIDResolver } from "./entities/App/queries/GetAppDID.resolver";
 import { PrismaService } from "./services/prisma/Prisma.service";
 import { UserModule } from "./entities/Users/User.module";
+import { CeramicService } from "./services/ceramic/Ceramic.service";
+import { CERAMIC_TESTNET_NODE_URL } from "./core/constants/ceramic";
+
+// https://jaywolfe.dev/how-to-use-es-modules-with-older-node-js-projects-the-right-way/
+const dynamicImport = async (packageName: string) =>
+  new Function(`return import('${packageName}')`)();
 
 @Module({
   imports: [
@@ -56,7 +63,28 @@ import { UserModule } from "./entities/Users/User.module";
     UserModule,
   ],
   controllers: [AppController, HealthController],
-  providers: [AppService, ConfigService, GetAppDIDResolver, PrismaService],
+  providers: [
+    AppService,
+    ConfigService,
+    GetAppDIDResolver,
+    PrismaService,
+    {
+      provide: CeramicService,
+      async useFactory() {
+        return new CeramicService(
+          new (
+            await dynamicImport("@ceramicnetwork/http-client")
+          ).CeramicClient(CERAMIC_TESTNET_NODE_URL),
+          new (await dynamicImport("@self.id/core")).Core({
+            ceramic: CERAMIC_TESTNET_NODE_URL,
+            aliases: publishedModel,
+          }),
+          await dynamicImport("@glazed/datamodel"),
+          await dynamicImport("@glazed/did-datastore")
+        );
+      },
+    },
+  ],
 })
 export class AppModule {}
 

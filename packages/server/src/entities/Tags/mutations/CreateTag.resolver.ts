@@ -1,5 +1,5 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
-import { schemaAliases } from "../../../core/constants/idx";
+import { schemaAliases } from "../../../core/constants/ceramic";
 import { UseCeramic } from "../../../core/decorators/UseCeramic.decorator";
 import { UseCeramicClient } from "../../../core/utils/types";
 import { CreateTagInput } from "../dto/CreateTag.input";

@@ -1,5 +1,5 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+import { GqlExecutionContext } from "@nestjs/graphql";
 
 export const UseCeramic = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
@@ -8,5 +8,5 @@ export const UseCeramic = createParamDecorator(
       ceramicClient: gqlCtx.req.ceramicClient,
       ceramicCore: gqlCtx.req.ceramicCore,
     };
-  },
+  }
 );

@@ -38,10 +38,10 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@ceramicnetwork/http-client": "^2.0.4",
+    "@ceramicnetwork/http-client": "^1.0.7",
     "@glazed/datamodel": "^0.2.0",
     "@glazed/did-datastore": "^0.2.3",
-    "@self.id/core": "^0.4.0",
+    "@self.id/core": "^0.4.1",
     "dids": "^2.4.0",
     "dotenv": "^10.0.0",
     "global": "^4.4.0",
