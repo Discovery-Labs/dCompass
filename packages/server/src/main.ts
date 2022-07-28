@@ -5,21 +5,24 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { NestExpressApplication } from "@nestjs/platform-express";
 // import { sessionMiddleware } from './core/resources/Redis/redis';
-import { Context } from "./core/utils/types";
+// import { Context } from "./core/utils/types";
+// import { NextFunction } from "express";
+// import {
+//   ceramicCoreFactory,
+//   ceramicDataModelFactory,
+// } from "./services/ceramic/data-models";
 
-import { NextFunction } from "express";
 import { Logger, ValidationPipe } from "@nestjs/common";
 import config from "./core/configs/config";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { SwaggerConfig } from "./core/configs/config.interface";
-import {
-  ceramicCoreFactory,
-  ceramicDataModelFactory,
-} from "./services/ceramic/data-models";
 
 import { sessionMiddleware } from "./core/resources/Redis/redis";
 import cookieParser from "cookie-parser";
+import { CeramicService } from "./services/ceramic/Ceramic.service";
+import { Context } from "./core/utils/types";
+import { NextFunction } from "express";
 // import { PrismaService } from "./services/prisma/Prisma.service";
 
 const {
@@ -45,7 +48,8 @@ async function bootstrap() {
   app.use(cookieParser(sessionOptions.secret));
   app.use(sessionMiddleware);
 
-  const ceramicClient = await ceramicDataModelFactory();
+  const ceramicService = app.get(CeramicService);
+  // const ceramicClient = await ceramicDataModelFactory();
 
   // app.use(sessionMiddleware);
   /* Cookie & Session cleaner */
@@ -58,10 +62,9 @@ async function bootstrap() {
 
   app.use(
     async (req: Context["req"], _res: Context["res"], next: NextFunction) => {
-      const ceramicCore = ceramicCoreFactory();
-      req.ceramicClient = ceramicClient;
+      req.ceramicClient = await ceramicService.ceramicDataModelFactory();
 
-      req.ceramicCore = ceramicCore;
+      req.ceramicCore = ceramicService.getCore();
       next();
     }
   );

@@ -277,7 +277,7 @@ const QuestCard = ({
   const isClaimed = account && claimedBy?.includes(account);
 
   const isLocked = quest.id === "01g0yjfgqrhc2q0f4nqtxtqy81";
-  const withRequisites = quest.prerequisites.length > 0;
+  const withPrerequisites = quest.prerequisites.length > 0;
 
   return (
     <Card position="relative" h="xl" spacing="6" py="4">
@@ -351,13 +351,13 @@ const QuestCard = ({
           </Flex>
 
           <VStack w="full" align="start">
-            <Text color="accent">Requisites: </Text>
+            <Text color="accent">Prerequisites: </Text>
 
-            {withRequisites ? (
+            {withPrerequisites ? (
               <Popover isLazy matchWidth>
                 <PopoverTrigger>
                   <Button w="full" variant="outline">
-                    {quest.prerequisites.length} Requisites
+                    {quest.prerequisites.length} Prerequisites
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent w="full">
@@ -386,7 +386,7 @@ const QuestCard = ({
                 </PopoverContent>
               </Popover>
             ) : (
-              <Button w="full" variant="outline">
+              <Button w="full" disabled variant="outline">
                 None
               </Button>
             )}

@@ -1,3 +1,4 @@
+import { BadRequestException } from "@nestjs/common";
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
 import { ProjectSquad } from "@prisma/client";
 import { ForbiddenError } from "apollo-server-errors";
@@ -29,7 +30,17 @@ export class CreateProjectResolver {
     // Check that the current user is the owner of the project
     const { address } = siwe;
 
-    const ogProject = await ceramicClient.ceramic.loadStream(id);
+    let ogProject;
+    try {
+      ogProject = await ceramicClient.ceramic.loadStream(id);
+    } catch (error) {
+      // retry after first failed attempt to load the stream
+      try {
+        ogProject = await ceramicClient.ceramic.loadStream(id);
+      } catch (retryError) {
+        throw new BadRequestException("Failed to load project stream " + id);
+      }
+    }
 
     const ownerAccounts = await ceramicCore.get(
       "cryptoAccounts",

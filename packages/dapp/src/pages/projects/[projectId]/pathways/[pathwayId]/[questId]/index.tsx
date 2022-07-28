@@ -349,7 +349,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
           <Text color="text-weak">{quizData?.getQuizQuestById.slogan}</Text>
           {isContributor && (
             <NextLink href={`${window.location.href}/edit`} passHref>
-              {/** TODO: Edit pathway form or page **/}
               <Button leftIcon={<EditIcon />}>{t("edit-quest")}</Button>
             </NextLink>
           )}
@@ -378,6 +377,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                 >
                   {quizData?.getQuizQuestById.description}
                 </ReactMarkdown>
+                <Button variant="outline" onClick={() => handleTabsChange(1)}>
+                  {"Let's play!"}
+                </Button>
               </VStack>
             </TabPanel>
 
