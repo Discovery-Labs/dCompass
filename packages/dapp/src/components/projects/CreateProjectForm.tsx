@@ -192,6 +192,32 @@ const CreateProjectForm = () => {
           </FormErrorMessage>
         </FormControl>
 
+        <FormControl isInvalid={!!errors.discord}>
+          <FormLabel htmlFor="discord">Discord</FormLabel>
+          <InputGroup>
+            <InputRightElement pointerEvents="none">
+              <Icon as={SiDiscord} />
+            </InputRightElement>
+            <InputLeftAddon>
+              <Text>https://</Text>
+            </InputLeftAddon>
+            <Input
+              placeholder="discord_invite_code"
+              {...register("discord", {
+                required: REQUIRED_FIELD_LABEL,
+                maxLength: {
+                  value: 50,
+                  message: "Maximum length should be 50",
+                },
+              })}
+            />
+          </InputGroup>
+
+          <FormErrorMessage>
+            {errors.discord && errors.discord.message}
+          </FormErrorMessage>
+        </FormControl>
+
         <FormControl isInvalid={!!errors.twitter}>
           <FormLabel htmlFor="twitter">Twitter</FormLabel>
           <InputGroup>
@@ -215,32 +241,6 @@ const CreateProjectForm = () => {
 
           <FormErrorMessage>
             {errors.twitter && errors.twitter.message}
-          </FormErrorMessage>
-        </FormControl>
-
-        <FormControl isInvalid={!!errors.discord}>
-          <FormLabel htmlFor="discord">Discord</FormLabel>
-          <InputGroup>
-            <InputRightElement pointerEvents="none">
-              <Icon as={SiDiscord} />
-            </InputRightElement>
-            <InputLeftAddon>
-              <Text>https://discord.gg/</Text>
-            </InputLeftAddon>
-            <Input
-              placeholder="discord_invite_code"
-              {...register("discord", {
-                required: REQUIRED_FIELD_LABEL,
-                maxLength: {
-                  value: 50,
-                  message: "Maximum length should be 50",
-                },
-              })}
-            />
-          </InputGroup>
-
-          <FormErrorMessage>
-            {errors.discord && errors.discord.message}
           </FormErrorMessage>
         </FormControl>
 

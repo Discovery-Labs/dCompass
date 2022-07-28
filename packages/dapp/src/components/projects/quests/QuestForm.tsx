@@ -517,14 +517,14 @@ const CreateQuestForm: React.FunctionComponent = () => {
         <ControlledSelect
           control={control}
           name="prerequisites"
-          label="Prerequisites"
+          label="Prerequisites - quest(s) in this pathway to complete"
           isMulti
           options={[
             ...pathwayData?.getAllQuestsByPathwayId?.bountyQuests,
             ...pathwayData?.getAllQuestsByPathwayId?.quizQuests,
           ].map((quest: Quest) => {
             return {
-              label: quest.name,
+              label: `Quest - ${quest.name}`,
               value: quest.id,
               colorScheme: "purple",
             };

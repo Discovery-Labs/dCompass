@@ -468,13 +468,13 @@ function PathwayCard({
       </Flex>
 
       {/* <VStack w="full" align="start">
-        <Text color="accent">Requisites: </Text>
+        <Text color="accent">Prerequisites: </Text>
 
        {pathway.prerequisites.length > 0 ? (
           <Popover isLazy matchWidth>
             <PopoverTrigger>
               <Button w="full" variant="outline">
-                {pathway.prerequisites.length} Requisites
+                {pathway.prerequisites.length} Prerequisites
               </Button>
             </PopoverTrigger>
             <PopoverContent w="full">

@@ -325,7 +325,7 @@ function ProjectPage({
         <HStack w="full">
           <TabList w="full">
             <Tab w="full">{t("pathways")}</Tab>
-            <Tab w="full">{t("guilds")}</Tab>
+            <Tab w="full">{t("squads")}</Tab>
             <Tab w="full">{t("about")}</Tab>
           </TabList>
         </HStack>
@@ -395,7 +395,7 @@ function ProjectPage({
             </Tabs>
           </TabPanel>
 
-          {/* Guilds */}
+          {/* Squads */}
           <TabPanel px="0">
             <SimpleGrid columns={[1, 1, 2, 3]} spacing={4}>
               {squads.map((squad: any) => (
