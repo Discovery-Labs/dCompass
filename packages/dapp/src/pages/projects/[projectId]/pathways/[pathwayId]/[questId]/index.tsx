@@ -573,6 +573,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                 mt="4"
                 src={`https://ipfs.io/ipfs/${quizData?.getQuizQuestById.image}`}
                 imageHeight="120px"
+                layerStyle="solid-hover2"
               >
                 <VStack w="full" align="start">
                   <Text color="accent">Rewards</Text>
