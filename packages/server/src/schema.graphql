@@ -384,6 +384,7 @@ type QuizQuest {
 type QuizQuestion {
   answer: String!
   choices: [String!]!
+  content: String!
   id: String!
   question: String!
 }

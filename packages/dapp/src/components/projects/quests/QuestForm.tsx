@@ -58,6 +58,7 @@ import TwitterFollowerForm from "./twitter/TwitterFollowerForm";
 
 type QuestionFormItemType = {
   question: string;
+  content: string;
   options: { value: string }[];
   answer: { value: string }[];
 };
@@ -205,234 +206,6 @@ const CreateQuestForm: React.FunctionComponent = () => {
     return tokenInfos;
   }
 
-  async function onSubmit(values: Record<string, any>) {
-    if (!account) {
-      return toast({
-        title: "Not connected",
-        description: "You're not connected with your wallet'",
-        status: "error",
-        position: "bottom-right",
-        duration: 3000,
-        isClosable: true,
-        variant: "subtle",
-      });
-    }
-    // check if the native token is used
-    const [, tokenAddressOrSymbol] = values.rewardCurrency.value.split(":");
-    const isNativeToken = tokenAddressOrSymbol ? false : true;
-
-    setSubmitStatus("Checking balance");
-    let balance = 0;
-    const rewardAmnt = isWithRewards ? parseFloat(values.rewardAmount) : 0;
-    const feeAmount = (rewardAmnt * 15) / 100;
-    const totalToPay = rewardAmnt + feeAmount;
-    if (!isNativeToken) {
-      const { tokenContract, tokenInfos } = getSelectedTokenContract(
-        values.rewardCurrency.value
-      );
-
-      balance = parseFloat(
-        ethers.utils.formatUnits(
-          await tokenContract.balanceOf(account),
-          tokenInfos.decimals
-        )
-      );
-      const isValidBalance = balance >= totalToPay;
-
-      if (!isValidBalance) {
-        toast({
-          title: "Insufficient funds",
-          description: `You don't have enough funds to provide the quest rewards in this currency`,
-          status: "error",
-          position: "bottom-right",
-          duration: 3000,
-          isClosable: true,
-          variant: "subtle",
-        });
-        return setError("rewardAmount", {
-          message: "Insufficient funds",
-        });
-      }
-    } else {
-      balance = parseFloat(
-        ethers.utils.formatEther(await library.getBalance(account))
-      );
-      const isValidBalance = balance >= totalToPay;
-      if (!isValidBalance) {
-        toast({
-          title: "Insufficient funds",
-          description: "You don't have enough funds to provide quest rewards",
-          status: "error",
-          position: "bottom-right",
-          duration: 3000,
-          isClosable: true,
-          variant: "subtle",
-        });
-        return setError("rewardAmount", {
-          message: "Insufficient funds",
-        });
-      }
-    }
-
-    setSubmitStatus("Generating token URIs");
-    const formData = new FormData();
-    if (values.image) {
-      formData.append(values.name, values.image[0]);
-    }
-    const cidsRes = await fetch("/api/image-storage", {
-      method: "POST",
-      body: formData,
-    });
-
-    const { cids } = await cidsRes.json();
-
-    setSubmitStatus("Creating quest");
-
-    const { prerequisites, rewardCurrency, ...questOptions } = values;
-    const prereqs = prerequisites
-      ? {
-          prerequisites: prerequisites.map(
-            (prereq: { value: string; label: string }) => prereq.value
-          ),
-        }
-      : {};
-    const erc20rewards = isWithRewards
-      ? {
-          rewardCurrency: rewardCurrency.value,
-          rewardAmount: rewardAmnt,
-          rewardUserCap: parseInt(values.rewardUserCap, 10),
-        }
-      : {
-          rewardUserCap: parseInt(values.rewardUserCap, 10),
-        };
-
-    const serlializedValues = {
-      ...questOptions,
-      ...erc20rewards,
-      ...prereqs,
-      difficulty: values.difficulty.value.toUpperCase(),
-      image: cids[values.name],
-      pathwayId: router.query.pathwayId,
-      chainId,
-      createdBy: account,
-      createdAt: new Date().toISOString(),
-    };
-
-    const appDid = data.getAppDID;
-    const finalValues =
-      questType === "quiz"
-        ? {
-            ...serlializedValues,
-            questions: await Promise.all(
-              values.questions.map(
-                async ({
-                  question,
-                  options,
-                  answer,
-                }: QuestionFormItemType) => ({
-                  question,
-                  choices: options.map((option) => option.value),
-                  answer: JSON.stringify(
-                    await self.client.ceramic.did?.createDagJWE(
-                      answer.map((a) => a.value),
-                      [
-                        // logged-in user,
-                        self.id,
-                        // backend ceramic did
-                        appDid,
-                      ]
-                    )
-                  ),
-                })
-              )
-            ),
-          }
-        : serlializedValues;
-
-    console.log({ finalValues });
-    const questDoc = await self.client.dataModel.createTile(
-      "Quest",
-      finalValues,
-      {
-        pin: true,
-      }
-    );
-
-    if (isNativeToken && isWithRewards) {
-      setSubmitStatus("Creating quest on-chain");
-      const createQuestOnChainTx = await contracts?.BadgeNFT.createBadge(
-        questDoc.id.toUrl(),
-        pathwayData.getAllQuestsByPathwayId.streamId,
-        parseInt(values.rewardUserCap, 10),
-        isWithRewards,
-        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-        account,
-        true,
-        (rewardAmnt * 1e18).toString(),
-        account
-      );
-      await createQuestOnChainTx?.wait(1);
-      setSubmitStatus("Quest created on-chain");
-    } else if (!isNativeToken && isWithRewards) {
-      const tokenDetails = await approveTokenAllowance(
-        values.rewardCurrency.value,
-        totalToPay.toString()
-      );
-      const rewardAmount = ethers.utils.parseUnits(
-        rewardAmnt.toString(),
-        tokenDetails.decimals
-      );
-      setSubmitStatus("Creating quest on-chain");
-      const createQuestOnChainTx = await contracts?.BadgeNFT.createBadge(
-        questDoc.id.toUrl(),
-        pathwayData.getAllQuestsByPathwayId.streamId,
-        parseInt(values.rewardUserCap, 10),
-        isWithRewards,
-        // TODO: deploy the DCOMP token and package it through npm to get the address based on the chainId
-        values.rewardCurrency.value.split(":")[1],
-        false,
-        rewardAmount,
-        account
-      );
-      await createQuestOnChainTx?.wait(1);
-      setSubmitStatus("Quest created on-chain");
-    }
-
-    const createQuestMutationVariables = {
-      input: {
-        id: questDoc.id.toUrl(),
-      },
-    };
-
-    let result;
-    setSubmitStatus("Quest validation");
-    if (questType === "quiz") {
-      const { data } = await createQuizQuestMutation({
-        variables: createQuestMutationVariables,
-      });
-      result = data.createQuizQuest;
-    }
-    // TODO: BOUNTY-DISABLED
-    // if (questType === "bounty") {
-    //   const { data } = await createQuestMutation({
-    //     variables: createQuestMutationVariables,
-    //   });
-    //   result = data.createQuizQuest;
-    // }
-    setSubmitStatus("Quest created!");
-    // TODO: support different types of quest
-    // if (questType === "snapshot-voter") {
-    //   const { data } = await createSnapshotVoterQuest({
-    //     variables: createQuestMutationVariables,
-    //   });
-    //   result = data.createSnapshotVoterQuest;
-    // }
-
-    console.log({ result });
-
-    return goBack();
-  }
-
   const rewardPerUser = parseFloat(rewardAmount) / parseInt(rewardUserCap, 10);
   const erc20Options = tokens.map((token) => ({
     label: `${token.symbol} - ${token.name}`,
@@ -466,7 +239,7 @@ const CreateQuestForm: React.FunctionComponent = () => {
     );
 
   return (
-    <Stack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
+    <>
       <Heading>Create quest</Heading>
       <FormControl isInvalid={!!errors.name}>
         <FormLabel htmlFor="name">Title</FormLabel>
@@ -685,9 +458,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
         options={questTypeOptions}
         defaultValue={questTypeOptions[1]}
       />
-      {questDetails[questType]}
 
-      <Flex w="full" pt="8" justify="space-between">
+      {/* <Flex w="full" pt="8" justify="space-between">
         <Button colorScheme="secondary" type="button" onClick={() => reset()}>
           Reset Form
         </Button>
@@ -698,8 +470,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
         >
           Submit
         </Button>
-      </Flex>
-    </Stack>
+      </Flex> */}
+    </>
   );
 };
 

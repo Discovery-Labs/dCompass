@@ -6,6 +6,9 @@ export class QuizQuestion {
   id: string;
 
   @Field()
+  content: string;
+
+  @Field()
   question: string;
 
   @Field()

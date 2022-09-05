@@ -6,8 +6,9 @@ import QuizQuestionsForm from "./Questions";
 const questionsDefaultValues = {
   questions: [
     {
+      content: "",
       question: "",
-      options: [""],
+      options: [{ label: "", value: "" }],
       answer: "",
     },
   ],

@@ -22,6 +22,9 @@ export const QuizQuestSchema = {
           answer: {
             type: "string",
           },
+          content: {
+            type: "string",
+          },
           choices: {
             type: "array",
             title: "choices",
