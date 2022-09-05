@@ -416,7 +416,7 @@ function PathwayPage({
                     passHref
                   >
                     <Flex pt="4" w="full" justify={["center", "center", "end"]}>
-                      <Button variant="outline" leftIcon={<AddIcon />}>
+                      <Button colorScheme="accent" leftIcon={<AddIcon />}>
                         {t("add-quest")}
                       </Button>
                     </Flex>
