@@ -1,4 +1,4 @@
-import { Divider, VStack, useCheckboxGroup, Text } from "@chakra-ui/react";
+import { VStack, useCheckboxGroup, Text } from "@chakra-ui/react";
 
 import CheckboxCard from "./CheckboxCard";
 

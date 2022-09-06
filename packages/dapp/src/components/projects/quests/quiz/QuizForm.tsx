@@ -2,7 +2,6 @@ import { ApolloError, useMutation } from "@apollo/client";
 import {
   Button,
   Container,
-  Divider,
   Flex,
   Text,
   useToast,

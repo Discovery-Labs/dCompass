@@ -22,7 +22,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import Container from "components/layout/Container";
 import BountyForm from "components/projects/quests/bounty/BountyForm";
 import QuestSubmissionList from "components/projects/quests/bounty/QuestSubmissionList";
@@ -37,7 +36,6 @@ import Blockies from "react-blockies";
 import { BsBarChartFill, BsCheckCircleFill, BsPeople } from "react-icons/bs";
 import { GiTwoCoins } from "react-icons/gi";
 import { RiHandCoinFill, RiSwordLine } from "react-icons/ri";
-import ReactMarkdown from "react-markdown";
 import CardMedia from "../../../../../../components/custom/CardMedia";
 import BreadcrumbItems from "../../../../../../components/layout/BreadcrumbItems";
 // import GithubContributorQuestForm from "../../../../../../components/projects/quests/github/GithubContributorQuestForm";
@@ -46,7 +44,6 @@ import QuizForm from "../../../../../../components/projects/quests/quiz/QuizForm
 // import SnapshotVoterForm from "../../../../../../components/projects/quests/snapshot/SnapshotVoterForm";
 // import ClaimNFTOwnerForm from "../../../../../../components/projects/quests/token/ClaimNFTOwnerForm";
 // import ClaimTokenHolderForm from "../../../../../../components/projects/quests/token/ClaimTokenHolderForm";
-import { usePageMarkdownTheme } from "../../../../../../core/hooks/useMarkdownTheme";
 import useTokenList from "../../../../../../core/hooks/useTokenList";
 import { PROJECT_BY_ID_QUERY } from "../../../../../../graphql/projects";
 import {
@@ -102,7 +99,6 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
   );
   const { t } = useTranslation("common");
   const { getRewardCurrency } = useTokenList();
-  const questMarkdownTheme = usePageMarkdownTheme();
   const toast = useToast();
   const { account, self, contracts } = useContext(Web3Context);
 
