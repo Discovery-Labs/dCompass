@@ -5,7 +5,7 @@ export class QuizQuestion {
   @Field()
   id: string;
 
-  @Field()
+  @Field(() => String, { defaultValue: "" })
   content: string;
 
   @Field()

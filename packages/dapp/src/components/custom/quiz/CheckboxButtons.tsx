@@ -48,7 +48,6 @@ const CheckboxButtons = ({ quiz, setQuestionAnswer }: any) => {
           );
         })}
       </VStack>
-      <Divider orientation="horizontal" />
     </VStack>
   );
 };

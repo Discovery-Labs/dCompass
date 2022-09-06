@@ -357,7 +357,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
         <Tabs w="full" index={tabIndex} onChange={handleTabsChange}>
           <HStack justifyContent="space-between">
             <TabList overflowX="auto">
-              <Tab>Guide</Tab>
+              {/* <Tab>Guide</Tab> */}
               <Tab>Play</Tab>
               <Tab>Details&amp;Rewards</Tab>
               {quizData?.getQuizQuestById.questType === "bounty" && (
@@ -369,7 +369,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
 
           <TabPanels>
             {/* Guide */}
-            <TabPanel px="0">
+            {/* <TabPanel px="0">
               <VStack w="full" align="flex-start">
                 <ReactMarkdown
                   components={ChakraUIRenderer(questMarkdownTheme)}
@@ -381,7 +381,7 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                   {"Let's play!"}
                 </Button>
               </VStack>
-            </TabPanel>
+            </TabPanel> */}
 
             {/* Play */}
             <TabPanel px="0">
@@ -394,15 +394,16 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                     <QuizForm
                       questions={quizData?.getQuizQuestById.questions}
                       questId={questId}
+                      overview={quizData?.getQuizQuestById.description}
                       pathwayId={pathwayId}
-                      successCallback={() => handleTabsChange(2)}
+                      successCallback={() => handleTabsChange(1)}
                     />
                   )}
                   {quizData?.getQuizQuestById.questType === "bounty" && (
                     <BountyForm
                       questId={questId}
                       pathwayId={pathwayId}
-                      successCallback={() => handleTabsChange(2)}
+                      successCallback={() => handleTabsChange(1)}
                     />
                   )}
                   {/* {quizData?.getQuizQuestById.questType === "snapshot-voter" && (

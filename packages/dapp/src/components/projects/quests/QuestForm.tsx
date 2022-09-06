@@ -285,8 +285,8 @@ const CreateQuestForm: React.FunctionComponent = () => {
         options={difficultyOptions}
       />
 
-      {(pathwayData?.getAllQuestsByPathwayId?.bountyQuests?.length ||
-        pathwayData?.getAllQuestsByPathwayId?.quizQuests?.length) && (
+      {pathwayData?.getAllQuestsByPathwayId?.bountyQuests?.length ||
+      pathwayData?.getAllQuestsByPathwayId?.quizQuests?.length ? (
         <ControlledSelect
           control={control}
           name="prerequisites"
@@ -304,8 +304,9 @@ const CreateQuestForm: React.FunctionComponent = () => {
           })}
           hasStickyGroupHeaders
         />
+      ) : (
+        "No prerequisite available"
       )}
-
       <FormControl isInvalid={!!errors.description}>
         <FormLabel htmlFor="description">Description</FormLabel>
 
