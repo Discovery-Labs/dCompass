@@ -49,6 +49,7 @@ export const CREATE_QUIZ_QUEST_MUTATION = gql`
       pathwayId
       questions {
         id
+        order
         question
         content
         choices
@@ -247,6 +248,7 @@ export const GET_QUIZ_QUEST_BY_ID_QUERY = gql`
       questions {
         id
         question
+        order
         content
         choices
         answer

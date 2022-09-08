@@ -10,7 +10,7 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { DragEventHandler, useEffect, useState } from "react";
 // import { useRouter } from "next/router";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { REQUIRED_FIELD_LABEL } from "../../../../core/constants";
@@ -22,6 +22,14 @@ import OptionsFieldArray from "./OptionsFieldArray";
 const CodeEditor = dynamic(() => import("@uiw/react-textarea-code-editor"), {
   ssr: false,
 });
+
+type initialDnD = {
+  draggedFrom: number | null;
+  draggedTo: number | null;
+  isDragging: boolean;
+  originalOrder: Record<"id", string>[];
+  updatedOrder: Record<"id", string>[];
+};
 
 export default function Questions({ control, register }: any) {
   // const router = useRouter();
@@ -37,17 +45,120 @@ export default function Questions({ control, register }: any) {
   const currentValues = watch();
   console.log({ currentValues });
 
+  const initialDnDState: initialDnD = {
+    draggedFrom: null,
+    draggedTo: null,
+    isDragging: false,
+    originalOrder: [],
+    updatedOrder: [],
+  };
+
+  const [dragAndDrop, setDragAndDrop] = useState(initialDnDState);
+
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "questions", // unique name for your Field Array
-    // keyName: "id", default to "id", you can change the key name
+    // keyName: "id", default to "id", you can change the key name,
   });
+  const [list, setList] = useState(fields);
+
+  // onDragStart fires when an element
+  // starts being dragged
+  const onDragStart = (event) => {
+    const initialPosition = Number(event.currentTarget.dataset.position);
+
+    setDragAndDrop({
+      ...dragAndDrop,
+      draggedFrom: initialPosition,
+      isDragging: true,
+      originalOrder: list,
+    });
+
+    // Note: this is only for Firefox.
+    // Without it, the DnD won't work.
+    // But we are not using it.
+    event.dataTransfer.setData("text/html", "");
+  };
+
+  // onDragOver fires when an element being dragged
+  // enters a droppable area.
+  // In this case, any of the items on the list
+  const onDragOver: DragEventHandler<HTMLDivElement> | undefined = (event) => {
+    // in order for the onDrop
+    // event to fire, we have
+    // to cancel out this one
+    event.preventDefault();
+
+    let newList = dragAndDrop.originalOrder;
+
+    // index of the item being dragged
+    const draggedFrom = dragAndDrop.draggedFrom || 0;
+
+    // index of the droppable area being hovered
+    const draggedTo = Number(event.currentTarget.dataset.position);
+
+    const itemDragged = newList[draggedFrom];
+    const remainingItems = newList.filter(
+      (item, index) => index !== draggedFrom
+    );
+
+    newList = [
+      ...remainingItems.slice(0, draggedTo),
+      itemDragged,
+      ...remainingItems.slice(draggedTo),
+    ];
+
+    if (draggedTo !== dragAndDrop.draggedTo) {
+      setDragAndDrop({
+        ...dragAndDrop,
+        updatedOrder: newList,
+        draggedTo: draggedTo,
+      });
+    }
+  };
+
+  const onDrop = () => {
+    setList(dragAndDrop.updatedOrder);
+
+    setDragAndDrop({
+      ...dragAndDrop,
+      draggedFrom: null,
+      draggedTo: null,
+      isDragging: false,
+    });
+  };
+
+  const onDragLeave = () => {
+    setDragAndDrop({
+      ...dragAndDrop,
+      draggedTo: null,
+    });
+  };
+
+  useEffect(() => {
+    console.log("Dragged From: ", dragAndDrop && dragAndDrop.draggedFrom);
+    console.log("Dropping Into: ", dragAndDrop && dragAndDrop.draggedTo);
+  }, [dragAndDrop]);
+
+  useEffect(() => {
+    console.log("Fields updated!");
+    setList(fields);
+  }, [fields]);
 
   return (
     <VStack w="full">
-      {fields.map((item, index) => {
+      {list.map((item, index) => {
         return (
-          <VStack w="full" key={item.id}>
+          <VStack
+            w="full"
+            key={item.id}
+            data-position={index}
+            draggable
+            onDragStart={onDragStart}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onDragLeave={onDragLeave}
+          >
             <Heading>Section {index + 1}</Heading>
             <FormControl
               isInvalid={
@@ -160,6 +271,9 @@ export default function Questions({ control, register }: any) {
                   }
                 });
                 remove(index);
+                setList((list) =>
+                  list.filter((itm, itemIndex) => itemIndex !== index)
+                );
               }}
               aria-label="remove"
               size="md"

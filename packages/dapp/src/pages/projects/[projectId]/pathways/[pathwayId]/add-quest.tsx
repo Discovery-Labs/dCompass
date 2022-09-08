@@ -277,13 +277,12 @@ function AddQuestForm() {
             ...serlializedValues,
             questions: await Promise.all(
               values.questions.map(
-                async ({
+                async (
+                  { question, content, options, answer }: QuestionFormItemType,
+                  i: number
+                ) => ({
                   question,
-                  content,
-                  options,
-                  answer,
-                }: QuestionFormItemType) => ({
-                  question,
+                  order: i,
                   content,
                   choices: options.map((option) => option.value),
                   answer: JSON.stringify(

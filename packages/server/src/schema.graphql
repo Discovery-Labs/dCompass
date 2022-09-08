@@ -386,6 +386,7 @@ type QuizQuestion {
   choices: [String!]!
   content: String!
   id: String!
+  order: Int!
   question: String!
 }
 

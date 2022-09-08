@@ -388,7 +388,9 @@ function QuestPage({ questId, pathwayId, projectId }: any) {
                 <Box>
                   {quizData?.getQuizQuestById.questType === "quiz" && (
                     <QuizForm
-                      questions={quizData?.getQuizQuestById.questions}
+                      questions={quizData?.getQuizQuestById.questions.sort(
+                        (qA, qB) => qA.order - qB.order
+                      )}
                       questId={questId}
                       overview={quizData?.getQuizQuestById.description}
                       pathwayId={pathwayId}
